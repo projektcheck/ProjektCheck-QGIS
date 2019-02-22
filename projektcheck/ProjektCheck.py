@@ -23,13 +23,14 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt5.QtGui import QIcon, QPixmap, QPalette, QBrush
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QMenu
 # Initialize Qt resources from file resources_rc.py
 from .resources_rc import *
 
 # Import the code for the DockWidget
 from .ProjektCheck_dockwidget import ProjektCheckDockWidget
 from .ProjektCheck_drawwidget import ProjektCheckDrawWidget
+from .toolbutton_dock import ToolbuttonWidget
 from .testdialog import TestDialog
 import os.path
 
@@ -77,6 +78,7 @@ class ProjektCheck:
         self.pluginIsActive = False
         self.dockwidget = None
         self.drawwidget = None
+        self.toolbuttonwidget = None
 
 
     # noinspection PyMethodMayBeStatic
@@ -230,6 +232,9 @@ class ProjektCheck:
             if self.drawwidget == None:
                 # Create the dockwidget (after translation) and keep reference
                 self.drawwidget = ProjektCheckDrawWidget()
+            if self.toolbuttonwidget == None:
+                # Create the dockwidget (after translation) and keep reference
+                self.toolbuttonwidget = ToolbuttonWidget()
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
@@ -240,6 +245,8 @@ class ProjektCheck:
             self.dockwidget.show()
             self.iface.addDockWidget(Qt.TopDockWidgetArea, self.drawwidget)
             self.drawwidget.show()
+            self.iface.addDockWidget(Qt.TopDockWidgetArea, self.toolbuttonwidget)
+            self.toolbuttonwidget.show()
 
             #back = QPixmap("/banner.png")
 
@@ -259,3 +266,22 @@ class ProjektCheck:
                 dialog.exec_()
 
             self.dockwidget.open_dialog.clicked.connect(show_dialog)
+
+            # menu test
+            toolMenu = QMenu()
+            for i in range(3):
+                action = toolMenu.addAction("Action {}".format(i))
+            for i in range(3):
+                action = toolMenu.addAction("Checkable Action {}".format(i))
+                action.setCheckable(True)
+            submenu = toolMenu.addMenu('submenu')
+            submenu2 = toolMenu.addMenu('submenu')
+            submenu2.addAction("Action".format(i))
+            submenu3 = toolMenu.addMenu('submenu')
+            submenu4 = submenu.addMenu('submenu')
+            for i in range(3):
+                action = submenu4.addAction("Action {}".format(i))
+            submenu = toolMenu.addMenu('submenu')
+            self.toolbuttonwidget.toolButton.setMenu(toolMenu)
+            self.toolbuttonwidget.toolButton_2.setMenu(toolMenu)
+            self.toolbuttonwidget.toolButton_3.setMenu(toolMenu)
