@@ -180,6 +180,11 @@ class ProjektCheck:
             text=self.tr(u'Projekt-Check'),
             callback=self.run,
             parent=self.iface.mainWindow())
+        self.add_action(
+            ':/plugins/ProjektCheck/edit.png',
+            text=self.tr(u'Zeichentools'),
+            callback=self.show_draw_widget,
+            parent=self.iface.mainWindow())
 
     #--------------------------------------------------------------------------
 
@@ -215,6 +220,23 @@ class ProjektCheck:
 
     #--------------------------------------------------------------------------
 
+    def example_menu(self):
+        tool_menu = QMenu()
+        for i in range(3):
+            action = tool_menu.addAction("Action {}".format(i))
+        for i in range(3):
+            action = tool_menu.addAction("Checkable Action {}".format(i))
+            action.setCheckable(True)
+        submenu = tool_menu.addMenu('submenu')
+        submenu2 = tool_menu.addMenu('submenu')
+        submenu2.addAction("Action".format(i))
+        submenu3 = tool_menu.addMenu('submenu')
+        submenu4 = submenu.addMenu('submenu')
+        for i in range(3):
+            action = submenu4.addAction("Action {}".format(i))
+        submenu = tool_menu.addMenu('submenu')
+        return tool_menu
+
     def run(self):
         """Run method that loads and starts the plugin"""
 
@@ -229,9 +251,6 @@ class ProjektCheck:
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = ProjektCheckDockWidget()
-            if self.drawwidget == None:
-                # Create the dockwidget (after translation) and keep reference
-                self.drawwidget = ProjektCheckDrawWidget()
             if self.toolbuttonwidget == None:
                 # Create the dockwidget (after translation) and keep reference
                 self.toolbuttonwidget = ToolbuttonWidget()
@@ -243,8 +262,6 @@ class ProjektCheck:
             # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.TopDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
-            self.iface.addDockWidget(Qt.TopDockWidgetArea, self.drawwidget)
-            self.drawwidget.show()
             self.iface.addDockWidget(Qt.TopDockWidgetArea, self.toolbuttonwidget)
             self.toolbuttonwidget.show()
 
@@ -252,11 +269,12 @@ class ProjektCheck:
 
             #back = back.scaled(self.dockwidget.size(), Qt.IgnoreAspectRatio)
             #palette = QPalette()
-            #p = os.path.join(self.plugin_dir, 'banner.png')
+            p = os.path.join(self.plugin_dir, 'banner.png')
             #print(p)
             #print(os.path.exists(p))
             #palette.setBrush(QPalette.Background, QBrush(QPixmap(p)));
             #self.dockwidget.area_tab.setPalette(palette);
+            self.toolbuttonwidget.setStyleSheet("background-image: url(:/plugins/ProjektCheck/ProjektCheck_Logo.png); background-attachment: fixed")
 
             self.dockwidget.project_combo.addItem("Test")
             self.dockwidget.project_combo.addItem("bla blubb")
@@ -267,21 +285,14 @@ class ProjektCheck:
 
             self.dockwidget.open_dialog.clicked.connect(show_dialog)
 
-            # menu test
-            toolMenu = QMenu()
-            for i in range(3):
-                action = toolMenu.addAction("Action {}".format(i))
-            for i in range(3):
-                action = toolMenu.addAction("Checkable Action {}".format(i))
-                action.setCheckable(True)
-            submenu = toolMenu.addMenu('submenu')
-            submenu2 = toolMenu.addMenu('submenu')
-            submenu2.addAction("Action".format(i))
-            submenu3 = toolMenu.addMenu('submenu')
-            submenu4 = submenu.addMenu('submenu')
-            for i in range(3):
-                action = submenu4.addAction("Action {}".format(i))
-            submenu = toolMenu.addMenu('submenu')
-            self.toolbuttonwidget.toolButton.setMenu(toolMenu)
-            self.toolbuttonwidget.toolButton_2.setMenu(toolMenu)
-            self.toolbuttonwidget.toolButton_3.setMenu(toolMenu)
+            self.toolbuttonwidget.toolButton.setMenu(self.example_menu())
+            self.toolbuttonwidget.toolButton_2.setMenu(self.example_menu())
+            self.toolbuttonwidget.toolButton_3.setMenu(self.example_menu())
+
+    def show_draw_widget(self):
+        if self.drawwidget == None:
+            # Create the dockwidget (after translation) and keep reference
+            self.drawwidget = ProjektCheckDrawWidget()
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.drawwidget)
+        self.drawwidget.show()
+

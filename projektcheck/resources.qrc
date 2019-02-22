@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/plugins/ProjektCheck">
+    <file>ProjektCheck_Logo.png</file>
+    <file>edit.png</file>
     <file>icon.png</file>
     <file>banner.png</file>
   </qresource>

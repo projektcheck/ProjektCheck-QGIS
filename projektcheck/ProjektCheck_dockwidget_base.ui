@@ -82,6 +82,16 @@
      </layout>
     </item>
     <item>
+     <widget class="QToolButton" name="toolButton">
+      <property name="text">
+       <string>Verwalten</string>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::MenuButtonPopup</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -136,7 +146,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>841</width>
+             <width>774</width>
              <height>70</height>
             </rect>
            </property>
@@ -188,8 +198,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>841</width>
-             <height>70</height>
+             <width>305</width>
+             <height>60</height>
             </rect>
            </property>
            <attribute name="label">
