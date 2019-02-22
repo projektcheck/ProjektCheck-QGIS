@@ -292,7 +292,7 @@ class ProjektCheck:
     def show_draw_widget(self):
         if self.drawwidget == None:
             # Create the dockwidget (after translation) and keep reference
-            self.drawwidget = ProjektCheckDrawWidget()
+            self.drawwidget = ProjektCheckDrawWidget(self.iface.mapCanvas())
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.drawwidget)
         self.drawwidget.show()
 

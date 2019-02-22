@@ -25,7 +25,10 @@
 import os
 
 from PyQt5 import QtGui, QtWidgets, uic
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
+from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
+from PyQt5.QtGui import QCursor
+from qgis.core import QgsVectorLayer, QgsFeature
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ProjektCheck_dockwidget_drawing.ui'))
@@ -35,7 +38,7 @@ class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, canvas, parent=None):
         """Constructor."""
         super(ProjektCheckDrawWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -44,7 +47,82 @@ class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.canvas = canvas
+        self.tool = RectangleMapTool(self.canvas)
+        self.pushButton_8.clicked.connect(self.draw)
+        self.pushButton_9.clicked.connect(self.draw)
+        self.pushButton_10.clicked.connect(self.draw)
+        self.pushButton_14.clicked.connect(self.draw)
+        #self.tool.drawn.connect(self.sth)
+
+    def draw(self):
+        self.canvas.setMapTool(self.tool)
+        cursor = QCursor(Qt.CrossCursor)
+        self.canvas.setCursor(cursor)
+        print('draw')
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
+
+
+class RectangleMapTool(QgsMapToolEmitPoint):
+    def __init__(self, canvas):
+        self.canvas = canvas
+        QgsMapToolEmitPoint.__init__(self, self.canvas)
+        self.rubberBand = QgsRubberBand(self.canvas, True)
+        self.rubberBand.setColor(Qt.red)
+        self.rubberBand.setWidth(1)
+        self.reset()
+
+    def reset(self):
+        self.startPoint = self.endPoint = None
+        self.isEmittingPoint = False
+        self.rubberBand.reset(True)
+
+    def canvasPressEvent(self, e):
+        self.startPoint = self.toMapCoordinates(e.pos())
+        self.endPoint = self.startPoint
+        self.isEmittingPoint = True
+        self.showRect(self.startPoint, self.endPoint)
+
+    def canvasReleaseEvent(self, e):
+        self.isEmittingPoint = False
+        r = self.rectangle()
+        if r is not None:
+            print("Rectangle:", r.xMinimum(), r.yMinimum(), r.xMaximum(), r.yMaximum())
+
+    def canvasMoveEvent(self, e):
+        if not self.isEmittingPoint:
+            return
+
+        self.endPoint = self.toMapCoordinates(e.pos())
+        self.showRect(self.startPoint, self.endPoint)
+
+    def showRect(self, startPoint, endPoint):
+        self.rubberBand.reset(QGis.Polygon)
+        if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
+            return
+
+        point1 = QgsPoint(startPoint.x(), startPoint.y())
+        point2 = QgsPoint(startPoint.x(), endPoint.y())
+        point3 = QgsPoint(endPoint.x(), endPoint.y())
+        point4 = QgsPoint(endPoint.x(), startPoint.y())
+
+        self.rubberBand.addPoint(point1, False)
+        self.rubberBand.addPoint(point2, False)
+        self.rubberBand.addPoint(point3, False)
+        self.rubberBand.addPoint(point4, True)    # true to update canvas
+        self.rubberBand.show()
+
+    def rectangle(self):
+        if self.startPoint is None or self.endPoint is None:
+            return None
+        elif self.startPoint.x() == self.endPoint.x() or self.startPoint.y() == self.endPoint.y():
+            return None
+
+        return QgsRectangle(self.startPoint, self.endPoint)
+
+    def deactivate(self):
+        super(RectangleMapTool, self).deactivate()
+        #self.emit(SIGNAL("deactivated()"))
