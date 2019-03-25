@@ -30,9 +30,16 @@ from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 from PyQt5.QtGui import QCursor
 from qgis.core import QgsVectorLayer, QgsFeature
 
+from .testframe import Ui_Frame
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ProjektCheck_dockwidget_drawing.ui'))
 
+class TestWidget(QtWidgets.QWidget):
+    def __init__(self):
+        QtWidgets.QWidget.__init__(self)
+        uic.loadUi(os.path.join(
+            os.path.dirname(__file__), 'testwidget.ui'), self)
 
 class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
@@ -54,6 +61,11 @@ class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.pushButton_10.clicked.connect(self.draw)
         self.pushButton_14.clicked.connect(self.draw)
         #self.tool.drawn.connect(self.sth)
+
+        self.widget1 = TestWidget()
+        self.tab.layout().addWidget(self.widget1)
+        self.widget2 = TestWidget()
+        self.tab_2.layout().addWidget(self.widget2)
 
     def draw(self):
         self.canvas.setMapTool(self.tool)
