@@ -28,9 +28,7 @@ from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtCore import pyqtSignal, Qt
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 from PyQt5.QtGui import QCursor
-from qgis.core import QgsVectorLayer, QgsFeature
-
-from .testframe import Ui_Frame
+from qgis.core import QgsVectorLayer, QgsFeature, QgsPointXY, QgsRectangle
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ProjektCheck_dockwidget_drawing.ui'))
@@ -55,23 +53,33 @@ class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.canvas = canvas
-        self.tool = RectangleMapTool(self.canvas)
-        self.pushButton_8.clicked.connect(self.draw)
-        self.pushButton_9.clicked.connect(self.draw)
-        self.pushButton_10.clicked.connect(self.draw)
-        self.pushButton_14.clicked.connect(self.draw)
-        #self.tool.drawn.connect(self.sth)
+        self.rectangle_tool = RectangleMapTool(self.canvas)
+        self.rectangle_button.clicked.connect(self.draw_rectangle)
+        self.rectangle_tool.deactivated.connect(
+            lambda: self.deactivate(self.rectangle_button))
+
+        self.polygon_tool = PolygonMapTool(self.canvas)
+        self.polygon_button.clicked.connect(self.draw_polygon)
+        self.polygon_tool.deactivated.connect(
+            lambda: self.deactivate(self.polygon_button))
 
         self.widget1 = TestWidget()
         self.tab.layout().addWidget(self.widget1)
         self.widget2 = TestWidget()
         self.tab_2.layout().addWidget(self.widget2)
 
-    def draw(self):
-        self.canvas.setMapTool(self.tool)
+    def deactivate(self, button):
+        button.setChecked(False)
+
+    def draw_rectangle(self):
+        self.canvas.setMapTool(self.rectangle_tool)
         cursor = QCursor(Qt.CrossCursor)
         self.canvas.setCursor(cursor)
-        print('draw')
+
+    def draw_polygon(self):
+        self.canvas.setMapTool(self.polygon_tool)
+        cursor = QCursor(Qt.CrossCursor)
+        self.canvas.setCursor(cursor)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -79,6 +87,7 @@ class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
 
 class RectangleMapTool(QgsMapToolEmitPoint):
+    deactivated = pyqtSignal()
     def __init__(self, canvas):
         self.canvas = canvas
         QgsMapToolEmitPoint.__init__(self, self.canvas)
@@ -112,19 +121,20 @@ class RectangleMapTool(QgsMapToolEmitPoint):
         self.showRect(self.startPoint, self.endPoint)
 
     def showRect(self, startPoint, endPoint):
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(True)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
 
-        point1 = QgsPoint(startPoint.x(), startPoint.y())
-        point2 = QgsPoint(startPoint.x(), endPoint.y())
-        point3 = QgsPoint(endPoint.x(), endPoint.y())
-        point4 = QgsPoint(endPoint.x(), startPoint.y())
+        point1 = QgsPointXY(startPoint.x(), startPoint.y())
+        point2 = QgsPointXY(startPoint.x(), endPoint.y())
+        point3 = QgsPointXY(endPoint.x(), endPoint.y())
+        point4 = QgsPointXY(endPoint.x(), startPoint.y())
 
         self.rubberBand.addPoint(point1, False)
         self.rubberBand.addPoint(point2, False)
         self.rubberBand.addPoint(point3, False)
-        self.rubberBand.addPoint(point4, True)    # true to update canvas
+        self.rubberBand.addPoint(point4, False)
+        self.rubberBand.addPoint(point1, True)# true to update canvas
         self.rubberBand.show()
 
     def rectangle(self):
@@ -137,4 +147,35 @@ class RectangleMapTool(QgsMapToolEmitPoint):
 
     def deactivate(self):
         super(RectangleMapTool, self).deactivate()
-        #self.emit(SIGNAL("deactivated()"))
+        self.rubberBand.reset(True)
+        self.deactivated.emit()
+
+
+class PolygonMapTool(QgsMapToolEmitPoint):
+    deactivated = pyqtSignal()
+    def __init__(self, canvas):
+        self.canvas = canvas
+        QgsMapToolEmitPoint.__init__(self, self.canvas)
+        self.rubberBand = QgsRubberBand(self.canvas, True)
+        self.rubberBand.setColor(Qt.blue)
+        self.rubberBand.setWidth(1)
+        self.reset()
+
+    def reset(self):
+        self.rubberBand.reset(True)
+
+    def canvasDoubleClickEvent(self, e):
+        self.reset()
+
+    def canvasPressEvent(self, e):
+        if(e.button() == Qt.RightButton):
+            self.reset()
+            return
+        point = self.toMapCoordinates(e.pos())
+        point = QgsPointXY(point.x(), point.y())
+        self.rubberBand.addPoint(point, True)
+
+    def deactivate(self):
+        super(PolygonMapTool, self).deactivate()
+        self.rubberBand.reset(True)
+        self.deactivated.emit()
