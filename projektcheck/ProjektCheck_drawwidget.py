@@ -91,15 +91,15 @@ class RectangleMapTool(QgsMapToolEmitPoint):
     def __init__(self, canvas):
         self.canvas = canvas
         QgsMapToolEmitPoint.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, True)
-        self.rubberBand.setColor(Qt.red)
-        self.rubberBand.setWidth(1)
+        self.rubber_band = QgsRubberBand(self.canvas, True)
+        self.rubber_band.setColor(Qt.red)
+        self.rubber_band.setWidth(1)
         self.reset()
 
     def reset(self):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(True)
+        self.rubber_band.reset(True)
 
     def canvasPressEvent(self, e):
         self.startPoint = self.toMapCoordinates(e.pos())
@@ -121,7 +121,7 @@ class RectangleMapTool(QgsMapToolEmitPoint):
         self.showRect(self.startPoint, self.endPoint)
 
     def showRect(self, startPoint, endPoint):
-        self.rubberBand.reset(True)
+        self.rubber_band.reset(True)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
 
@@ -130,12 +130,12 @@ class RectangleMapTool(QgsMapToolEmitPoint):
         point3 = QgsPointXY(endPoint.x(), endPoint.y())
         point4 = QgsPointXY(endPoint.x(), startPoint.y())
 
-        self.rubberBand.addPoint(point1, False)
-        self.rubberBand.addPoint(point2, False)
-        self.rubberBand.addPoint(point3, False)
-        self.rubberBand.addPoint(point4, False)
-        self.rubberBand.addPoint(point1, True)# true to update canvas
-        self.rubberBand.show()
+        self.rubber_band.addPoint(point1, False)
+        self.rubber_band.addPoint(point2, False)
+        self.rubber_band.addPoint(point3, False)
+        self.rubber_band.addPoint(point4, False)
+        self.rubber_band.addPoint(point1, True)# true to update canvas
+        self.rubber_band.show()
 
     def rectangle(self):
         if self.startPoint is None or self.endPoint is None:
@@ -147,7 +147,7 @@ class RectangleMapTool(QgsMapToolEmitPoint):
 
     def deactivate(self):
         super(RectangleMapTool, self).deactivate()
-        self.rubberBand.reset(True)
+        self.rubber_band.reset(True)
         self.deactivated.emit()
 
 
@@ -156,26 +156,41 @@ class PolygonMapTool(QgsMapToolEmitPoint):
     def __init__(self, canvas):
         self.canvas = canvas
         QgsMapToolEmitPoint.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, True)
-        self.rubberBand.setColor(Qt.blue)
-        self.rubberBand.setWidth(1)
+        self.rubber_band = QgsRubberBand(self.canvas, True)
+        self.rubber_band.setColor(Qt.blue)
+        self.rubber_band.setWidth(1)
+
+        self.move_band = QgsRubberBand(self.canvas, True)
+        self.move_band.setColor(Qt.blue)
+        self.move_band.setWidth(1)
         self.reset()
 
     def reset(self):
-        self.rubberBand.reset(True)
+        self.rubber_band.reset(True)
+        self.move_band.reset(True)
+        self.last_point = None
 
     def canvasDoubleClickEvent(self, e):
         self.reset()
 
+    def canvasMoveEvent(self, e):
+        if self.last_point:
+            self.move_band.reset(True)
+            self.move_band.addPoint(self.last_point, False)
+            point = self.toMapCoordinates(e.pos())
+            point = QgsPointXY(point.x(), point.y())
+            self.move_band.addPoint(point, True)
+
     def canvasPressEvent(self, e):
+        self.move_band.reset(True)
         if(e.button() == Qt.RightButton):
             self.reset()
             return
         point = self.toMapCoordinates(e.pos())
-        point = QgsPointXY(point.x(), point.y())
-        self.rubberBand.addPoint(point, True)
+        self.last_point = QgsPointXY(point.x(), point.y())
+        self.rubber_band.addPoint(self.last_point, True)
 
     def deactivate(self):
         super(PolygonMapTool, self).deactivate()
-        self.rubberBand.reset(True)
+        self.reset()
         self.deactivated.emit()
