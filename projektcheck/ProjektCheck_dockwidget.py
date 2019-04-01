@@ -23,6 +23,7 @@
 """
 
 import os
+import subprocess
 
 from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtCore import pyqtSignal
@@ -44,6 +45,19 @@ class ProjektCheckDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        
+        self.pandas_button.clicked.connect(self.install_pandas)
+        
+    def install_pandas(self):
+        print('hallo')
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        print(dir_path)
+        process = subprocess.Popen(os.path.join(dir_path, 'install-pandas.bat'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #process = subprocess.Popen(['runas', '/user:Administrator', '/noprofile', os.path.join(dir_path, 'install-pandas.bat')], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,stdin=subprocess.PIPE)#os.path.join(dir_path, 'install-pandas.bat')])
+        #process.stdin.write(b'')
+        stdout, stderr = process.communicate()
+        print('STDOUT:{}'.format(stdout))
+        print('STDERR:{}'.format(stderr))
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
