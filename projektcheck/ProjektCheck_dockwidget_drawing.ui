@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>354</width>
-    <height>304</height>
+    <width>442</width>
+    <height>721</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Projekt-Check Zeichentools</string>
+   <string>Projekt-Check // Analyse-Toolz</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -35,8 +35,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>312</width>
-             <height>166</height>
+             <width>400</width>
+             <height>583</height>
             </rect>
            </property>
            <attribute name="label">
@@ -215,8 +215,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>312</width>
-             <height>166</height>
+             <width>400</width>
+             <height>583</height>
             </rect>
            </property>
            <attribute name="label">
@@ -530,8 +530,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>312</width>
-             <height>166</height>
+             <width>400</width>
+             <height>583</height>
             </rect>
            </property>
            <attribute name="label">
