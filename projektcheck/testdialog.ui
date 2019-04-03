@@ -38,6 +38,16 @@
         <height>169</height>
        </rect>
       </property>
+      <widget class="QDial" name="dial">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>50</width>
+         <height>64</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>
