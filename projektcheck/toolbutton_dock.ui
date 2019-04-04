@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>638</width>
-    <height>979</height>
+    <width>592</width>
+    <height>692</height>
    </rect>
   </property>
   <property name="font">
@@ -45,8 +45,8 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>577</width>
+             <y>-756</y>
+             <width>531</width>
              <height>1332</height>
             </rect>
            </property>
@@ -1182,7 +1182,10 @@
         <item>
          <widget class="QDialogButtonBox" name="buttonBox">
           <property name="standardButtons">
-           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+           <set>QDialogButtonBox::Help|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+          </property>
+          <property name="centerButtons">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -1208,7 +1211,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
+             <width>533</width>
              <height>549</height>
             </rect>
            </property>
@@ -1564,8 +1567,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>512</width>
-             <height>603</height>
+             <width>454</width>
+             <height>358</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1577,8 +1580,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>512</width>
-             <height>603</height>
+             <width>454</width>
+             <height>358</height>
             </rect>
            </property>
            <attribute name="label">
