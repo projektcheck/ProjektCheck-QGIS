@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>687</width>
-    <height>987</height>
+    <width>569</width>
+    <height>879</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Projekt-Check Analyse-Tool // Verkehr im Umfeld</string>
+   <string>Projekt-Check Analyse-Tools // Verkehr im Umfeld</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
@@ -112,7 +112,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>667</width>
+         <width>549</width>
          <height>638</height>
         </rect>
        </property>
@@ -488,6 +488,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="toolTip">
+       <string>Der Aufplopteil wird eher als xtra Dialog umgesetzt ...</string>
+      </property>
       <property name="text">
        <string>Annahmen verändern / präzisieren</string>
       </property>
@@ -495,7 +498,7 @@
        <bool>true</bool>
       </property>
       <property name="flat">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -535,7 +538,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>75</x>
-     <y>347</y>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>89</x>
