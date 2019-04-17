@@ -25,13 +25,13 @@ from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt5.QtGui import QIcon, QPixmap, QPalette, QBrush
 from PyQt5.QtWidgets import QAction, QMenu
 # Initialize Qt resources from file resources_rc.py
-from .resources_rc import *
+from pctools.ui.resources_rc import *
 
 # Import the code for the DockWidget
-from .ProjektCheck_dockwidget import ProjektCheckDockWidget
-from .ProjektCheck_drawwidget import ProjektCheckDrawWidget
-from .toolbutton_dock import ToolbuttonWidget
-from .testdialog import TestDialog
+from pctools.ui.ProjektCheck_dockwidget import ProjektCheckDockWidget
+from pctools.ui.ProjektCheck_drawwidget import ProjektCheckDrawWidget
+from pctools.ui.toolbutton_dock import ToolbuttonWidget
+from pctools.ui.testdialog import TestDialog
 import os.path
 
 
