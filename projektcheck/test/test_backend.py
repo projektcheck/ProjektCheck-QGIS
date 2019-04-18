@@ -6,11 +6,13 @@ __copyright__ = 'Copyright 2019, GGR Planungsbuero'
 import unittest
 
 from pctools.backend.generic import Database
+from pctools.backend.geopackage import Geopackage
 
 
 class GenericDatabaseTest(unittest.TestCase):
 
     def setUp(self):
+
         class Gen1DB(Database):
             ''''''
         class Gen2DB(Database):
@@ -24,7 +26,9 @@ class GenericDatabaseTest(unittest.TestCase):
         pass
 
     def test_singleton(self):
+        # same database implementation -> same object
         self.assertEqual(id(self.gen11), id(self.gen12))
+        # different database implementations -> different objects
         self.assertNotEqual(id(self.gen11), id(self.gen2))
 
 
@@ -32,13 +36,14 @@ class GeopackageTest(unittest.TestCase):
     """Test geopackage backend"""
 
     def setUp(self):
-        pass
+        self.backend = Geopackage()
 
     def tearDown(self):
         pass
 
     def test_workspace(self):
-        pass
+        self.backend.get_workspace('test_basisdaten_deutschland')
+
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(GenericDatabaseTest)

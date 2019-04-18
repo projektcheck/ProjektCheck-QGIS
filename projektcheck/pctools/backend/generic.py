@@ -8,9 +8,12 @@ class Database(ABC, metaclass=SingletonABCMeta):
     abstract class for managing connection to a database
     '''
     def __init__(self):
-        pass
+        workspaces = []
 
     def get_table(self):
+        return NotImplemented
+
+    def get_workspace(self):
         return NotImplemented
 
     def update_table(self):

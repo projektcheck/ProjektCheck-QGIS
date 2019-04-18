@@ -19,6 +19,8 @@ import json
 
 from pctools.utils.singleton import Singleton
 
+BASE_PATH = os
+
 
 class Config(object):
     __metaclass__ = Singleton

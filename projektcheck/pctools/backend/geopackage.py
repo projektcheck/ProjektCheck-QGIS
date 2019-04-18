@@ -1,7 +1,7 @@
 from pctools.backend.generic import Database, Table
 
 
-class Geopackage(TableManager):
+class Geopackage(Database):
     '''
     manages the connection to a geopackage db (file)
     '''
