@@ -1,9 +1,13 @@
-from pctools.backend.backend import TableManager, Table
+from pctools.backend.backend import Database, Table
 
 
-class GeopackageManager(TableManager):
-    ''''''
+class Geopackage(TableManager):
+    '''
+    manages the connection to a geopackage db (file)
+    '''
 
 
 class GeopackageTable(Table):
-    ''''''
+    '''
+    representation of a table in a geopackage
+    '''

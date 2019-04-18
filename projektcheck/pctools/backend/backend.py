@@ -1,8 +1,10 @@
 from abc import ABC
 
 
-class TableManager(ABC):
-    ''''''
+class Database(ABC):
+    '''
+    abstract class for managing connection to a database
+    '''
 
     def get_table(self):
         return NotImplemented
@@ -12,7 +14,9 @@ class TableManager(ABC):
 
 
 class Table(ABC):
-    ''''''
+    '''
+    abstract class for a database table
+    '''
 
     def get(self):
         return NotImplemented
@@ -30,9 +34,11 @@ class Table(ABC):
     def __next__(self):
         return NotImplemented
 
-
-class TemporaryTable(Table, ABC):
-    ''''''
-
     def create(self):
         return NotImplemented
+
+
+class TemporaryTable(Table):
+    '''
+    temporary table with no database behind
+    '''
