@@ -1,36 +1,24 @@
 # coding=utf-8
-"""Resources test.
-
-.. note:: This program is free software; you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation; either version 2 of the License, or
-     (at your option) any later version.
-
-"""
-
-__author__ = 'franke@ggr-planung.de'
-__date__ = '2019-02-21'
+__author__ = 'Christoph Franke'
+__license__ = 'GPL'
 __copyright__ = 'Copyright 2019, GGR'
 
 import unittest
 
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
 
 
-
-class ProjektCheckDialogTest(unittest.TestCase):
-    """Test rerources work."""
+class ProjektCheckResourcesTest(unittest.TestCase):
+    '''Test resources'''
 
     def setUp(self):
-        """Runs before each test."""
         pass
 
     def tearDown(self):
-        """Runs after each test."""
         pass
 
     def test_icon_png(self):
-        """Test we can click OK."""
+        '''test that icon is in resource file'''
         path = ':/plugins/ProjektCheck/icon.png'
         icon = QIcon(path)
         self.assertFalse(icon.isNull())

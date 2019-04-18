@@ -1,10 +1,14 @@
 from abc import ABC
 
+from pctools.utils.singleton import SingletonABCMeta
 
-class Database(ABC):
+
+class Database(ABC, metaclass=SingletonABCMeta):
     '''
     abstract class for managing connection to a database
     '''
+    def __init__(self):
+        pass
 
     def get_table(self):
         return NotImplemented

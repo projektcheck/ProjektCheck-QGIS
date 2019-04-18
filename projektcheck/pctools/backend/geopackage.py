@@ -1,4 +1,4 @@
-from pctools.backend.backend import Database, Table
+from pctools.backend.generic import Database, Table
 
 
 class Geopackage(TableManager):
