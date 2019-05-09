@@ -6,488 +6,230 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>208</height>
+    <width>352</width>
+    <height>187</height>
    </rect>
   </property>
+  <property name="features">
+   <set>QDockWidget::AllDockWidgetFeatures</set>
+  </property>
   <property name="windowTitle">
-   <string>Projekt-Check</string>
+   <string>Projekt-Check // Projekt-Verwaltung</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Projekt</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="project_combo">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton_3">
-          <property name="text">
-           <string>Neues Projekt</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_4">
-          <property name="text">
-           <string>Projekt kopieren</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_5">
-          <property name="text">
-           <string>Projekt löschen</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pandas_button">
-        <property name="text">
-         <string>Install Pandas</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_6">
-        <property name="text">
-         <string>Einstellungen</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QToolButton" name="toolButton">
-      <property name="text">
-       <string>Verwalten</string>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="3" column="0" colspan="2">
+     <widget class="QPushButton" name="pushButton">
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
       </property>
-      <property name="popupMode">
-       <enum>QToolButton::MenuButtonPopup</enum>
+      <property name="text">
+       <string>neues Projekt</string>
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>0</number>
+    <item row="3" column="3">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="area_tab">
-       <property name="styleSheet">
-        <string notr="true"/>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>3</width>
+        <height>17</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="4" column="0">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>aktuelles duplizieren</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="5">
+     <widget class="Line" name="line">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QComboBox" name="project_combo">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>15</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <property name="currentText">
+       <string>Projekt wählen</string>
+      </property>
+      <property name="maxVisibleItems">
+       <number>10</number>
+      </property>
+      <item>
+       <property name="text">
+        <string comment="0">Projekt wählen</string>
        </property>
-       <attribute name="title">
-        <string>Flächendefinition</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>200</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="resources.qrc">:/plugins/ProjektCheck/banner.png</pixmap>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="inhabitants_tab">
-       <attribute name="title">
-        <string>Bewohner und Arbeitsplätze</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QToolBox" name="toolBox">
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="page">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>305</width>
-             <height>60</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Bewohnerzahl schätzen</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="0">
-             <widget class="QComboBox" name="comboBox">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Fläche</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="pushButton">
-              <property name="text">
-               <string>schätz mich</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="page_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>305</width>
-             <height>60</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Arbeitsplätze schätzen</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Fläche</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QComboBox" name="comboBox_2">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="pushButton_8">
-              <property name="text">
-               <string>schätz mich</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>533</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="project_tab">
-       <attribute name="title">
-        <string>Standortkonkurrenz Supermärkte</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QStackedWidget" name="stackedWidget">
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="page_3">
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="1" column="0">
-             <widget class="QPushButton" name="open_dialog">
-              <property name="text">
-               <string>Hier ist ein Dialog dahinter</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="pushButton_10">
-              <property name="text">
-               <string>PushButton</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Seite 1 vom Stacked Widget</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="page_4">
-           <widget class="QLabel" name="label_8">
-            <property name="geometry">
-             <rect>
-              <x>80</x>
-              <y>20</y>
-              <width>197</width>
-              <height>77</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Seite 2 vom Stacked Widget</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="comboBox_3">
-            <property name="geometry">
-             <rect>
-              <x>110</x>
-              <y>80</y>
-              <width>69</width>
-              <height>22</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDockWidget" name="dockWidget_2">
-          <property name="palette">
-           <palette>
-            <active>
-             <colorrole role="Base">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>255</red>
-                <green>255</green>
-                <blue>255</blue>
-               </color>
-              </brush>
-             </colorrole>
-             <colorrole role="Window">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>211</red>
-                <green>217</green>
-                <blue>240</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </active>
-            <inactive>
-             <colorrole role="Base">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>255</red>
-                <green>255</green>
-                <blue>255</blue>
-               </color>
-              </brush>
-             </colorrole>
-             <colorrole role="Window">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>211</red>
-                <green>217</green>
-                <blue>240</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </inactive>
-            <disabled>
-             <colorrole role="Base">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>211</red>
-                <green>217</green>
-                <blue>240</blue>
-               </color>
-              </brush>
-             </colorrole>
-             <colorrole role="Window">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>211</red>
-                <green>217</green>
-                <blue>240</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </disabled>
-           </palette>
-          </property>
-          <property name="autoFillBackground">
-           <bool>true</bool>
-          </property>
-          <property name="windowTitle">
-           <string>Zeichentools für irgendwas</string>
-          </property>
-          <widget class="QWidget" name="dockWidgetContents_2">
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QPushButton" name="pushButton_2">
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="resources.qrc">
-                  <normaloff>:/plugins/ProjektCheck/icon.png</normaloff>:/plugins/ProjektCheck/icon.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>mal was</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <widget class="QPushButton" name="pushButton_7">
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="resources.qrc">
-                  <normaloff>:/plugins/ProjektCheck/icon.png</normaloff>:/plugins/ProjektCheck/icon.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>mal was anderes</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="4">
+     <widget class="QToolButton" name="toolButton_4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
+      </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::DefaultContextMenu</enum>
+      </property>
+      <property name="text">
+       <string>Analyse-Tools</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::InstantPopup</enum>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonTextBesideIcon</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>false</bool>
+      </property>
+      <property name="arrowType">
+       <enum>Qt::DownArrow</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <spacer name="verticalSpacer_5">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>98</width>
+        <height>0</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="4">
+     <widget class="QToolButton" name="toolButton_5">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>Projekt-Definitionen</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="5">
+     <widget class="QLabel" name="label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>14</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <strikeout>false</strikeout>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>Projekt-Check</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::AutoText</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>aktuelles löschen</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QToolButton" name="toolButton_6">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>incl. updates, if not via plugin-updater</string>
+      </property>
+      <property name="text">
+       <string>Einstellungen</string>
+      </property>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
+ <resources/>
  <connections/>
 </ui>

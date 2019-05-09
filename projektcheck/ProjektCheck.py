@@ -274,10 +274,11 @@ class ProjektCheck:
             #print(os.path.exists(p))
             #palette.setBrush(QPalette.Background, QBrush(QPixmap(p)));
             #self.dockwidget.area_tab.setPalette(palette);
-            self.toolbuttonwidget.setStyleSheet("background-image: url(:/plugins/ProjektCheck/ProjektCheck_Logo.png); background-attachment: fixed")
+            #self.toolbuttonwidget.setStyleSheet("background-image: url(:/plugins/ProjektCheck/ProjektCheck_Logo.png); background-attachment: fixed")
 
-            self.dockwidget.project_combo.addItem("Test")
-            self.dockwidget.project_combo.addItem("bla blubb")
+            self.dockwidget.project_combo.addItem("Projekt Bli")
+            self.dockwidget.project_combo.addItem("Projekt Bla")
+            self.dockwidget.project_combo.addItem("Projekt Blubb")
 
             def show_dialog():
                 dialog = TestDialog()

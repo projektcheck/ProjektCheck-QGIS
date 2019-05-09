@@ -33,11 +33,13 @@ from qgis.core import QgsVectorLayer, QgsFeature, QgsPointXY, QgsRectangle
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ProjektCheck_dockwidget_drawing.ui'))
 
-class TestWidget(QtWidgets.QWidget):
-    def __init__(self):
-        QtWidgets.QWidget.__init__(self)
-        uic.loadUi(os.path.join(
-            os.path.dirname(__file__), 'testwidget.ui'), self)
+
+#class TestWidget(QtWidgets.QWidget):
+#    def __init__(self):
+#        QtWidgets.QWidget.__init__(self)
+#        uic.loadUi(os.path.join(
+#            os.path.dirname(__file__), 'testwidget.ui'), self)
+
 
 class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
@@ -54,19 +56,19 @@ class ProjektCheckDrawWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.canvas = canvas
         self.rectangle_tool = RectangleMapTool(self.canvas)
-        self.rectangle_button.clicked.connect(self.draw_rectangle)
+        #self.rectangle_button.clicked.connect(self.draw_rectangle)
         self.rectangle_tool.deactivated.connect(
             lambda: self.deactivate(self.rectangle_button))
 
         self.polygon_tool = PolygonMapTool(self.canvas)
-        self.polygon_button.clicked.connect(self.draw_polygon)
+        #self.polygon_button.clicked.connect(self.draw_polygon)
         self.polygon_tool.deactivated.connect(
             lambda: self.deactivate(self.polygon_button))
 
-        self.widget1 = TestWidget()
-        self.tab.layout().addWidget(self.widget1)
-        self.widget2 = TestWidget()
-        self.tab_2.layout().addWidget(self.widget2)
+        #self.widget1 = TestWidget()
+        #self.tab.layout().addWidget(self.widget1)
+        #self.widget2 = TestWidget()
+        #self.tab_2.layout().addWidget(self.widget2)
 
     def deactivate(self, button):
         button.setChecked(False)
