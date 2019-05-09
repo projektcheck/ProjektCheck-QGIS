@@ -23,15 +23,12 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon, QPixmap, QPalette, QBrush
-from qgis.PyQt.QtWidgets import QAction, QMenu
+from qgis.PyQt.QtWidgets import QAction
 # Initialize Qt resources from file resources_rc.py
 from pctools.ui.resources_rc import *
 
 # Import the code for the DockWidget
-from pctools.ui.ProjektCheck_dockwidget import ProjektCheckDockWidget
-from pctools.ui.ProjektCheck_drawwidget import ProjektCheckDrawWidget
-from pctools.ui.toolbutton_dock import ToolbuttonWidget
-from pctools.ui.testdialog import TestDialog
+from ProjektCheck_dockwidget import ProjektCheckMainDockWidget
 import os.path
 
 
@@ -180,18 +177,11 @@ class ProjektCheck:
             text=self.tr(u'Projekt-Check'),
             callback=self.run,
             parent=self.iface.mainWindow())
-        self.add_action(
-            ':/plugins/ProjektCheck/edit.png',
-            text=self.tr(u'Zeichentools'),
-            callback=self.show_draw_widget,
-            parent=self.iface.mainWindow())
 
     #--------------------------------------------------------------------------
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
-
-        #print "** CLOSING ProjektCheck"
 
         # disconnects
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
@@ -220,29 +210,11 @@ class ProjektCheck:
 
     #--------------------------------------------------------------------------
 
-    def example_menu(self):
-        tool_menu = QMenu()
-        for i in range(3):
-            action = tool_menu.addAction("Action {}".format(i))
-        for i in range(3):
-            action = tool_menu.addAction("Checkable Action {}".format(i))
-            action.setCheckable(True)
-        submenu = tool_menu.addMenu('submenu')
-        submenu2 = tool_menu.addMenu('submenu')
-        submenu2.addAction("Action".format(i))
-        submenu3 = tool_menu.addMenu('submenu')
-        submenu4 = submenu.addMenu('submenu')
-        for i in range(3):
-            action = submenu4.addAction("Action {}".format(i))
-        submenu = tool_menu.addMenu('submenu')
-        return tool_menu
-
     def run(self):
         """Run method that loads and starts the plugin"""
 
         if not self.pluginIsActive:
             self.pluginIsActive = True
-
             #print "** STARTING ProjektCheck"
 
             # dockwidget may not exist if:
@@ -250,50 +222,13 @@ class ProjektCheck:
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = ProjektCheckDockWidget()
-            if self.toolbuttonwidget == None:
-                # Create the dockwidget (after translation) and keep reference
-                self.toolbuttonwidget = ToolbuttonWidget()
+                self.dockwidget = ProjektCheckMainDockWidget()
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
             # show the dockwidget
-            # TODO: fix to allow choice of dock location
-            self.iface.addDockWidget(Qt.TopDockWidgetArea, self.dockwidget)
-            self.dockwidget.show()
-            self.iface.addDockWidget(Qt.TopDockWidgetArea, self.toolbuttonwidget)
-            self.toolbuttonwidget.show()
+            self.dockwidget.show(iface=self.iface,
+                                 position=Qt.LeftDockWidgetArea)
 
-            #back = QPixmap("/banner.png")
-
-            #back = back.scaled(self.dockwidget.size(), Qt.IgnoreAspectRatio)
-            #palette = QPalette()
-            p = os.path.join(self.plugin_dir, 'banner.png')
-            #print(p)
-            #print(os.path.exists(p))
-            #palette.setBrush(QPalette.Background, QBrush(QPixmap(p)));
-            #self.dockwidget.area_tab.setPalette(palette);
-            #self.toolbuttonwidget.setStyleSheet("background-image: url(:/plugins/ProjektCheck/ProjektCheck_Logo.png); background-attachment: fixed")
-
-            self.dockwidget.project_combo.addItem("Projekt Bli")
-            self.dockwidget.project_combo.addItem("Projekt Bla")
-            self.dockwidget.project_combo.addItem("Projekt Blubb")
-
-            def show_dialog():
-                dialog = TestDialog()
-                dialog.exec_()
-
-            self.dockwidget.open_dialog.clicked.connect(show_dialog)
-
-            self.toolbuttonwidget.toolButton.setMenu(self.example_menu())
-            self.toolbuttonwidget.toolButton_2.setMenu(self.example_menu())
-            self.toolbuttonwidget.toolButton_3.setMenu(self.example_menu())
-
-    def show_draw_widget(self):
-        if self.drawwidget == None:
-            # Create the dockwidget (after translation) and keep reference
-            self.drawwidget = ProjektCheckDrawWidget(self.iface.mapCanvas())
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.drawwidget)
-        self.drawwidget.show()
 

@@ -101,7 +101,7 @@
      </widget>
     </item>
     <item row="3" column="4">
-     <widget class="QToolButton" name="toolButton_4">
+     <widget class="QToolButton" name="domain_button">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -150,7 +150,7 @@
      </spacer>
     </item>
     <item row="2" column="4">
-     <widget class="QToolButton" name="toolButton_5">
+     <widget class="QToolButton" name="definition_button">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
