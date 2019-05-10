@@ -73,10 +73,9 @@ class ProjektCheck:
         #print "** INITIALIZING ProjektCheck"
 
         self.pluginIsActive = False
-        self.dockwidget = None
+        self.mainwidget = None
         self.drawwidget = None
         self.toolbuttonwidget = None
-
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -92,7 +91,6 @@ class ProjektCheck:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('Projekt-Check', message)
-
 
     def add_action(
         self,
@@ -167,7 +165,6 @@ class ProjektCheck:
 
         return action
 
-
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
@@ -184,7 +181,8 @@ class ProjektCheck:
         """Cleanup necessary items here when plugin dockwidget is closed"""
 
         # disconnects
-        self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+        self.mainwidget.closingPlugin.disconnect(self.onClosePlugin)
+        self.mainwidget.close()
 
         # remove this statement if dockwidget is to remain
         # for reuse if plugin is reopened
@@ -193,7 +191,6 @@ class ProjektCheck:
         # self.dockwidget = None
 
         self.pluginIsActive = False
-
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -206,7 +203,11 @@ class ProjektCheck:
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
-        del self.toolbar
+        if self.toolbar:
+            del self.toolbar
+        if self.mainwidget:
+            self.mainwidget.unload()
+            del self.mainwidget
 
     #--------------------------------------------------------------------------
 
@@ -220,15 +221,14 @@ class ProjektCheck:
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None:
+            if self.mainwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = ProjektCheckMainDockWidget()
+                self.mainwidget = ProjektCheckMainDockWidget(iface=self.iface)
 
             # connect to provide cleanup on closing of dockwidget
-            self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+            self.mainwidget.closingPlugin.connect(self.onClosePlugin)
 
             # show the dockwidget
-            self.dockwidget.show(iface=self.iface,
-                                 position=Qt.LeftDockWidgetArea)
+            self.mainwidget.show(position=Qt.LeftDockWidgetArea)
 
 

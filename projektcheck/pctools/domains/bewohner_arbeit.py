@@ -1,6 +1,8 @@
-from pctools.base.domain import Domain
+from pctools.base import Domain
+
 
 class BewohnerArbeit(Domain):
     """"""
 
-    name = 'Bewohner und Arbeitsplätze'
+    label = 'Bewohner und Arbeitsplätze'
+    ui_file = 'ProjektCheck_dockwidget_analysis_01-BA.ui'

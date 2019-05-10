@@ -58,7 +58,7 @@ class ParamField(Params):
         pass
 
 
-class SumDependency(SumDependency):
+class SumDependency(Dependency):
     '''
     all dependent fields add up to a total value
     '''

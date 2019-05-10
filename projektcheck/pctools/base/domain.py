@@ -9,18 +9,24 @@ class PCDockWidget(QtWidgets.QDockWidget):
     ui_file = None
     closingPlugin = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, iface=None):
         super().__init__()
-        uic.loadUi(os.path.join(UI_PATH, self.ui_file), self)
+        self.iface = iface
+        # look for file ui folder if not found
+        ui_file = self.ui_file if os.path.exists(self.ui_file) \
+            else os.path.join(UI_PATH, self.ui_file)
+        uic.loadUi(ui_file, self)
         self.setupUi()
 
     def setupUi(self):
-        raise NotImplementedError
+        pass
 
-    def show(self, iface=None, position=Qt.RightDockWidgetArea):
-        print(iface)
-        print(os.path.join(UI_PATH, self.ui_file))
-        iface.addDockWidget(position, self)
+    def show(self, position=Qt.RightDockWidgetArea):
+        self.iface.addDockWidget(position, self)
+
+    def unload(self):
+        self.close()
+        self.iface.removeDockWidget(self)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
