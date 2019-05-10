@@ -36,10 +36,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
     def setup_definitions(self):
         '''setup project definitions widget'''
         self.project_definitions = ProjectDefinitions(iface=self.iface)
-        self.definition_button.clicked.connect(
-            lambda: self.project_definitions.show(
-                position=Qt.RightDockWidgetArea)
-        )
+        self.definition_button.clicked.connect(self.project_definitions.show)
 
     def setup_domains(self):
         '''setup the domain widgets'''
@@ -57,9 +54,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         menu = QMenu()
         for domain in self.domains:
             action = menu.addAction(domain.label)
-            action.triggered.connect(
-                lambda t, d=domain: d.show(position=Qt.RightDockWidgetArea)
-            )
+            action.triggered.connect(domain.show)
         self.domain_button.setMenu(menu)
 
     def install_pandas(self):
@@ -80,7 +75,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         super().close()
 
     def unload(self):
+        self.close()
         self.project_definitions.unload()
+        del self.project_definitions
         for domain in self.domains:
             domain.unload()
+            del domain
         super().unload()

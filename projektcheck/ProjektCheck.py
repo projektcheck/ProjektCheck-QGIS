@@ -217,12 +217,13 @@ class ProjektCheck:
         # initialize and show main widget
         if not self.mainwidget:
             # Create the dockwidget (after translation) and keep reference
-            self.mainwidget = ProjektCheckMainDockWidget(iface=self.iface)
+            self.mainwidget = ProjektCheckMainDockWidget(
+                iface=self.iface, position=Qt.LeftDockWidgetArea)
 
         # connect to provide cleanup on closing of dockwidget
         self.mainwidget.closingPlugin.connect(self.onClosePlugin)
 
         # show the dockwidget
-        self.mainwidget.show(position=Qt.LeftDockWidgetArea)
+        self.mainwidget.show()
 
 
