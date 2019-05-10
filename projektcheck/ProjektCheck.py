@@ -184,18 +184,12 @@ class ProjektCheck:
         self.mainwidget.closingPlugin.disconnect(self.onClosePlugin)
         self.mainwidget.close()
 
-        # remove this statement if dockwidget is to remain
-        # for reuse if plugin is reopened
-        # Commented next statement since it causes QGIS crashe
-        # when closing the docked window:
-        # self.dockwidget = None
-
         self.pluginIsActive = False
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
-        #print "** UNLOAD ProjektCheck"
+        print("** UNLOAD ProjektCheck")
 
         for action in self.actions:
             self.iface.removePluginMenu(
@@ -205,30 +199,30 @@ class ProjektCheck:
         # remove the toolbar
         if self.toolbar:
             del self.toolbar
+        # remove widget
         if self.mainwidget:
+            self.mainwidget.close()
             self.mainwidget.unload()
             del self.mainwidget
+        self.pluginIsActive = False
 
     #--------------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""
 
-        if not self.pluginIsActive:
-            self.pluginIsActive = True
-            #print "** STARTING ProjektCheck"
+        if self.pluginIsActive:
+            return
 
-            # dockwidget may not exist if:
-            #    first run of plugin
-            #    removed on close (see self.onClosePlugin method)
-            if self.mainwidget == None:
-                # Create the dockwidget (after translation) and keep reference
-                self.mainwidget = ProjektCheckMainDockWidget(iface=self.iface)
+        # initialize and show main widget
+        if not self.mainwidget:
+            # Create the dockwidget (after translation) and keep reference
+            self.mainwidget = ProjektCheckMainDockWidget(iface=self.iface)
 
-            # connect to provide cleanup on closing of dockwidget
-            self.mainwidget.closingPlugin.connect(self.onClosePlugin)
+        # connect to provide cleanup on closing of dockwidget
+        self.mainwidget.closingPlugin.connect(self.onClosePlugin)
 
-            # show the dockwidget
-            self.mainwidget.show(position=Qt.LeftDockWidgetArea)
+        # show the dockwidget
+        self.mainwidget.show(position=Qt.LeftDockWidgetArea)
 
 

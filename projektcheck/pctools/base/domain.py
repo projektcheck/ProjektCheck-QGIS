@@ -25,7 +25,7 @@ class PCDockWidget(QtWidgets.QDockWidget):
         self.iface.addDockWidget(position, self)
 
     def unload(self):
-        self.close()
+        print('removing {}'.format(str(self)))
         self.iface.removeDockWidget(self)
 
     def closeEvent(self, event):
