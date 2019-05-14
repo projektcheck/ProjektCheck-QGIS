@@ -7,7 +7,9 @@ from qgis.PyQt.QtWidgets import QAction, QMenu
 
 from pctools.base import PCDockWidget
 from pctools.domains import (BewohnerArbeit, ProjectDefinitions,
-                             Verkehr, Erreichbarkeiten)
+                             Verkehr, Erreichbarkeiten, Ecology,
+                             LandUse, InfrastructuralCosts, 
+                             MunicipalTaxRevenue)
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -49,11 +51,23 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         verkehr = Verkehr(iface=self.iface)
         self.domains.append(verkehr)
 
+        ecology = Ecology(iface=self.iface)
+        self.domains.append(ecology)
+
+        landuse = LandUse(iface=self.iface)
+        self.domains.append(landuse)
+
+        infrastructuralcosts = InfrastructuralCosts(iface=self.iface)
+        self.domains.append(infrastructuralcosts)
+
+        municipaltaxrevenue = MunicipalTaxRevenue(iface=self.iface)
+        self.domains.append(municipaltaxrevenue)
+
     def setup_menu(self):
         '''fill the analysis menu with available domains'''
         menu = QMenu()
         for domain in self.domains:
-            action = menu.addAction(domain.label)
+            action = menu.addAction(domain.ui_label)
             action.triggered.connect(domain.show)
         self.domain_button.setMenu(menu)
 
