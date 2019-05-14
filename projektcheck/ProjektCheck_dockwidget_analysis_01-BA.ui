@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>287</width>
-    <height>299</height>
+    <width>409</width>
+    <height>455</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,8 +31,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>269</width>
-         <height>176</height>
+         <width>391</width>
+         <height>332</height>
         </rect>
        </property>
        <attribute name="label">
@@ -90,7 +90,7 @@
          <x>0</x>
          <y>0</y>
          <width>438</width>
-         <height>159</height>
+         <height>315</height>
         </rect>
        </property>
        <attribute name="label">
@@ -134,6 +134,21 @@
           </property>
           <property name="flat">
            <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <family>Linux Biolinum O</family>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Vgl. hierzu handschriftliche Notiz!</string>
           </property>
          </widget>
         </item>

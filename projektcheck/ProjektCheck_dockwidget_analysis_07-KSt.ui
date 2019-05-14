@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
+    <width>676</width>
     <height>998</height>
    </rect>
   </property>
@@ -21,15 +21,15 @@
        <enum>QFrame::Raised</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>445</width>
-         <height>872</height>
+         <width>658</width>
+         <height>875</height>
         </rect>
        </property>
        <attribute name="label">
