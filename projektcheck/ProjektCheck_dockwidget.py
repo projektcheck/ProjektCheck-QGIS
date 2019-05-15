@@ -9,7 +9,8 @@ from pctools.base import PCDockWidget
 from pctools.domains import (BewohnerArbeit, ProjectDefinitions,
                              Verkehr, Erreichbarkeiten, Ecology,
                              LandUse, InfrastructuralCosts, 
-                             MunicipalTaxRevenue)
+                             MunicipalTaxRevenue, 
+                             SupermarketsLocationalCompetition)
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -62,6 +63,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         municipaltaxrevenue = MunicipalTaxRevenue(iface=self.iface)
         self.domains.append(municipaltaxrevenue)
+
+        supermarketslocationallompetition = SupermarketsLocationalCompetition(iface=self.iface)
+        self.domains.append(supermarketslocationallompetition)
 
     def setup_menu(self):
         '''fill the analysis menu with available domains'''
