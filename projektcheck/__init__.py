@@ -22,7 +22,8 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
-
+import os
+import sys
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
@@ -31,6 +32,8 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
+    # append this path to system, so that subfolders are recognized as
+    # packages
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     from .ProjektCheck import ProjektCheck
     return ProjektCheck(iface)
