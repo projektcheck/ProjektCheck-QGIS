@@ -6,9 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>522</width>
+    <width>610</width>
     <height>1000</height>
    </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QToolBox:tab {
+	font: bold 10pt ;
+    color: black;
+}
+QGroupBox::title {
+	font: bold italic 8pt ;
+    color: black;
+}
+</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Standortkonkurrenz und Supermärkte</string>
@@ -25,7 +36,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>504</width>
+         <width>592</width>
          <height>796</height>
         </rect>
        </property>
@@ -49,10 +60,10 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="flat">
            <bool>true</bool>
@@ -75,8 +86,9 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>181112_Icons_toggle_visibility_on.png</normalon>181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
+            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
+            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -106,7 +118,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>504</width>
+         <width>592</width>
          <height>796</height>
         </rect>
        </property>
@@ -114,34 +126,90 @@
         <string>Lebensmitteleinzelhandel im Bestand</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="10" column="2">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="11" column="4" colspan="2">
-         <widget class="QCheckBox" name="checkBox_23">
           <property name="text">
-           <string>zusätzlicher Buffer für Umkreissuche (m)</string>
+           <string>Erfassungsvorlagen</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="4" colspan="2">
-         <widget class="QCheckBox" name="checkBox_22">
-          <property name="text">
-           <string>vorhandene OSM-Märkte entfernen</string>
+        <item row="2" column="1" colspan="5">
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
           </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Dialog!</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QDialogButtonBox" name="buttonBox">
+             <property name="standardButtons">
+              <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QComboBox" name="comboBox_6">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="currentText">
+              <string>[Dateiformat]</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>[Dateiformat]</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <spacer name="horizontalSpacer_16">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QLineEdit" name="lineEdit">
+             <property name="placeholderText">
+              <string>Zielordner</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="3" column="1" colspan="4">
+        <item row="4" column="1" colspan="5">
          <widget class="QFrame" name="frame_2">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -184,73 +252,57 @@
              </property>
             </widget>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="1" colspan="4">
-         <widget class="QFrame" name="frame">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0" colspan="2">
-            <widget class="QLineEdit" name="lineEdit">
-             <property name="placeholderText">
-              <string>Zielordner</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <spacer name="horizontalSpacer_16">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="0">
-            <widget class="QComboBox" name="comboBox_6">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>90</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="currentText">
-              <string>[Dateiformat]</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>[Dateiformat]</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QDialogButtonBox" name="buttonBox">
-             <property name="standardButtons">
-              <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Dialog!</string>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="10" column="1">
+        <item row="7" column="1">
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>OpenStreetMap-Daten</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1" colspan="5">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="4" colspan="2">
+         <widget class="QCheckBox" name="checkBox_23">
+          <property name="text">
+           <string>zusätzlicher Buffer für Umkreissuche (m)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="11" column="1">
          <widget class="QPushButton" name="pushButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -263,39 +315,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_45">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>Erfassungsvorlage erzeugen</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="16" column="1">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QPushButton" name="pushButton_46">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -314,7 +334,43 @@
           </property>
          </widget>
         </item>
-        <item row="15" column="1">
+        <item row="13" column="5">
+         <widget class="QSlider" name="horizontalSlider">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="13" column="4">
+         <widget class="QSpinBox" name="spinBox">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pushButton_45">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Erfassungsvorlage erzeugen</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="19" column="1">
          <widget class="QPushButton" name="pushButton_33">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -327,7 +383,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -340,7 +396,7 @@
           </property>
          </widget>
         </item>
-        <item row="14" column="1">
+        <item row="18" column="1">
          <widget class="QPushButton" name="pushButton_32">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -353,7 +409,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -366,7 +422,14 @@
           </property>
          </widget>
         </item>
-        <item row="13" column="1">
+        <item row="11" column="4" colspan="2">
+         <widget class="QCheckBox" name="checkBox_22">
+          <property name="text">
+           <string>vorhandene OSM-Märkte entfernen</string>
+          </property>
+         </widget>
+        </item>
+        <item row="17" column="1">
          <widget class="QPushButton" name="pushButton_31">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -379,7 +442,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -392,18 +455,34 @@
           </property>
          </widget>
         </item>
-        <item row="12" column="4">
-         <widget class="QSpinBox" name="spinBox">
-          <property name="maximum">
-           <number>10000</number>
+        <item row="20" column="1" colspan="5">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="16" column="1">
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>individuelle Bearbeitung</string>
           </property>
          </widget>
         </item>
-        <item row="12" column="5">
-         <widget class="QSlider" name="horizontalSlider">
-          <property name="maximum">
-           <number>10000</number>
-          </property>
+        <item row="15" column="1" colspan="5">
+         <widget class="Line" name="line_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -412,6 +491,14 @@
        </layout>
       </widget>
       <widget class="QWidget" name="page_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>592</width>
+         <height>796</height>
+        </rect>
+       </property>
        <attribute name="label">
         <string>Veränderungen durch Planung</string>
        </attribute>
@@ -429,7 +516,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -455,7 +542,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -481,7 +568,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -507,7 +594,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -536,6 +623,14 @@
        </layout>
       </widget>
       <widget class="QWidget" name="page_4">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>592</width>
+         <height>796</height>
+        </rect>
+       </property>
        <attribute name="label">
         <string>Zentren</string>
        </attribute>
@@ -553,7 +648,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -579,7 +674,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -605,7 +700,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>edit.png</normaloff>edit.png</iconset>
+            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -634,6 +729,14 @@
        </layout>
       </widget>
       <widget class="QWidget" name="page_5">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>592</width>
+         <height>796</height>
+        </rect>
+       </property>
        <attribute name="label">
         <string>Projektwirkung</string>
        </attribute>
@@ -749,7 +852,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>322</x>
-     <y>407</y>
+     <y>408</y>
     </hint>
    </hints>
   </connection>
@@ -808,12 +911,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>695</y>
+     <x>236</x>
+     <y>225</y>
     </hint>
     <hint type="destinationlabel">
-     <x>182</x>
-     <y>697</y>
+     <x>181</x>
+     <y>223</y>
     </hint>
    </hints>
   </connection>
@@ -824,12 +927,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>167</x>
-     <y>695</y>
+     <x>166</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
-     <x>227</x>
-     <y>704</y>
+     <x>226</x>
+     <y>225</y>
     </hint>
    </hints>
   </connection>

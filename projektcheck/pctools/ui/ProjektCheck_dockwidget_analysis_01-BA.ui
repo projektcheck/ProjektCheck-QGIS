@@ -6,9 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>455</height>
+    <width>609</width>
+    <height>805</height>
    </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QToolBox:tab {
+	font: bold 10pt ;
+    color: black;
+}
+QGroupBox::title {
+	font: bold italic 8pt ;
+    color: black;
+}
+</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Bewohner und Arbeitsplätze</string>
@@ -31,8 +42,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>391</width>
-         <height>332</height>
+         <width>591</width>
+         <height>682</height>
         </rect>
        </property>
        <attribute name="label">
@@ -89,8 +100,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>438</width>
-         <height>315</height>
+         <width>591</width>
+         <height>682</height>
         </rect>
        </property>
        <attribute name="label">
@@ -134,21 +145,6 @@
           </property>
           <property name="flat">
            <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <family>Linux Biolinum O</family>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Vgl. hierzu handschriftliche Notiz!</string>
           </property>
          </widget>
         </item>
