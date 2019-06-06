@@ -6,9 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>287</width>
-    <height>299</height>
+    <width>609</width>
+    <height>805</height>
    </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QToolBox:tab {
+	font: bold 10pt ;
+    color: black;
+}
+QGroupBox::title {
+	font: bold italic 8pt ;
+    color: black;
+}
+</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Bewohner und Arbeitsplätze</string>
@@ -31,8 +42,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>269</width>
-         <height>176</height>
+         <width>591</width>
+         <height>682</height>
         </rect>
        </property>
        <attribute name="label">
@@ -89,8 +100,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>438</width>
-         <height>159</height>
+         <width>591</width>
+         <height>682</height>
         </rect>
        </property>
        <attribute name="label">
