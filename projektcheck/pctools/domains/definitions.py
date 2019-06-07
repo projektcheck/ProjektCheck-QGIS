@@ -8,8 +8,11 @@ class ProjectDefinitions(Domain):
     workspace = 'Definition_Projekt'
 
     def setupUi(self):
-        if not self.project:
-            self.close()
-            return
         for area in self.project.areas:
-            print(area)
+            self.ui.area_combo.addItem(area)
+        #self.setup_parameters()
+
+    #def setup_parameters(self):
+        #period = Params(self.workspace, table, label='Bezugszeitraum')
+        #period = Params(self.workspace, table, label='Bezugszeitraum')
+        #period = Params(self.workspace, table, label='Bezugszeitraum')

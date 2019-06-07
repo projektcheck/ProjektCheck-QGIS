@@ -22,10 +22,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.domains = []
         self.active_dockwidget = None
+        self.project_definitions = None
         self.setup_projects()
-        self.setup_definitions()
-        self.setup_domains()
-        self.setup_menu()
+        self.change_project(self.project_manager.active_project)
 
     def setup_projects(self):
         '''
@@ -33,20 +32,25 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         load active project? (or later after setting up domains?)
         '''
         for project in self.project_manager.projects:
-            self.project_combo.addItem(project.name, project)
-        self.project_combo.currentIndexChanged.connect(
+            self.ui.project_combo.addItem(project.name, project)
+        active_project = self.project_manager.active_project
+        if active_project:
+            index = self.ui.project_combo.findText(active_project.name)
+            self.ui.project_combo.setCurrentIndex(index)
+        self.ui.project_combo.currentIndexChanged.connect(
             lambda index: self.change_project(
-                self.project_combo.itemData(index))
+                self.ui.project_combo.itemData(index))
         )
 
     def setup_definitions(self):
         '''setup project definitions widget'''
         self.project_definitions = ProjectDefinitions(iface=self.iface)
-        self.definition_button.clicked.connect(
+        self.ui.definition_button.clicked.connect(
             lambda: self.show_dockwidget(self.project_definitions))
 
     def setup_domains(self):
         '''setup the domain widgets'''
+        # ToDo: load domains on demand only
         bewohner_arbeit = BewohnerArbeit(iface=self.iface)
         self.domains.append(bewohner_arbeit)
 
@@ -73,12 +77,13 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def setup_menu(self):
         '''fill the analysis menu with available domains'''
+        # ToDo: remove old menu?
         menu = QMenu()
         for domain in self.domains:
             action = menu.addAction(domain.ui_label)
             action.triggered.connect(
                 lambda e, d=domain: self.show_dockwidget(d))
-        self.domain_button.setMenu(menu)
+        self.ui.domain_button.setMenu(menu)
 
     def install_pandas(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -98,22 +103,44 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
-        self.project_manager.active_project.close()
-        self.project_definitions.close()
+        active_project = self.project_manager.active_project
+        if active_project:
+            active_project.close()
+        if self.project_definitions:
+            self.project_definitions.unload()
+            del self.project_definitions
         for domain in self.domains:
-            domain.close()
+            domain.unload()
+            del domain
+
+        if not project:
+            self.ui.domain_button.setEnabled(False)
+            self.ui.definition_button.setEnabled(False)
+            return
+        else:
+            self.ui.domain_button.setEnabled(True)
+            self.ui.definition_button.setEnabled(True)
+
         self.project_manager.active_project = project
 
+        self.setup_definitions()
+        self.setup_domains()
+        self.setup_menu()
+
+        # ToDo: show last active widget
+
     def close(self):
-        self.project_definitions.close()
+        if self.project_definitions:
+            self.project_definitions.close()
         for domain in self.domains:
             domain.close()
         super().close()
 
     def unload(self):
         self.close()
-        self.project_definitions.unload()
-        del self.project_definitions
+        if self.project_definitions:
+            self.project_definitions.unload()
+            del self.project_definitions
         for domain in self.domains:
             domain.unload()
             del domain
