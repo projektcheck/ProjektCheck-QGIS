@@ -8,9 +8,9 @@ from qgis.PyQt.QtWidgets import QAction, QMenu
 from pctools.base import PCDockWidget
 from pctools.domains import (BewohnerArbeit, ProjectDefinitions,
                              Verkehr, Erreichbarkeiten, Ecology,
-                             LandUse, InfrastructuralCosts, 
-                             MunicipalTaxRevenue, 
-                             SupermarketsLocationalCompetition)
+                             LandUse, InfrastructuralCosts,
+                             MunicipalTaxRevenue,
+                             SupermarketsCompetition)
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -21,6 +21,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         #self.ui.pandas_button.clicked.connect(self.install_pandas)
 
         self.domains = []
+        self.active_dockwidget = None
         self.setup_projects()
         self.setup_definitions()
         self.setup_domains()
@@ -31,15 +32,18 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
-        # ToDo: fill with real projects
-        self.project_combo.addItem("Projekt Bli")
-        self.project_combo.addItem("Projekt Bla")
-        self.project_combo.addItem("Projekt Blubb")
+        for project in self.project_manager.projects:
+            self.project_combo.addItem(project.name, project)
+        self.project_combo.currentIndexChanged.connect(
+            lambda index: self.change_project(
+                self.project_combo.itemData(index))
+        )
 
     def setup_definitions(self):
         '''setup project definitions widget'''
         self.project_definitions = ProjectDefinitions(iface=self.iface)
-        self.definition_button.clicked.connect(self.project_definitions.show)
+        self.definition_button.clicked.connect(
+            lambda: self.show_dockwidget(self.project_definitions))
 
     def setup_domains(self):
         '''setup the domain widgets'''
@@ -64,15 +68,16 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         municipaltaxrevenue = MunicipalTaxRevenue(iface=self.iface)
         self.domains.append(municipaltaxrevenue)
 
-        supermarketslocationallompetition = SupermarketsLocationalCompetition(iface=self.iface)
-        self.domains.append(supermarketslocationallompetition)
+        supermarkets = SupermarketsCompetition(iface=self.iface)
+        self.domains.append(supermarkets)
 
     def setup_menu(self):
         '''fill the analysis menu with available domains'''
         menu = QMenu()
         for domain in self.domains:
             action = menu.addAction(domain.ui_label)
-            action.triggered.connect(domain.show)
+            action.triggered.connect(
+                lambda e, d=domain: self.show_dockwidget(d))
         self.domain_button.setMenu(menu)
 
     def install_pandas(self):
@@ -85,6 +90,19 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         stdout, stderr = process.communicate()
         print('STDOUT:{}'.format(stdout))
         print('STDERR:{}'.format(stderr))
+
+    def show_dockwidget(self, widget):
+        if self.active_dockwidget:
+            self.active_dockwidget.close()
+        self.active_dockwidget = widget
+        widget.show()
+
+    def change_project(self, project):
+        self.project_manager.active_project.close()
+        self.project_definitions.close()
+        for domain in self.domains:
+            domain.close()
+        self.project_manager.active_project = project
 
     def close(self):
         self.project_definitions.close()

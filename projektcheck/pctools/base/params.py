@@ -5,10 +5,11 @@ class Params:
     '''
     holds grouped parameters
     '''
-    def __init__(self, label):
+    def __init__(self, label, workspace):
         self.fields = []
         self.dependencies = []
         self.label = label
+        self.workspace = workspace
 
     def add_dependency(self, dependency):
         pass

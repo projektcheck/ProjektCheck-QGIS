@@ -1,7 +1,7 @@
 from pctools.base import Domain
 
 
-class SupermarketsLocationalCompetition(Domain):
+class SupermarketsCompetition(Domain):
     """"""
 
     ui_label = 'Standortkonkurrenz und Supermärkte'

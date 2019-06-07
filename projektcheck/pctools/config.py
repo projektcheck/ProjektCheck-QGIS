@@ -16,39 +16,37 @@ import sys
 from os.path import join, isdir, abspath, dirname, basename, exists
 from os import mkdir, getenv
 import json
-
 from pctools.utils.singleton import Singleton
 
-BASE_PATH = os
+#BASE_PATH = os
+
+DEFAULT_SETTINGS = {
+    'active_project': u'',
+    'epsg': 31467,
+    'transformation': "DHDN_To_WGS_1984_5x",
+    'max_area_distance': 1000,
+    'google_api_key': ' AIzaSyDL32xzaNsQmB_fZGU9SF_FtnvJ4ZrwP8g',
+    'project_folder': u''
+}
 
 
-class Config(object):
+class Config:
     __metaclass__ = Singleton
-
-    _default = {
-        'active_project': u'',
-        'epsg': 31467,
-        'transformation': "DHDN_To_WGS_1984_5x",
-        'max_area_distance': 1000,
-        'google_api_key': ' AIzaSyDL32xzaNsQmB_fZGU9SF_FtnvJ4ZrwP8g',
-        'project_folder': u''
-    }
-
     _config = {}
 
     # write changed config instantly to file
     _write_instantly = True
 
-    def __init__(self):
+    def __init__(self, filename='qgis-projektcheck-config.txt'):
 
-        self.config_file = join(self.APPDATA_PATH, 'projektcheck-config.txt')
+        self.config_file = join(self.APPDATA_PATH, filename)
         self._callbacks = {}
         self.active_coord = (0, 0)
         if exists(self.config_file):
             self.read()
             # add missing Parameters
             changed = False
-            for k, v in self._default.items():
+            for k, v in DEFAULT_SETTINGS.items():
                 if k not in self._config:
                     self._config[k] = v
                     changed = True
@@ -57,7 +55,7 @@ class Config(object):
 
         # write default config, if file doesn't exist yet
         else:
-            self._config = self._default.copy()
+            self._config = DEFAULT_SETTINGS.copy()
             self.write()
 
     @property
@@ -74,7 +72,7 @@ class Config(object):
             with open(config_file, 'r') as f:
                 self._config = json.load(f)
         except:
-            self._config = self._default.copy()
+            self._config = DEFAULT_SETTINGS.copy()
             print('Error while loading config. Using default values.')
 
     def write(self, config_file=None):

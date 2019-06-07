@@ -2,15 +2,19 @@ from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 import os
 
+from pctools.base.project import ProjectManager
+
 UI_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'ui')
 
 
 class PCDockWidget(QtWidgets.QDockWidget):
     ui_file = None
     closingPlugin = pyqtSignal()
+    project_manager = ProjectManager()
 
     def __init__(self, iface=None, position=Qt.RightDockWidgetArea):
         super().__init__()
+        print(self.project)
         self.iface = iface
         self.initial_position = position
         # look for file ui folder if not found
@@ -42,6 +46,14 @@ class PCDockWidget(QtWidgets.QDockWidget):
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
+
+    @property
+    def project(self):
+        return self.project_manager.active_project
+
+    @property
+    def config(self):
+        return self.project_manager.config
 
 
 class Domain(PCDockWidget):
