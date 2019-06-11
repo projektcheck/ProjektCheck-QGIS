@@ -1,22 +1,39 @@
 from abc import ABC
 
 
-class Params:
+class Param:
+    '''
+    single parameter
+    '''
+
+    def __init__(self, label: str, input_type, field, table):
+        self.label = label
+        self.input_type = input_type
+        self.field = field
+        self.table = table
+
+
+class Dependency(ABC):
+    '''
+    base class for dependencies between fields
+    '''
+    params = []
+
+
+class ParamView:
     '''
     holds grouped parameters
     '''
-    def __init__(self, workspace, table, label=''):
-        self.fields = []
+    def __init__(self, label: str):
+        self.params = []
         self.dependencies = []
         self.label = label
-        self.workspace = workspace
-        self.table = table
 
-    def add_dependency(self, dependency):
+    def add_dependency(self, dependency: Dependency):
         pass
 
-    def add(self, field):
-        pass
+    def add(self, param: Param):
+        self.params.append(param)
 
     def load(self):
         pass
@@ -31,32 +48,16 @@ class Params:
         pass
 
 
-class ParamCluster(Params):
+class ParamCluster(ParamView):
     '''
     logical unit of params, that trigger sth if one of them is changed
     '''
-    params = []
+    views = []
 
-    def add(self, params):
+    def add(self, view):
         pass
 
     def trigger(self):
-        pass
-
-
-class Dependency(ABC):
-    '''
-    base class for dependencies between fields
-    '''
-    fields = []
-
-
-class ParamField(Params):
-    '''
-    single parameter
-    '''
-
-    def __init__(self, label, input_type, field):
         pass
 
 

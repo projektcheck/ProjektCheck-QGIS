@@ -14,11 +14,11 @@ __copyright__ = 'Copyright 2019, GGR'
 
 import unittest
 
-from PyQt5.QtGui import QDockWidget
+from settings import settings
+print(settings)
+from ProjektCheck_dockwidget import ProjektCheckMainDockWidget
 
-from ProjektCheck_dockwidget import ProjektCheckDockWidget
-
-from utilities import get_qgis_app
+from .utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()
 
@@ -28,7 +28,7 @@ class ProjektCheckDockWidgetTest(unittest.TestCase):
 
     def setUp(self):
         """Runs before each test."""
-        self.dockwidget = ProjektCheckDockWidget(None)
+        self.dockwidget = ProjektCheckMainDockWidget(None)
 
     def tearDown(self):
         """Runs after each test."""
@@ -39,7 +39,7 @@ class ProjektCheckDockWidgetTest(unittest.TestCase):
         pass
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(ProjektCheckDialogTest)
+    suite = unittest.makeSuite(ProjektCheckDockWidgetTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

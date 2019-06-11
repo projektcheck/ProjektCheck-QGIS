@@ -10,10 +10,10 @@ UI_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'ui')
 class PCDockWidget(QObject):
     ui_file = None
     closingPlugin = pyqtSignal()
-    project_manager = ProjectManager()
 
     def __init__(self, iface=None, position=Qt.RightDockWidgetArea):
         super().__init__()
+        self.project_manager = ProjectManager()
         self.iface = iface
         self.initial_position = position
         self.ui = QtWidgets.QDockWidget()
