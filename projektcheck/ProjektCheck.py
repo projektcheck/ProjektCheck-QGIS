@@ -21,7 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from qgis.PyQt.QtCore import (QSettings, QTranslator, qVersion,
+                              QCoreApplication, Qt)
 from qgis.PyQt.QtGui import QIcon, QPixmap, QPalette, QBrush
 from qgis.PyQt.QtWidgets import QAction
 # Initialize Qt resources from file resources_rc.py
@@ -218,7 +219,7 @@ class ProjektCheck:
         if not self.mainwidget:
             # Create the dockwidget (after translation) and keep reference
             self.mainwidget = ProjektCheckMainDockWidget(
-                iface=self.iface, position=Qt.LeftDockWidgetArea)
+                iface=self.iface, position=Qt.TopDockWidgetArea)
 
         # connect to provide cleanup on closing of dockwidget
         self.mainwidget.closingPlugin.connect(self.onClosePlugin)

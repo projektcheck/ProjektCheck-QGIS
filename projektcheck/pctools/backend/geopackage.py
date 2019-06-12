@@ -1,4 +1,4 @@
-from pctools.backend import Database
+from pctools.backend import Database, Table
 
 
 class Geopackage(Database):
@@ -12,6 +12,11 @@ class Geopackage(Database):
     def add_workspace(self, name, path, is_base: bool = True):
         workspace = super().add_workspace(name, path)
         workspace.is_base = is_base
+
+    def get_table(self, name, workspace):
+        # ToDo: get path from workspace and settings (if project)
+        return Table(workspace)
+
 
 #class GeopackageTable(Table):
     #'''

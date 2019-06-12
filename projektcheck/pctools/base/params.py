@@ -1,4 +1,10 @@
 from abc import ABC
+from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
+                          QLabel)
+from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy
+from typing import Union
+
+from pctools.base import InputType
 
 
 class Param:
@@ -6,11 +12,20 @@ class Param:
     single parameter
     '''
 
-    def __init__(self, label: str, input_type, field, table):
+    def __init__(self, value, input_type: InputType = None, label: str = ''):
         self.label = label
         self.input_type = input_type
-        self.field = field
-        self.table = table
+        self.value = value
+
+    def show(self, parent):
+        layout = QHBoxLayout()
+        label = QLabel(self.label)
+        value_label = QLabel(str(self.value))
+        layout.addWidget(label)
+        layout.addItem(
+            QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        layout.addWidget(value_label)
+        parent.addLayout(layout)
 
 
 class Dependency(ABC):
@@ -20,25 +35,49 @@ class Dependency(ABC):
     params = []
 
 
+class Seperator:
+    ''''''
+    def show(self, parent):
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        parent.addWidget(line)
+
+
+class Title:
+    ''''''
+    def __init__(self, title):
+        self.title = title
+
+    def show(self, parent):
+        label = QLabel(self.title)
+        parent.addWidget(label)
+
+
 class ParamView:
     '''
     holds grouped parameters
     '''
-    def __init__(self, label: str):
-        self.params = []
+    def __init__(self):
+        self.elements = []
         self.dependencies = []
-        self.label = label
 
     def add_dependency(self, dependency: Dependency):
         pass
 
-    def add(self, param: Param):
-        self.params.append(param)
+    def add(self, element: Union[InputType, Seperator, Title]):
+        self.elements.append(element)
 
     def load(self):
         pass
 
-    def show(self, parent):
+    def show(self, parent: QObject, *args):
+        layout = QVBoxLayout()
+        for element in self.elements:
+            element.show(layout)
+        parent.addLayout(layout, *args)
+
+    def close(self):
         pass
 
     def show_dialog(self, parent, modal=True):

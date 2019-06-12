@@ -133,7 +133,6 @@ class ProjectManager:
 
     def load(self):
         self.settings = settings
-        print(self.settings)
         if 'DATABASE' not in self.settings:
             raise Exception('database is not set')
         # ToDo: load projects from disk

@@ -43,7 +43,6 @@ class PCDockWidget(QObject):
         self.isActive = True
 
     def unload(self):
-        print('removing {}'.format(str(self)))
         self.isActive = False
         self.iface.removeDockWidget(self.ui)
 
@@ -57,7 +56,11 @@ class PCDockWidget(QObject):
 
     @property
     def config(self):
-        return self.project_manager.config
+        return self.project_manager.settings
+
+    @property
+    def database(self):
+        return self.config.DATABASE
 
 
 class Domain(PCDockWidget):
