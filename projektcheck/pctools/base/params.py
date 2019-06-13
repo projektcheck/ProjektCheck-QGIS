@@ -1,31 +1,35 @@
 from abc import ABC
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
                           QLabel)
-from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy
+from qgis.PyQt.QtGui import QFont
+from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy, QPushButton
 from typing import Union
+from collections import OrderedDict
 
-from pctools.base import InputType
+from pctools.base import InputType, ParamsDialog
 
 
-class Param:
+class Param(QObject):
     '''
     single parameter
     '''
+    changed = pyqtSignal()
 
     def __init__(self, value, input_type: InputType = None, label: str = ''):
+        super().__init__()
         self.label = label
         self.input_type = input_type
-        self.value = value
+        self._value = value
 
-    def show(self, parent):
-        layout = QHBoxLayout()
-        label = QLabel(self.label)
-        value_label = QLabel(str(self.value))
-        layout.addWidget(label)
-        layout.addItem(
-            QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Minimum))
-        layout.addWidget(value_label)
-        parent.addLayout(layout)
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+        self.changed.emit()
 
 
 class Dependency(ABC):
@@ -46,48 +50,96 @@ class Seperator:
 
 class Title:
     ''''''
-    def __init__(self, title):
+    def __init__(self, title, fontsize=9):
         self.title = title
+        self.fontsize = fontsize
 
     def show(self, parent):
         label = QLabel(self.title)
+        font = QFont()
+        font.setPointSize(self.fontsize)
+        label.setFont(font)
         parent.addWidget(label)
 
 
-class ParamView:
+class Params(QObject):
     '''
     holds grouped parameters
     '''
-    def __init__(self):
+    confirmed = pyqtSignal()
+
+    def __init__(self, parent: QObject = None):
+        super().__init__()
+        self._params = OrderedDict()
         self.elements = []
         self.dependencies = []
+        self.parent = parent
 
     def add_dependency(self, dependency: Dependency):
         pass
 
-    def add(self, element: Union[InputType, Seperator, Title]):
+    def add(self, element: Union[Param, Seperator, Title], name=''):
         self.elements.append(element)
+        if name and isinstance(element, Param):
+            self._params[name] = element
+
+    @property
+    def params(self):
+        return self._params.values()
 
     def load(self):
         pass
 
-    def show(self, parent: QObject, *args):
+    def show(self, *args):
         layout = QVBoxLayout()
+        layout.setSpacing(5)
         for element in self.elements:
-            element.show(layout)
-        parent.addLayout(layout, *args)
+            if isinstance(element, Param):
+                row = QHBoxLayout()
+                label = QLabel(element.label)
+                value_label = QLabel(str(element.value))
+                row.addWidget(label)
+                row.addItem(
+                    QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+                row.addWidget(value_label)
+                layout.addLayout(row)
+                element.changed.connect(lambda x, label=value_label:
+                                        label.setText(str(element.value)))
+            else:
+                element.show(layout)
+
+        row = QHBoxLayout()
+        button = QPushButton('ändern')
+        row.addItem(
+            QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        row.addWidget(button)
+        layout.addLayout(row)
+        self.parent.addLayout(layout, *args)
+
+        button.clicked.connect(self.show_dialog)
 
     def close(self):
         pass
 
-    def show_dialog(self, parent, modal=True):
-        pass
+    def show_dialog(self):
+        dialog = ParamsDialog(self.params)
+        dialog.show()
+        self.confirmed.emit()
 
-    def trigger(self):
-        pass
+    def __getattr__(self, name):
+        param = self._params.get(name, None)
+        if param:
+            return param
+        return self.__dict__[name]
+
+    def __setattr__(self, name, value):
+        if isinstance(value, Param):
+            self.add(value, name)
+        else:
+            self.__dict__[name] = value
 
 
-class ParamCluster(ParamView):
+class ParamCluster(Params):
     '''
     logical unit of params, that trigger sth if one of them is changed
     '''

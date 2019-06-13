@@ -1,4 +1,4 @@
-from pctools.base import (Domain, ParamView, Param, Slider, SpinBox,
+from pctools.base import (Domain, Params, Param, Slider, SpinBox,
                           Title, Seperator)
 from pctools.backend import Geopackage
 
@@ -19,28 +19,45 @@ class ProjectDefinitions(Domain):
         for typ in ['Wohnen', 'Gewerbe', 'Einzelhandel']:
             self.ui.type_combo.addItem(typ)
         self.ui.type_combo.currentTextChanged.connect(self.change_type)
-        self.param_view = None
+        self.params = None
         self.setup_living()
 
     def change_area(self, area):
         pass
 
     def change_type(self, typ):
-        if self.param_view:
-            self.param_view.close()
+        if self.params:
+            self.params.close()
 
     def setup_living(self):
         table = self.workspace.get_table('Wohnen_Struktur_und_Alterung')
-        self.param_view = ParamView()
-        begin = Param(0, Slider(), label='Beginn des Bezuges')
-        period = Param(0, SpinBox(), label='Dauer des Bezuges')
+        self.params = Params(self.ui.param_layout)
 
-        self.param_view.add(Title('Bezugszeitraum'))
-        self.param_view.add(begin)
-        self.param_view.add(period)
-        self.param_view.add(Seperator())
+        self.params.add(Title('Bezugszeitraum'))
+        self.params.begin = Param(0, Slider(minimum=2000, maximum=2100),
+                                  label='Beginn des Bezuges')
+        self.params.period = Param(0, SpinBox(), label='Dauer des Bezuges')
+        self.params.add(Seperator())
 
-        self.param_view.show(self.ui.param_layout)
+        self.params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
+                              '(3 Jahre nach Bezug)'))
+        self.params.eh = Param(0, SpinBox(), label='in Einfamilienhäusern')
+        self.params.zh = Param(0, SpinBox(), label='in Zweifamilienhäusern')
+        self.params.rh = Param(0, SpinBox(), label='in Reihenhäusern')
+        self.params.mfh = Param(0, SpinBox(), label='in Mehrfamilienhäusern')
+        self.params.add(Seperator())
+
+        self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
+        self.params.eh_we = Param(0, SpinBox(),
+                                  label='Anzahl WE in Einfamilienhäusern')
+        self.params.zh_we = Param(0, SpinBox(),
+                                  label='Anzahl WE in Zweifamilienhäusern')
+        self.params.rh_we = Param(0, SpinBox(),
+                                  label='Anzahl WE in Reihenhäusern')
+        self.params.mfh_we = Param(0, SpinBox(),
+                                   label='Anzahl WE in Mehrfamilienhäusern')
+
+        self.params.show()
 
     def save_living(self):
         pass

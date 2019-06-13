@@ -1,4 +1,30 @@
-class ProgressDialog:
+from qgis.PyQt import uic
+from qgis.PyQt.Qt import QDialog
+import os
+
+from pctools.base.domain import UI_PATH
+
+
+class Dialog(QDialog):
+    def __init__(self, ui_file, modal=True):
+        super().__init__()
+        # look for file ui folder if not found
+        ui_file = ui_file if os.path.exists(ui_file) \
+            else os.path.join(UI_PATH, ui_file)
+        print(ui_file)
+        uic.loadUi(ui_file, self)
+        self.setModal(modal)
+
+    def show(self):
+
+        print('show')
+        self.exec()
+
+    def setupUi(self):
+        pass
+
+
+class ProgressDialog(Dialog):
     '''
     dialog showing the progress of a thread
     '''
@@ -16,21 +42,20 @@ class ProgressDialog:
     def connect(self):
         pass
 
+    def setupUi(self):
+        pass
+
 
 class Message:
     '''
     dialog showing a message
     '''
 
+class ParamsDialog(Dialog):
+    ui_file = 'parameter_dialog.ui'
 
-class ParamDialog:
-    '''
-    dialog for changing parameters
-    '''
-    ui_file = None
-
-    def show(self):
-        pass
-
-    def onAccept(self):
-        pass
+    def __init__(self, params):
+        print(self.ui_file)
+        super().__init__(self.ui_file, modal=True)
+        for param in params:
+            param.show(self.param_layout)
