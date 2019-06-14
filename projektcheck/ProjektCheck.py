@@ -205,14 +205,14 @@ class ProjektCheck:
         if self.mainwidget:
             self.mainwidget.close()
             self.mainwidget.unload()
-            del self.mainwidget
+            self.mainwidget.deleteLater()
+            self.mainwidget = None
         self.pluginIsActive = False
 
     #--------------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""
-
         if self.pluginIsActive:
             return
 

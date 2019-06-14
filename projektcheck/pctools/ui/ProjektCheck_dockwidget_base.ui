@@ -184,7 +184,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="create_project_button">
         <property name="maximumSize">
          <size>
           <width>30</width>
@@ -202,7 +202,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="remove_project_button">
         <property name="maximumSize">
          <size>
           <width>30</width>
@@ -220,7 +220,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="clone_project_button">
         <property name="maximumSize">
          <size>
           <width>30</width>

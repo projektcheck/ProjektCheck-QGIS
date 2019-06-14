@@ -3,7 +3,7 @@ import os
 import subprocess
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QAction, QMenu
+from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog
 
 from pctools.base import PCDockWidget, SettingsDialog
 from pctools.domains import (BewohnerArbeit, ProjectDefinitions,
@@ -19,26 +19,31 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def setupUi(self):
         #self.ui.pandas_button.clicked.connect(self.install_pandas)
-
         self.domains = []
         self.active_dockwidget = None
         self.project_definitions = None
 
-        project_folder = self.settings.project_folder
-        if project_folder and not os.path.exists(project_folder):
+        project_path = self.settings.project_path
+        if project_path and not os.path.exists(project_path):
             try:
-                os.makedirs(project_folder)
+                os.makedirs(project_path)
             except:
-                self.settings.project_folder = project_folder = ''
-        settings_dialog = SettingsDialog(project_folder)
+                self.settings.project_path = project_path = ''
+        settings_dialog = SettingsDialog(project_path)
         def set_project_path(path):
-            print(path)
             if not path:
                 return
-            self.settings.project_folder = path
+            self.settings.project_path = path
             self.setup_projects()
         self.ui.settings_button.clicked.connect(
             lambda: set_project_path(settings_dialog.show()))
+
+        def create_project():
+            name, ok = QInputDialog.getText(
+                self.ui, 'Neues Projekt erstellen', 'Projektname')
+            if ok:
+                self.project_manager.create_project(name)
+        self.ui.create_project_button.clicked.connect(create_project)
 
         self.setup_projects()
 

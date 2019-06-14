@@ -51,9 +51,9 @@ class Message:
 class SettingsDialog(Dialog):
     ui_file = 'settings.ui'
 
-    def __init__(self, project_folder):
+    def __init__(self, project_path):
         super().__init__(self.ui_file, modal=True)
-        self.project_folder = project_folder
+        self.project_path = project_path
         self.browse_button.clicked.connect(self.browse_path)
 
     def browse_path(self):
@@ -69,18 +69,18 @@ class SettingsDialog(Dialog):
         self.project_path_edit.setText(path)
 
     def show(self):
-        self.project_path_edit.setText(self.project_folder)
+        self.project_path_edit.setText(self.project_path)
         confirmed = self.exec_()
         if confirmed:
-            project_folder = self.project_path_edit.text()
-            if not os.path.exists(project_folder):
+            project_path = self.project_path_edit.text()
+            if not os.path.exists(project_path):
                 try:
-                    os.makedirs(project_folder)
+                    os.makedirs(project_path)
                 except:
                     # ToDo: show warning that it could not be created
                     return
-            self.project_folder = project_folder
-            return self.project_folder
+            self.project_path = project_path
+            return self.project_path
         else:
-            self.project_path_edit.setText(self.project_folder)
+            self.project_path_edit.setText(self.project_path)
 

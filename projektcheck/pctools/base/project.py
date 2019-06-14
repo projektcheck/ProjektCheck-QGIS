@@ -1,16 +1,16 @@
-from os import listdir
+import os
 import sys
-from os.path import join, isdir, abspath, dirname, basename, exists
-from os import mkdir, getenv
 import json
+import shutil
 
 from pctools.utils.singleton import Singleton
+from pctools.backend import Geopackage
 
-APPDATA_PATH = join(getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
+APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
 
 DEFAULT_SETTINGS = {
     'active_project': u'',
-    'project_folder': join(APPDATA_PATH, 'Projekte')
+    'project_path': os.path.join(APPDATA_PATH, 'Projekte')
 }
 
 
@@ -22,13 +22,13 @@ class Settings:
 
     def __init__(self, filename='projektcheck-config.txt'):
 
-        if not exists(APPDATA_PATH):
-            mkdir(APPDATA_PATH)
+        if not os.path.exists(APPDATA_PATH):
+            os.mkdir(APPDATA_PATH)
 
-        self.config_file = join(APPDATA_PATH, filename)
+        self.config_file = os.path.join(APPDATA_PATH, filename)
         self._callbacks = {}
         self.active_coord = (0, 0)
-        if exists(self.config_file):
+        if os.path.exists(self.config_file):
             self.read()
             # add missing Parameters
             changed = False
@@ -125,18 +125,48 @@ class Project:
 class ProjectManager:
     __metaclass__ = Singleton
     _projects = {}
+    settings = settings
+    _required_settings = ['BASE_PATH', 'BASEDATA_PATH', 'TEMPLATE_PATH']
+
     def __init__(self):
-        self.database = None
+
+        # check settings
+        missing = []
+        for required in self._required_settings:
+            if required not in self.settings:
+                missing.append(required)
+        if missing:
+            raise Exception(f'{missing} have to be set')
+
+        self.basedata = Geopackage(base_path=settings.BASEDATA_PATH, read_only=True)
+        self.projectdata = Geopackage()
         self.load()
 
     def load(self):
-        self.settings = settings
-        if 'DATABASE' not in self.settings:
-            raise Exception('database is not set')
-        # ToDo: load projects from disk
-        for name in ['test1', 'test2', 'test3']:
+
+        if settings.project_path:
+            self.projectdata.base_path = settings.project_path
+        for name in self._get_projects():
             project = Project(name)
             self._projects[project.name] = project
+
+    def create_project(self, name):
+        target_folder = os.path.join(settings.project_path, name)
+        shutil.copytree(settings.TEMPLATE_PATH, 'project', target_folder)
+        project = Project(name)
+        self._projects[project.name] = project
+        return project
+
+    def _get_projects(self):
+        '''
+        returns all available projects inside the project folder
+        '''
+        base_path = settings.project_path
+        if not os.path.exists(base_path):
+            return []
+        project_folders = [f for f in os.listdir(base_path)
+                           if os.path.isdir(os.path.join(base_path, f))]
+        return sorted(project_folders)
 
     @property
     def projects(self):
@@ -145,7 +175,7 @@ class ProjectManager:
     @property
     def active_project(self):
         if self.settings.active_project:
-            return self._projects[self.settings.active_project]
+            return self._projects.get(self.settings.active_project, None)
         return None
 
     @active_project.setter

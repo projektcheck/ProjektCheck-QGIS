@@ -8,18 +8,17 @@ class Database(ABC):
     abstract class for managing connection to a database
     '''
     _workspaces = {}
+
     def __init__(self):
         pass
 
     def get_workspace(self, name: str):
         return self._workspaces.get(name, None)
 
-    def add_workspace(self, name, path):
-        workspace = Workspace(name, path, self)
-        self._workspaces[name] = workspace
-        return workspace
+    def get_table(self, name: str, workspace: str):
+        return NotImplemented
 
-    def get_table(self, name, workspace: str):
+    def clone(self, name: str, workspace: str):
         return NotImplemented
 
     def __repr__(self):
@@ -27,26 +26,27 @@ class Database(ABC):
         return '{} {{\n{}\n}}'.format(type(self).__name__, table_repr)
 
 
-class Workspace:
-    def __init__(self, name: str, path, database: Database):
-        self.name = name
-        self.path = path
-        self.database = database
+#class Workspace:
+    #def __init__(self, name: str, path, database: Database):
+        #self.name = name
+        #self.path = path
+        #self.database = database
 
-    def get_table(self, name):
-        return self.database.get_table(name, self.name)
+    #def get_table(self, name):
+        #return self.database.get_table(name, self.name)
 
-    def __str__(self):
-        ret = '{} - {}'.format(self.name, self.path)
-        return ret
+    #def __str__(self):
+        #ret = '{} - {}'.format(self.name, self.path)
+        #return ret
 
 
-class Table:
+class Table(ABC):
     '''
     abstract class for a database table
     '''
 
-    def __init__(self, workspace: Workspace):
+    def __init__(self, name: str, workspace: str):
+        self.name = name
         self.workspace = workspace
 
     def get(self):

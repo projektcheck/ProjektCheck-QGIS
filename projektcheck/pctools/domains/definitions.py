@@ -7,13 +7,12 @@ class ProjectDefinitions(Domain):
     """"""
     ui_label = 'Projekt-Definitionen'
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
+    workspace = 'Definition_Projekt'
 
     def setupUi(self):
         for area in self.project.areas:
             self.ui.area_combo.addItem(area)
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
-        self.workspace = self.database.get_workspace('Definition')
-        print(self.database)
 
         # ToDo: take from database
         for typ in ['Wohnen', 'Gewerbe', 'Einzelhandel']:
@@ -30,7 +29,8 @@ class ProjectDefinitions(Domain):
             self.params.close()
 
     def setup_living(self):
-        table = self.workspace.get_table('Wohnen_Struktur_und_Alterung')
+        table = self.projectdata.get_table(
+            'Wohnen_Struktur_und_Alterung', self.workspace)
         self.params = Params(self.ui.param_layout)
 
         self.params.add(Title('Bezugszeitraum'))
