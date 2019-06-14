@@ -7,7 +7,7 @@ from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy, QPushButton
 from typing import Union
 from collections import OrderedDict
 
-from pctools.base import InputType, ParamsDialog
+from pctools.base import InputType, Dialog
 
 
 class Param(QObject):
@@ -16,11 +16,18 @@ class Param(QObject):
     '''
     changed = pyqtSignal()
 
-    def __init__(self, value, input_type: InputType = None, label: str = ''):
+    def __init__(self, value, input: InputType = None, label: str = ''):
         super().__init__()
-        self.label = label
-        self.input_type = input_type
         self._value = value
+        self.label = label
+        self.input = input
+        self._value_label = QLabel(str(value))
+        # update value label when value of param is changed
+        self.changed.connect(lambda: self._value_label.setText(str(self.value)))
+        # update input when value of param is changed
+        if input:
+            self.input.set(value)
+            self.changed.connect(lambda: self.input.set(self.value))
 
     @property
     def value(self):
@@ -30,6 +37,19 @@ class Param(QObject):
     def value(self, value):
         self._value = value
         self.changed.emit()
+
+    def draw(self, layout, editable=False):
+        row = QHBoxLayout()
+        label = QLabel(self.label)
+        row.addWidget(label)
+        row.addItem(
+            QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        if editable:
+            self.input.draw(row)
+        else:
+            row.addWidget(self._value_label)
+        layout.addLayout(row)
+
 
 
 class Dependency(ABC):
@@ -41,11 +61,11 @@ class Dependency(ABC):
 
 class Seperator:
     ''''''
-    def show(self, parent):
+    def draw(self, layout):
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
-        parent.addWidget(line)
+        layout.addWidget(line)
 
 
 class Title:
@@ -54,19 +74,19 @@ class Title:
         self.title = title
         self.fontsize = fontsize
 
-    def show(self, parent):
+    def draw(self, layout):
         label = QLabel(self.title)
         font = QFont()
         font.setPointSize(self.fontsize)
         label.setFont(font)
-        parent.addWidget(label)
+        layout.addWidget(label)
 
 
 class Params(QObject):
     '''
-    holds grouped parameters
+    collection of parameters
     '''
-    confirmed = pyqtSignal()
+    changed = pyqtSignal()
 
     def __init__(self, parent: QObject = None):
         super().__init__()
@@ -74,6 +94,7 @@ class Params(QObject):
         self.elements = []
         self.dependencies = []
         self.parent = parent
+        self.dialog = None
 
     def add_dependency(self, dependency: Dependency):
         pass
@@ -91,22 +112,26 @@ class Params(QObject):
         pass
 
     def show(self, *args):
+        if self.parent is None:
+            raise Exception("can't render Params object with no parent set")
+        self.dialog = Dialog('parameter_dialog.ui', modal=True)
         layout = QVBoxLayout()
         layout.setSpacing(5)
+
+        def init_param_row(param):
+            row = QHBoxLayout()
+            label = QLabel(element.label)
+            row.addWidget(label)
+            row.addItem(
+                QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+            return row
+
         for element in self.elements:
+            element.draw(layout)
             if isinstance(element, Param):
-                row = QHBoxLayout()
-                label = QLabel(element.label)
-                value_label = QLabel(str(element.value))
-                row.addWidget(label)
-                row.addItem(
-                    QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
-                row.addWidget(value_label)
-                layout.addLayout(row)
-                element.changed.connect(lambda x, label=value_label:
-                                        label.setText(str(element.value)))
+                element.draw(self.dialog.param_layout, editable=True)
             else:
-                element.show(layout)
+                element.draw(self.dialog.param_layout)
 
         row = QHBoxLayout()
         button = QPushButton('ändern')
@@ -119,12 +144,24 @@ class Params(QObject):
         button.clicked.connect(self.show_dialog)
 
     def close(self):
-        pass
+        if self.dialog:
+            self.dialog.deleteLater()
 
     def show_dialog(self):
-        dialog = ParamsDialog(self.params)
-        dialog.show()
-        self.confirmed.emit()
+        confirmed = self.dialog.exec_()
+        if confirmed:
+            has_changed = False
+            for param in self.params:
+                if param.value == param.input.value:
+                    continue
+                param.value = param.input.value
+                has_changed = True
+            if has_changed:
+                self.changed.emit()
+        else:
+            # reset inputs
+            for param in self.params:
+                param.input.set(param.value)
 
     def __getattr__(self, name):
         param = self._params.get(name, None)

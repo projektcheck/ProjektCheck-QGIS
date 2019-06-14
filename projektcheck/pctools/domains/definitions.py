@@ -1,4 +1,4 @@
-from pctools.base import (Domain, Params, Param, Slider, SpinBox,
+from pctools.base import (Domain, Params, Param, SpinBox,
                           Title, Seperator)
 from pctools.backend import Geopackage
 
@@ -34,7 +34,9 @@ class ProjectDefinitions(Domain):
         self.params = Params(self.ui.param_layout)
 
         self.params.add(Title('Bezugszeitraum'))
-        self.params.begin = Param(0, Slider(minimum=2000, maximum=2100),
+        #self.params.begin = Param(0, Slider(minimum=2000, maximum=2100),
+                                  #label='Beginn des Bezuges')
+        self.params.begin = Param(0, SpinBox(),
                                   label='Beginn des Bezuges')
         self.params.period = Param(0, SpinBox(), label='Dauer des Bezuges')
         self.params.add(Seperator())
@@ -59,6 +61,8 @@ class ProjectDefinitions(Domain):
 
         self.params.show()
 
+        self.params.changed.connect(lambda: print('params changed'))
+
     def save_living(self):
         pass
 
@@ -67,3 +71,7 @@ class ProjectDefinitions(Domain):
 
     def setup_retail(self):
         pass
+
+    def close(self):
+        self.params.close()
+        super().close()

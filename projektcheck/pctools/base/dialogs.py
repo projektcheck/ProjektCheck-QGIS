@@ -6,19 +6,15 @@ from pctools.base.domain import UI_PATH
 
 
 class Dialog(QDialog):
-    def __init__(self, ui_file, modal=True):
-        super().__init__()
+    def __init__(self, ui_file, modal=True, parent=None):
+        super().__init__(parent=parent)
         # look for file ui folder if not found
         ui_file = ui_file if os.path.exists(ui_file) \
             else os.path.join(UI_PATH, ui_file)
         print(ui_file)
         uic.loadUi(ui_file, self)
         self.setModal(modal)
-
-    def show(self):
-
-        print('show')
-        self.exec()
+        self.setupUi()
 
     def setupUi(self):
         pass
@@ -55,7 +51,6 @@ class ParamsDialog(Dialog):
     ui_file = 'parameter_dialog.ui'
 
     def __init__(self, params):
-        print(self.ui_file)
         super().__init__(self.ui_file, modal=True)
         for param in params:
             param.show(self.param_layout)
