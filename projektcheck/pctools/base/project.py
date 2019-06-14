@@ -6,9 +6,11 @@ import json
 
 from pctools.utils.singleton import Singleton
 
+APPDATA_PATH = join(getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
+
 DEFAULT_SETTINGS = {
     'active_project': u'',
-    'project_folder': u''
+    'project_folder': join(APPDATA_PATH, 'Projekte')
 }
 
 
@@ -18,9 +20,12 @@ class Settings:
     # write changed config instantly to file
     _write_instantly = True
 
-    def __init__(self, filename='qgis-projektcheck-config.txt'):
+    def __init__(self, filename='projektcheck-config.txt'):
 
-        self.config_file = join(self.APPDATA_PATH, filename)
+        if not exists(APPDATA_PATH):
+            mkdir(APPDATA_PATH)
+
+        self.config_file = join(APPDATA_PATH, filename)
         self._callbacks = {}
         self.active_coord = (0, 0)
         if exists(self.config_file):
@@ -38,13 +43,6 @@ class Settings:
         else:
             self._settings = DEFAULT_SETTINGS.copy()
             self.write()
-
-    @property
-    def APPDATA_PATH(self):
-        path = join(getenv('LOCALAPPDATA'), 'Projekt-Check')
-        if not exists(path):
-            mkdir(path)
-        return path
 
     def read(self, config_file=None):
         if config_file is None:

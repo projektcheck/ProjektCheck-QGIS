@@ -55,12 +55,12 @@ class PCDockWidget(QObject):
         return self.project_manager.active_project
 
     @property
-    def config(self):
+    def settings(self):
         return self.project_manager.settings
 
     @property
     def database(self):
-        return self.config.DATABASE
+        return self.settings.DATABASE
 
 
 class Domain(PCDockWidget):

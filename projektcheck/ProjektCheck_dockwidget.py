@@ -5,7 +5,7 @@ from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QAction, QMenu
 
-from pctools.base import PCDockWidget
+from pctools.base import PCDockWidget, SettingsDialog
 from pctools.domains import (BewohnerArbeit, ProjectDefinitions,
                              Verkehr, Erreichbarkeiten, Ecology,
                              LandUse, InfrastructuralCosts,
@@ -23,8 +23,24 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.domains = []
         self.active_dockwidget = None
         self.project_definitions = None
+
+        project_folder = self.settings.project_folder
+        if project_folder and not os.path.exists(project_folder):
+            try:
+                os.makedirs(project_folder)
+            except:
+                self.settings.project_folder = project_folder = ''
+        settings_dialog = SettingsDialog(project_folder)
+        def set_project_path(path):
+            print(path)
+            if not path:
+                return
+            self.settings.project_folder = path
+            self.setup_projects()
+        self.ui.settings_button.clicked.connect(
+            lambda: set_project_path(settings_dialog.show()))
+
         self.setup_projects()
-        self.change_project(self.project_manager.active_project)
 
     def setup_projects(self):
         '''
@@ -41,6 +57,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             lambda index: self.change_project(
                 self.ui.project_combo.itemData(index))
         )
+        # load active project
+        self.change_project(self.project_manager.active_project)
 
     def setup_definitions(self):
         '''setup project definitions widget'''
@@ -128,6 +146,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.setup_menu()
 
         # ToDo: show last active widget
+
+    def show_setting(self):
+        dialog = SettingsDialog
 
     def close(self):
         if self.project_definitions:

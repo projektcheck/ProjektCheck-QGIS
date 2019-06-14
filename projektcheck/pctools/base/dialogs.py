@@ -1,5 +1,6 @@
 from qgis.PyQt import uic
 from qgis.PyQt.Qt import QDialog
+from qgis.PyQt.QtWidgets import QFileDialog
 import os
 
 from pctools.base.domain import UI_PATH
@@ -47,10 +48,39 @@ class Message:
     dialog showing a message
     '''
 
-class ParamsDialog(Dialog):
-    ui_file = 'parameter_dialog.ui'
+class SettingsDialog(Dialog):
+    ui_file = 'settings.ui'
 
-    def __init__(self, params):
+    def __init__(self, project_folder):
         super().__init__(self.ui_file, modal=True)
-        for param in params:
-            param.show(self.param_layout)
+        self.project_folder = project_folder
+        self.browse_button.clicked.connect(self.browse_path)
+
+    def browse_path(self):
+        path = str(
+            QFileDialog.getExistingDirectory(
+                self,
+                u'Verzeichnis wählen',
+                self.project_path_edit.text()
+            )
+        )
+        if not path:
+            return
+        self.project_path_edit.setText(path)
+
+    def show(self):
+        self.project_path_edit.setText(self.project_folder)
+        confirmed = self.exec_()
+        if confirmed:
+            project_folder = self.project_path_edit.text()
+            if not os.path.exists(project_folder):
+                try:
+                    os.makedirs(project_folder)
+                except:
+                    # ToDo: show warning that it could not be created
+                    return
+            self.project_folder = project_folder
+            return self.project_folder
+        else:
+            self.project_path_edit.setText(self.project_folder)
+

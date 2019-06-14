@@ -25,6 +25,7 @@ from qgis.PyQt.QtCore import (QSettings, QTranslator, qVersion,
                               QCoreApplication, Qt)
 from qgis.PyQt.QtGui import QIcon, QPixmap, QPalette, QBrush
 from qgis.PyQt.QtWidgets import QAction
+
 # Initialize Qt resources from file resources_rc.py
 from pctools.ui.resources_rc import *
 
