@@ -10,7 +10,6 @@ class GeopackageTable(Table):
         self.name = name
 
 
-
 class Geopackage(Database):
     '''
     manages the connection to a geopackage db (file)

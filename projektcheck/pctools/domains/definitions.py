@@ -73,5 +73,6 @@ class ProjectDefinitions(Domain):
         pass
 
     def close(self):
-        self.params.close()
+        if self.params:
+            self.params.close()
         super().close()

@@ -27,7 +27,6 @@ class PCDockWidget(QObject):
         #)
         self.ui.closeEvent = self.closeEvent
         self.isActive = False
-        self.setupUi()
 
     def setupUi(self):
         pass
@@ -39,6 +38,7 @@ class PCDockWidget(QObject):
         if self.isActive:
             self.ui.show()
             return
+        self.setupUi()
         self.iface.addDockWidget(self.initial_position, self.ui)
         self.isActive = True
 

@@ -143,9 +143,18 @@ class ProjectManager:
         self.load()
 
     def load(self):
-
         if settings.project_path:
-            self.projectdata.base_path = settings.project_path
+            project_path = settings.project_path
+            if project_path and not os.path.exists(project_path):
+                try:
+                    os.makedirs(project_path)
+                except:
+                    pass
+            if not os.path.exists(project_path):
+                settings.project_path = project_path = ''
+            if settings.active_project:
+                self.projectdata.base_path = os.path.join(
+                    project_path, settings.active_project)
         for name in self._get_projects():
             project = Project(name)
             self._projects[project.name] = project
@@ -181,6 +190,8 @@ class ProjectManager:
     @active_project.setter
     def active_project(self, project):
         self.settings.active_project = project.name
+        self.projectdata.base_path = os.path.join(
+            settings.project_path, project.name)
 
 
 

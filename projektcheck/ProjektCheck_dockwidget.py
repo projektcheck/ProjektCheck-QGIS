@@ -23,13 +23,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.active_dockwidget = None
         self.project_definitions = None
 
-        project_path = self.settings.project_path
-        if project_path and not os.path.exists(project_path):
-            try:
-                os.makedirs(project_path)
-            except:
-                self.settings.project_path = project_path = ''
-        settings_dialog = SettingsDialog(project_path)
+        settings_dialog = SettingsDialog(self.settings.project_path)
         def set_project_path(path):
             if not path:
                 return
@@ -73,7 +67,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def setup_domains(self):
         '''setup the domain widgets'''
-        # ToDo: load domains on demand only
+
+
+        # ToDo: remove old domains and menu?
+
         bewohner_arbeit = BewohnerArbeit(iface=self.iface)
         self.domains.append(bewohner_arbeit)
 
@@ -98,9 +95,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         supermarkets = SupermarketsCompetition(iface=self.iface)
         self.domains.append(supermarkets)
 
-    def setup_menu(self):
-        '''fill the analysis menu with available domains'''
-        # ToDo: remove old menu?
+        # fill the analysis menu with available domains
         menu = QMenu()
         for domain in self.domains:
             action = menu.addAction(domain.ui_label)
@@ -148,7 +143,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.setup_definitions()
         self.setup_domains()
-        self.setup_menu()
 
         # ToDo: show last active widget
 
