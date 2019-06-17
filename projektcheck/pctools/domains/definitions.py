@@ -77,7 +77,7 @@ class ProjectDefinitions(Domain):
                                         label='Dauer des Bezuges')
         self.type_params.add(Seperator())
 
-        self.type_params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit '
+        self.type_params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
                                    '(3 Jahre nach Bezug)'))
         self.type_params.eh = Param(
             0, SpinBox(), label='in Einfamilienhäusern')
@@ -109,8 +109,8 @@ class ProjectDefinitions(Domain):
         table = self.projectdata.get_table('irgendwas', self.workspace)
 
     def close(self):
-        if getattr(self, 'type_params', None):
-            self.type_params.close()
-        if getattr(self, 'params', None):
-            self.params.close()
+        #if getattr(self, 'type_params', None):
+            #self.type_params.close()
+        #if getattr(self, 'params', None):
+            #self.params.close()
         super().close()
