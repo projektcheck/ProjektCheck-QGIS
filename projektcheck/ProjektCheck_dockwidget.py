@@ -150,7 +150,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         dialog = SettingsDialog
 
     def close(self):
-        if self.project_definitions:
+        if getattr(self, 'project_definitions', None):
             self.project_definitions.close()
         for domain in self.domains:
             domain.close()

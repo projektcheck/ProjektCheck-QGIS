@@ -16,10 +16,12 @@ class Param(QObject):
     '''
     changed = pyqtSignal()
 
-    def __init__(self, value, input: InputType = None, label: str = ''):
+    def __init__(self, value, input: InputType = None, label: str = '',
+                 hide_in_edit: bool = False):
         super().__init__()
         self._value = value
         self.label = label
+        self.hide_in_edit = hide_in_edit
         self.input = input
         self._value_label = QLabel(str(value))
         # update value label when value of param is changed
@@ -38,13 +40,15 @@ class Param(QObject):
         self._value = value
         self.changed.emit()
 
-    def draw(self, layout, editable=False):
+    def draw(self, layout, edit=False):
+        if edit and not self.input:
+            return
         row = QHBoxLayout()
         label = QLabel(self.label)
         row.addWidget(label)
         row.addItem(
             QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
-        if editable:
+        if edit:
             self.input.draw(row)
         else:
             row.addWidget(self._value_label)
@@ -129,7 +133,7 @@ class Params(QObject):
         for element in self.elements:
             element.draw(layout)
             if isinstance(element, Param):
-                element.draw(self.dialog.param_layout, editable=True)
+                element.draw(self.dialog.param_layout, edit=True)
             else:
                 element.draw(self.dialog.param_layout)
 
@@ -145,14 +149,14 @@ class Params(QObject):
 
     def close(self):
         if self.dialog:
-            self.dialog.deleteLater()
+            del self.dialog
 
     def show_dialog(self):
         confirmed = self.dialog.exec_()
         if confirmed:
             has_changed = False
             for param in self.params:
-                if param.value == param.input.value:
+                if not param.input or param.value == param.input.value:
                     continue
                 param.value = param.input.value
                 has_changed = True
@@ -161,13 +165,14 @@ class Params(QObject):
         else:
             # reset inputs
             for param in self.params:
-                param.input.set(param.value)
+                if param.input:
+                    param.input.set(param.value)
 
     def __getattr__(self, name):
         param = self._params.get(name, None)
         if param:
             return param
-        return self.__dict__[name]
+        return self.__dict__.get(name, None)
 
     def __setattr__(self, name, value):
         if isinstance(value, Param):
