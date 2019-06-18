@@ -15,13 +15,29 @@ DEFAULT_SETTINGS = {
 
 
 class Settings:
+    '''
+    singleton for accessing and storing global settings in files
+
+    Attributes
+    ----------
+    active_project : str
+        the name of the active project
+    project_path : str
+        path to project folders
+    '''
     __metaclass__ = Singleton
     _settings = {}
     # write changed config instantly to file
     _write_instantly = True
 
     def __init__(self, filename='projektcheck-config.txt'):
-
+        '''
+        Parameters
+        ----------
+        filename : str, optional
+            name of file in APPDATA path to store settings in
+            by default 'projektcheck-config.txt'
+        '''
         if not os.path.exists(APPDATA_PATH):
             os.mkdir(APPDATA_PATH)
 
@@ -45,6 +61,15 @@ class Settings:
             self.write()
 
     def read(self, config_file=None):
+        '''
+        read settings from file
+
+        Parameters
+        ----------
+        config_file : str, optional
+            path to file with settings, self.config_file used if None,
+            by default None
+        '''
         if config_file is None:
             config_file = self.config_file
         try:
@@ -55,6 +80,15 @@ class Settings:
             print('Error while loading config. Using default values.')
 
     def write(self, config_file=None):
+        '''
+        write current settings to file
+
+        Parameters
+        ----------
+        config_file : str, optional
+            path to file with settings, self.config_file used if None,
+            by default None
+        '''
         if config_file is None:
             config_file = self.config_file
 
@@ -106,7 +140,14 @@ settings = Settings()
 
 
 class Project:
+    '''
+    single project
 
+    Attributes
+    ----------
+    areas : list
+        list of names of project areas
+    '''
     def __init__(self, name):
         self.name = name
 
@@ -123,13 +164,22 @@ class Project:
 
 
 class ProjectManager:
+    '''
+    singleton for accessing/changing projects and their data
+
+    Attributes
+    ----------
+    projects : list
+        available projects
+    active_project: Project
+        active project
+    '''
     __metaclass__ = Singleton
     _projects = {}
     settings = settings
     _required_settings = ['BASE_PATH', 'BASEDATA_PATH', 'TEMPLATE_PATH']
 
     def __init__(self):
-
         # check settings
         missing = []
         for required in self._required_settings:
@@ -143,6 +193,9 @@ class ProjectManager:
         self.load()
 
     def load(self):
+        '''
+        load settings and projects
+        '''
         if settings.project_path:
             project_path = settings.project_path
             if project_path and not os.path.exists(project_path):
@@ -160,6 +213,14 @@ class ProjectManager:
             self._projects[project.name] = project
 
     def create_project(self, name):
+        '''
+        create a new project
+
+        Parameters
+        ----------
+        name : str
+            name of the project
+        '''
         target_folder = os.path.join(settings.project_path, name)
         shutil.copytree(settings.TEMPLATE_PATH, 'project', target_folder)
         project = Project(name)
@@ -167,9 +228,6 @@ class ProjectManager:
         return project
 
     def _get_projects(self):
-        '''
-        returns all available projects inside the project folder
-        '''
         base_path = settings.project_path
         if not os.path.exists(base_path):
             return []

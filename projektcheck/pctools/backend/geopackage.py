@@ -63,9 +63,3 @@ class Geopackage(Database):
 
     def __repr__(self):
         return f"Geopackage {self.base_path}"
-
-
-#class GeopackageTable(Table):
-    #'''
-    #representation of a table in a geopackage
-    #'''

@@ -61,7 +61,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def setup_definitions(self):
         '''setup project definitions widget'''
-        self.project_definitions = ProjectDefinitions(iface=self.iface)
+        self.project_definitions = ProjectDefinitions(self.iface)
         self.ui.definition_button.clicked.connect(
             lambda: self.show_dockwidget(self.project_definitions))
 
@@ -70,28 +70,28 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         # ToDo: remove old domains and menu?
 
-        bewohner_arbeit = BewohnerArbeit(iface=self.iface)
+        bewohner_arbeit = BewohnerArbeit(self.iface)
         self.domains.append(bewohner_arbeit)
 
-        erreichbarkeiten = Erreichbarkeiten(iface=self.iface)
+        erreichbarkeiten = Erreichbarkeiten(self.iface)
         self.domains.append(erreichbarkeiten)
 
-        verkehr = Verkehr(iface=self.iface)
+        verkehr = Verkehr(self.iface)
         self.domains.append(verkehr)
 
-        ecology = Ecology(iface=self.iface)
+        ecology = Ecology(self.iface)
         self.domains.append(ecology)
 
-        landuse = LandUse(iface=self.iface)
+        landuse = LandUse(self.iface)
         self.domains.append(landuse)
 
-        infrastructuralcosts = InfrastructuralCosts(iface=self.iface)
+        infrastructuralcosts = InfrastructuralCosts(self.iface)
         self.domains.append(infrastructuralcosts)
 
-        municipaltaxrevenue = MunicipalTaxRevenue(iface=self.iface)
+        municipaltaxrevenue = MunicipalTaxRevenue(self.iface)
         self.domains.append(municipaltaxrevenue)
 
-        supermarkets = SupermarketsCompetition(iface=self.iface)
+        supermarkets = SupermarketsCompetition(self.iface)
         self.domains.append(supermarkets)
 
         # fill the analysis menu with available domains

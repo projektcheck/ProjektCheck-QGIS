@@ -8,10 +8,40 @@ UI_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'ui')
 
 
 class PCDockWidget(QObject):
-    ui_file = None
-    closingPlugin = pyqtSignal()
+    '''
+    dock widget, can be rendered in QGIS
 
-    def __init__(self, iface=None, position=Qt.RightDockWidgetArea):
+    Attributes
+    ----------
+    ui : QDockWidget
+        the actual qwidget holding all child ui elements
+    ui_file : str
+        the qt ui file used for rendering the widget
+    value : basic_type
+        current value of the parameter
+    closingWidget : pyqtSignal
+        fired when widget is closed
+    project : Project
+        active project
+    settings : Settings
+        projekt-check related settings
+    projectdata : Database,
+        database of the active project
+    basedata :
+        database with all base data
+    '''
+    ui_file = None
+    closingWidget = pyqtSignal()
+
+    def __init__(self, iface, position=Qt.RightDockWidgetArea):
+        '''
+        Parameters
+        ----------
+        iface : QgisInterface
+            instance of QGIS interface
+        position : int, optional
+            dock widget area to add widget to, by default Qt.RightDockWidgetArea
+        '''
         super().__init__()
         self.project_manager = ProjectManager()
         self.iface = iface
@@ -29,12 +59,19 @@ class PCDockWidget(QObject):
         self.isActive = False
 
     def setupUi(self):
+        '''
+        setup ui, called when widget is shown
+        override in sub classes to setup the ui elements of the widget
+        '''
         pass
 
     def close(self):
         self.ui.close()
 
     def show(self):
+        '''
+        show the widget inside QGIS
+        '''
         if self.isActive:
             self.ui.show()
             return
@@ -43,12 +80,15 @@ class PCDockWidget(QObject):
         self.isActive = True
 
     def unload(self):
+        '''
+        unload the widget
+        '''
         self.isActive = False
         self.close()
         self.iface.removeDockWidget(self.ui)
 
     def closeEvent(self, event):
-        self.closingPlugin.emit()
+        self.closingWidget.emit()
         event.accept()
 
     @property
@@ -70,16 +110,34 @@ class PCDockWidget(QObject):
 
 class Domain(PCDockWidget):
     '''
-    area of ​​knowledge with settings and tools, displayed in seperate dock widget
+    dock widget for specific area of ​​knowledge
+
+    Attributes
+    ----------
+    label : str
+        label for area of knowledge displayed in ui
+    ui : QDockWidget
+        the actual qwidget holding all child ui elements
+    ui_file : str
+        the qt ui file used for rendering the widget
+    value : basic_type
+        current value of the parameter
+    closingWidget : pyqtSignal
+        fired when widget is closed
+    project : Project
+        active project
+    settings : Settings
+        projekt-check related settings
+    projectdata : Database,
+        database of the active project
+    basedata : Database,
+        database with all base data
     '''
     label = None
 
     def __init__(self, iface=None, position=Qt.RightDockWidgetArea):
         super().__init__(iface=iface, position=position)
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-
-    #def show(self, parent):
-        #pass
 
     def connect(self):
         pass
