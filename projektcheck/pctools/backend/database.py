@@ -59,13 +59,15 @@ class Table(ABC):
         return NotImplemented
 
     def __iter__(self):
-        # return the rows here
         return NotImplemented
 
     def __next__(self):
         return NotImplemented
 
     def create(self):
+        return NotImplemented
+
+    def count(self):
         return NotImplemented
 
 
