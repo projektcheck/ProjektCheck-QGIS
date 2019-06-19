@@ -222,7 +222,8 @@ class ProjectManager:
             name of the project
         '''
         target_folder = os.path.join(settings.project_path, name)
-        shutil.copytree(settings.TEMPLATE_PATH, 'project', target_folder)
+        shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
+                        target_folder)
         project = Project(name)
         self._projects[project.name] = project
         return project

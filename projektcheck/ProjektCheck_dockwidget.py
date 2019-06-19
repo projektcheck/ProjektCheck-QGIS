@@ -36,7 +36,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             name, ok = QInputDialog.getText(
                 self.ui, 'Neues Projekt erstellen', 'Projektname')
             if ok:
-                self.project_manager.create_project(name)
+                project = self.project_manager.create_project(name)
+                self.ui.project_combo.addItem(project.name, project)
         self.ui.create_project_button.clicked.connect(create_project)
 
         self.setup_projects()
