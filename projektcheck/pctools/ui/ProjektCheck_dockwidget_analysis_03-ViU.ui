@@ -19,114 +19,16 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Verkehr im Umfeld</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QComboBox" name="comboBox">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>0</height>
-         </size>
-        </property>
-        <item>
-         <property name="text">
-          <string>Anbindungspunkt Teilfläche XY</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>neu setzen</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="9" column="1">
-     <widget class="QSpinBox" name="spinBox_5">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimum">
-       <number>1000</number>
-      </property>
-      <property name="maximum">
-       <number>5000</number>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="2">
-     <widget class="Line" name="line_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0" colspan="2">
-     <widget class="QPushButton" name="pushButton_14">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="text">
-       <string>Straßenverkehrsbelastung schätzen</string>
-      </property>
-     </widget>
-    </item>
-    <item row="20" column="0" colspan="2">
-     <widget class="QDialogButtonBox" name="buttonBox_3">
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Help</set>
-      </property>
-     </widget>
-    </item>
     <item row="17" column="0">
      <widget class="QPushButton" name="pushButton_15">
       <property name="sizePolicy">
@@ -172,6 +74,29 @@ QGroupBox::title {
       </property>
      </widget>
     </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="Line" name="line_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QSpinBox" name="spinBox_5">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimum">
+       <number>1000</number>
+      </property>
+      <property name="maximum">
+       <number>5000</number>
+      </property>
+     </widget>
+    </item>
     <item row="19" column="0">
      <spacer name="verticalSpacer_3">
       <property name="orientation">
@@ -184,6 +109,72 @@ QGroupBox::title {
        </size>
       </property>
      </spacer>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
+        </property>
+        <item>
+         <property name="text">
+          <string>Anbindungspunkt Teilfläche XY</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="text">
+         <string>neu setzen</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</normaloff>
+          <normalon>../../images/iconset_mob/20190619_iconset_mob_replace_point_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="20" column="0" colspan="2">
+     <widget class="QDialogButtonBox" name="buttonBox_3">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Help</set>
+      </property>
+     </widget>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label">
@@ -198,6 +189,33 @@ QGroupBox::title {
        <string>Anbindung der Teilflächen an das Straßennetz</string>
       </property>
      </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Straßenverkehrsbelastung</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="0">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="18" column="0" colspan="2">
      <widget class="QScrollArea" name="scrollArea">
@@ -586,30 +604,23 @@ QGroupBox::title {
       </widget>
      </widget>
     </item>
-    <item row="12" column="0">
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="10" column="0" colspan="2">
+     <widget class="QPushButton" name="pushButton_14">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>Straßenverkehrsbelastung</string>
+       <string>Straßenverkehrsbelastung schätzen</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_1.png</iconset>
       </property>
      </widget>
     </item>

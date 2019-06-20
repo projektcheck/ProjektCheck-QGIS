@@ -136,6 +136,10 @@
         <property name="text">
          <string>Einst</string>
         </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../images/iconset_mob/20190619_iconset_mob_settings_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_settings_2.png</iconset>
+        </property>
        </widget>
       </item>
       <item>

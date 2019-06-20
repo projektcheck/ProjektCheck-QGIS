@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>378</width>
-    <height>770</height>
+    <width>469</width>
+    <height>804</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -19,7 +19,10 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Erreichbarkeit</string>
@@ -29,15 +32,15 @@ QGroupBox::title {
     <item>
      <widget class="QToolBox" name="toolBox">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>366</width>
-         <height>630</height>
+         <width>451</width>
+         <height>681</height>
         </rect>
        </property>
        <attribute name="label">
@@ -54,7 +57,7 @@ QGroupBox::title {
         <item row="2" column="0">
          <widget class="QPushButton" name="pushButton_3">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -62,10 +65,29 @@ QGroupBox::title {
           <property name="text">
            <string>Haltestellen ermitteln</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item row="10" column="0">
          <widget class="QComboBox" name="ovstop_combo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <item>
            <property name="text">
             <string>[Haltestellenauswahl]</string>
@@ -93,16 +115,20 @@ QGroupBox::title {
         <item row="13" column="0">
          <widget class="QPushButton" name="pushButton_9">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="layoutDirection">
-           <enum>Qt::RightToLeft</enum>
+           <enum>Qt::LeftToRight</enum>
           </property>
           <property name="text">
            <string>Fahrzeit zu zentralen Orten ermitteln</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
           </property>
          </widget>
         </item>
@@ -125,18 +151,31 @@ QGroupBox::title {
         <item row="12" column="0">
          <widget class="QPushButton" name="pushButton_5">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Haltestellenplan aufrufen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_departures_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_departures_2.png</iconset>
           </property>
          </widget>
         </item>
         <item row="10" column="2">
          <widget class="QPushButton" name="pushButton">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::RightToLeft</enum>
           </property>
@@ -145,7 +184,14 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -176,6 +222,9 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::RightToLeft</enum>
           </property>
@@ -184,9 +233,14 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -227,8 +281,8 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>373</width>
-         <height>647</height>
+         <width>451</width>
+         <height>681</height>
         </rect>
        </property>
        <attribute name="label">
@@ -282,6 +336,10 @@ QGroupBox::title {
           <property name="text">
            <string>Isochronen erzeugen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="6" column="0">
@@ -328,6 +386,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Einrichtungen einlesen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</iconset>
           </property>
          </widget>
         </item>
