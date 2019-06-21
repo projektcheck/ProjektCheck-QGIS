@@ -19,7 +19,10 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Ökologie</string>
@@ -29,7 +32,7 @@ QGroupBox::title {
     <item>
      <widget class="QToolBox" name="toolBox">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
@@ -51,6 +54,9 @@ QGroupBox::title {
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
            <string>Natur- und Artenschutz</string>
@@ -76,6 +82,9 @@ QGroupBox::title {
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
            <string>Landschaftsschutz</string>
@@ -109,6 +118,9 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>unzerschnittene Freiräume &gt; 100 km²</string>
           </property>
@@ -134,6 +146,9 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>unzerschnittene Freiräume &gt; 50 km²</string>
           </property>
@@ -158,6 +173,9 @@ QGroupBox::title {
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
            <string>Freiräume       </string>
@@ -191,6 +209,9 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>unzerschnittene Wälder &gt; 50 m²</string>
           </property>
@@ -215,6 +236,9 @@ QGroupBox::title {
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
            <string>Wälder              </string>
@@ -272,6 +296,16 @@ QGroupBox::title {
           <property name="text">
            <string>Bodenbedeckung zeichnen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -290,6 +324,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Leistungskennwerte berechnen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -342,6 +380,9 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::RightToLeft</enum>
           </property>
@@ -350,9 +391,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -786,6 +826,10 @@ QGroupBox::title {
           <property name="text">
            <string>Anteile Bodenbedeckung eingeben</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="9" column="2">
@@ -798,6 +842,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Erläuterung der Leistungskennwerte</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
           </property>
          </widget>
         </item>
