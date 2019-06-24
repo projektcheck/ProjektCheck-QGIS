@@ -19,7 +19,10 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Flächeninanspruchnahme</string>
@@ -58,6 +61,10 @@ QGroupBox::title {
           <property name="text">
            <string>Wohndichte bestimmen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="0" column="0" colspan="2">
@@ -71,6 +78,10 @@ QGroupBox::title {
           <property name="text">
            <string>Spezifikationen anpassen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -81,6 +92,42 @@ QGroupBox::title {
            <bool>false</bool>
           </property>
          </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QPushButton" name="pushButton_19">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Wohnflächendichte bestimmen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</iconset>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QScrollArea" name="scrollArea">
@@ -134,7 +181,7 @@ QGroupBox::title {
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-461</y>
              <width>467</width>
              <height>971</height>
             </rect>
@@ -1023,38 +1070,6 @@ QGroupBox::title {
           </widget>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QPushButton" name="pushButton_19">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>Wohnflächendichte bestimmen</string>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="2">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="page_2">
@@ -1070,45 +1085,6 @@ QGroupBox::title {
         <string>integrierte Lage</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="7" column="1">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton_27">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Gemeinsame Grenze mit Siedlungskörper einzeichnen</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -1122,34 +1098,25 @@ QGroupBox::title {
           </property>
          </spacer>
         </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_28">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Zeichnung löschen   </string>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
         <item row="4" column="0" colspan="2">
          <widget class="Line" name="line">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
+        </item>
+        <item row="7" column="1">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="5" column="0">
          <widget class="QPushButton" name="pushButton_30">
@@ -1167,15 +1134,67 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_pylon_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_pylon_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_pylon_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
           <property name="flat">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButton_27">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Gemeinsame Grenze mit Siedlungskörper einzeichnen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButton_28">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Zeichnung löschen   </string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -1188,10 +1207,14 @@ QGroupBox::title {
            </sizepolicy>
           </property>
           <property name="layoutDirection">
-           <enum>Qt::RightToLeft</enum>
+           <enum>Qt::LeftToRight</enum>
           </property>
           <property name="text">
            <string>Integrationsgrad berechnen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -1231,18 +1254,18 @@ QGroupBox::title {
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_24</sender>
+   <sender>pushButton_26</sender>
    <signal>toggled(bool)</signal>
-   <receiver>scrollArea_3</receiver>
+   <receiver>scrollArea_2</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>302</x>
-     <y>177</y>
+     <x>303</x>
+     <y>771</y>
     </hint>
     <hint type="destinationlabel">
-     <x>397</x>
-     <y>206</y>
+     <x>353</x>
+     <y>800</y>
     </hint>
    </hints>
   </connection>
@@ -1263,18 +1286,18 @@ QGroupBox::title {
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_26</sender>
+   <sender>pushButton_24</sender>
    <signal>toggled(bool)</signal>
-   <receiver>scrollArea_2</receiver>
+   <receiver>scrollArea_3</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>303</x>
-     <y>771</y>
+     <x>302</x>
+     <y>177</y>
     </hint>
     <hint type="destinationlabel">
-     <x>353</x>
-     <y>800</y>
+     <x>397</x>
+     <y>206</y>
     </hint>
    </hints>
   </connection>

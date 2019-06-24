@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
+    <width>559</width>
     <height>1000</height>
    </rect>
   </property>
@@ -32,14 +32,14 @@ border: 0;
     <item>
      <widget class="QToolBox" name="toolBox">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>512</width>
+         <width>541</width>
          <height>877</height>
         </rect>
        </property>
@@ -63,9 +63,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_3.png</normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -91,9 +90,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_4.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_3.png</normalon>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_4.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -126,9 +124,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_100_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_100_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_100_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -154,9 +151,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_50_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_50_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_50_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -182,9 +178,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -217,9 +212,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -245,9 +239,8 @@ border: 0;
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -277,7 +270,7 @@ border: 0;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>512</width>
+         <width>541</width>
          <height>877</height>
         </rect>
        </property>
@@ -437,7 +430,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_trees_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -463,7 +457,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_field_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_field_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_field_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -489,7 +484,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -515,7 +511,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -541,7 +538,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -567,7 +565,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -593,7 +592,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -619,7 +619,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -645,7 +646,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -671,7 +673,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -697,7 +700,8 @@ border: 0;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -789,10 +793,14 @@ border: 0;
               </sizepolicy>
              </property>
              <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
+              <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
               <string>Zeichnung auswerten</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -805,10 +813,14 @@ border: 0;
               </sizepolicy>
              </property>
              <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
+              <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
               <string>Zeichnung löschen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
              </property>
             </widget>
            </item>

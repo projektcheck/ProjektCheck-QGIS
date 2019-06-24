@@ -307,7 +307,7 @@
          <bool>false</bool>
         </property>
         <property name="arrowType">
-         <enum>Qt::DownArrow</enum>
+         <enum>Qt::NoArrow</enum>
         </property>
        </widget>
       </item>
