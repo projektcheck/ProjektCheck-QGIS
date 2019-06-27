@@ -49,8 +49,7 @@ class GeopackageTable(Table):
         self._cursor = None
         self._where = value
         self._layer = self.workspace._conn.GetLayerByName(self.name)
-        if value:
-            self._layer.SetAttributeFilter(value)
+        self._layer.SetAttributeFilter(value)
 
     @property
     def fields(self):
@@ -61,15 +60,30 @@ class GeopackageTable(Table):
         return fields
 
     def add(self, row: Union[dict, list]):
-        pass
+        if isinstance(row, list):
+            row = dict(zip(self.fields, row))
+        feature = ogr.Feature(self._layer.GetLayerDefn())
+        for field, value in row.items():
+            feature.SetField(field, value)
+        self._layer.CreateFeature(feature)
 
-    def updateCursor(self, row: Union[dict, list]):
+    def delete(self, where=''):
+        '''warning: resets cursor'''
+        prev_where = self._where
+        self.where = where
+        i = 0
+        for feature in self._layer:
+            self._layer.DeleteFeature(feature.GetFID())
+            i += 1
+        self.where = prev_where
+        return i
+
+    def update_cursor(self, row: Union[dict, list]):
         if isinstance(row, list):
             row = dict(zip(self.fields, row))
         for field, value in row.items():
             self._cursor.SetField(field, value)
             self._layer.SetFeature(self._cursor)
-
 
     def to_pandas(self):
         rows = []

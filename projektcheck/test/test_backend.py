@@ -26,8 +26,17 @@ class GeopackageTest(unittest.TestCase):
         new_val = random.randint(0, 50)
         for row in self.table:
             row['Gemeindetyp'] = new_val
-            self.table.updateCursor(row)
+            self.table.update_cursor(row)
         self.table.where = f'"Gemeindetyp" = {new_val}'
+        assert self.table.count == 2
+
+    def test_add_delete(self):
+        assert self.table.count == 2
+        new_row = {'Gemeindename': '------', 'Projektname': '-----',
+                   'AGS': '0000', 'Gemeindetyp': 0}
+        self.table.add(new_row)
+        assert self.table.count == 3
+        n = self.table.delete('"Gemeindename" = "------"')
         assert self.table.count == 2
 
     def test_pandas(self):
