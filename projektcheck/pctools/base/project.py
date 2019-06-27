@@ -2,9 +2,11 @@ import os
 import sys
 import json
 import shutil
+from qgis.core import QgsVectorLayer
 
 from pctools.utils.singleton import Singleton
-from pctools.backend import Geopackage
+from pctools.base import Geopackage
+
 
 APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
 
@@ -12,7 +14,6 @@ DEFAULT_SETTINGS = {
     'active_project': u'',
     'project_path': os.path.join(APPDATA_PATH, 'Projekte')
 }
-
 
 class Settings:
     '''
@@ -206,11 +207,14 @@ class ProjectManager:
             if not os.path.exists(project_path):
                 settings.project_path = project_path = ''
             if settings.active_project:
-                self.projectdata.base_path = os.path.join(
-                    project_path, settings.active_project)
+                self._set_projectdata(settings.active_project)
         for name in self._get_projects():
             project = Project(name)
             self._projects[project.name] = project
+
+    def _set_projectdata(self, projectname):
+        self.projectdata.base_path = os.path.join(
+            settings.project_path, projectname)
 
     def create_project(self, name):
         '''
@@ -221,11 +225,21 @@ class ProjectManager:
         name : str
             name of the project
         '''
+        if not settings.project_path:
+            return
         target_folder = os.path.join(settings.project_path, name)
-        shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
-                        target_folder)
+        shape = os.path.join(settings.TEMPLATE_PATH, 'projektflaechen',
+                             'projektflaechen_template.shp')
+        layer = QgsVectorLayer(shape, "testlayer_shp", "ogr")
         project = Project(name)
         self._projects[project.name] = project
+        self._set_projectdata(name)
+        shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
+                        target_folder)
+        workspace = self.projectdata.get_workspace('Definition_Projekt')
+        tfl_table = workspace.get_table('Teilflaechen_Plangebiet')
+        for feature in layer.getFeatures():
+            pass
         return project
 
     def _get_projects(self):

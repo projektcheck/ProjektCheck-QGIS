@@ -1,6 +1,6 @@
 from pctools.base import (Domain, Params, Param, SpinBox, ComboBox,
                           Title, Seperator, LineEdit)
-from pctools.backend import Geopackage
+from pctools.base import Geopackage
 
 def clearLayout(layout):
     while layout.count():

@@ -1,4 +1,4 @@
-from pctools.backend import Geopackage
+from pctools.base import Geopackage
 from pctools.base import settings
 
 import os

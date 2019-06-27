@@ -25,6 +25,12 @@
 import os
 import sys
 
+try:
+    import wingdbstub
+    wingdbstub.Ensure()
+except:
+    pass
+
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
     """Load ProjektCheck class from file ProjektCheck.

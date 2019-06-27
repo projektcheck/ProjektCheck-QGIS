@@ -38,6 +38,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             if ok:
                 project = self.project_manager.create_project(name)
                 self.ui.project_combo.addItem(project.name, project)
+                self.project_manager.active_project = project
         self.ui.create_project_button.clicked.connect(create_project)
 
         self.setup_projects()
@@ -115,7 +116,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         print('STDERR:{}'.format(stderr))
 
     def show_dockwidget(self, widget):
-        if self.active_dockwidget:
+        if self.active_dockwidgets:
             self.active_dockwidget.close()
         self.active_dockwidget = widget
         widget.show()
