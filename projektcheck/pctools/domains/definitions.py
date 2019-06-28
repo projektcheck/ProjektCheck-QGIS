@@ -63,8 +63,8 @@ class ProjectDefinitions(Domain):
         self.type_params.changed.connect(lambda: print('params changed'))
 
     def add_living_params(self):
-        table = self.projectdata.get_table(
-            'Wohnen_Struktur_und_Alterung', self.workspace)
+        #table = self.projectdata.get_table(
+            #'Wohnen_Struktur_und_Alterung', self.workspace)
 
         self.type_params.add(Title('Bezugszeitraum'))
         #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
@@ -103,10 +103,12 @@ class ProjectDefinitions(Domain):
         pass
 
     def add_industry_params(self):
-        table = self.projectdata.get_table('irgendwas', self.workspace)
+        #table = self.projectdata.get_table('irgendwas', self.workspace)
+        pass
 
     def add_retail_params(self):
-        table = self.projectdata.get_table('irgendwas', self.workspace)
+        #table = self.projectdata.get_table('irgendwas', self.workspace)
+        pass
 
     def close(self):
         #if getattr(self, 'type_params', None):

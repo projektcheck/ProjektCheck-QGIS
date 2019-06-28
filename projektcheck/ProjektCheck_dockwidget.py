@@ -116,7 +116,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         print('STDERR:{}'.format(stderr))
 
     def show_dockwidget(self, widget):
-        if self.active_dockwidgets:
+        if self.active_dockwidget:
             self.active_dockwidget.close()
         self.active_dockwidget = widget
         widget.show()
