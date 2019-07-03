@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>559</width>
+    <width>455</width>
     <height>1000</height>
    </rect>
   </property>
@@ -19,9 +19,22 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
+QPushButton::flat:hover{
+background-color: azure;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}
 QPushButton::flat{
 background-color: none;
 border: 0;
+border-style:none;
+border-color: blue;
+border-width: 0px;
+border-radius: 0px;
+padding:2px;
 }</string>
   </property>
   <property name="windowTitle">
@@ -32,14 +45,14 @@ border: 0;
     <item>
      <widget class="QToolBox" name="toolBox">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>541</width>
+         <width>437</width>
          <height>877</height>
         </rect>
        </property>
@@ -65,6 +78,57 @@ border: 0;
            <iconset>
             <normaloff>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_1.png</normaloff>
             <normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_3.png</normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_31">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton::flat:checked{
+background-color: none;
+border-style:none;
+border-color: green;
+border-width: 0px;
+border-radius: 4px;
+padding: 2px;
+}
+QPushButton::flat{
+background-color: none;
+border-style:none;
+border-color: red;
+border-width: 0px;
+border-radius: 4px;
+padding: 2px;
+}</string>
+          </property>
+          <property name="text">
+           <string>Natur- und Artenschutz</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_4.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_5.png</normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_4.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -219,7 +283,7 @@ border: 0;
            <bool>true</bool>
           </property>
           <property name="flat">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -235,7 +299,7 @@ border: 0;
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
-           <string>Wälder              </string>
+           <string>Wälder</string>
           </property>
           <property name="icon">
            <iconset>
@@ -246,9 +310,189 @@ border: 0;
            <bool>true</bool>
           </property>
           <property name="flat">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
+        </item>
+        <item>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_16">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton::flat:checked{
+background-color: none;
+border-style:inset;
+border-color: dimgrey;
+border-width: 2px;
+border-radius: 6px;
+padding: 3px;
+}
+QPushButton::flat{
+background-color: none;
+border-style:outset;
+border-color: lightgrey;
+border-width: 2px;
+border-radius: 6px;
+padding: 3px;
+}</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_18">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton::flat:checked{
+background-color: none;
+border-style:inset;
+border-color: dimgrey;
+border-width: 2px;
+border-radius: 6px;
+padding: 3px;
+}
+QPushButton::flat{
+background-color: none;
+border-style:outset;
+border-color: lightgrey;
+border-width: 2px;
+border-radius: 6px;
+padding: 3px;
+}</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>unzerschnittene Wälder &gt; 50 m²</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Wälder</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_29">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_30">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>unzerschnittene Wälder &gt; 50 m²</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Wälder</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <spacer name="verticalSpacer_7">
@@ -270,7 +514,7 @@ border: 0;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>541</width>
+         <width>437</width>
          <height>877</height>
         </rect>
        </property>
@@ -404,73 +648,6 @@ border: 0;
            <enum>QFrame::Plain</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="1" column="1">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="4" column="0">
-            <widget class="QPushButton" name="pushButton_19">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Bäume oder Sträucher</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_trees_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="0">
-            <widget class="QPushButton" name="pushButton_24">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>offener Boden / Acker</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_field_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_field_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_field_1.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="0">
             <widget class="QPushButton" name="pushButton_15">
              <property name="sizePolicy">
@@ -478,6 +655,9 @@ border: 0;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="text">
               <string>Platten             </string>
@@ -506,6 +686,9 @@ border: 0;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
              <property name="text">
               <string>überbaute Flächen</string>
              </property>
@@ -525,33 +708,6 @@ border: 0;
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="pushButton_14">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>natürliche Wasserfläche</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="6" column="0">
             <widget class="QPushButton" name="pushButton_21">
              <property name="sizePolicy">
@@ -559,6 +715,9 @@ border: 0;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="text">
               <string>Rasen    </string>
@@ -587,6 +746,9 @@ border: 0;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
              <property name="text">
               <string>Kleinpflaster</string>
              </property>
@@ -613,6 +775,9 @@ border: 0;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="text">
               <string>Asphalt oder Beton</string>
@@ -641,6 +806,9 @@ border: 0;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
              <property name="text">
               <string>Wiese    </string>
              </property>
@@ -667,6 +835,9 @@ border: 0;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="text">
               <string>Stauden      </string>
@@ -695,6 +866,9 @@ border: 0;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
              <property name="text">
               <string>wassergebundene Decke oder Rasengittersteine</string>
              </property>
@@ -702,32 +876,6 @@ border: 0;
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</normaloff>
                <normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="0" colspan="2">
-            <widget class="QPushButton" name="pushButton_28">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Element bearbeiten / löschen</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -801,6 +949,139 @@ border: 0;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="12" column="0" colspan="3">
+            <widget class="QPushButton" name="pushButton_28">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="text">
+              <string>Element bearbeiten / löschen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_delete_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_edit_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_edit_delete_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="3">
+            <widget class="QPushButton" name="pushButton_14">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="text">
+              <string>natürliche Wasserfläche</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" colspan="4">
+            <widget class="QPushButton" name="pushButton_19">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="text">
+              <string>Bäume oder Sträucher</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_trees_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0" colspan="4">
+            <widget class="QPushButton" name="pushButton_24">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="text">
+              <string>offener Boden / Acker</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_field_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_field_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_field_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
              </property>
             </widget>
            </item>

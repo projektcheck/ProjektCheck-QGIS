@@ -35,7 +35,7 @@ QGroupBox::title {
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
@@ -77,6 +77,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Bewohneranzahl schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -142,6 +146,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Arbeitsplätze schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</iconset>
           </property>
           <property name="flat">
            <bool>false</bool>

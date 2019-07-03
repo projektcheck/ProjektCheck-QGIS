@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
+    <width>480</width>
     <height>809</height>
    </rect>
   </property>
@@ -39,7 +39,7 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>438</width>
+         <width>462</width>
          <height>686</height>
         </rect>
        </property>
@@ -229,12 +229,20 @@ QGroupBox::title {
           <property name="text">
            <string>Wanderungssalden schätzen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="8" column="0">
          <widget class="QPushButton" name="pushButton_45">
           <property name="text">
            <string>geschätze Salden bearbeiten</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_statistics_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -466,6 +474,10 @@ QGroupBox::title {
           <property name="text">
            <string>geschätze Salden bearbeiten</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_statistics_1.png</iconset>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -475,6 +487,10 @@ QGroupBox::title {
          <widget class="QPushButton" name="pushButton_32">
           <property name="text">
            <string>Wanderungssalden schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -502,7 +518,7 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>438</width>
+         <width>462</width>
          <height>686</height>
         </rect>
        </property>
@@ -526,6 +542,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Grundsteuer schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -588,7 +608,7 @@ QGroupBox::title {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>418</width>
+             <width>442</width>
              <height>69</height>
             </rect>
            </property>
@@ -621,6 +641,10 @@ QGroupBox::title {
           <property name="text">
            <string>Einkommenssteuer schätzen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -633,6 +657,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Familienleistungsausgleich schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -680,6 +708,10 @@ QGroupBox::title {
              </property>
              <property name="text">
               <string>Hebesätze kontrollieren</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -742,7 +774,7 @@ QGroupBox::title {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>400</width>
+                <width>424</width>
                 <height>69</height>
                </rect>
               </property>
@@ -781,6 +813,10 @@ QGroupBox::title {
              <property name="text">
               <string>Gewerbesteuer (netto) schätzen</string>
              </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</iconset>
+             </property>
              <property name="checkable">
               <bool>false</bool>
              </property>
@@ -803,6 +839,10 @@ QGroupBox::title {
           <property name="text">
            <string>Umsatzsteuer schätzen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</iconset>
+          </property>
           <property name="checkable">
            <bool>false</bool>
           </property>
@@ -818,6 +858,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Gesamtsumme schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_sum_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_sum_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -835,20 +879,41 @@ QGroupBox::title {
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_40">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::RightToLeft</enum>
-          </property>
-          <property name="text">
-           <string>Hinweise zur Ergebnisinterpretation</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_40">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Hinweise zur Ergebnisinterpretation</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>1056</height>
+    <width>531</width>
+    <height>1017</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -19,7 +19,10 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Infrastrukturfolgekosten</string>
@@ -32,15 +35,15 @@ QGroupBox::title {
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>614</width>
-         <height>906</height>
+         <width>513</width>
+         <height>867</height>
         </rect>
        </property>
        <attribute name="label">
@@ -83,6 +86,9 @@ QGroupBox::title {
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
             </property>
@@ -91,9 +97,8 @@ QGroupBox::title {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-              <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-              <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -106,84 +111,6 @@ QGroupBox::title {
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_50">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Sammelstraße hinzufügen (innere Erschließung)</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_49">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Sammelstraße hinzufügen (äußere Erschließung)</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_48">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Trinkwasserleitung hinzufügen</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="pushButton_47">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -191,12 +118,16 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>Anliegerstraße hinzufügen (innere Erschließung)</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -210,19 +141,23 @@ QGroupBox::title {
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_46">
+         <widget class="QPushButton" name="pushButton_50">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
-           <string>Stromleitung hinzufügen</string>
+           <string>Sammelstraße hinzufügen (innere Erschließung)</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -243,12 +178,46 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>Anliegerstraße hinzufügen (äußere Erschließung)</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_49">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>Sammelstraße hinzufügen (äußere Erschließung)</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -269,38 +238,16 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>Kanal (Trennsystem) hinzufügen</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_43">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Kanal (nur Schmutzwasser) hinzufügen</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_seperate_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_seperate_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_seperate_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -321,12 +268,106 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>Kanal (Mischsystem) hinzufügen</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_combined_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_combined_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_combined_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_43">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>Kanal (nur Schmutzwasser) hinzufügen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_sewage_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_sewage_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_sewage_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_48">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>Trinkwasserleitung hinzufügen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_potable_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_potable_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_potable_1.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_46">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>Stromleitung hinzufügen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_powerline_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_powerline_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_powerline_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -347,12 +388,16 @@ QGroupBox::title {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>einzelne Zeichnungselemente löschen</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_3.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_delete_3.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -385,8 +430,8 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>614</width>
-         <height>906</height>
+         <width>513</width>
+         <height>867</height>
         </rect>
        </property>
        <attribute name="label">
@@ -437,9 +482,8 @@ QGroupBox::title {
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-              <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-              <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -464,7 +508,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_new_point_2.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_new_point_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_new_point_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -490,7 +535,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_point_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_edit_point_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_edit_point_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -516,7 +562,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_point_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_point_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_delete_point_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -548,9 +595,9 @@ QGroupBox::title {
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-132</y>
-         <width>597</width>
-         <height>1038</height>
+         <y>0</y>
+         <width>496</width>
+         <height>1044</height>
         </rect>
        </property>
        <attribute name="label">
@@ -560,7 +607,7 @@ QGroupBox::title {
         <item row="3" column="0">
          <widget class="QPushButton" name="pushButton_26">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -568,12 +615,16 @@ QGroupBox::title {
           <property name="text">
            <string>Gesamtkosten ermitteln</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="7" column="0">
          <widget class="QPushButton" name="pushButton_29">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -581,18 +632,26 @@ QGroupBox::title {
           <property name="text">
            <string>Kosten pro WE / APL vergleichen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_statistics_1.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="0" column="0">
          <widget class="QPushButton" name="pushButton_24">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="text">
            <string>Infrastrukturmengen bilanzieren</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -612,7 +671,7 @@ QGroupBox::title {
         <item row="1" column="0">
          <widget class="QPushButton" name="pushButton_25">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -622,6 +681,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>Kostenkennwerte kontrollieren</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -634,7 +697,7 @@ QGroupBox::title {
         <item row="4" column="0">
          <widget class="QPushButton" name="pushButton_27">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -648,6 +711,10 @@ QGroupBox::title {
           <property name="text">
            <string>Kostenaufteilung festlegen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_diagram_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_diagram_1.png</iconset>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -659,13 +726,17 @@ QGroupBox::title {
         <item row="6" column="0">
          <widget class="QPushButton" name="pushButton_28">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="text">
            <string>Kosten nach Kostenträgern auswerten</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</iconset>
           </property>
          </widget>
         </item>
@@ -741,7 +812,7 @@ QGroupBox::title {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
+             <width>459</width>
              <height>371</height>
             </rect>
            </property>
@@ -1047,8 +1118,8 @@ QGroupBox::title {
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-246</y>
-             <width>560</width>
+             <y>-127</y>
+             <width>459</width>
              <height>768</height>
             </rect>
            </property>
