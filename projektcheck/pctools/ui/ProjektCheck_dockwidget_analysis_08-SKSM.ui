@@ -19,7 +19,10 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Standortkonkurrenz und Supermärkte</string>
@@ -29,7 +32,7 @@ QGroupBox::title {
     <item>
      <widget class="QToolBox" name="toolBox">
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="geometry">
@@ -60,7 +63,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -86,9 +90,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/181112_Icons_toggle_visibility_off.png</normaloff>
-            <normalon>../../images/181112_Icons_toggle_visibility_on.png</normalon>
-            <disabledon>../../images/181112_Icons_toggle_visibility_on.png</disabledon>../../images/181112_Icons_toggle_visibility_off.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -313,6 +316,10 @@ QGroupBox::title {
           <property name="text">
            <string>Betrachtungsraum mit Märkten aus OSM ergänzen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</iconset>
+          </property>
          </widget>
         </item>
         <item row="3" column="1">
@@ -328,6 +335,10 @@ QGroupBox::title {
           </property>
           <property name="text">
            <string>befüllte Vorlage einlesen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -365,6 +376,10 @@ QGroupBox::title {
           <property name="text">
            <string>Erfassungsvorlage erzeugen</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</iconset>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -383,7 +398,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_delete_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_delete_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -409,7 +425,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_edit_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_edit_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_edit_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -442,7 +459,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -516,7 +534,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_edit_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_edit_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_edit_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -542,7 +561,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -568,7 +588,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_edit_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_edit_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_edit_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -594,7 +615,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_delete_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_market_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_delete_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -648,7 +670,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -674,7 +697,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_3.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_specify_3.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -700,7 +724,8 @@ QGroupBox::title {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../images/edit.png</normaloff>../../images/edit.png</iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_3.png</normaloff>
+            <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_delete_3.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -789,6 +814,10 @@ QGroupBox::title {
          <widget class="QPushButton" name="pushButton_2">
           <property name="text">
            <string>Projektwirkung schätzen</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
           </property>
          </widget>
         </item>
