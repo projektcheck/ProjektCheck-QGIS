@@ -1,16 +1,9 @@
 from pctools.base import (Domain, Params, Param, SpinBox, ComboBox,
                           Title, Seperator, LineEdit, Geopackage,
                           Slider)
+from pctools.utils.utils import clearLayout
 from pctools.definitions.basetable_definitions import (
     BuildingTypes, Industries, Assortments)
-
-def clearLayout(layout):
-    while layout.count():
-        child = layout.takeAt(0)
-        if child.widget():
-            child.widget().deleteLater()
-        elif child.layout() is not None:
-            clearLayout(child.layout())
 
 
 class ProjectDefinitions(Domain):

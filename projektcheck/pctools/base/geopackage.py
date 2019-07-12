@@ -1,5 +1,6 @@
 import os
 from osgeo import ogr
+from qgis.core import QgsGeometry
 import pandas as pd
 import numpy as np
 from typing import Union
@@ -38,6 +39,7 @@ class GeopackageTable(Table):
         self.workspace = workspace
         self.name = name
         self.where = where
+        self._fields = None
         if fields is not None:
             f = np.array(fields)
             isin = np.isin(f, np.array(self.fields))
@@ -45,7 +47,7 @@ class GeopackageTable(Table):
                 notin = ', '.join(f[isin != True])
                 raise ValueError(
                     f'fields "{notin}" are not in table {self.name}')
-        self._fields = fields
+            self._fields = fields
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
@@ -73,18 +75,25 @@ class GeopackageTable(Table):
 
     @property
     def fields(self):
+        if self._fields is not None:
+            return self._fields
         definition = self._layer.GetLayerDefn()
         fields = []
         for i in range(definition.GetFieldCount()):
             fields.append((definition.GetFieldDefn(i).GetName()))
         return fields
 
-    def add(self, row: Union[dict, list]):
+    def add(self, row: Union[dict, list], geom=None):
         if isinstance(row, list):
-            row = dict(zip(self.fields, row))
+            fields = self._fields if self._fields is not None else self.fields
+            row = dict(zip(fields, row))
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in row.items():
             feature.SetField(field, value)
+        if geom and isinstance(geom, QgsGeometry):
+            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+        if geom:
+            feature.SetGeometry(geom)
         self._layer.CreateFeature(feature)
 
     def delete(self, where=''):

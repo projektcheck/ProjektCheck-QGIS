@@ -2,10 +2,12 @@ import os
 import sys
 import json
 import shutil
-from qgis.core import QgsVectorLayer
+from qgis.core import (QgsVectorLayer, QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransform, QgsProject)
 
 from pctools.utils.singleton import Singleton
 from pctools.base import Geopackage
+from datetime import datetime
 
 
 APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
@@ -155,6 +157,9 @@ class Project:
     @property
     def areas(self):
         # ToDo: from disk
+        #table = ProjectManager().projectdata.get_table(
+            #'Teilflaechen_Plangebiet', 'Definition_Projekt')
+        #tfl_table = workspace.get_table('Teilflaechen_Plangebiet')
         return [u'fläche1', u'fläche2', u'fläche3']
 
     def close(self):
@@ -238,8 +243,30 @@ class ProjectManager:
                         target_folder)
         workspace = self.projectdata.get_workspace('Definition_Projekt')
         tfl_table = workspace.get_table('Teilflaechen_Plangebiet')
-        for feature in layer.getFeatures():
-            pass
+        source_crs = layer.crs()
+        target_crs = QgsCoordinateReferenceSystem(31467)
+        for i, feature in enumerate(layer.getFeatures()):
+            row = {
+                "id_teilflaeche": i + 1,
+                "Nutzungsart": 0,
+                "Name": f"Flaeche_{i+1}",
+                "Aufsiedlungsdauer": 1,
+                "validiert": 0,
+                "Beginn_Nutzung": datetime.now().year,
+                "ags_bkg": '',
+                "gemeinde_name": '',
+                "WE_gesamt": 0,
+                "AP_gesamt": 0,
+                "VF_gesamt": 0,
+                "ew": 0,
+                "Wege_gesamt":  0,
+                "Wege_MIV":  0
+            }
+            tr = QgsCoordinateTransform(
+                source_crs, target_crs, QgsProject.instance())
+            geom = feature.geometry()
+            geom.transform(tr)
+            tfl_table.add(row, geom=geom)
         return project
 
     def _get_projects(self):
