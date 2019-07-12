@@ -1,7 +1,9 @@
 import os
 from osgeo import ogr
 import pandas as pd
+import numpy as np
 from typing import Union
+from collections import OrderedDict
 
 from pctools.base import Database, Table, Workspace
 
@@ -21,24 +23,40 @@ class GeopackageWorkspace(Workspace):
         tables = [l.GetName() for l in self._conn]
         return tables
 
-    def get_table(self, name):
-        return GeopackageTable(name, self)
+    def get_table(self, name, where='', fields=None):
+        if name not in self.tables:
+            raise ValueError(f'layer {self.name} not found')
+        return GeopackageTable(name, self, where=where, fields=fields)
 
     def __repr__(self):
         return f"GeopackageWorkspace {self.name} {self.path}"
 
 
 class GeopackageTable(Table):
-    def __init__(self, name, workspace: GeopackageWorkspace, where=''):
+    def __init__(self, name, workspace: GeopackageWorkspace, where='',
+                 fields=None):
         self.workspace = workspace
         self.name = name
         self.where = where
+        if fields is not None:
+            f = np.array(fields)
+            isin = np.isin(f, np.array(self.fields))
+            if not np.all(isin):
+                notin = ', '.join(f[isin != True])
+                raise ValueError(
+                    f'fields "{notin}" are not in table {self.name}')
+        self._fields = fields
 
     def __next__(self):
-        self._cursor = self._layer.GetNextFeature()
-        if not self._cursor:
+        cursor = self._layer.GetNextFeature()
+        self._cursor = cursor
+        if not cursor:
             raise StopIteration
-        return self._cursor.items()
+        if self._fields is not None:
+            items = OrderedDict([(f, cursor[f]) for f in self._fields])
+        else:
+            items = OrderedDict(self._cursor.items())
+        return items
 
     @property
     def where(self):
@@ -49,6 +67,8 @@ class GeopackageTable(Table):
         self._cursor = None
         self._where = value
         self._layer = self.workspace._conn.GetLayerByName(self.name)
+        if self._layer is None:
+            raise ConnectionError(f'layer {self.name} not found')
         self._layer.SetAttributeFilter(value)
 
     @property
@@ -109,11 +129,12 @@ class Geopackage(Database):
         self.base_path = base_path
         self.read_only = read_only
 
-    def get_table(self, name: str, workspace: str = ''):
+    def get_table(self, name: str, workspace: str = '', fields=None, where=''):
         if not workspace:
             raise Exception('Geopackage backend does not support '
                             'tables without workspaces')
-        return self.get_workspace(workspace).get_table(name)
+        return self.get_workspace(workspace).get_table(
+            name, where=where, fields=fields)
 
     def get_workspace(self, name):
         return GeopackageWorkspace(name, self)

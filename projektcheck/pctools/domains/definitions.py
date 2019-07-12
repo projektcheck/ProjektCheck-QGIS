@@ -1,6 +1,7 @@
 from pctools.base import (Domain, Params, Param, SpinBox, ComboBox,
-                          Title, Seperator, LineEdit)
-from pctools.base import Geopackage
+                          Title, Seperator, LineEdit, Geopackage,
+                          Slider)
+from pctools.definitions.basetable_definitions import BuildingTypes
 
 def clearLayout(layout):
     while layout.count():
@@ -21,6 +22,8 @@ class ProjectDefinitions(Domain):
         for area in self.project.areas:
             self.ui.area_combo.addItem(area)
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
+
+        self.building_types = BuildingTypes(self.basedata)
 
         # ToDo: take from database
         #for typ in ['Wohnen', 'Gewerbe', 'Einzelhandel']:
@@ -53,18 +56,18 @@ class ProjectDefinitions(Domain):
         clearLayout(layout)
         self.type_params = Params(layout)
         if typ == 'Wohnen':
-            self.add_living_params()
+            self.setup_living_params()
         elif typ == 'Gewerbe':
-            self.add_industry_params()
+            self.setup_industry_params()
         elif typ == 'Einzelhandel':
-            self.add_retail_params()
+            self.setup_retail_params()
 
         self.type_params.show()
         self.type_params.changed.connect(lambda: print('params changed'))
 
-    def add_living_params(self):
-        #table = self.projectdata.get_table(
-            #'Wohnen_Struktur_und_Alterung', self.workspace)
+    def setup_living_params(self):
+        table = self.projectdata.get_table(
+            'Wohnen_Struktur_und_Alterung_WE', self.workspace)
 
         self.type_params.add(Title('Bezugszeitraum'))
         #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
@@ -77,36 +80,34 @@ class ProjectDefinitions(Domain):
                                         label='Dauer des Bezuges')
         self.type_params.add(Seperator())
 
-        self.type_params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
-                                   '(3 Jahre nach Bezug)'))
-        self.type_params.eh = Param(
-            0, SpinBox(), label='in Einfamilienhäusern')
-        self.type_params.zh = Param(
-            0, SpinBox(), label='in Zweifamilienhäusern')
-        self.type_params.rh = Param(
-            0, SpinBox(), label='in Reihenhäusern')
-        self.type_params.mfh = Param(
-            0, SpinBox(), label='in Mehrfamilienhäusern')
+        self.type_params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
+
+        for bt in self.building_types.values():
+            # ToDo: slider
+            self.type_params.add(Param(
+                0, Slider(maximum=500),
+                label=f'Anzahl WE in {bt.display_name}'),
+                name=bt.param_we
+            )
         self.type_params.add(Seperator())
 
-        self.type_params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
-        self.type_params.eh_we = Param(
-            0, SpinBox(), label='Anzahl WE in Einfamilienhäusern')
-        self.type_params.zh_we = Param(
-            0, SpinBox(), label='Anzahl WE in Zweifamilienhäusern')
-        self.type_params.rh_we = Param(
-            0, SpinBox(), label='Anzahl WE in Reihenhäusern')
-        self.type_params.mfh_we = Param(
-            0, SpinBox(), label='Anzahl WE in Mehrfamilienhäusern')
+        self.type_params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
+                                   '(3 Jahre nach Bezug)'))
+
+        for bt in self.building_types.values():
+            self.type_params.add(Param(
+                0, Slider(maximum=500), label=f'... in {bt.display_name}'),
+                name=bt.param_ew_je_we
+            )
 
     def save_living(self):
         pass
 
-    def add_industry_params(self):
+    def setup_industry_params(self):
         #table = self.projectdata.get_table('irgendwas', self.workspace)
         pass
 
-    def add_retail_params(self):
+    def setup_retail_params(self):
         #table = self.projectdata.get_table('irgendwas', self.workspace)
         pass
 

@@ -70,7 +70,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
     def setup_domains(self):
         '''setup the domain widgets'''
 
-        # ToDo: remove old domains and menu?
+        self.domains = []
 
         bewohner_arbeit = BewohnerArbeit(self.iface)
         self.domains.append(bewohner_arbeit)

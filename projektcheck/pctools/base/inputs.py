@@ -1,6 +1,6 @@
 from abc import ABC
 from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
-                          QLineEdit, QComboBox)
+                          QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout)
 from qgis.PyQt.QtCore import pyqtSignal
 
 
@@ -21,20 +21,43 @@ class InputType(QObject):
         return NotImplemented
 
 
-#class Slider(InputType):
-    #'''
-    #slider input
-    #'''
+class Slider(InputType):
+    '''
+    slider input
+    '''
 
-    #def __init__(self, minimum=0, maximum=100000000, step=1):
-        #super().__init__()
-        #self.minimum = minimum
-        #self.maximum = maximum
-        #self.step = step
+    def __init__(self, minimum=0, maximum=100000000, step=1, width=300):
+        super().__init__()
+        self.minimum = minimum
+        self.maximum = maximum
+        self.step = step
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setMinimum(minimum)
+        self.slider.setMaximum(maximum)
+        self.slider.setTickInterval(step)
+        self.slider.setMinimumWidth(width)
+        self.spinbox = QSpinBox()
+        self.spinbox.setMinimum(minimum)
+        self.spinbox.setMaximum(maximum)
+        self.spinbox.setSingleStep(step)
+        self.slider.valueChanged.connect(
+            lambda: self.spinbox.setValue(self.slider.value()))
+        self.spinbox.valueChanged.connect(
+            lambda: self.slider.setValue(self.spinbox.value()))
 
-    #def draw(self, layout):
-        #input = QSlider()
-        #layout.addWidget(input)
+    def set(self, value):
+        self.slider.setValue(value)
+        self.spinbox.setValue(value)
+
+    def draw(self, layout):
+        l = QHBoxLayout()
+        l.addWidget(self.slider)
+        l.addWidget(self.spinbox)
+        layout.addLayout(l)
+
+    @property
+    def value(self):
+        return self.slider.value()
 
 
 class ComboBox(InputType):
