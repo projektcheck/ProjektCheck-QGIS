@@ -18,6 +18,16 @@ class InputType(QObject):
 
     @property
     def value(self):
+        return self.get()
+
+    @value.setter
+    def value(self, value):
+        self.set(value)
+
+    def set(self, value):
+        return NotImplemented
+
+    def get(self):
         return NotImplemented
 
 
@@ -55,8 +65,7 @@ class Slider(InputType):
         l.addWidget(self.spinbox)
         layout.addLayout(l)
 
-    @property
-    def value(self):
+    def get(self):
         return self.slider.value()
 
 
@@ -70,8 +79,7 @@ class ComboBox(InputType):
     def set(self, value):
         self.input.setCurrentText(str(value))
 
-    @property
-    def value(self):
+    def get(self):
         return self.input.currentText()
 
 
@@ -83,8 +91,7 @@ class LineEdit(InputType):
     def set(self, value):
         self.input.setText(str(value))
 
-    @property
-    def value(self):
+    def get(self):
         return self.input.text()
 
 
@@ -100,8 +107,7 @@ class SpinBox(InputType):
     def set(self, value):
         self.input.setValue(value)
 
-    @property
-    def value(self):
+    def get(self):
         return self.input.value()
 
 

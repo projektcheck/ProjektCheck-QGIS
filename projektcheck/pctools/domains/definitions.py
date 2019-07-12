@@ -1,7 +1,8 @@
 from pctools.base import (Domain, Params, Param, SpinBox, ComboBox,
                           Title, Seperator, LineEdit, Geopackage,
                           Slider)
-from pctools.definitions.basetable_definitions import BuildingTypes
+from pctools.definitions.basetable_definitions import (
+    BuildingTypes, Industries, Assortments)
 
 def clearLayout(layout):
     while layout.count():
@@ -24,11 +25,9 @@ class ProjectDefinitions(Domain):
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
 
         self.building_types = BuildingTypes(self.basedata)
+        self.assortments = Assortments(self.basedata)
+        self.industries = Industries(self.basedata)
 
-        # ToDo: take from database
-        #for typ in ['Wohnen', 'Gewerbe', 'Einzelhandel']:
-            #self.ui.type_combo.addItem(typ)
-        #self.ui.type_combo.currentTextChanged.connect(self.setup_type)
         self.setup_type()
         self.setup_type_params()
 
@@ -83,7 +82,6 @@ class ProjectDefinitions(Domain):
         self.type_params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
         for bt in self.building_types.values():
-            # ToDo: slider
             self.type_params.add(Param(
                 0, Slider(maximum=500),
                 label=f'Anzahl WE in {bt.display_name}'),
@@ -104,12 +102,50 @@ class ProjectDefinitions(Domain):
         pass
 
     def setup_industry_params(self):
-        #table = self.projectdata.get_table('irgendwas', self.workspace)
-        pass
+        table = self.projectdata.get_table(
+            'Wohnen_Struktur_und_Alterung_WE', self.workspace)
+
+        self.type_params.add(Title('Bezugszeitraum'))
+        self.type_params.begin = Param(
+            2000, SpinBox(minimum=2000, maximum=2100),
+            label='Beginn des Bezuges'
+        )
+        self.type_params.period = Param(
+            1, SpinBox(minimum=1, maximum=100),
+            label='Dauer des Bezuges (Jahre, 1 = Bezug wird noch\n'
+            'im Jahr des Bezugsbeginns abgeschlossen)')
+        self.type_params.add(Seperator())
+
+        self.type_params.add(
+            Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
+
+        for branche in self.industries.values():
+            # ToDo: slider
+            self.type_params.add(Param(
+                0, Slider(maximum=100, width=200),
+                label=f'{branche.name}', unit='%'),
+                name=branche.param_gewerbenutzung
+            )
+        self.type_params.add(Seperator())
+
+        self.type_params.add(Title('Voraussichtliche Anzahl an Arbeitsplätzen'))
+
+        self.type_params.arbeitsplaetze_insgesamt = Param(
+            0, Slider(maximum=10000),
+            label='Schätzung der Zahl der Arbeitsplätze\n'
+            'nach Vollbezug (Summe über alle Branchen)'
+        )
 
     def setup_retail_params(self):
-        #table = self.projectdata.get_table('irgendwas', self.workspace)
-        pass
+        self.type_params.add(Title('Verkaufsfläche'))
+
+        for assortment in self.assortments.values():
+            # ToDo: slider
+            self.type_params.add(Param(
+                0, Slider(maximum=20000),
+                label=f'{assortment.name}', unit='m²'),
+                name=assortment.param_vfl
+            )
 
     def close(self):
         #if getattr(self, 'type_params', None):

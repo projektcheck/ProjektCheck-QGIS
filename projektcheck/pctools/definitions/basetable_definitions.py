@@ -46,7 +46,7 @@ class BuildingTypes(OrderedDict):
             self[values[0]] = BuildingType(*values)
 
 
-class Sortiment(object):
+class Assortment(object):
     """Description of a Sortiment"""
     def __init__(self,
                  typ_id,
@@ -70,21 +70,22 @@ class Sortiment(object):
         self.kurzname = kurzname
 
 
-class Sortimente(OrderedDict):
+class Assortments(OrderedDict):
     """Get From BaseTable Einzelhandel_Sortimente"""
-    def __init__(self, folders):
-        super(Sortimente, self).__init__()
-        table = folders.get_base_table(
-            'FGDB_Definition_Projekt_Tool.gdb', 'Einzelhandel_Sortimente')
+    def __init__(self, database):
+        super(Assortments, self).__init__()
         fields = ['ID_Sortiment_ProjektCheck', 'Name_Sortiment_ProjektCheck',
                   'param_vfl', 'Kurzname']
-        rows = arcpy.da.SearchCursor(table, fields)
-        for row in rows:
-            self[row[0]] = Sortiment(*row)
-        del rows
+        table = database.get_table(
+            'Einzelhandel_Sortimente', 'Definition_Projekt',
+            fields=fields
+        )
+        for row in table:
+            values = list(row.values())
+            self[values[0]] = Assortment(*values)
 
 
-class Branche(object):
+class Industry(object):
     def __init__(self, id, name, param_gewerbenutzung, default_gewerbenutzung):
         self.id = id
         self.name = name
@@ -94,18 +95,19 @@ class Branche(object):
         self.jobs_per_ha = 0
 
 
-class Branchen(OrderedDict):
+class Industries(OrderedDict):
     """Get From BaseTable Wohnen_Gebaeudetypen"""
-    def __init__(self, folders):
-        super(Branchen, self).__init__()
-        table = folders.get_base_table(
-            'FGDB_Definition_Projekt_Tool.gdb', 'Gewerbe_branchen')
+    def __init__(self, database):
+        super(Industries, self).__init__()
         fields = ['ID_Branche_ProjektCheck', 'Name_Branche_ProjektCheck',
                   'param_gewerbenutzung', 'default_gewerbenutzung']
-        rows = arcpy.da.SearchCursor(table, fields)
-        for row in rows:
-            self[row[0]] = Branche(*row)
-        del rows
+        table = database.get_table(
+            'Gewerbe_Branchen', 'Definition_Projekt',
+            fields=fields
+        )
+        for row in table:
+            values = list(row.values())
+            self[values[0]] = Industry(*values)
 
 
 class Netzart(object):

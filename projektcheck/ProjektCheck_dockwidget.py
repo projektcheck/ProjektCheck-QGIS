@@ -125,7 +125,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         active_project = self.project_manager.active_project
         if active_project:
             active_project.close()
-        if self.project_definitions:
+        if getattr(self, 'project_definitions', None):
             self.project_definitions.unload()
             del self.project_definitions
         for domain in self.domains:

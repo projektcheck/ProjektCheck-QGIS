@@ -23,7 +23,8 @@ class Param(QObject):
     '''
     changed = pyqtSignal()
 
-    def __init__(self, value, input: InputType = None, label: str = ''):
+    def __init__(self, value, input: InputType = None, label: str = '',
+                 unit=''):
         '''
         Parameters
         ----------
@@ -39,6 +40,9 @@ class Param(QObject):
         self._value = value
         self.label = label
         self.input = input
+        if input:
+            self.input.value = value
+        self.unit = unit
         self._value_label = QLabel(str(value))
 
     @property
@@ -76,8 +80,10 @@ class Param(QObject):
             self.input.draw(row)
         else:
             row.addWidget(self._value_label)
+        if self.unit:
+            unit_label = QLabel(self.unit)
+            row.addWidget(unit_label)
         layout.addLayout(row)
-
 
 
 class Dependency(ABC):
