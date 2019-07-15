@@ -8,29 +8,78 @@ from collections import OrderedDict
 
 from pctools.base import Database, Table, Workspace
 
+driver = ogr.GetDriverByName('GPKG')
+
+DATATYPES = {
+    int: ogr.OFTInteger64,
+    bool: ogr.OFSTBoolean,
+    float: ogr.OFTReal,
+    str: ogr.OFTString
+}
 
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
         self.name = name
         self.path = os.path.join(database.base_path, name).rstrip('\\')
-        if not os.path.exists(self.path) and not self.path.endswith('.gpkg'):
+        if not self.path.endswith('.gpkg'):
             self.path += '.gpkg'
         if not os.path.exists(self.path):
             raise FileNotFoundError(f'{self.path} does not exist')
         self._conn = ogr.Open(self.path, 0 if database.read_only else 1)
+
+    @classmethod
+    def create(cls, name, database, overwrite=False):
+        fn = os.path.join(database.base_path, name).rstrip('\\')
+        if not fn.endswith('.gpkg'):
+            fn += '.gpkg'
+        if overwrite and os.path.exists('test.gpkg'):
+            os.remove('test.gpkg')
+        driver.CreateDataSource(fn)
+        return GeopackageWorkspace(name, database)
 
     @property
     def tables(self):
         tables = [l.GetName() for l in self._conn]
         return tables
 
-    def get_table(self, name, where='', fields=None):
+    def get_table(self, name: str, where: str='', fields: list=None):
         if name not in self.tables:
-            raise ValueError(f'layer {self.name} not found')
+            raise ValueError(f'layer {name} not found')
         return GeopackageTable(name, self, where=where, fields=fields)
+
+    def create_table(self, name: str, fields: dict, geometry_type: str=None,
+                     overwrite: bool=False):
+        '''
+        geometry_type: str, optional
+            adds geometry to layer, wkb geometry type string
+        '''
+        if overwrite:
+            self._conn.DeleteLayer(name)
+        if geometry_type:
+            wkb_types = self.wkb_types
+            geometry_type = 'wkb' + geometry_type
+            if geometry_type not in wkb_types:
+                raise ValueError(
+                    f'geometry type {geometry_type} is unknown. Available'
+                    f'types are:\n {wkb_types}'
+                )
+            geometry_type = getattr(ogr, geometry_type)
+        layer = self._conn.CreateLayer(name, geom_type=geometry_type)
+        for fieldname, typ in fields.items():
+            dt = DATATYPES[typ]
+            field = ogr.FieldDefn(fieldname, dt)
+            layer.CreateField(field)
+        return self.get_table(name)
+
+    @property
+    def wkb_types(self):
+        return [a for a in ogr.__dict__.keys() if a.startswith('wkb')]
 
     def __repr__(self):
         return f"GeopackageWorkspace {self.name} {self.path}"
+
+    def close(self):
+        self._conn = None
 
 
 class GeopackageTable(Table):
@@ -78,14 +127,16 @@ class GeopackageTable(Table):
         if self._fields is not None:
             return self._fields
         definition = self._layer.GetLayerDefn()
-        fields = []
+        fields = {}
         for i in range(definition.GetFieldCount()):
-            fields.append((definition.GetFieldDefn(i).GetName()))
+            defn = definition.GetFieldDefn(i)
+            fields[defn.GetName()] = defn.GetTypeName()
         return fields
 
     def add(self, row: Union[dict, list], geom=None):
         if isinstance(row, list):
-            fields = self._fields if self._fields is not None else self.fields
+            fields = self._fields if self._fields is not None \
+                else self.fields.keys()
             row = dict(zip(fields, row))
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in row.items():
@@ -137,6 +188,9 @@ class Geopackage(Database):
         super().__init__()
         self.base_path = base_path
         self.read_only = read_only
+
+    def create_workspace(self, name, overwrite=False):
+        return GeopackageWorkspace.create(name, self, overwrite=overwrite)
 
     def get_table(self, name: str, workspace: str = '', fields=None, where=''):
         if not workspace:

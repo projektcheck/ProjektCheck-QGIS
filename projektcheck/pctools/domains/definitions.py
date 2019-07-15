@@ -4,40 +4,53 @@ from pctools.base import (Domain, Params, Param, SpinBox, ComboBox,
 from pctools.utils.utils import clearLayout
 from pctools.definitions.basetable_definitions import (
     BuildingTypes, Industries, Assortments)
+from pctools.definitions.constants import Nutzungsart
 
 
 class ProjectDefinitions(Domain):
     """"""
     ui_label = 'Projekt-Definitionen'
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
-    workspace = 'Definition_Projekt'
+    _workspace = 'Definition_Projekt'
 
     def setupUi(self):
-        for area in self.project.areas:
-            self.ui.area_combo.addItem(area)
+        self.workspace = self.project.data.get_workspace(self._workspace)
+        self.areas_table = self.project.data.get_table(
+            'Teilflaechen_Plangebiet', self.workspace)
+        #for area in self.project.areas:
+            #self.ui.area_combo.addItem(area, id)
+        for area in self.areas_table:
+            self.ui.area_combo.addItem(area['Name'], area['id'])
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
 
         self.building_types = BuildingTypes(self.basedata)
         self.assortments = Assortments(self.basedata)
         self.industries = Industries(self.basedata)
 
+        self.area_id = None
         self.setup_type()
         self.setup_type_params()
 
     def change_area(self, area):
-        pass
+
+        self.setup_type()
+        self.setup_type_params()
 
     def setup_type(self):
         layout = self.ui.parameter_group.layout()
         self.params = Params(layout)
         self.params.name = Param('fläche1', LineEdit(), label='Name')
         self.params.area = Param(0, label='Größe')
+        #type_names = [n.capitalize() for n in Nutzungsart._member_names_]
         self.params.typ = Param(
             'Wohnen', ComboBox(['Wohnen', 'Gewerbe', 'Einzelhandel']),
             label='Nutzungsart'
         )
         self.params.show()
-        self.params.changed.connect(self.setup_type_params)
+        def type_changed():
+            ##
+            self.setup_type_params
+        self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
         typ = self.params.typ.value
@@ -58,8 +71,7 @@ class ProjectDefinitions(Domain):
         self.type_params.changed.connect(lambda: print('params changed'))
 
     def setup_living_params(self):
-        table = self.projectdata.get_table(
-            'Wohnen_Struktur_und_Alterung_WE', self.workspace)
+        table = self.workspace.get_table('Wohnen_Struktur_und_Alterung_WE')
 
         self.type_params.add(Title('Bezugszeitraum'))
         #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
@@ -77,7 +89,7 @@ class ProjectDefinitions(Domain):
         for bt in self.building_types.values():
             self.type_params.add(Param(
                 0, Slider(maximum=500),
-                label=f'Anzahl WE in {bt.display_name}'),
+                label=f'... in {bt.display_name}'),
                 name=bt.param_we
             )
         self.type_params.add(Seperator())
@@ -95,8 +107,6 @@ class ProjectDefinitions(Domain):
         pass
 
     def setup_industry_params(self):
-        table = self.projectdata.get_table(
-            'Wohnen_Struktur_und_Alterung_WE', self.workspace)
 
         self.type_params.add(Title('Bezugszeitraum'))
         self.type_params.begin = Param(

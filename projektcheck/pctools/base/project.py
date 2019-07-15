@@ -14,7 +14,8 @@ APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
 
 DEFAULT_SETTINGS = {
     'active_project': u'',
-    'project_path': os.path.join(APPDATA_PATH, 'Projekte')
+    'project_path': os.path.join(APPDATA_PATH, 'Projekte'),
+    'epsg': 25832
 }
 
 class Settings:
