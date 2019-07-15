@@ -96,7 +96,7 @@ class Table(ABC):
         '''
         return NotImplemented
 
-    def to_pandas(self):
+    def as_pandas(self):
         '''
         override
 

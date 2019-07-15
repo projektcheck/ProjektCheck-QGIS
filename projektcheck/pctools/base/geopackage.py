@@ -114,7 +114,7 @@ class GeopackageTable(Table):
             self._cursor.SetField(field, value)
             self._layer.SetFeature(self._cursor)
 
-    def to_pandas(self):
+    def as_pandas(self):
         rows = []
         for row in self:
             rows.append(row.values())

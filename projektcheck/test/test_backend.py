@@ -40,7 +40,7 @@ class GeopackageTest(unittest.TestCase):
         assert self.table.count == 2
 
     def test_pandas(self):
-        a = self.table.to_pandas()
+        a = self.table.as_pandas()
 
     def test_where(self):
         assert self.table.count == 2

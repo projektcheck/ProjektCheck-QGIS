@@ -3,7 +3,7 @@ import os
 import subprocess
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog
+from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
 
 from pctools.base import PCDockWidget, SettingsDialog
 from pctools.domains import (BewohnerArbeit, ProjectDefinitions,
@@ -40,6 +40,23 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 self.ui.project_combo.addItem(project.name, project)
                 self.project_manager.active_project = project
         self.ui.create_project_button.clicked.connect(create_project)
+
+        def remove_project():
+            project = self.project_manager.active_project
+            if not project:
+                return
+            reply = QMessageBox.question(
+                self.ui, 'Projekt entfernen',
+                f'Soll das Projekt "{project.name}" entfernt werden?\n'
+                '(alle Projektdaten werden gelöscht)',
+                 QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                idx = self.ui.project_combo.currentIndex()
+                self.ui.project_combo.setCurrentIndex(0)
+                self.ui.project_combo.removeItem(idx)
+                self.project_manager.active_project = ''
+                project.remove()
+        self.ui.remove_project_button.clicked.connect(remove_project)
 
         self.setup_projects()
 

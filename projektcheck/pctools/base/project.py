@@ -151,16 +151,21 @@ class Project:
     areas : list
         list of names of project areas
     '''
-    def __init__(self, name):
+    def __init__(self, name, path=''):
         self.name = name
+        path = path or settings.project_path
+        self.path = os.path.join(path, name)
+        self.data = Geopackage(base_path=self.path)
 
     @property
     def areas(self):
-        # ToDo: from disk
-        #table = ProjectManager().projectdata.get_table(
-            #'Teilflaechen_Plangebiet', 'Definition_Projekt')
-        #tfl_table = workspace.get_table('Teilflaechen_Plangebiet')
-        return [u'fläche1', u'fläche2', u'fläche3']
+        ws = self.data.get_workspace('Definition_Projekt')
+        area_df = ws.get_table('Teilflaechen_Plangebiet').as_pandas()
+        return area_df['Name'].values
+
+    def remove(self):
+        self.close()
+        shutil.rmtree(self.path)
 
     def close(self):
         pass
@@ -194,8 +199,8 @@ class ProjectManager:
         if missing:
             raise Exception(f'{missing} have to be set')
 
-        self.basedata = Geopackage(base_path=settings.BASEDATA_PATH, read_only=True)
-        self.projectdata = Geopackage()
+        self.basedata = Geopackage(base_path=settings.BASEDATA_PATH,
+                                   read_only=True)
         self.load()
 
     def load(self):
@@ -211,15 +216,9 @@ class ProjectManager:
                     pass
             if not os.path.exists(project_path):
                 settings.project_path = project_path = ''
-            if settings.active_project:
-                self._set_projectdata(settings.active_project)
         for name in self._get_projects():
             project = Project(name)
             self._projects[project.name] = project
-
-    def _set_projectdata(self, projectname):
-        self.projectdata.base_path = os.path.join(
-            settings.project_path, projectname)
 
     def create_project(self, name):
         '''
@@ -238,10 +237,9 @@ class ProjectManager:
         layer = QgsVectorLayer(shape, "testlayer_shp", "ogr")
         project = Project(name)
         self._projects[project.name] = project
-        self._set_projectdata(name)
         shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
                         target_folder)
-        workspace = self.projectdata.get_workspace('Definition_Projekt')
+        workspace = project.data.get_workspace('Definition_Projekt')
         tfl_table = workspace.get_table('Teilflaechen_Plangebiet')
         source_crs = layer.crs()
         target_crs = QgsCoordinateReferenceSystem(31467)
@@ -269,6 +267,11 @@ class ProjectManager:
             tfl_table.add(row, geom=geom)
         return project
 
+    def remove_project(self, project):
+        #self.active_project = None
+        project.remove()
+
+
     def _get_projects(self):
         base_path = settings.project_path
         if not os.path.exists(base_path):
@@ -289,9 +292,11 @@ class ProjectManager:
 
     @active_project.setter
     def active_project(self, project):
-        self.settings.active_project = project.name
-        self.projectdata.base_path = os.path.join(
-            settings.project_path, project.name)
+        self.settings.active_project = project.name if project else ''
+
+    @property
+    def projectdata(self):
+        return self.active_project.data
 
 
 
