@@ -24,8 +24,9 @@ class GeopackageTest(unittest.TestCase):
             'name': str,
             'value': float
         }
-        cls.table = cls.workspace.create_table('testtable', fields,
-                                                 geometry_type='Polygon')
+        cls.table = cls.workspace.create_table(
+            'testtable', fields, geometry_type='Polygon',
+            defaults={'id': -1, 'name': '', 'value': 0})
         print(cls.table.fields)
         cls.table.add({
             'id': 1,

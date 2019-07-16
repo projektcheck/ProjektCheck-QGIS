@@ -20,21 +20,31 @@ DATATYPES = {
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
         self.name = name
-        self.path = os.path.join(database.base_path, name).rstrip('\\')
-        if not self.path.endswith('.gpkg'):
-            self.path += '.gpkg'
+        self.path = self.fn(database, name)
         if not os.path.exists(self.path):
             raise FileNotFoundError(f'{self.path} does not exist')
         self._conn = ogr.Open(self.path, 0 if database.read_only else 1)
 
-    @classmethod
-    def create(cls, name, database, overwrite=False):
+    @staticmethod
+    def fn(database, name):
         fn = os.path.join(database.base_path, name).rstrip('\\')
         if not fn.endswith('.gpkg'):
             fn += '.gpkg'
-        if overwrite and os.path.exists('test.gpkg'):
-            os.remove('test.gpkg')
-        driver.CreateDataSource(fn)
+        return fn
+
+    @classmethod
+    def get_or_create(cls, name, database):
+        path = cls.fn(database, name)
+        if not os.path.exists(path):
+            cls.create(name, database)
+        return GeopackageWorkspace(name, database)
+
+    @classmethod
+    def create(cls, name, database, overwrite=False):
+        path = cls.fn(database, name)
+        if overwrite and os.path.exists(path):
+            os.remove(path)
+        driver.CreateDataSource(path)
         return GeopackageWorkspace(name, database)
 
     @property
@@ -44,17 +54,18 @@ class GeopackageWorkspace(Workspace):
 
     def get_table(self, name: str, where: str='', fields: list=None):
         if name not in self.tables:
-            raise ValueError(f'layer {name} not found')
+            raise FileNotFoundError(f'layer {name} not found')
         return GeopackageTable(name, self, where=where, fields=fields)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
-                     overwrite: bool=False):
+                     overwrite: bool=False, defaults: dict={}):
         '''
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
         '''
         if overwrite:
             self._conn.DeleteLayer(name)
+        kwargs = {}
         if geometry_type:
             wkb_types = self.wkb_types
             geometry_type = 'wkb' + geometry_type
@@ -64,12 +75,13 @@ class GeopackageWorkspace(Workspace):
                     f'types are:\n {wkb_types}'
                 )
             geometry_type = getattr(ogr, geometry_type)
-        layer = self._conn.CreateLayer(name, geom_type=geometry_type)
+            kwargs['geom_type'] = geometry_type
+        layer = self._conn.CreateLayer(name, **kwargs)
         for fieldname, typ in fields.items():
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
             layer.CreateField(field)
-        return self.get_table(name)
+        return GeopackageTable(name, self, defaults=defaults)
 
     @property
     def wkb_types(self):
@@ -83,15 +95,16 @@ class GeopackageWorkspace(Workspace):
 
 
 class GeopackageTable(Table):
-    def __init__(self, name, workspace: GeopackageWorkspace, where='',
-                 fields=None):
+    def __init__(self, name, workspace: GeopackageWorkspace, where: str='',
+                 fields: list=None, defaults: dict={}):
         self.workspace = workspace
         self.name = name
         self.where = where
         self._fields = None
+        self.defaults = defaults
         if fields is not None:
             f = np.array(fields)
-            isin = np.isin(f, np.array(self.fields))
+            isin = np.isin(f, np.array(list(self.fields.keys())))
             if not np.all(isin):
                 notin = ', '.join(f[isin != True])
                 raise ValueError(
@@ -138,6 +151,9 @@ class GeopackageTable(Table):
             fields = self._fields if self._fields is not None \
                 else self.fields.keys()
             row = dict(zip(fields, row))
+        for field, default in self.defaults.items():
+            if field not in row:
+                row[field] = default
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in row.items():
             feature.SetField(field, value)

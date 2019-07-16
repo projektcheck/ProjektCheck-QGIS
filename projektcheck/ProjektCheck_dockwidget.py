@@ -36,6 +36,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             name, ok = QInputDialog.getText(
                 self.ui, 'Neues Projekt erstellen', 'Projektname')
             if ok:
+                project_names = [p.name for p in self.project_manager.projects]
+                if name in project_names:
+                    QMessageBox.warning(
+                        self.ui,
+                        'Fehler',
+                        f'Ein Projekt mit dem Namen {name} existiert bereits!\n'
+                        'Projektnamen müssen einzigartig sein.'
+                    )
+                    return
                 project = self.project_manager.create_project(name)
                 self.ui.project_combo.addItem(project.name, project)
                 self.project_manager.active_project = project
@@ -55,7 +64,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 self.ui.project_combo.setCurrentIndex(0)
                 self.ui.project_combo.removeItem(idx)
                 self.project_manager.active_project = ''
-                project.remove()
+                self.project_manager.remove(project)
         self.ui.remove_project_button.clicked.connect(remove_project)
 
         self.setup_projects()

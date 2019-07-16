@@ -2,11 +2,12 @@ import os
 import sys
 import json
 import shutil
+from collections import OrderedDict
 from qgis.core import (QgsVectorLayer, QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsProject)
 
 from pctools.utils.singleton import Singleton
-from pctools.base import Geopackage
+from pctools.base import Geopackage, GeopackageWorkspace, GeopackageTable
 from datetime import datetime
 
 
@@ -14,8 +15,7 @@ APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
 
 DEFAULT_SETTINGS = {
     'active_project': u'',
-    'project_path': os.path.join(APPDATA_PATH, 'Projekte'),
-    'epsg': 25832
+    'project_path': os.path.join(APPDATA_PATH, 'Projekte')
 }
 
 class Settings:
@@ -171,7 +171,7 @@ class Project:
     def close(self):
         pass
 
-    def __str__(self):
+    def __repr__(self):
         return f'Project {self.name}'
 
 
@@ -189,7 +189,7 @@ class ProjectManager:
     __metaclass__ = Singleton
     _projects = {}
     settings = settings
-    _required_settings = ['BASE_PATH', 'BASEDATA_PATH', 'TEMPLATE_PATH']
+    _required_settings = ['BASEDATA', 'EPSG']
 
     def __init__(self):
         # check settings
@@ -200,8 +200,6 @@ class ProjectManager:
         if missing:
             raise Exception(f'{missing} have to be set')
 
-        self.basedata = Geopackage(base_path=settings.BASEDATA_PATH,
-                                   read_only=True)
         self.load()
 
     def load(self):
@@ -235,31 +233,41 @@ class ProjectManager:
         target_folder = os.path.join(settings.project_path, name)
         shape = os.path.join(settings.TEMPLATE_PATH, 'projektflaechen',
                              'projektflaechen_template.shp')
-        layer = QgsVectorLayer(shape, "testlayer_shp", "ogr")
+        layer = QgsVectorLayer(shape, 'testlayer_shp', 'ogr')
         project = Project(name)
         self._projects[project.name] = project
-        shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
-                        target_folder)
-        workspace = project.data.get_workspace('Definition_Projekt')
-        tfl_table = workspace.get_table('Teilflaechen_Plangebiet')
+        #shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
+                        #target_folder)
+        if not os.path.exists(target_folder):
+            os.mkdir(target_folder)
+        workspace = project.data.create_workspace('project_definition')
         source_crs = layer.crs()
-        target_crs = QgsCoordinateReferenceSystem(31467)
+        target_crs = QgsCoordinateReferenceSystem(self.settings.epsg)
+        fields = {
+            'id': int,
+            'type_of_use': int,
+            'name': str,
+            'validated': int,
+            'aufsiedlungsdauer': int,
+            'begin_usage': int,
+            'ags_bkg': str,
+            'gemeinde_name': str,
+            'we_total': int,
+            'ap_total': int,
+            'vf_total': int,
+            'inhabitants': int,
+            'trips_total':  int,
+            'trips_miv':  int
+        }
+        tfl_table = workspace.create_table('project_areas', fields)
         for i, feature in enumerate(layer.getFeatures()):
             row = {
-                "id_teilflaeche": i + 1,
-                "Nutzungsart": 0,
-                "Name": f"Flaeche_{i+1}",
-                "Aufsiedlungsdauer": 1,
-                "validiert": 0,
-                "Beginn_Nutzung": datetime.now().year,
-                "ags_bkg": '',
-                "gemeinde_name": '',
-                "WE_gesamt": 0,
-                "AP_gesamt": 0,
-                "VF_gesamt": 0,
-                "ew": 0,
-                "Wege_gesamt":  0,
-                "Wege_MIV":  0
+                'id': i + 1,
+                'type_of_use': 0,
+                'name': f'Flaeche_{i+1}',
+                'validated': 0,
+                'aufsiedlungsdauer': 1,
+                'begin_usage': datetime.now().year,
             }
             tr = QgsCoordinateTransform(
                 source_crs, target_crs, QgsProject.instance())
@@ -270,8 +278,8 @@ class ProjectManager:
 
     def remove_project(self, project):
         #self.active_project = None
+        del self._projects[project.name]
         project.remove()
-
 
     def _get_projects(self):
         base_path = settings.project_path
@@ -283,7 +291,11 @@ class ProjectManager:
 
     @property
     def projects(self):
-        return self._projects.values()
+        return self._projects.values
+
+    @property
+    def basedata(self):
+        return self.settings.BASEDATA
 
     @property
     def active_project(self):
@@ -295,10 +307,47 @@ class ProjectManager:
     def active_project(self, project):
         self.settings.active_project = project.name if project else ''
 
-    @property
-    def projectdata(self):
-        return self.active_project.data
 
+class ProjectTable:
+    ''''''
+    workspace = None
+    fields = []
+
+    @classmethod
+    def get(cls, where: str='', project=None):
+        project = project or ProjectManager().active_project
+        database = Geopackage(project.path, read_only=False)
+        workspace_name = getattr(cls.Meta, 'workspace', 'default')
+        workspace = GeopackageWorkspace.get_or_create(
+            cls.Meta.workspace, database)
+        name = getattr(cls.Meta, 'name', cls.__name__.lower())
+        try:
+            table = workspace.get_table(name)
+        except FileNotFoundError:
+            table = cls._create(name, workspace)
+        return table
+
+    @classmethod
+    def _create(cls, name, workspace):
+        fields = OrderedDict()
+        defaults = OrderedDict()
+        for k, v in cls.__dict__.items():
+            if not isinstance(v, Field):
+                continue
+            fields[k] = v.type
+            defaults[k] = v.default
+        workspace.create_table(name, fields)
+        return GeopackageTable(name, workspace, defaults=defaults)
+
+    class Meta:
+        ''''''
+
+
+class Field:
+    ''''''
+    def __init__(self, type, default=None):
+        self.type = type
+        self.default = default
 
 
 

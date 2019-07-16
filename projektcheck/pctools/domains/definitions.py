@@ -11,16 +11,15 @@ class ProjectDefinitions(Domain):
     """"""
     ui_label = 'Projekt-Definitionen'
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
-    _workspace = 'Definition_Projekt'
+    _workspace = 'project_definition'
 
     def setupUi(self):
         self.workspace = self.project.data.get_workspace(self._workspace)
-        self.areas_table = self.project.data.get_table(
-            'Teilflaechen_Plangebiet', self.workspace)
+        self.areas_table = self.workspace.get_table('project_areas')
         #for area in self.project.areas:
             #self.ui.area_combo.addItem(area, id)
         for area in self.areas_table:
-            self.ui.area_combo.addItem(area['Name'], area['id'])
+            self.ui.area_combo.addItem(area['name'], area['id'])
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
 
         self.building_types = BuildingTypes(self.basedata)
@@ -71,7 +70,7 @@ class ProjectDefinitions(Domain):
         self.type_params.changed.connect(lambda: print('params changed'))
 
     def setup_living_params(self):
-        table = self.workspace.get_table('Wohnen_Struktur_und_Alterung_WE')
+        #table = self.workspace.get_table('Wohnen_Struktur_und_Alterung_WE')
 
         self.type_params.add(Title('Bezugszeitraum'))
         #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
