@@ -54,12 +54,10 @@ class GeopackageWorkspace(Workspace):
         tables = [l.GetName() for l in self._conn]
         return tables
 
-    def get_table(self, name: str, where: str='', fields: list=None,
-                  defaults: dict={}):
+    def get_table(self, name: str, fields: list=None):
         if name not in self.tables:
             raise FileNotFoundError(f'layer {name} not found')
-        return GeopackageTable(name, self, where=where, fields=fields,
-                               defaults=defaults)
+        return GeopackageTable(name, self, fields=fields)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
                      overwrite: bool=False, defaults: dict={}):
@@ -67,7 +65,7 @@ class GeopackageWorkspace(Workspace):
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
         '''
-        if overwrite:
+        if overwrite and name in self.tables:
             self._conn.DeleteLayer(name)
         kwargs = {}
         if geometry_type:
@@ -85,7 +83,7 @@ class GeopackageWorkspace(Workspace):
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
             layer.CreateField(field)
-        return self.get_table(name, defaults=defaults)
+        return self.get_table(name)
 
     @property
     def wkb_types(self):
@@ -99,13 +97,15 @@ class GeopackageWorkspace(Workspace):
 
 
 class GeopackageTable(Table):
-    def __init__(self, name, workspace: GeopackageWorkspace, where: str='',
-                 fields: list=None, defaults: dict={}):
+    def __init__(self, name, workspace: GeopackageWorkspace,
+                 fields: list=None):
         self.workspace = workspace
         self.name = name
-        self.where = where
+        self._where = None
         self._fields = None
-        self.defaults = defaults
+        self._layer = self.workspace._conn.GetLayerByName(self.name)
+        if self._layer is None:
+            raise ConnectionError(f'layer {self.name} not found')
         if fields is not None:
             f = np.array(fields)
             isin = np.isin(f, np.array(list(self.fields.keys())))
@@ -114,6 +114,26 @@ class GeopackageTable(Table):
                 raise ValueError(
                     f'fields "{notin}" are not in table {self.name}')
             self._fields = fields
+
+    def filter(self, **kwargs):
+        '''
+        supported: __in, __gt, __lt
+        '''
+        terms = []
+        for k, v in kwargs.items():
+            if '__' not in k:
+                if k not in self.fields:
+                    raise ValueError(f'{k} not in fields')
+                terms.append(f'{k} = {v}')
+            elif k.endswith('__in'):
+                vstr = [str(i) for i in v]
+                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
+            elif k.endswith('__gt'):
+                terms.append(f'"{k.strip("__gt")}" > {v}')
+            elif k.endswith('__lt'):
+                terms.append(f'"{k.strip("__lt")}" < {v}')
+        # set where clause, clears filter if no kwargs
+        self.where = ' and '.join(terms)
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
@@ -135,8 +155,6 @@ class GeopackageTable(Table):
         self._cursor = None
         self._where = value
         self._layer = self.workspace._conn.GetLayerByName(self.name)
-        if self._layer is None:
-            raise ConnectionError(f'layer {self.name} not found')
         self._layer.SetAttributeFilter(value)
 
     @property
@@ -154,10 +172,6 @@ class GeopackageTable(Table):
         fields = self.fields.keys()
         if isinstance(row, list):
             row = dict(zip(fields, row))
-        # set missing fields to default (if in default)
-        for field, default in self.defaults.items():
-            if field not in row:
-                row[field] = default
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in row.items():
             if field not in fields:
@@ -170,10 +184,10 @@ class GeopackageTable(Table):
             feature.SetGeometry(geom)
         self._layer.CreateFeature(feature)
 
-    def delete(self, where=''):
+    def delete(self, **kwargs):
         '''warning: resets cursor'''
         prev_where = self._where
-        self.where = where
+        self.filter(**kwargs)
         i = 0
         for feature in self._layer:
             self._layer.DeleteFeature(feature.GetFID())
@@ -215,12 +229,14 @@ class Geopackage(Database):
     def create_workspace(self, name, overwrite=False):
         return GeopackageWorkspace.create(name, self, overwrite=overwrite)
 
-    def get_table(self, name: str, workspace: str = '', fields=None, where=''):
+    def get_table(self, name: str, workspace: str = '', fields=None):
         if not workspace:
             raise Exception('Geopackage backend does not support '
                             'tables without workspaces')
-        return self.get_workspace(workspace).get_table(
-            name, where=where, fields=fields)
+        return self.get_workspace(workspace).get_table(name, fields=fields)
+
+    def get_or_create_workspace(self, name):
+        return GeopackageWorkspace.get_or_create(name, self)
 
     def get_workspace(self, name):
         return GeopackageWorkspace(name, self)

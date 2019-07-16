@@ -41,8 +41,11 @@ class ProjectTest(unittest.TestCase):
         cls.project_manager.remove_project(cls.project)
 
     def test_project_table(self):
-        table = TestProjectTable.get()
-        print(table)
+        table = TestProjectTable.get_table()
+
+    def test_features(self):
+        feature = TestProjectTable.add(project=self.project, id=1, name='')
+        feature.save()
 
 
 if __name__ == "__main__":
