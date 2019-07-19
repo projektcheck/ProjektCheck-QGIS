@@ -39,7 +39,7 @@ class BuildingTypes(OrderedDict):
                   'param_ew_je_we', 'display_name', 'default_ew_je_we']
         table = database.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt',
-            fields=fields
+            field_names=fields
         )
         for row in table:
             values = list(row.values())
@@ -78,7 +78,7 @@ class Assortments(OrderedDict):
                   'param_vfl', 'Kurzname']
         table = database.get_table(
             'Einzelhandel_Sortimente', 'Definition_Projekt',
-            fields=fields
+            field_names=fields
         )
         for row in table:
             values = list(row.values())
@@ -103,7 +103,7 @@ class Industries(OrderedDict):
                   'param_gewerbenutzung', 'default_gewerbenutzung']
         table = database.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt',
-            fields=fields
+            field_names=fields
         )
         for row in table:
             values = list(row.values())

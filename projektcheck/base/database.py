@@ -4,6 +4,102 @@ from typing import Union
 from projektcheck.utils.singleton import SingletonABCMeta
 
 
+class Field:
+    ''''''
+    def __init__(self, name, type, default=None):
+        self.name = name
+        self.type = type
+        self.default = default
+
+
+class Feature:
+    def __init__(self, table, fields, id=None):
+        self.id = id
+        self.fields = {}
+        for field in fields:
+            self.fields[field]
+        self.fields = fields
+        self.values = {}
+
+    def __getattr__(self, k):
+        if k in self.fields:
+            return
+        return self.__dict__[v]
+
+    def save(self):
+        pass
+
+    def delete(self):
+        #self._layer.DeleteFeature(id)
+        pass
+
+
+class FeatureCollection:
+    def __init__(self, table, fields):
+        self._table = table
+        self.it = 0
+        self.fields = fields
+
+    def __iter__(self):
+        self.it += 1
+        return self
+
+    def __next__(self):
+        if self.it > self._table.count():
+            self.it = 0
+            raise StopIteration
+        else:
+            row = self._table.get_row(self.it)
+            feature = 0
+
+    def __len__(self):
+        return len(self._table)
+
+    def delete(self):
+        pass
+
+    def get(cls, **kwargs):
+        #feat = self._layer.GetFeature(id)
+        #feature = Feature(self, fields)
+        #return feature
+        pass
+
+    def add(cls, project=None, **kwargs):
+        #project = project or ProjectManager().active_project
+        #table = cls.get_table(project=project)
+        #fields = OrderedDict([
+            #(k, f) for k, f in cls.__dict__.items() if isinstance(f, Field)
+        #])
+        #feature = Feature(table, fields)
+        #return feature
+        pass
+
+
+    def filter(self, **kwargs):
+        '''
+        filtering django style
+        supported: __in, __gt, __lt
+        '''
+        terms = []
+        _prev = self._table.where
+        for k, v in kwargs.items():
+            if '__' not in k:
+                if k not in self.fields:
+                    raise ValueError(f'{k} not in fields')
+                terms.append(f'{k} = {v}')
+            elif k.endswith('__in'):
+                vstr = [str(i) for i in v]
+                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
+            elif k.endswith('__gt'):
+                terms.append(f'"{k.strip("__gt")}" > {v}')
+            elif k.endswith('__lt'):
+                terms.append(f'"{k.strip("__lt")}" < {v}')
+        where = ' and '.join(terms)
+        if _prev:
+            where = _prev + where
+        table = self._table.__class__(where=where)
+
+
 class Database(ABC):
     '''
     abstract class for managing connection to a database
@@ -95,6 +191,17 @@ class Table(ABC):
             ordered field names (column names)
         '''
         return NotImplemented
+
+    @property
+    def features(self):
+        '''
+        override to cache features
+
+        Returns
+        -------
+        features : FeatureCollection
+        '''
+        return FeatureCollection(self)
 
     def as_pandas(self):
         '''

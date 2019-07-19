@@ -5,7 +5,7 @@ import shutil
 from collections import OrderedDict
 
 from projektcheck.utils.singleton import Singleton
-from projektcheck.base import Geopackage, GeopackageWorkspace, GeopackageTable
+from projektcheck.base import Field, Feature, Geopackage
 from datetime import datetime
 
 
@@ -260,26 +260,16 @@ class ProjectManager:
 
 
 class ProjectTable:
-    ''''''
+    '''
+    manages project related database tables
 
-    class Feature:
-        def __init__(self, table, fields):
-            self.fields = fields
-            self.values = {}
-
-        def __getattr__(self, k):
-            if k in self.fields:
-                return
-            return self.__dict__[v]
-
-        def save(self):
-            pass
-
-        def delete(self):
-            pass
+    auto created
+    define fields
+    define Meta
+    '''
 
     @classmethod
-    def get_table(cls, project=None):
+    def get_table(cls, project=None, create=True):
         project = project or ProjectManager().active_project
         Database = getattr(cls.Meta, 'database', Geopackage)
         workspace_name = getattr(cls.Meta, 'workspace', 'default')
@@ -289,7 +279,9 @@ class ProjectTable:
         try:
             fields, defaults = cls._fields()
             table = workspace.get_table(table_name)
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+            if not create:
+                raise e
             table = cls._create(table_name, workspace)
         return table
 
@@ -297,48 +289,23 @@ class ProjectTable:
     def _where(kwargs):
         pass
 
-    @classmethod
-    def get(cls, **kwargs):
-        pass
-
-    @classmethod
-    def filter(cls, where: str='', project=None):
-        table = cls.get_table(where=where, project=project)
-        features = []
-        for row in table:
-            fields, defaults = cls._fields()
-            feature = cls.Feature(table, fields)
-            fields = OrderedDict([
-                (k, f) for k, f in cls.__dict__.items() if isinstance(f, Field)
-            ])
-            features.append
-
-    @classmethod
-    def add(cls, project=None, **kwargs):
-        project = project or ProjectManager().active_project
-        table = cls.get_table(project=project)
-        fields = OrderedDict([
-            (k, f) for k, f in cls.__dict__.items() if isinstance(f, Field)
-        ])
-        feature = cls.Feature(table, fields)
-        return feature
 
     @classmethod
     def _fields(cls):
-        fields = OrderedDict()
+        types = OrderedDict()
         defaults = OrderedDict()
         for k, v in cls.__dict__.items():
             if not isinstance(v, Field):
                 continue
-            fields[k] = v.type
+            types[k] = v.type
             defaults[k] = v.default
-        return fields, defaults
+        return types, defaults
 
     @classmethod
     def _create(cls, name, workspace):
-        fields, defaults = cls._fields()
-        workspace.create_table(name, fields)
-        return GeopackageTable(name, workspace, defaults=defaults)
+        types, defaults = cls._fields()
+        return workspace.create_table(name, field_names=types.keys(), types=types,
+                                      defaults=defaults)
 
     class Meta:
         '''
@@ -346,14 +313,6 @@ class ProjectTable:
         name - name of table
         database - type of database, by default Geopackage
         '''
-
-
-class Field:
-    ''''''
-    def __init__(self, type, default=None):
-        self.type = type
-        self.default = default
-
 
 
 

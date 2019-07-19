@@ -6,7 +6,8 @@ import numpy as np
 from typing import Union
 from collections import OrderedDict
 
-from projektcheck.base import Database, Table, Workspace
+from projektcheck.base import (Database, Table, Workspace, Feature, Field,
+                               FeatureCollection)
 
 driver = ogr.GetDriverByName('GPKG')
 
@@ -20,7 +21,7 @@ DATATYPES = {
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
         self.name = name
-        self.path = self.fn(database, name)
+        self.path = self._fn(database, name)
         if not name:
             raise ValueError('workspace name can not be empty')
         if not os.path.exists(self.path):
@@ -28,7 +29,7 @@ class GeopackageWorkspace(Workspace):
         self._conn = ogr.Open(self.path, 0 if database.read_only else 1)
 
     @staticmethod
-    def fn(database, name):
+    def _fn(database, name):
         fn = os.path.join(database.base_path, name).rstrip('\\')
         if not fn.endswith('.gpkg'):
             fn += '.gpkg'
@@ -36,14 +37,14 @@ class GeopackageWorkspace(Workspace):
 
     @classmethod
     def get_or_create(cls, name, database):
-        path = cls.fn(database, name)
+        path = cls._fn(database, name)
         if not os.path.exists(path):
             cls.create(name, database)
         return GeopackageWorkspace(name, database)
 
     @classmethod
     def create(cls, name, database, overwrite=False):
-        path = cls.fn(database, name)
+        path = cls._fn(database, name)
         if overwrite and os.path.exists(path):
             os.remove(path)
         driver.CreateDataSource(path)
@@ -54,10 +55,10 @@ class GeopackageWorkspace(Workspace):
         tables = [l.GetName() for l in self._conn]
         return tables
 
-    def get_table(self, name: str, fields: list=None):
+    def get_table(self, name: str, field_names: list=None):
         if name not in self.tables:
             raise FileNotFoundError(f'layer {name} not found')
-        return GeopackageTable(name, self, fields=fields)
+        return GeopackageTable(name, self, field_names=field_names)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
                      overwrite: bool=False, defaults: dict={}):
@@ -98,7 +99,7 @@ class GeopackageWorkspace(Workspace):
 
 class GeopackageTable(Table):
     def __init__(self, name, workspace: GeopackageWorkspace,
-                 fields: list=None):
+                 field_names: list=None):
         self.workspace = workspace
         self.name = name
         self._where = None
@@ -106,34 +107,20 @@ class GeopackageTable(Table):
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
-        if fields is not None:
-            f = np.array(fields)
-            isin = np.isin(f, np.array(list(self.fields.keys())))
-            if not np.all(isin):
-                notin = ', '.join(f[isin != True])
-                raise ValueError(
-                    f'fields "{notin}" are not in table {self.name}')
-            self._fields = fields
+        self._fields = self.fields(field_names=field_names)
+        #if fields is not None:
+            #f = np.array(fields)
+            #isin = np.isin(f, np.array(list(self.fields.keys())))
+            #if not np.all(isin):
+                #notin = ', '.join(f[isin != True])
+                #raise ValueError(
+                    #f'fields "{notin}" are not in table {self.name}')
+            #self._fields = fields
+        self._features = FeatureCollection(self)
 
-    def filter(self, **kwargs):
-        '''
-        supported: __in, __gt, __lt
-        '''
-        terms = []
-        for k, v in kwargs.items():
-            if '__' not in k:
-                if k not in self.fields:
-                    raise ValueError(f'{k} not in fields')
-                terms.append(f'{k} = {v}')
-            elif k.endswith('__in'):
-                vstr = [str(i) for i in v]
-                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
-            elif k.endswith('__gt'):
-                terms.append(f'"{k.strip("__gt")}" > {v}')
-            elif k.endswith('__lt'):
-                terms.append(f'"{k.strip("__lt")}" < {v}')
-        # set where clause, clears filter if no kwargs
-        self.where = ' and '.join(terms)
+    @property
+    def features(self):
+        return self._features
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
@@ -146,6 +133,9 @@ class GeopackageTable(Table):
             items = OrderedDict(self._cursor.items())
         return items
 
+    def get_row(self):
+        pass
+
     @property
     def where(self):
         return self._where
@@ -157,15 +147,17 @@ class GeopackageTable(Table):
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         self._layer.SetAttributeFilter(value)
 
-    @property
-    def fields(self):
-        if self._fields is not None:
-            return self._fields
+    def fields(self, field_names=None):
+        #if self._fields is not None:
+            #return self._fields
         definition = self._layer.GetLayerDefn()
-        fields = {}
+        fields = []
         for i in range(definition.GetFieldCount()):
             defn = definition.GetFieldDefn(i)
-            fields[defn.GetName()] = defn.GetTypeName()
+            name = defn.GetName()
+            if field_names and name not in field_names:
+                continue
+            fields.append(Field(name, type))
         return fields
 
     def add(self, row: Union[dict, list], geom=None):
@@ -183,6 +175,14 @@ class GeopackageTable(Table):
         if geom:
             feature.SetGeometry(geom)
         self._layer.CreateFeature(feature)
+
+    def delete_feature(self, id):
+        self._layer.DeleteFeature(id)
+
+    def get_feature(self, id):
+        feat = self._layer.GetFeature(id)
+        feature = Feature(self, fields)
+        return feature
 
     def delete(self, **kwargs):
         '''warning: resets cursor'''
@@ -209,8 +209,7 @@ class GeopackageTable(Table):
         df = pd.DataFrame.from_records(rows, columns=self.fields)
         return df
 
-    @property
-    def count(self):
+    def __len__(self):
         return self._layer.GetFeatureCount()
 
     def __repr__(self):
@@ -233,7 +232,7 @@ class Geopackage(Database):
         if not workspace:
             raise Exception('Geopackage backend does not support '
                             'tables without workspaces')
-        return self.get_workspace(workspace).get_table(name, fields=fields)
+        return self.get_workspace(workspace).get_table(name, field_names=fields)
 
     def get_or_create_workspace(self, name):
         return GeopackageWorkspace.get_or_create(name, self)

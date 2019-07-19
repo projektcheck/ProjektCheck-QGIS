@@ -54,36 +54,36 @@ class GeopackageTest(unittest.TestCase):
         pass
 
     def test_filter(self):
-        assert self.table.count == 4
+        assert len(self.table) == 4
         self.table.filter(value=6)
-        assert self.table.count == 1
+        assert len(self.table) == 1
         self.table.filter(value=5)
-        assert self.table.count == 2
+        assert len(self.table) == 2
         self.table.filter(value__in=[5, 6])
-        assert self.table.count == 3
+        assert len(self.table) == 3
         self.table.filter(value__lt=4)
-        assert self.table.count == 1
+        assert len(self.table) == 1
         self.table.filter(value__gt=7)
-        assert self.table.count == 0
+        assert len(self.table) == 0
 
     def test_cursor(self):
         for i, row in enumerate(self.table):
             row['value'] = i
             self.table.update_cursor(row)
         self.table.filter(value=i)
-        assert self.table.count == 1
+        assert len(self.table) == 1
         self.table.filter()
-        assert self.table.count == 4
+        assert len(self.table)  == 4
 
     def test_add_delete(self):
-        assert self.table.count == 4
+        assert len(self.table) == 4
         new_row = {'value': 7}
         self.table.add(new_row)
         new_row = {'value': 5}
         self.table.add(new_row)
-        assert self.table.count == 6
+        assert len(self.table) == 6
         n = self.table.delete(value=5)
-        assert self.table.count == 3
+        assert len(self.table) == 3
 
     def test_pandas(self):
         a = self.table.as_pandas()
