@@ -53,26 +53,35 @@ class GeopackageTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_filter(self):
+    def test_where(self):
         assert len(self.table) == 4
-        self.table.filter(value=6)
+        self.table.where = 'value=6'
         assert len(self.table) == 1
-        self.table.filter(value=5)
+        self.table.where = 'value=5'
         assert len(self.table) == 2
-        self.table.filter(value__in=[5, 6])
-        assert len(self.table) == 3
-        self.table.filter(value__lt=4)
-        assert len(self.table) == 1
-        self.table.filter(value__gt=7)
-        assert len(self.table) == 0
+
+    def test_feature_filter(self):
+        features = self.table.features
+        assert len(features) == 4
+        assert len(features.filter(value=0)) == 1
+        assert len(features.filter(value=6)) == 1
+        assert len(features.filter(value=5)) == 2
+        assert len(features.filter(value__lt=4)) == 1
+        assert len(features.filter(value__gt=7)) == 0
+        # test filter chain
+        feat_f = features.filter(value__in=[5, 6])
+        assert len(feat_f) == 3
+        assert len(feat_f.filter(value=0)) == 0
+        assert len(feat_f.filter(value__lt=4)) == 0
+        assert len(feat_f.filter(value__gt=4)) == 3
 
     def test_cursor(self):
         for i, row in enumerate(self.table):
             row['value'] = i
             self.table.update_cursor(row)
-        self.table.filter(value=i)
+        self.table.where = f'value={i}'
         assert len(self.table) == 1
-        self.table.filter()
+        self.table.where = ''
         assert len(self.table)  == 4
 
     def test_add_delete(self):
@@ -81,8 +90,10 @@ class GeopackageTest(unittest.TestCase):
         self.table.add(new_row)
         new_row = {'value': 5}
         self.table.add(new_row)
-        assert len(self.table) == 6
-        n = self.table.delete(value=5)
+        self.table.add(new_row)
+        assert len(self.table) == 7
+        n = self.table.delete('value=5')
+        assert n == 4
         assert len(self.table) == 3
 
     def test_pandas(self):

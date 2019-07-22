@@ -99,36 +99,29 @@ class GeopackageWorkspace(Workspace):
 
 class GeopackageTable(Table):
     def __init__(self, name, workspace: GeopackageWorkspace,
-                 field_names: list=None):
+                 field_names: list=None, where=''):
         self.workspace = workspace
         self.name = name
-        self._where = None
         self._fields = None
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
-        self._fields = self.fields(field_names=field_names)
-        #if fields is not None:
-            #f = np.array(fields)
-            #isin = np.isin(f, np.array(list(self.fields.keys())))
-            #if not np.all(isin):
-                #notin = ', '.join(f[isin != True])
-                #raise ValueError(
-                    #f'fields "{notin}" are not in table {self.name}')
-            #self._fields = fields
-        self._features = FeatureCollection(self)
-
-    @property
-    def features(self):
-        return self._features
+        self.where = where
+        if field_names:
+            self.field_names = field_names
+        else:
+            defn = self._layer.GetLayerDefn()
+            self.field_names = [defn.GetFieldDefn(i).GetName()
+                                for i in range(defn.GetFieldCount())]
+        #self._fields = self.fields()
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
             raise StopIteration
-        if self._fields is not None:
-            items = OrderedDict([(f, cursor[f]) for f in self._fields])
+        if self.field_names is not None:
+            items = OrderedDict([(f, cursor[f]) for f in self.field_names])
         else:
             items = OrderedDict(self._cursor.items())
         return items
@@ -147,26 +140,28 @@ class GeopackageTable(Table):
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         self._layer.SetAttributeFilter(value)
 
-    def fields(self, field_names=None):
-        #if self._fields is not None:
-            #return self._fields
+    def fields(self):
         definition = self._layer.GetLayerDefn()
         fields = []
+        rev_types = {v: k for k, v in DATATYPES.items()}
         for i in range(definition.GetFieldCount()):
             defn = definition.GetFieldDefn(i)
             name = defn.GetName()
-            if field_names and name not in field_names:
+            if name not in self.field_names:
                 continue
-            fields.append(Field(name, type))
+            try:
+                datatype = rev_types[defn.GetType()]
+            except KeyError:
+                datatype = None
+            fields.append(Field(name, datatype))
         return fields
 
     def add(self, row: Union[dict, list], geom=None):
-        fields = self.fields.keys()
         if isinstance(row, list):
             row = dict(zip(fields, row))
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in row.items():
-            if field not in fields:
+            if field not in self.field_names:
                 raise ValueError(f'{field} is not in fields of '
                                  f'table {self.name}')
             feature.SetField(field, value)
@@ -184,10 +179,10 @@ class GeopackageTable(Table):
         feature = Feature(self, fields)
         return feature
 
-    def delete(self, **kwargs):
+    def delete(self, where=''):
         '''warning: resets cursor'''
         prev_where = self._where
-        self.filter(**kwargs)
+        self.where = where
         i = 0
         for feature in self._layer:
             self._layer.DeleteFeature(feature.GetFID())
@@ -206,7 +201,7 @@ class GeopackageTable(Table):
         rows = []
         for row in self:
             rows.append(row.values())
-        df = pd.DataFrame.from_records(rows, columns=self.fields)
+        df = pd.DataFrame.from_records(rows, columns=self.field_names)
         return df
 
     def __len__(self):

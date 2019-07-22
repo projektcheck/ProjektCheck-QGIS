@@ -6,9 +6,9 @@ from projektcheck.utils.singleton import SingletonABCMeta
 
 class Field:
     ''''''
-    def __init__(self, name, type, default=None):
+    def __init__(self, name, datatype, default=None):
         self.name = name
-        self.type = type
+        self.datatype = datatype
         self.default = default
 
 
@@ -35,10 +35,10 @@ class Feature:
 
 
 class FeatureCollection:
-    def __init__(self, table, fields):
+    def __init__(self, table, fields=[]):
         self._table = table
         self.it = 0
-        self.fields = fields
+        self.fields = table.fields()
 
     def __iter__(self):
         self.it += 1
@@ -74,17 +74,17 @@ class FeatureCollection:
         #return feature
         pass
 
-
     def filter(self, **kwargs):
         '''
         filtering django style
         supported: __in, __gt, __lt
         '''
         terms = []
-        _prev = self._table.where
+        field_names = [field.name for field in self.fields]
+        prev = self._table.where
         for k, v in kwargs.items():
             if '__' not in k:
-                if k not in self.fields:
+                if k not in field_names:
                     raise ValueError(f'{k} not in fields')
                 terms.append(f'{k} = {v}')
             elif k.endswith('__in'):
@@ -95,9 +95,14 @@ class FeatureCollection:
             elif k.endswith('__lt'):
                 terms.append(f'"{k.strip("__lt")}" < {v}')
         where = ' and '.join(terms)
-        if _prev:
-            where = _prev + where
-        table = self._table.__class__(where=where)
+        if prev:
+            where = f'({prev}) and ({where})'
+        table = self._table.__class__(
+            name=self._table.name,
+            workspace=self._table.workspace,
+            where=where,
+            field_names=field_names)
+        return FeatureCollection(table)
 
 
 class Database(ABC):
@@ -160,10 +165,18 @@ class Table(ABC):
     '''
 
     def __init__(self, name: str, workspace: Union[Workspace, str] = None,
-                 where=''):
+                 field_names: list=None, where=''):
         self.name = name
         self.workspace = workspace
         self.where = where
+
+    @property
+    def where(self):
+        return self._where
+
+    @where.setter
+    def where(self, value):
+        self._where = value
 
     def __iter__(self):
         return self
