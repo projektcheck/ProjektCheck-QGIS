@@ -78,6 +78,9 @@ class GeopackageTest(unittest.TestCase):
     def test_cursor(self):
         for i, row in enumerate(self.table):
             row['value'] = i
+            # test list
+            self.table.update_cursor([i]*len(row))
+            # test dict
             self.table.update_cursor(row)
         self.table.where = f'value={i}'
         assert len(self.table) == 1

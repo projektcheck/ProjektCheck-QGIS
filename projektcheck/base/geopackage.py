@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from typing import Union
 from collections import OrderedDict
+import shutil
 
 from projektcheck.base import (Database, Table, Workspace, Feature, Field,
                                FeatureCollection)
@@ -39,6 +40,8 @@ class GeopackageWorkspace(Workspace):
     def get_or_create(cls, name, database):
         path = cls._fn(database, name)
         if not os.path.exists(path):
+            if database.read_only:
+                raise PermissionError('database is read-only')
             cls.create(name, database)
         return GeopackageWorkspace(name, database)
 
@@ -55,10 +58,11 @@ class GeopackageWorkspace(Workspace):
         tables = [l.GetName() for l in self._conn]
         return tables
 
-    def get_table(self, name: str, field_names: list=None):
+    def get_table(self, name: str, field_names: list=None, defaults: dict={}):
         if name not in self.tables:
             raise FileNotFoundError(f'layer {name} not found')
-        return GeopackageTable(name, self, field_names=field_names)
+        return GeopackageTable(name, self, field_names=field_names,
+                               defaults=defaults)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
                      overwrite: bool=False, defaults: dict={}):
@@ -84,7 +88,7 @@ class GeopackageWorkspace(Workspace):
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
             layer.CreateField(field)
-        return self.get_table(name)
+        return self.get_table(name, defaults=defaults)
 
     @property
     def wkb_types(self):
@@ -99,10 +103,9 @@ class GeopackageWorkspace(Workspace):
 
 class GeopackageTable(Table):
     def __init__(self, name, workspace: GeopackageWorkspace,
-                 field_names: list=None, where=''):
+                 field_names: list=None, where: str='', defaults: dict={}):
         self.workspace = workspace
         self.name = name
-        self._fields = None
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
@@ -113,7 +116,7 @@ class GeopackageTable(Table):
             defn = self._layer.GetLayerDefn()
             self.field_names = [defn.GetFieldDefn(i).GetName()
                                 for i in range(defn.GetFieldCount())]
-        #self._fields = self.fields()
+        self._defaults = defaults
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
@@ -126,9 +129,6 @@ class GeopackageTable(Table):
             items = OrderedDict(self._cursor.items())
         return items
 
-    def get_row(self):
-        pass
-
     @property
     def where(self):
         return self._where
@@ -140,24 +140,24 @@ class GeopackageTable(Table):
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         self._layer.SetAttributeFilter(value)
 
-    def fields(self):
+    def fields(self, cached=True):
+        if cached and getattr(self, '_fields', None):
+            return self._fields
         definition = self._layer.GetLayerDefn()
         fields = []
         rev_types = {v: k for k, v in DATATYPES.items()}
         for i in range(definition.GetFieldCount()):
             defn = definition.GetFieldDefn(i)
             name = defn.GetName()
-            if name not in self.field_names:
-                continue
-            try:
-                datatype = rev_types[defn.GetType()]
-            except KeyError:
-                datatype = None
-            fields.append(Field(name, datatype))
+            t = defn.GetType()
+            datatype = rev_types[t] if t in rev_types else None
+            default = self._defaults[name] if name in self._defaults else None
+            fields.append(Field(datatype, name=name, default=default))
         return fields
 
     def add(self, row: Union[dict, list], geom=None):
         if isinstance(row, list):
+            fields = [field.name for field in self.fields]
             row = dict(zip(fields, row))
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in row.items():
@@ -174,9 +174,26 @@ class GeopackageTable(Table):
     def delete_feature(self, id):
         self._layer.DeleteFeature(id)
 
+    def add_feature(self, feature):
+        feat = ogr.Feature(self._layer.GetLayerDefn())
+        for field in self.fields():
+            feat.SetField(field.name, getattr(feature, field.name))
+        geom = feature.geom
+        if geom and isinstance(geom, QgsGeometry):
+            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+        if geom:
+            feat.SetGeometry(geom)
+        self._layer.CreateFeature(feat)
+        feature.id = feat.GetFID()
+
+    def set_feature(self, id, feature):
+        feat = self._layer.GetFeature(id)
+        for field in self.fields():
+            feat.SetField(field.name, field.value)
+
     def get_feature(self, id):
         feat = self._layer.GetFeature(id)
-        feature = Feature(self, fields)
+        feature = Feature(self, self.fields())
         return feature
 
     def delete(self, where=''):
@@ -192,7 +209,7 @@ class GeopackageTable(Table):
 
     def update_cursor(self, row: Union[dict, list]):
         if isinstance(row, list):
-            row = dict(zip(self.fields, row))
+            row = dict(zip(self.field_names, row))
         for field, value in row.items():
             self._cursor.SetField(field, value)
             self._layer.SetFeature(self._cursor)
@@ -219,9 +236,23 @@ class Geopackage(Database):
         super().__init__()
         self.base_path = base_path
         self.read_only = read_only
+        self._workspaces = {}
 
     def create_workspace(self, name, overwrite=False):
-        return GeopackageWorkspace.create(name, self, overwrite=overwrite)
+        if self.read_only:
+            raise ('database is read-only')
+        workspace = GeopackageWorkspace.create(name, self, overwrite=overwrite)
+        self._workspaces[name] = workspace
+        return workspace
+
+    def remove_workspace(self, name):
+        if self.read_only:
+            raise PermissionError('database is read-only')
+        if not name.endswith('.gpkg'):
+            name += '.gpkg'
+        if name in self._workspaces:
+            self._workspaces[name].close()
+        os.remove(os.path.join(self.base_path, name))
 
     def get_table(self, name: str, workspace: str = '', fields=None):
         if not workspace:
@@ -230,10 +261,19 @@ class Geopackage(Database):
         return self.get_workspace(workspace).get_table(name, field_names=fields)
 
     def get_or_create_workspace(self, name):
-        return GeopackageWorkspace.get_or_create(name, self)
+        if name in self._workspaces:
+            return self._workspaces[name]
+        workspace = GeopackageWorkspace.get_or_create(name, self)
+        self._workspaces[name] = workspace
+        return workspace
 
     def get_workspace(self, name):
-        return GeopackageWorkspace(name, self)
+        if name in self._workspaces:
+            workspace = self._workspaces[name]
+        else:
+            workspace = GeopackageWorkspace(name, self)
+            self._workspaces[name] = workspace
+        return workspace
 
     @property
     def workspaces(self):
@@ -244,3 +284,7 @@ class Geopackage(Database):
 
     def __repr__(self):
         return f"Geopackage {self.base_path}"
+
+    def close(self):
+        for workspace in self._workspaces:
+            workspace.close()

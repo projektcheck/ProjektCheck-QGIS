@@ -274,21 +274,27 @@ class ProjectTable:
         Database = getattr(cls.Meta, 'database', Geopackage)
         workspace_name = getattr(cls.Meta, 'workspace', 'default')
         table_name = getattr(cls.Meta, 'name', cls.__name__.lower())
+        geometry_type = getattr(cls.Meta, 'geom', None)
         database = Database(project.path, read_only=False)
         workspace = database.get_or_create_workspace(workspace_name)
         try:
             fields, defaults = cls._fields()
-            table = workspace.get_table(table_name)
+            table = workspace.get_table(table_name, field_names=fields.keys(),
+                                        defaults=defaults)
         except FileNotFoundError as e:
             if not create:
                 raise e
-            table = cls._create(table_name, workspace)
+            table = cls._create(table_name, workspace,
+                                geometry_type=geometry_type)
         return table
 
     @staticmethod
     def _where(kwargs):
         pass
 
+    @classmethod
+    def features(cls):
+        return cls.get_table().features
 
     @classmethod
     def _fields(cls):
@@ -297,21 +303,27 @@ class ProjectTable:
         for k, v in cls.__dict__.items():
             if not isinstance(v, Field):
                 continue
-            types[k] = v.type
+            name = k if not v.name else v.name
+            if name == 'id':
+                raise ValueError("keyword 'id' is reserved and can't be "
+                                 "used as a field name")
+            types[k] = v.datatype
             defaults[k] = v.default
         return types, defaults
 
     @classmethod
-    def _create(cls, name, workspace):
+    def _create(cls, name, workspace, geometry_type=None):
         types, defaults = cls._fields()
-        return workspace.create_table(name, field_names=types.keys(), types=types,
-                                      defaults=defaults)
+        return workspace.create_table(name, fields=types,
+                                      defaults=defaults,
+                                      geometry_type=geometry_type)
 
     class Meta:
         '''
         workspace - name of workspace
         name - name of table
         database - type of database, by default Geopackage
+        geom - type of geometry (Polygon, LineString)
         '''
 
 

@@ -6,51 +6,67 @@ from projektcheck.utils.singleton import SingletonABCMeta
 
 class Field:
     ''''''
-    def __init__(self, name, datatype, default=None):
+    def __init__(self, datatype, default=None, name=''):
         self.name = name
         self.datatype = datatype
         self.default = default
 
+    def __repr__(self):
+        return f'Field {self.name} {self.datatype}'
+
 
 class Feature:
-    def __init__(self, table, fields, id=None):
-        self.id = id
-        self.fields = {}
-        for field in fields:
-            self.fields[field]
-        self.fields = fields
-        self.values = {}
+    def __init__(self, table, **kwargs):
+        self.__dict__['_fields'] = {f.name: f for f in table.fields()}
+        self.id = kwargs.pop('id', None)
+        self._table = table
+        self.geom = kwargs.pop('geom', None)
+        self._values = {f.name: kwargs.get(f.name, None) or f.default
+                        for f in table.fields()}
 
     def __getattr__(self, k):
-        if k in self.fields:
-            return
-        return self.__dict__[v]
+        if k in self.__dict__:
+            return self.__dict__[k]
+        if k in self._fields:
+            return self._values[k]
+        raise AttributeError(f'{k}')
+
+    def __setattr__(self, k, v):
+        if k in self._fields:
+            self.values[k] = v
+        else:
+            self.__dict__[k] = v
 
     def save(self):
-        pass
+        if self.id is not None:
+            self._table.set_feature(self.id, self)
+        else:
+            self._table.add_feature(self)
 
     def delete(self):
         #self._layer.DeleteFeature(id)
         pass
 
+    def __repr__(self):
+        return f'Feature <{self.id}> of {self._table}'
+
 
 class FeatureCollection:
-    def __init__(self, table, fields=[]):
+    def __init__(self, table):
         self._table = table
-        self.it = 0
-        self.fields = table.fields()
+        self._it = 0
 
     def __iter__(self):
-        self.it += 1
+        self._it += 1
         return self
 
     def __next__(self):
-        if self.it > self._table.count():
-            self.it = 0
+        if self._it > len(self._table):
+            self._it = 0
             raise StopIteration
         else:
-            row = self._table.get_row(self.it)
-            feature = 0
+            row = next(self._table)
+            Feature(table=self._table, **row)
 
     def __len__(self):
         return len(self._table)
@@ -58,21 +74,19 @@ class FeatureCollection:
     def delete(self):
         pass
 
-    def get(cls, **kwargs):
+    def get(self, **kwargs):
         #feat = self._layer.GetFeature(id)
         #feature = Feature(self, fields)
         #return feature
         pass
 
-    def add(cls, project=None, **kwargs):
-        #project = project or ProjectManager().active_project
-        #table = cls.get_table(project=project)
-        #fields = OrderedDict([
-            #(k, f) for k, f in cls.__dict__.items() if isinstance(f, Field)
-        #])
-        #feature = Feature(table, fields)
-        #return feature
-        pass
+    def add(self, **kwargs):
+        if 'id' in kwargs:
+            raise Exception("You can't set the id when adding a new feature. "
+                            "The id will be assigned automatically.")
+        feature = Feature(self._table, **kwargs)
+        feature.save()
+        return feature
 
     def filter(self, **kwargs):
         '''
@@ -80,7 +94,7 @@ class FeatureCollection:
         supported: __in, __gt, __lt
         '''
         terms = []
-        field_names = [field.name for field in self.fields]
+        field_names = [field.name for field in self._table.fields()]
         prev = self._table.where
         for k, v in kwargs.items():
             if '__' not in k:
