@@ -14,7 +14,7 @@ driver = ogr.GetDriverByName('GPKG')
 
 DATATYPES = {
     int: ogr.OFTInteger64,
-    bool: ogr.OFSTBoolean,
+    bool: ogr.OFTInteger,
     float: ogr.OFTReal,
     str: ogr.OFTString
 }
@@ -102,32 +102,81 @@ class GeopackageWorkspace(Workspace):
 
 
 class GeopackageTable(Table):
+    id_field = '__id__'
     def __init__(self, name, workspace: GeopackageWorkspace,
-                 field_names: list=None, where: str='', defaults: dict={}):
+                 field_names: list=None, filters: str='', defaults: dict={}):
         self.workspace = workspace
         self.name = name
+        self._defaults = defaults
+        self._where = ''
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
-        self.where = where
         if field_names:
             self.field_names = field_names
         else:
             defn = self._layer.GetLayerDefn()
             self.field_names = [defn.GetFieldDefn(i).GetName()
                                 for i in range(defn.GetFieldCount())]
-        self._defaults = defaults
+        self._filters = {}
+        if filters:
+            self.filter(**filters)
+
+    def copy(self):
+        return GeopackageTable(self.name, self.workspace,
+                               field_names=self.field_names,
+                               filters=self._filters, defaults=self._defaults)
+
+    def _ogr_feat_to_row(self, feat):
+        if self.field_names is not None:
+            items = OrderedDict([(f, feat[f]) for f in self.field_names])
+        else:
+            items = OrderedDict(self._cursor.items())
+        items[self.id_field] = feat.GetFID()
+        geom = feat.geometry()
+        if geom:
+            geom = QgsGeometry.fromWkt(geom.ExportToWkt())
+        items['geom'] = geom
+        return items
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
             raise StopIteration
-        if self.field_names is not None:
-            items = OrderedDict([(f, cursor[f]) for f in self.field_names])
-        else:
-            items = OrderedDict(self._cursor.items())
-        return items
+        return self._ogr_feat_to_row(cursor)
+
+    def filter(self, **kwargs):
+        '''
+        filtering django style
+        supported: __in, __gt, __lt
+        '''
+        terms = []
+        field_names = [field.name for field in self.fields()]
+        # ToDo: if there it is eventually possible to filter OR you can't just
+        # append filters to old ones
+        # (but seperate  previous and new filters with brackets)
+        self._filters.update(kwargs)
+        for k, v in self._filters.items():
+            if '__' not in k:
+                if k not in field_names:
+                    raise ValueError(f'{k} not in fields')
+                terms.append(f'{k} = {v}')
+            elif k.endswith('__in'):
+                vstr = [str(i) for i in v]
+                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
+            elif k.endswith('__gt'):
+                terms.append(f'"{k.strip("__gt")}" > {v}')
+            elif k.endswith('__lt'):
+                terms.append(f'"{k.strip("__lt")}" < {v}')
+        where = ' and '.join(terms)
+        #if self.where:
+            #where = f'({self.where}) and ({where})'
+        self.where = where
+
+    @property
+    def filters(self):
+        return self._filters
 
     @property
     def where(self):
@@ -155,51 +204,41 @@ class GeopackageTable(Table):
             fields.append(Field(datatype, name=name, default=default))
         return fields
 
-    def add(self, row: Union[dict, list], geom=None):
-        if isinstance(row, list):
-            fields = [field.name for field in self.fields]
-            row = dict(zip(fields, row))
+    def add(self, **kwargs):
+        geom = kwargs.pop('geom', None)
         feature = ogr.Feature(self._layer.GetLayerDefn())
-        for field, value in row.items():
+        for field, value in kwargs.items():
             if field not in self.field_names:
                 raise ValueError(f'{field} is not in fields of '
                                  f'table {self.name}')
             feature.SetField(field, value)
-        if geom and isinstance(geom, QgsGeometry):
-            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
         if geom:
+            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
             feature.SetGeometry(geom)
         self._layer.CreateFeature(feature)
+        return self._ogr_feat_to_row(feature)
 
-    def delete_feature(self, id):
+    def delete(self, id):
         self._layer.DeleteFeature(id)
 
-    def add_feature(self, feature):
-        feat = ogr.Feature(self._layer.GetLayerDefn())
-        for field in self.fields():
-            feat.SetField(field.name, getattr(feature, field.name))
-        geom = feature.geom
-        if geom and isinstance(geom, QgsGeometry):
-            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+    def set(self, id, **kwargs):
+        feature = self._layer.GetFeature(id)
+        geom = kwargs.pop('geom', None)
         if geom:
-            feat.SetGeometry(geom)
-        self._layer.CreateFeature(feat)
-        feature.id = feat.GetFID()
+            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+            feature.SetGeometry(geom)
+        for field_name, value in kwargs.items():
+            feature.SetField(field_name, value)
+        self._layer.SetFeature(feature)
 
-    def set_feature(self, id, feature):
+    def get(self, id):
         feat = self._layer.GetFeature(id)
-        for field in self.fields():
-            feat.SetField(field.name, field.value)
+        return self._ogr_feat_to_row(feat)
 
-    def get_feature(self, id):
-        feat = self._layer.GetFeature(id)
-        feature = Feature(self, self.fields())
-        return feature
-
-    def delete(self, where=''):
+    def delete_rows(self, **kwargs):
         '''warning: resets cursor'''
-        prev_where = self._where
-        self.where = where
+        prev_where = self.where
+        self.filter(**kwargs)
         i = 0
         for feature in self._layer:
             self._layer.DeleteFeature(feature.GetFID())
@@ -210,15 +249,18 @@ class GeopackageTable(Table):
     def update_cursor(self, row: Union[dict, list]):
         if isinstance(row, list):
             row = dict(zip(self.field_names, row))
-        for field, value in row.items():
-            self._cursor.SetField(field, value)
-            self._layer.SetFeature(self._cursor)
+        for field_name, value in row.items():
+            if field_name == self.id_field:
+                continue
+            self._cursor.SetField(field_name, value)
+        self._layer.SetFeature(self._cursor)
 
     def as_pandas(self):
         rows = []
         for row in self:
-            rows.append(row.values())
-        df = pd.DataFrame.from_records(rows, columns=self.field_names)
+            rows.append(row)
+        df = pd.DataFrame.from_records(
+            rows, columns=[self.id_field] + self.field_names)
         return df
 
     def __len__(self):

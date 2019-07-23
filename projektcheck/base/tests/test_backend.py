@@ -22,33 +22,15 @@ class GeopackageTest(unittest.TestCase):
 
     def setUp(self):
         fields = {
-            'id': int,
             'name': str,
             'value': float
         }
         self.table = self.workspace.create_table(
             'testtable', fields, geometry_type='Polygon', overwrite=True)
-        self.table.add({
-            'id': 1,
-            'name': 'row1',
-            'value': 5
-        })
-        self.table.add({
-            'id': 2,
-            'name': 'row2',
-            'value': 5
-        })
-        self.table.add({
-            'id': 3,
-            'name': 'row3',
-            'value': 6
-        })
-        self.table.add({
-            'id': 3,
-            'name': 'row4',
-            'value': 0
-        })
-        #self.table.
+        self.table.add(name='row1', value=5)
+        self.table.add(name='row2', value=5)
+        self.table.add(name='row3', value=6)
+        self.table.add(name='row4', value=0)
 
     def tearDown(self):
         pass
@@ -89,14 +71,12 @@ class GeopackageTest(unittest.TestCase):
 
     def test_add_delete(self):
         assert len(self.table) == 4
-        new_row = {'value': 7}
-        self.table.add(new_row)
-        new_row = {'value': 5}
-        self.table.add(new_row)
-        self.table.add(new_row)
-        assert len(self.table) == 7
-        n = self.table.delete('value=5')
-        assert n == 4
+        self.table.add(value=7)
+        for i in range(3):
+            self.table.add(value=5)
+        assert len(self.table) == 8
+        n = self.table.delete_rows(value=5)
+        assert n == 5
         assert len(self.table) == 3
 
     def test_pandas(self):

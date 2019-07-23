@@ -33,15 +33,18 @@ class Feature:
 
     def __setattr__(self, k, v):
         if k in self._fields:
-            self.values[k] = v
+            self._values[k] = v
         else:
             self.__dict__[k] = v
 
     def save(self):
+        kwargs = self._values.copy()
+        kwargs['geom'] = self.geom
         if self.id is not None:
-            self._table.set_feature(self.id, self)
+            self._table.set(self.id, **kwargs)
         else:
-            self._table.add_feature(self)
+            row = self._table.add(**kwargs)
+            self.id = row[self._table.id_field]
 
     def delete(self):
         #self._layer.DeleteFeature(id)
@@ -66,7 +69,8 @@ class FeatureCollection:
             raise StopIteration
         else:
             row = next(self._table)
-            Feature(table=self._table, **row)
+            id = row.pop(self._table.id_field)
+            return Feature(table=self._table, id=id, **row)
 
     def __len__(self):
         return len(self._table)
@@ -74,11 +78,10 @@ class FeatureCollection:
     def delete(self):
         pass
 
-    def get(self, **kwargs):
-        #feat = self._layer.GetFeature(id)
-        #feature = Feature(self, fields)
-        #return feature
-        pass
+    def get(self, id):
+        row = self._table.get(id)
+        row['id'] = id
+        return Feature(self._table, **row)
 
     def add(self, **kwargs):
         if 'id' in kwargs:
@@ -93,29 +96,8 @@ class FeatureCollection:
         filtering django style
         supported: __in, __gt, __lt
         '''
-        terms = []
-        field_names = [field.name for field in self._table.fields()]
-        prev = self._table.where
-        for k, v in kwargs.items():
-            if '__' not in k:
-                if k not in field_names:
-                    raise ValueError(f'{k} not in fields')
-                terms.append(f'{k} = {v}')
-            elif k.endswith('__in'):
-                vstr = [str(i) for i in v]
-                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
-            elif k.endswith('__gt'):
-                terms.append(f'"{k.strip("__gt")}" > {v}')
-            elif k.endswith('__lt'):
-                terms.append(f'"{k.strip("__lt")}" < {v}')
-        where = ' and '.join(terms)
-        if prev:
-            where = f'({prev}) and ({where})'
-        table = self._table.__class__(
-            name=self._table.name,
-            workspace=self._table.workspace,
-            where=where,
-            field_names=field_names)
+        table = self._table.copy()
+        table.filter(**kwargs)
         return FeatureCollection(table)
 
 
@@ -177,6 +159,7 @@ class Table(ABC):
     '''
     abstract class for a database table
     '''
+    id_field = '__id__'
 
     def __init__(self, name: str, workspace: Union[Workspace, str] = None,
                  field_names: list=None, where=''):
@@ -204,6 +187,7 @@ class Table(ABC):
         row : dict
             dictionary with field names as keys and values of fields as values
             representing the content of a single row
+            if id is available it has to be added as key {self.id_field}
         '''
         return NotImplemented
 

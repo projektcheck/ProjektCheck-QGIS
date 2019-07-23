@@ -49,13 +49,19 @@ class ProjectTest(unittest.TestCase):
         assert len(features) == 0
         geom = QgsGeometry.fromPolygonXY([[QgsPointXY(1, 1), QgsPointXY(2, 2),
                                            QgsPointXY(2, 1)]])
-        feature = features.add(name='first', geom=geom)
-        assert feature.value == 1
-        assert not feature.is_true
-        feature = features.add(name='second', geom=None)
+        feat1 = features.add(name='first', geom=geom)
+        assert feat1.value == 1
+        assert not feat1.is_true
+        feat1.is_true = True
+        feat1.name = 'new_name'
+        feat1.save()
+        feature = features.get(feat1.id)
+        feature.name == 'new_name'
+        assert isinstance(feature.geom, QgsGeometry)
+        feat2 = features.add(name='second', geom=None, is_true=True)
         assert len(features) == 2
         for feature in features:
-            pass
+            assert feature.is_true
 
     def tearDown(self):
         if self.workspace:
