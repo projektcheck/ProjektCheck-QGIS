@@ -19,26 +19,28 @@ class Feature:
     def __init__(self, table, **kwargs):
         self.__dict__['_fields'] = {f.name: f for f in table.fields()}
         self.id = kwargs.pop('id', None)
-        self._table = table
         self.geom = kwargs.pop('geom', None)
-        self._values = {f.name: kwargs.get(f.name, None) or f.default
-                        for f in table.fields()}
+        self._table = table
+        self._fields = []
+        for f in table.fields():
+            self._fields.append(f.name)
+            v = kwargs.get(f.name, None) or f.default
+            self.__dict__[f.name] = v
 
-    def __getattr__(self, k):
-        if k in self.__dict__:
-            return self.__dict__[k]
-        if k in self._fields:
-            return self._values[k]
-        raise AttributeError(f'{k}')
+    #def __getattr__(self, k):
+        #if k in self.__dict__['_fields']:
+            #return self._values[k]
+        #if k in self.__dict__:
+            #return self.__dict__[k]
+        #raise AttributeError(f'{k}')
 
-    def __setattr__(self, k, v):
-        if k in self._fields:
-            self._values[k] = v
-        else:
-            self.__dict__[k] = v
+    #def __setattr__(self, k, v):
+        #if k in self._fields:
+            #self._values[k] = v
+        #self.__dict__[k] = v
 
     def save(self):
-        kwargs = self._values.copy()
+        kwargs = {f: getattr(self, f) for f in self._fields}
         kwargs[self._table.geom_field] = self.geom
         if self.id is not None:
             self._table.set(self.id, **kwargs)
@@ -100,6 +102,9 @@ class FeatureCollection:
         table = self._table.copy()
         table.filter(**kwargs)
         return FeatureCollection(table)
+
+    def as_pandas(self):
+        return self._table.as_pandas()
 
 
 class Database(ABC):

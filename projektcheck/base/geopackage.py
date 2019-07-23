@@ -102,8 +102,8 @@ class GeopackageWorkspace(Workspace):
 
 
 class GeopackageTable(Table):
-    id_field = '__id__'
-    geom_field = '__geom__'
+    id_field = 'fid'
+    geom_field = 'geom'
 
     def __init__(self, name, workspace: GeopackageWorkspace,
                  field_names: list=None, filters: str='', defaults: dict={}):
@@ -153,6 +153,8 @@ class GeopackageTable(Table):
         filtering django style
         supported: __in, __gt, __lt
         '''
+        # ToDo: filter ids (geom maybe not)
+        #       more filters
         terms = []
         field_names = [field.name for field in self.fields()]
         # ToDo: if there it is eventually possible to filter OR you can't just
@@ -228,7 +230,7 @@ class GeopackageTable(Table):
         geom = kwargs.pop(self.geom_field, None)
         if geom:
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())
-            feature.SetGeometry(geom)
+        feature.SetGeometry(geom)
         for field_name, value in kwargs.items():
             feature.SetField(field_name, value)
         self._layer.SetFeature(feature)
@@ -253,6 +255,11 @@ class GeopackageTable(Table):
             row = dict(zip(self.field_names, row))
         for field_name, value in row.items():
             if field_name == self.id_field:
+                continue
+            if field_name == self.geom_field:
+                if value:
+                    geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+                self._cursor.SetGeometry(value)
                 continue
             self._cursor.SetField(field_name, value)
         self._layer.SetFeature(self._cursor)

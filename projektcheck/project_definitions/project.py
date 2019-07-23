@@ -3,22 +3,22 @@ from qgis.core import (QgsCoordinateReferenceSystem,
 from datetime import datetime
 
 from projektcheck.project_definitions.projecttables import Areas
+from projektcheck.project_definitions.constants import Nutzungsart
 
 def init_project(project, area_layer, epsg):
     source_crs = area_layer.crs()
     target_crs = QgsCoordinateReferenceSystem(epsg)
-    tfl_table = Areas.get(project=project)
-    for i, feature in enumerate(area_layer.getFeatures()):
-        row = {
-            'id': i + 1,
-            'nutzungsart': 0,
-            'name': f'Flaeche_{i+1}',
-            'validated': 0,
-            'aufsiedlungsdauer': 1,
-            'nutzungsdauer': datetime.now().year,
-        }
+    features = Areas.features(project=project, create=True)
+    for i, area in enumerate(area_layer.getFeatures()):
         tr = QgsCoordinateTransform(
             source_crs, target_crs, QgsProject.instance())
-        geom = feature.geometry()
+        geom = area.geometry()
         geom.transform(tr)
-        tfl_table.add(row, geom=geom)
+        features.add(
+            nutzungsart=Nutzungsart.UNDEFINIERT.value,
+            name=f'Flaeche_{i+1}',
+            validiert=0,
+            aufsiedlungsdauer=1,
+            nutzungsdauer=datetime.now().year,
+            geom=geom
+        )

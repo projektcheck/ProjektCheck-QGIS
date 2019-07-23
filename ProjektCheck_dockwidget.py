@@ -69,6 +69,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                  QMessageBox.Yes, QMessageBox.No)
             if reply == QMessageBox.Yes:
                 idx = self.ui.project_combo.currentIndex()
+                if self.active_dockwidget:
+                    self.active_dockwidget.close()
                 self.ui.project_combo.setCurrentIndex(0)
                 self.ui.project_combo.removeItem(idx)
                 self.project_manager.active_project = ''

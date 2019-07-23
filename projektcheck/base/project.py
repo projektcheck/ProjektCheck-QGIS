@@ -293,8 +293,8 @@ class ProjectTable:
         pass
 
     @classmethod
-    def features(cls):
-        return cls.get_table().features
+    def features(cls, project=None, create=False):
+        return cls.get_table(project=project, create=create).features
 
     @classmethod
     def _fields(cls):

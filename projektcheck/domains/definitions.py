@@ -14,11 +14,11 @@ class ProjectDefinitions(Domain):
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
 
     def setupUi(self):
-        self.areas_table = Areas.get()
+        features = Areas.features()
         #for area in self.project.areas:
             #self.ui.area_combo.addItem(area, id)
-        for area in self.areas_table:
-            self.ui.area_combo.addItem(area['Name'], area['id'])
+        for area in features:
+            self.ui.area_combo.addItem(area.name, area.id)
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
 
         self.building_types = BuildingTypes(self.basedata)

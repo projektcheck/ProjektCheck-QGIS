@@ -44,7 +44,7 @@ class ProjectTest(unittest.TestCase):
         self.workspace = table.workspace
 
     def test_features(self):
-        features = TestProjectTable.features()
+        features = TestProjectTable.features(create=True)
         self.workspace = features._table.workspace
         assert len(features) == 0
         geom = QgsGeometry.fromPolygonXY([[QgsPointXY(1, 1), QgsPointXY(2, 2),
