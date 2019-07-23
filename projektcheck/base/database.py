@@ -39,7 +39,7 @@ class Feature:
 
     def save(self):
         kwargs = self._values.copy()
-        kwargs['geom'] = self.geom
+        kwargs[self._table.geom_field] = self.geom
         if self.id is not None:
             self._table.set(self.id, **kwargs)
         else:
@@ -47,8 +47,7 @@ class Feature:
             self.id = row[self._table.id_field]
 
     def delete(self):
-        #self._layer.DeleteFeature(id)
-        pass
+        self._table.delete(self.id)
 
     def __repr__(self):
         return f'Feature <{self.id}> of {self._table}'
@@ -70,18 +69,20 @@ class FeatureCollection:
         else:
             row = next(self._table)
             id = row.pop(self._table.id_field)
-            return Feature(table=self._table, id=id, **row)
+            geom = row.pop(self._table.geom_field)
+            return Feature(table=self._table, id=id, geom=geom, **row)
 
     def __len__(self):
         return len(self._table)
 
-    def delete(self):
-        pass
+    def delete(self, id):
+        self._table.delete(id)
 
     def get(self, id):
         row = self._table.get(id)
-        row['id'] = id
-        return Feature(self._table, **row)
+        id = row.pop(self._table.id_field)
+        geom = row.pop(self._table.geom_field)
+        return Feature(self._table, id=id, geom=geom, **row)
 
     def add(self, **kwargs):
         if 'id' in kwargs:
@@ -160,6 +161,7 @@ class Table(ABC):
     abstract class for a database table
     '''
     id_field = '__id__'
+    geom_field = '__geom__'
 
     def __init__(self, name: str, workspace: Union[Workspace, str] = None,
                  field_names: list=None, where=''):

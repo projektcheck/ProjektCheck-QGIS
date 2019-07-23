@@ -103,6 +103,8 @@ class GeopackageWorkspace(Workspace):
 
 class GeopackageTable(Table):
     id_field = '__id__'
+    geom_field = '__geom__'
+
     def __init__(self, name, workspace: GeopackageWorkspace,
                  field_names: list=None, filters: str='', defaults: dict={}):
         self.workspace = workspace
@@ -136,7 +138,7 @@ class GeopackageTable(Table):
         geom = feat.geometry()
         if geom:
             geom = QgsGeometry.fromWkt(geom.ExportToWkt())
-        items['geom'] = geom
+        items[self.geom_field] = geom
         return items
 
     def __next__(self):
@@ -205,7 +207,7 @@ class GeopackageTable(Table):
         return fields
 
     def add(self, **kwargs):
-        geom = kwargs.pop('geom', None)
+        geom = kwargs.pop(self.geom_field, None)
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in kwargs.items():
             if field not in self.field_names:
@@ -223,7 +225,7 @@ class GeopackageTable(Table):
 
     def set(self, id, **kwargs):
         feature = self._layer.GetFeature(id)
-        geom = kwargs.pop('geom', None)
+        geom = kwargs.pop(self.geom_field, None)
         if geom:
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())
             feature.SetGeometry(geom)
@@ -260,7 +262,7 @@ class GeopackageTable(Table):
         for row in self:
             rows.append(row)
         df = pd.DataFrame.from_records(
-            rows, columns=[self.id_field] + self.field_names)
+            rows, columns=[self.id_field, self.geom_field] + self.field_names)
         return df
 
     def __len__(self):

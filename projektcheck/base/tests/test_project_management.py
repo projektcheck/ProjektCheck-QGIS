@@ -62,6 +62,10 @@ class ProjectTest(unittest.TestCase):
         assert len(features) == 2
         for feature in features:
             assert feature.is_true
+        feat2.delete()
+        assert len(features) == 1
+        features.delete(feat1.id)
+        assert len(features) == 0
 
     def tearDown(self):
         if self.workspace:
