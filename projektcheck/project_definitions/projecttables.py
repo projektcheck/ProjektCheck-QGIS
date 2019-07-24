@@ -3,7 +3,6 @@ from projektcheck.base import ProjectTable, Field
 
 class Areas(ProjectTable):
 
-    id_teilflaeche = Field(int, 0)
     nutzungsart = Field(int, 0)
     name = Field(str, 0)
     aufsiedlungsdauer = Field(int, 0)

@@ -12,10 +12,8 @@ class ProjectDefinitions(Domain):
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
 
     def setupUi(self):
-        features = Areas.features()
-        #for area in self.project.areas:
-            #self.ui.area_combo.addItem(area, id)
-        for area in features:
+        self.areas = Areas.features()
+        for area in self.areas:
             self.ui.area_combo.addItem(area.name, area.id)
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
 
@@ -29,29 +27,39 @@ class ProjectDefinitions(Domain):
             'Gewerbe_Branchen', 'Definition_Projekt',
         )
 
-        self.area_id = None
         self.setup_type()
         self.setup_type_params()
 
     def change_area(self, area):
-
         self.setup_type()
         self.setup_type_params()
 
     def setup_type(self):
+
+        area_id = self.ui.area_combo.itemData(self.ui.area_combo.currentIndex())
+        self.area = self.areas.get(area_id)
         layout = self.ui.parameter_group.layout()
+        clearLayout(layout)
         self.params = Params(layout)
-        self.params.name = Param('fläche1', LineEdit(), label='Name')
-        self.params.area = Param(0, label='Größe')
-        #type_names = [n.capitalize() for n in Nutzungsart._member_names_]
+        self.params.name = Param(self.area.name, LineEdit(), label='Name')
+        self.params.area = Param(round(self.area.geom.area()), label='Größe')
+        type_names = [n.capitalize() for n in Nutzungsart._member_names_]
+
         self.params.typ = Param(
-            'Wohnen', ComboBox(['Wohnen', 'Gewerbe', 'Einzelhandel']),
+            Nutzungsart(self.area.nutzungsart).name.capitalize(),
+            ComboBox(type_names),
             label='Nutzungsart'
         )
         self.params.show()
+
         def type_changed():
-            ##
-            self.setup_type_params
+            self.area.name = self.params.name.value
+            self.area.nutzungsart = Nutzungsart[
+                self.params.typ.value.upper()].value
+            self.ui.area_combo.setItemText(
+                self.ui.area_combo.currentIndex(), self.area.name)
+            self.setup_type_params()
+            self.area.save()
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
@@ -68,6 +76,8 @@ class ProjectDefinitions(Domain):
             self.setup_industry_params()
         elif typ == 'Einzelhandel':
             self.setup_retail_params()
+        else:
+            return
 
         self.type_params.show()
         self.type_params.changed.connect(lambda: print('params changed'))
@@ -128,7 +138,8 @@ class ProjectDefinitions(Domain):
             # ToDo: slider
             self.type_params.add(Param(
                 0, Slider(maximum=100, width=200),
-                label=f'{branche.name}', unit='%'),
+                # great column naming by the way ^^
+                label=f'{branche.Name_Branche_ProjektCheck}', unit='%'),
                 name=branche.param_gewerbenutzung
             )
         self.type_params.add(Seperator())
