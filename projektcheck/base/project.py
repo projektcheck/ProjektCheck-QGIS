@@ -294,7 +294,7 @@ class ProjectTable:
 
     @classmethod
     def features(cls, project=None, create=False):
-        return cls.get_table(project=project, create=create).features
+        return cls.get_table(project=project, create=create).features()
 
     @classmethod
     def _fields(cls):

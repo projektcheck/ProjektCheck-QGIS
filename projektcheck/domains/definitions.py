@@ -2,8 +2,6 @@ from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                           Title, Seperator, LineEdit, Geopackage,
                           Slider)
 from projektcheck.utils.utils import clearLayout
-from projektcheck.project_definitions.basetable_definitions import (
-    BuildingTypes, Industries, Assortments)
 from projektcheck.project_definitions.constants import Nutzungsart
 from projektcheck.project_definitions.projecttables import Areas
 
@@ -21,9 +19,15 @@ class ProjectDefinitions(Domain):
             self.ui.area_combo.addItem(area.name, area.id)
         self.ui.area_combo.currentTextChanged.connect(self.change_area)
 
-        self.building_types = BuildingTypes(self.basedata)
-        self.assortments = Assortments(self.basedata)
-        self.industries = Industries(self.basedata)
+        self.building_types = self.basedata.get_table(
+            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
+        )
+        self.assortments = self.basedata.get_table(
+            'Einzelhandel_Sortimente', 'Definition_Projekt',
+        )
+        self.industries = self.basedata.get_table(
+            'Gewerbe_Branchen', 'Definition_Projekt',
+        )
 
         self.area_id = None
         self.setup_type()
@@ -84,7 +88,7 @@ class ProjectDefinitions(Domain):
 
         self.type_params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
-        for bt in self.building_types.values():
+        for bt in self.building_types.features():
             self.type_params.add(Param(
                 0, Slider(maximum=500),
                 label=f'... in {bt.display_name}'),
@@ -95,7 +99,7 @@ class ProjectDefinitions(Domain):
         self.type_params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
                                    '(3 Jahre nach Bezug)'))
 
-        for bt in self.building_types.values():
+        for bt in self.building_types.features():
             self.type_params.add(Param(
                 0, Slider(maximum=500), label=f'... in {bt.display_name}'),
                 name=bt.param_ew_je_we
@@ -120,7 +124,7 @@ class ProjectDefinitions(Domain):
         self.type_params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
 
-        for branche in self.industries.values():
+        for branche in self.industries.features():
             # ToDo: slider
             self.type_params.add(Param(
                 0, Slider(maximum=100, width=200),
@@ -140,7 +144,7 @@ class ProjectDefinitions(Domain):
     def setup_retail_params(self):
         self.type_params.add(Title('Verkaufsfläche'))
 
-        for assortment in self.assortments.values():
+        for assortment in self.assortments.features():
             # ToDo: slider
             self.type_params.add(Param(
                 0, Slider(maximum=20000),

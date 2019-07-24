@@ -52,7 +52,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                     self.project_manager.settings.TEMPLATE_PATH,
                     'projektflaechen', 'projektflaechen_template.shp')
                 layer = QgsVectorLayer(shape, 'testlayer_shp', 'ogr')
-                init_project(project, layer, self.project_manager.settings.epsg)
+                init_project(project, layer, self.project_manager.settings.EPSG)
                 self.ui.project_combo.addItem(project.name, project)
                 self.project_manager.active_project = project
 

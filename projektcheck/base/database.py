@@ -210,7 +210,6 @@ class Table(ABC):
         '''
         return NotImplemented
 
-    @property
     def features(self):
         '''
         override to cache features

@@ -43,7 +43,7 @@ class GeopackageTest(unittest.TestCase):
         assert len(self.table) == 2
 
     def test_feature_filter(self):
-        features = self.table.features
+        features = self.table.features()
         assert len(features) == 4
         assert len(features.filter(value=0)) == 1
         assert len(features.filter(value=6)) == 1
