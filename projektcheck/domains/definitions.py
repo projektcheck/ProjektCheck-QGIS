@@ -15,7 +15,7 @@ class ProjectDefinitions(Domain):
         self.areas = Areas.features()
         for area in self.areas:
             self.ui.area_combo.addItem(area.name, area.id)
-        self.ui.area_combo.currentTextChanged.connect(self.change_area)
+        self.ui.area_combo.currentIndexChanged.connect(self.change_area)
 
         self.building_types = self.basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
@@ -30,7 +30,8 @@ class ProjectDefinitions(Domain):
         self.setup_type()
         self.setup_type_params()
 
-    def change_area(self, area):
+    def change_area(self, index):
+        area = self.ui.area_combo.itemText(index)
         self.setup_type()
         self.setup_type_params()
 
@@ -53,13 +54,14 @@ class ProjectDefinitions(Domain):
         self.params.show()
 
         def type_changed():
-            self.area.name = self.params.name.value
+            name = self.params.name.value
             self.area.nutzungsart = Nutzungsart[
                 self.params.typ.value.upper()].value
             self.ui.area_combo.setItemText(
-                self.ui.area_combo.currentIndex(), self.area.name)
-            self.setup_type_params()
+                self.ui.area_combo.currentIndex(), name)
+            self.area.name = name
             self.area.save()
+            self.setup_type_params()
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
@@ -159,7 +161,7 @@ class ProjectDefinitions(Domain):
             # ToDo: slider
             self.type_params.add(Param(
                 0, Slider(maximum=20000),
-                label=f'{assortment.name}', unit='m²'),
+                label=f'{assortment.Name_Sortiment_ProjektCheck}', unit='m²'),
                 name=assortment.param_vfl
             )
 

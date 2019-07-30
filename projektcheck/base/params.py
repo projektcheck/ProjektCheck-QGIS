@@ -40,7 +40,7 @@ class Param(QObject):
         self._value = value
         self.label = label
         self.input = input
-        if input:
+        if self.input:
             self.input.value = value
         self.unit = unit
         self._value_label = QLabel(str(value))
@@ -53,7 +53,7 @@ class Param(QObject):
     def value(self, value):
         self._value = value
         self._value_label.setText(str(value))
-        if input:
+        if self.input:
             self.input.set(value)
         self.changed.emit()
 
