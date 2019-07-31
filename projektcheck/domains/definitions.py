@@ -1,6 +1,6 @@
 from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                                Title, Seperator, LineEdit, Geopackage, Field,
-                               Slider)
+                               Slider, DoubleSpinBox)
 from projektcheck.utils.utils import clearLayout
 from projektcheck.project_definitions.constants import Nutzungsart
 from projektcheck.project_definitions.projecttables import Areas
@@ -13,36 +13,22 @@ class ProjectDefinitions(Domain):
 
     def setupUi(self):
         self.areas = Areas.features()
-        self.building_types = self.basedata.get_table(
-            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
-        )
-        self.assortments = self.basedata.get_table(
-            'Einzelhandel_Sortimente', 'Definition_Projekt',
-        )
-        self.industries = self.basedata.get_table(
-            'Gewerbe_Branchen', 'Definition_Projekt',
-        )
-
-        self.setup_table()
-
         for area in self.areas:
             self.ui.area_combo.addItem(area.name, area.id)
         self.ui.area_combo.currentIndexChanged.connect(self.change_area)
 
+        self.building_types = self.basedata.get_table(
+            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
+        )
+        self.assortments = self.basedata.get_table(
+            'Einzelhandel_Sortimente', 'Definition_Projekt'
+        )
+        self.industries = self.basedata.get_table(
+            'Gewerbe_Branchen', 'Definition_Projekt'
+        )
+
         self.setup_type()
         self.setup_type_params()
-
-    def setup_table(self):
-        # add dynamic fields (created if not existing)
-        for bt in self.building_types.features():
-            for param_name in [bt.param_we, bt.param_ew_je_we]:
-                self.areas.add_field(Field(int, default=0, name=param_name))
-        for branche in self.industries.features():
-            self.areas.add_field(Field(int, default=0,
-                                       name=branche.param_gewerbenutzung))
-        for assortment in self.assortments.features():
-            self.areas.add_field(Field(int, default=0,
-                                       name=assortment.param_vfl))
 
     def change_area(self, index):
         self.setup_type()
@@ -129,7 +115,8 @@ class ProjectDefinitions(Domain):
         for bt in self.building_types.features():
             param_name = bt.param_ew_je_we
             self.type_params.add(Param(
-                getattr(self.area, param_name), Slider(maximum=500),
+                getattr(self.area, param_name),
+                DoubleSpinBox(step=0.1, maximum=50),
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )
@@ -204,8 +191,7 @@ class ProjectDefinitions(Domain):
             )
 
     def close(self):
-        #if getattr(self, 'type_params', None):
-            #self.type_params.close()
-        #if getattr(self, 'params', None):
-            #self.params.close()
+        # ToDo: implement this in project (collecting all used workscpaces)
+        if hasattr(self, 'areas'):
+            self.areas._table.workspace.close()
         super().close()

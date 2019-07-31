@@ -25,6 +25,10 @@ class TestProjectTable(ProjectTable):
         database = Geopackage
         geom = 'Polygon'
 
+    @classmethod
+    def extra(cls):
+        setattr(cls, 'extra_field', Field(int, default=-1))
+
 
 class ProjectTest(unittest.TestCase):
     """Test projects"""
@@ -50,6 +54,7 @@ class ProjectTest(unittest.TestCase):
         geom = QgsGeometry.fromPolygonXY([[QgsPointXY(1, 1), QgsPointXY(2, 2),
                                            QgsPointXY(2, 1)]])
         feat1 = features.add(name='first', geom=geom)
+        assert feat1.extra_field == -1
         assert feat1.value == 1
         assert not feat1.is_true
         feat1.is_true = True

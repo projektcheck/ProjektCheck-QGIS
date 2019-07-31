@@ -66,6 +66,7 @@ class PCDockWidget(QObject):
         pass
 
     def close(self):
+        self.isActive = False
         self.ui.close()
 
     def show(self):

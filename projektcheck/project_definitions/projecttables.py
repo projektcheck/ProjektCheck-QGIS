@@ -1,4 +1,4 @@
-from projektcheck.base import ProjectTable, Field
+from projektcheck.base import ProjectTable, Field, settings
 
 
 class Areas(ProjectTable):
@@ -19,3 +19,25 @@ class Areas(ProjectTable):
 
     class Meta:
         workspace = 'project_definitions'
+
+    @classmethod
+    def extra(cls):
+
+        building_types = settings.BASEDATA.get_table(
+            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
+        )
+        assortments = settings.BASEDATA.get_table(
+            'Einzelhandel_Sortimente', 'Definition_Projekt'
+        )
+        industries = settings.BASEDATA.get_table(
+            'Gewerbe_Branchen', 'Definition_Projekt'
+        )
+
+        for bt in building_types.features():
+            setattr(cls, bt.param_we, Field(int, default=0))
+            setattr(cls, bt.param_ew_je_we,
+                    Field(float, default=bt.default_ew_je_we))
+        for branche in industries.features():
+            setattr(cls, branche.param_gewerbenutzung, Field(int, default=0))
+        for assortment in assortments.features():
+            setattr(cls, assortment.param_vfl, Field(int, default=0))

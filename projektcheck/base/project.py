@@ -297,6 +297,7 @@ class ProjectTable:
 
     @classmethod
     def _fields(cls):
+        cls.extra()
         types = OrderedDict()
         defaults = OrderedDict()
         for k, v in cls.__dict__.items():
@@ -316,6 +317,13 @@ class ProjectTable:
         return workspace.create_table(name, fields=types,
                                       defaults=defaults,
                                       geometry_type=geometry_type)
+
+    @classmethod
+    def extra(cls):
+        '''
+        override to add extra fields on runtime
+        '''
+        pass
 
     class Meta:
         '''
