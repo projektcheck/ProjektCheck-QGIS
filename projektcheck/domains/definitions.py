@@ -1,6 +1,6 @@
 from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
-                          Title, Seperator, LineEdit, Geopackage,
-                          Slider)
+                               Title, Seperator, LineEdit, Geopackage, Field,
+                               Slider)
 from projektcheck.utils.utils import clearLayout
 from projektcheck.project_definitions.constants import Nutzungsart
 from projektcheck.project_definitions.projecttables import Areas
@@ -13,10 +13,6 @@ class ProjectDefinitions(Domain):
 
     def setupUi(self):
         self.areas = Areas.features()
-        for area in self.areas:
-            self.ui.area_combo.addItem(area.name, area.id)
-        self.ui.area_combo.currentIndexChanged.connect(self.change_area)
-
         self.building_types = self.basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         )
@@ -27,11 +23,28 @@ class ProjectDefinitions(Domain):
             'Gewerbe_Branchen', 'Definition_Projekt',
         )
 
+        self.setup_table()
+
+        for area in self.areas:
+            self.ui.area_combo.addItem(area.name, area.id)
+        self.ui.area_combo.currentIndexChanged.connect(self.change_area)
+
         self.setup_type()
         self.setup_type_params()
 
+    def setup_table(self):
+        # add dynamic fields (created if not existing)
+        for bt in self.building_types.features():
+            for param_name in [bt.param_we, bt.param_ew_je_we]:
+                self.areas.add_field(Field(int, default=0, name=param_name))
+        for branche in self.industries.features():
+            self.areas.add_field(Field(int, default=0,
+                                       name=branche.param_gewerbenutzung))
+        for assortment in self.assortments.features():
+            self.areas.add_field(Field(int, default=0,
+                                       name=assortment.param_vfl))
+
     def change_area(self, index):
-        area = self.ui.area_combo.itemText(index)
         self.setup_type()
         self.setup_type_params()
 
@@ -68,6 +81,7 @@ class ProjectDefinitions(Domain):
         typ = self.params.typ.value
         if getattr(self, 'type_params', None):
             self.type_params.close()
+            del self.type_params
         layout = self.ui.type_parameter_group.layout()
         # clear layout with parameters
         clearLayout(layout)
@@ -82,7 +96,7 @@ class ProjectDefinitions(Domain):
             return
 
         self.type_params.show()
-        self.type_params.changed.connect(lambda: print('params changed'))
+        self.type_params.changed.connect(lambda: self.save_params(typ))
 
     def setup_living_params(self):
         #table = self.workspace.get_table('Wohnen_Struktur_und_Alterung_WE')
@@ -101,10 +115,11 @@ class ProjectDefinitions(Domain):
         self.type_params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
         for bt in self.building_types.features():
+            param_name = bt.param_we
             self.type_params.add(Param(
-                0, Slider(maximum=500),
+                getattr(self.area, param_name), Slider(maximum=500),
                 label=f'... in {bt.display_name}'),
-                name=bt.param_we
+                name=param_name
             )
         self.type_params.add(Seperator())
 
@@ -112,13 +127,36 @@ class ProjectDefinitions(Domain):
                                    '(3 Jahre nach Bezug)'))
 
         for bt in self.building_types.features():
+            param_name = bt.param_ew_je_we
             self.type_params.add(Param(
-                0, Slider(maximum=500), label=f'... in {bt.display_name}'),
-                name=bt.param_ew_je_we
+                getattr(self.area, param_name), Slider(maximum=500),
+                label=f'... in {bt.display_name}'),
+                name=param_name
             )
 
-    def save_living(self):
-        pass
+    def save_params(self, typ):
+        if typ == 'Wohnen':
+            for bt in self.building_types.features():
+                for param_name in [bt.param_we, bt.param_ew_je_we]:
+                    value = getattr(self.type_params, param_name).value
+                    setattr(self.area, param_name, value)
+        elif typ == 'Gewerbe':
+            for branche in self.industries.features():
+                param_name = branche.param_gewerbenutzung
+                value = getattr(self.type_params, param_name).value
+                setattr(self.area, param_name, value)
+        elif typ == 'Einzelhandel':
+            for assortment in self.assortments.features():
+                param_name = assortment.param_vfl
+                value = getattr(self.type_params, param_name).value
+                setattr(self.area, param_name, value)
+        self.area.save()
+
+        #if we_changed:
+            #we_idx = self.df_acc_units['IDTeilflaeche'] == area['id_teilflaeche']
+            #sums = self.df_acc_units[we_idx]['WE'].sum()
+            #self.df_areas.loc[area_idx, 'WE_gesamt'] = sums
+            #self.update_pretty_name()
 
     def setup_industry_params(self):
 
@@ -137,9 +175,9 @@ class ProjectDefinitions(Domain):
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
 
         for branche in self.industries.features():
-            # ToDo: slider
             self.type_params.add(Param(
-                0, Slider(maximum=100, width=200),
+                getattr(self.area, branche.param_gewerbenutzung),
+                Slider(maximum=100, width=200),
                 # great column naming by the way ^^
                 label=f'{branche.Name_Branche_ProjektCheck}', unit='%'),
                 name=branche.param_gewerbenutzung
@@ -158,9 +196,9 @@ class ProjectDefinitions(Domain):
         self.type_params.add(Title('Verkaufsfläche'))
 
         for assortment in self.assortments.features():
-            # ToDo: slider
             self.type_params.add(Param(
-                0, Slider(maximum=20000),
+                getattr(self.area, assortment.param_vfl),
+                Slider(maximum=20000),
                 label=f'{assortment.Name_Sortiment_ProjektCheck}', unit='m²'),
                 name=assortment.param_vfl
             )

@@ -58,14 +58,13 @@ class GeopackageWorkspace(Workspace):
         tables = [l.GetName() for l in self._conn]
         return tables
 
-    def get_table(self, name: str, field_names: list=None, defaults: dict={}):
+    def get_table(self, name: str, field_names: list=None):
         if name not in self.tables:
             raise FileNotFoundError(f'layer {name} not found')
-        return GeopackageTable(name, self, field_names=field_names,
-                               defaults=defaults)
+        return GeopackageTable(name, self, field_names=field_names)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
-                     overwrite: bool=False, defaults: dict={}):
+                     overwrite: bool=False, defaults={}):
         '''
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
@@ -87,8 +86,10 @@ class GeopackageWorkspace(Workspace):
         for fieldname, typ in fields.items():
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
+            if fieldname in defaults:
+                field.SetDefault(str(defaults[fieldname]))
             layer.CreateField(field)
-        return self.get_table(name, defaults=defaults)
+        return self.get_table(name)
 
     @property
     def wkb_types(self):
@@ -106,16 +107,15 @@ class GeopackageTable(Table):
     geom_field = 'geom'
 
     def __init__(self, name, workspace: GeopackageWorkspace,
-                 field_names: list=None, filters: str='', defaults: dict={}):
+                 field_names: list=None, filters: str=''):
         self.workspace = workspace
         self.name = name
-        self._defaults = defaults
         self._where = ''
         self._layer = self.workspace._conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
         if field_names:
-            self.field_names = field_names
+            self.field_names = list(field_names)
         else:
             defn = self._layer.GetLayerDefn()
             self.field_names = [defn.GetFieldDefn(i).GetName()
@@ -127,7 +127,7 @@ class GeopackageTable(Table):
     def copy(self):
         return GeopackageTable(self.name, self.workspace,
                                field_names=self.field_names,
-                               filters=self._filters, defaults=self._defaults)
+                               filters=self._filters)
 
     def _ogr_feat_to_row(self, feat):
         if self.field_names is not None:
@@ -156,14 +156,14 @@ class GeopackageTable(Table):
         # ToDo: filter ids (geom maybe not)
         #       more filters
         terms = []
-        field_names = [field.name for field in self.fields()]
+        #field_names = [field.name for field in self.fields()]
         # ToDo: if there it is eventually possible to filter OR you can't just
         # append filters to old ones
         # (but seperate  previous and new filters with brackets)
         self._filters.update(kwargs)
         for k, v in self._filters.items():
             if '__' not in k:
-                if k not in field_names:
+                if k not in self.field_names:
                     raise ValueError(f'{k} not in fields')
                 terms.append(f'{k} = {v}')
             elif k.endswith('__in'):
@@ -204,7 +204,14 @@ class GeopackageTable(Table):
             name = defn.GetName()
             t = defn.GetType()
             datatype = rev_types[t] if t in rev_types else None
-            default = self._defaults[name] if name in self._defaults else None
+            default = defn.GetDefault()
+            # GetDefault returns strings -> need to cast
+            if datatype and default is not None:
+                if datatype == bool:
+                    default = False if default in ['False', 'false', '0'] \
+                        else True
+                else:
+                    default = datatype(default)
             fields.append(Field(datatype, name=name, default=default))
         return fields
 
@@ -221,6 +228,31 @@ class GeopackageTable(Table):
             feature.SetGeometry(geom)
         self._layer.CreateFeature(feature)
         return self._ogr_feat_to_row(feature)
+
+    def add_field(self, field):
+        '''
+        add field to table
+        creates if not existing
+        '''
+        dt = DATATYPES[field.datatype]
+        name = field.name
+        if not name:
+            raise ValueError('The field needs a name to be added to the table')
+        # create field if not existing
+        if name not in [f.name for f in self.fields()]:
+            f = ogr.FieldDefn(name, dt)
+            default = field.default
+            f.SetDefault(str(default))
+            self._layer.CreateField(f)
+            # set all existing rows to default value
+            feat = self._layer.GetNextFeature()
+            while feat:
+                feat.SetField(name, default)
+                self._layer.SetFeature(feat)
+                feat = self._layer.GetNextFeature()
+        if getattr(self, '_fields', None):
+            self._fields.append(field)
+        self.field_names.append(name)
 
     def delete(self, id):
         self._layer.DeleteFeature(id)
@@ -258,7 +290,7 @@ class GeopackageTable(Table):
                 continue
             if field_name == self.geom_field:
                 if value:
-                    geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+                    value = ogr.CreateGeometryFromWkt(value.asWkt())
                 self._cursor.SetGeometry(value)
                 continue
             self._cursor.SetField(field_name, value)

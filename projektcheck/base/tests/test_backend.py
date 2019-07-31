@@ -7,7 +7,7 @@ import unittest
 import random
 import os
 
-from projektcheck.base import Geopackage
+from projektcheck.base import Geopackage, Field
 
 
 class GeopackageTest(unittest.TestCase):
@@ -26,7 +26,8 @@ class GeopackageTest(unittest.TestCase):
             'value': float
         }
         self.table = self.workspace.create_table(
-            'testtable', fields, geometry_type='Polygon', overwrite=True)
+            'testtable', fields, geometry_type='Polygon', overwrite=True,
+            defaults={'value': 0.0})
         self.table.add(name='row1', value=5)
         self.table.add(name='row2', value=5)
         self.table.add(name='row3', value=6)
@@ -81,6 +82,18 @@ class GeopackageTest(unittest.TestCase):
 
     def test_pandas(self):
         a = self.table.as_pandas()
+
+    def test_fields(self):
+        self.table.add_field(Field(int, default=0, name='1'))
+        self.table.add_field(Field(str, default='hallo', name='2'))
+        self.table.add(geom=None)
+        df = self.table.as_pandas()
+        uq1 = df['1'].unique()
+        uq2 = df['2'].unique()
+        assert len(uq1) == 1
+        assert uq1[0] == 0
+        assert len(uq2) == 1
+        assert uq2[0] == 'hallo'
 
     @classmethod
     def tearDownClass(cls):

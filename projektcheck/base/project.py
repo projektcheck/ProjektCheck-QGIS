@@ -279,8 +279,7 @@ class ProjectTable:
         workspace = database.get_or_create_workspace(workspace_name)
         try:
             fields, defaults = cls._fields()
-            table = workspace.get_table(table_name, field_names=fields.keys(),
-                                        defaults=defaults)
+            table = workspace.get_table(table_name, field_names=fields.keys())
         except FileNotFoundError as e:
             if not create:
                 raise e
