@@ -1,6 +1,6 @@
 from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                                Title, Seperator, LineEdit, Geopackage, Field,
-                               Slider, DoubleSpinBox)
+                               Slider, DoubleSpinBox, SumDependency)
 from projektcheck.utils.utils import clearLayout
 from projektcheck.project_definitions.constants import Nutzungsart
 from projektcheck.project_definitions.projecttables import Areas
@@ -161,14 +161,17 @@ class ProjectDefinitions(Domain):
         self.type_params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
 
+        dependency = SumDependency(100)
         for branche in self.industries.features():
-            self.type_params.add(Param(
+            param = Param(
                 getattr(self.area, branche.param_gewerbenutzung),
                 Slider(maximum=100, width=200),
                 # great column naming by the way ^^
-                label=f'{branche.Name_Branche_ProjektCheck}', unit='%'),
-                name=branche.param_gewerbenutzung
+                label=f'{branche.Name_Branche_ProjektCheck}', unit='%'
             )
+            dependency.add(param)
+            self.type_params.add(param, name=branche.param_gewerbenutzung)
+
         self.type_params.add(Seperator())
 
         self.type_params.add(Title('Voraussichtliche Anzahl an Arbeitsplätzen'))

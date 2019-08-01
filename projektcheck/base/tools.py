@@ -11,10 +11,10 @@ class Tool(ABC):
         self.params = params
 
     def run(self):
-        return NotImplemented
+        raise NotImplementedError
 
     def store(self):
-        return NotImplemented
+        raise NotImplementedError
 
 
 class CalculationTool(Tool, ABC):
@@ -30,10 +30,10 @@ class DrawingTool(Tool, ABC):
     '''
 
     def draw(self, canvas):
-        return NotImplemented
+        raise NotImplementedError
 
     def load(self):
-        return NotImplemented
+        raise NotImplementedError
 
     def run(self):
         pass

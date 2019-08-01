@@ -7,7 +7,7 @@ class Output(ABC):
     '''
 
     def draw(self):
-        return NotImplemented
+        raise NotImplementedError
 
 
 class Diagram(Output, ABC):

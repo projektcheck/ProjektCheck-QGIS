@@ -135,14 +135,14 @@ class Database(ABC):
         table : Table
 
         '''
-        return NotImplemented
+        raise NotImplementedError
 
     @property
     def workspaces(self):
-        return NotImplemented
+        raise NotImplementedError
 
     def get_workspace(self, name):
-        return NotImplemented
+        raise NotImplementedError
 
     #def __repr__(self):
         #table_repr = '\n'.join(['   ' + str(v) for k, v in
@@ -164,7 +164,7 @@ class Workspace:
 
     @property
     def tables(self):
-        return NotImplemented
+        raise NotImplementedError
 
 
 class Table(ABC):
@@ -202,7 +202,7 @@ class Table(ABC):
             representing the content of a single row
             if id is available it has to be added as key {self.id_field}
         '''
-        return NotImplemented
+        raise NotImplementedError
 
     @property
     def fields(self):
@@ -214,7 +214,7 @@ class Table(ABC):
         row : list of str
             ordered field names (column names)
         '''
-        return NotImplemented
+        raise NotImplementedError
 
     def features(self):
         '''
@@ -236,7 +236,7 @@ class Table(ABC):
             pandas dataframe with field names as column names containing all
             rows in table
         '''
-        return NotImplemented
+        raise NotImplementedError
 
     def count(self):
         '''
@@ -247,13 +247,13 @@ class Table(ABC):
         count : int
             number of rows (features)
         '''
-        return NotImplemented
+        raise NotImplementedError
 
     def update(self):
-        return NotImplemented
+        raise NotImplementedError
 
     def create(self):
-        return NotImplemented
+        raise NotImplementedError
 
 
 class TemporaryTable(Table):

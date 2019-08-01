@@ -8,7 +8,7 @@ class InputType(QObject):
     '''
     abstract class for an input ui element
     '''
-    #changed = pyqtSignal()
+    changed = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -25,10 +25,10 @@ class InputType(QObject):
         self.set(value)
 
     def set(self, value):
-        return NotImplemented
+        raise NotImplementedError
 
     def get(self):
-        return NotImplemented
+        raise NotImplementedError
 
 
 class Slider(InputType):
@@ -36,7 +36,8 @@ class Slider(InputType):
     slider input
     '''
 
-    def __init__(self, minimum=0, maximum=100000000, step=1, width=300):
+    def __init__(self, minimum=0, maximum=100000000, step=1, width=300,
+                 lockable=False):
         super().__init__()
         self.minimum = minimum
         self.maximum = maximum
@@ -51,13 +52,18 @@ class Slider(InputType):
         self.spinbox.setMaximum(maximum)
         self.spinbox.setSingleStep(step)
         self.slider.valueChanged.connect(
-            lambda: self.spinbox.setValue(self.slider.value()))
+            lambda: self.set(self.slider.value()))
         self.spinbox.valueChanged.connect(
-            lambda: self.slider.setValue(self.spinbox.value()))
+            lambda: self.set(self.spinbox.value()))
+        self.slider.valueChanged.connect(lambda: self.changed.emit())
+        self.spinbox.valueChanged.connect(lambda: self.changed.emit())
 
     def set(self, value):
-        self.slider.setValue(value)
-        self.spinbox.setValue(value)
+        for element in [self.slider, self.spinbox]:
+            # avoid infinite recursion
+            element.blockSignals(True)
+            element.setValue(value)
+            element.blockSignals(False)
 
     def draw(self, layout):
         l = QHBoxLayout()
@@ -73,6 +79,7 @@ class ComboBox(InputType):
     def __init__(self, values):
         super().__init__()
         self.input = QComboBox()
+        self.input.currentIndexChanged.connect(lambda: self.changed.emit())
         for value in values:
             self.input.addItem(value)
 
@@ -87,6 +94,7 @@ class LineEdit(InputType):
     def __init__(self):
         super().__init__()
         self.input = QLineEdit()
+        self.input.textChanged.connect(lambda: self.changed.emit())
 
     def set(self, value):
         self.input.setText(str(value))
@@ -99,10 +107,13 @@ class SpinBox(InputType):
     InputClass = QSpinBox
     def __init__(self, minimum=0, maximum=100000000, step=1):
         super().__init__()
+        self.minimum = minimum
+        self.maximum = maximum
         self.input = self.InputClass()
         self.input.setMinimum(minimum)
         self.input.setMaximum(maximum)
         self.input.setSingleStep(step)
+        self.input.valueChanged.connect(lambda: self.changed.emit())
 
     def set(self, value):
         self.input.setValue(value)

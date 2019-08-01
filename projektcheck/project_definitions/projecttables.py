@@ -38,6 +38,6 @@ class Areas(ProjectTable):
             setattr(cls, bt.param_ew_je_we,
                     Field(float, default=bt.default_ew_je_we))
         for branche in industries.features():
-            setattr(cls, branche.param_gewerbenutzung, Field(int, default=0))
+            setattr(cls, branche.param_gewerbenutzung, Field(int, default=16))
         for assortment in assortments.features():
             setattr(cls, assortment.param_vfl, Field(int, default=0))

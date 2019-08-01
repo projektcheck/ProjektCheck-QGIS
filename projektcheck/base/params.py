@@ -6,6 +6,7 @@ from qgis.PyQt.QtGui import QFont
 from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy, QPushButton
 from typing import Union
 from collections import OrderedDict
+import math
 
 from projektcheck.base import InputType, Dialog
 
@@ -90,7 +91,52 @@ class Dependency(ABC):
     '''
     base class for dependencies between fields
     '''
-    params = []
+    def __init__(self, params=[]):
+        self._params = []
+        for param in params:
+            self.add(param)
+
+    def add(self, param):
+        param.input.changed.connect(lambda: self.on_change(param))
+        self._params.append(param)
+
+    def on_change(self, param):
+        raise NotImplementedError
+
+
+class SumDependency(Dependency):
+    '''
+    all dependent fields add up to a total value
+    '''
+    def __init__(self, total, params=[], decimals=0):
+        super().__init__(params=params)
+        self.total = total
+        self.decimals = decimals
+
+    def on_change(self, param):
+        #print(param)
+        current_total = sum(p.input.get() for p in self._params)
+        dif = self.total - current_total
+        share = round(abs(dif) / (len(self._params) - 1), self.decimals)
+        # the share has to be bigger than zero (at least 0.xxx1)
+        share = max(share, 1/math.pow(10, self.decimals))
+        shared = 0
+        for p in self._params:
+            current = p.input.get()
+            signed_share = (share) * math.copysign(1, dif)
+            if (param == p or
+                current + signed_share < p.input.minimum or
+                current + signed_share > p.input.maximum):
+                continue
+            p.input.set(current + signed_share)
+            shared += share
+            if shared >= abs(dif):
+                break
+        # change order for next time, so that another input is raised first
+        # ToDo: can hit param currently changed, then same input is changed
+        # again next round
+        self._params.append(self._params.pop(0))
+        print(sum(p.input.get() for p in self._params))
 
 
 class Seperator:
@@ -158,13 +204,15 @@ class Params(QObject):
         '''
         super().__init__()
         self._params = OrderedDict()
-        self.elements = []
-        self.dependencies = []
+        self._elements = []
+        #self._dependencies = []
         self.parent = parent
         self.dialog = None
 
-    def add_dependency(self, dependency: Dependency):
-        pass
+    #def add_dependency(self, dependency: Dependency):
+        #self._dependencies.append(dependency)
+        #for param in self._params.values():
+            #dependency.add_param(param)
 
     def add(self, element: Union[Param, Seperator, Title], name=''):
         '''
@@ -172,9 +220,11 @@ class Params(QObject):
         elements will be rendered in order of addition
 
         '''
-        self.elements.append(element)
+        self._elements.append(element)
         if name and isinstance(element, Param):
             self._params[name] = element
+            #for dependency in self._dependencies:
+                #dependency.add(element)
 
     @property
     def params(self):
@@ -207,7 +257,7 @@ class Params(QObject):
                 QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
             return row
 
-        for element in self.elements:
+        for element in self._elements:
             element.draw(layout)
             if isinstance(element, Param):
                 element.draw(self.dialog.param_layout, edit=True)
@@ -276,11 +326,4 @@ class ParamCluster(Params):
     def trigger(self):
         pass
 
-
-class SumDependency(Dependency):
-    '''
-    all dependent fields add up to a total value
-    '''
-    def __init__(self, fields, total):
-        pass
 
