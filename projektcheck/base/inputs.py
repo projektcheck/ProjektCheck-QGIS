@@ -18,16 +18,16 @@ class InputType(QObject):
 
     @property
     def value(self):
-        return self.get()
+        return self.get_value()
 
     @value.setter
     def value(self, value):
-        self.set(value)
+        self.set_value(value)
 
-    def set(self, value):
+    def set_value(self, value):
         raise NotImplementedError
 
-    def get(self):
+    def get_value(self):
         raise NotImplementedError
 
 
@@ -52,13 +52,13 @@ class Slider(InputType):
         self.spinbox.setMaximum(maximum)
         self.spinbox.setSingleStep(step)
         self.slider.valueChanged.connect(
-            lambda: self.set(self.slider.value()))
+            lambda: self.set_value(self.slider.value()))
         self.spinbox.valueChanged.connect(
-            lambda: self.set(self.spinbox.value()))
+            lambda: self.set_value(self.spinbox.value()))
         self.slider.valueChanged.connect(lambda: self.changed.emit())
         self.spinbox.valueChanged.connect(lambda: self.changed.emit())
 
-    def set(self, value):
+    def set_value(self, value):
         for element in [self.slider, self.spinbox]:
             # avoid infinite recursion
             element.blockSignals(True)
@@ -71,7 +71,7 @@ class Slider(InputType):
         l.addWidget(self.spinbox)
         layout.addLayout(l)
 
-    def get(self):
+    def get_value(self):
         return self.slider.value()
 
 
@@ -83,10 +83,10 @@ class ComboBox(InputType):
         for value in values:
             self.input.addItem(value)
 
-    def set(self, value):
+    def set_value(self, value):
         self.input.setCurrentText(str(value))
 
-    def get(self):
+    def get_value(self):
         return self.input.currentText()
 
 
@@ -96,10 +96,10 @@ class LineEdit(InputType):
         self.input = QLineEdit()
         self.input.textChanged.connect(lambda: self.changed.emit())
 
-    def set(self, value):
+    def set_value(self, value):
         self.input.setText(str(value))
 
-    def get(self):
+    def get_value(self):
         return self.input.text()
 
 
@@ -115,10 +115,10 @@ class SpinBox(InputType):
         self.input.setSingleStep(step)
         self.input.valueChanged.connect(lambda: self.changed.emit())
 
-    def set(self, value):
+    def set_value(self, value):
         self.input.setValue(value)
 
-    def get(self):
+    def get_value(self):
         return self.input.value()
 
 

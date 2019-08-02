@@ -55,7 +55,7 @@ class Param(QObject):
         self._value = value
         self._value_label.setText(str(value))
         if self.input:
-            self.input.set(value)
+            self.input.value = value
         self.changed.emit()
 
     def draw(self, layout, edit=False):
@@ -114,29 +114,50 @@ class SumDependency(Dependency):
         self.decimals = decimals
 
     def on_change(self, param):
-        #print(param)
-        current_total = sum(p.input.get() for p in self._params)
+
+        def distribute(value, equally=True):
+            share = round(dif / (len(self._params) - 1), self.decimals)
+            if equally:
+                # equal share has to be different from zero (at least +-x.xxx1)
+                share = math.copysign(
+                    max(abs(share), 1/math.pow(10, self.decimals)), share)
+            distributed = 0
+            for p in self._params:
+                if param == p:
+                    continue
+                # no equal share -> try to add complete missing amount
+                if not equally:
+                    share = value - distributed
+                current = p.input.value
+                if current + share < p.input.minimum:
+                    new_val = p.input.minimum
+                elif current + share > p.input.maximum:
+                    new_val = p.input.maximum
+                else:
+                    new_val = current + share
+                delta = new_val - current
+                p.input.value = new_val
+                distributed += delta
+                if abs(distributed) >= abs(dif):
+                    break
+
+        current_total = sum(p.input.value for p in self._params)
         dif = self.total - current_total
-        share = round(abs(dif) / (len(self._params) - 1), self.decimals)
-        # the share has to be bigger than zero (at least 0.xxx1)
-        share = max(share, 1/math.pow(10, self.decimals))
-        shared = 0
-        for p in self._params:
-            current = p.input.get()
-            signed_share = (share) * math.copysign(1, dif)
-            if (param == p or
-                current + signed_share < p.input.minimum or
-                current + signed_share > p.input.maximum):
-                continue
-            p.input.set(current + signed_share)
-            shared += share
-            if shared >= abs(dif):
-                break
+        # equal distribution of difference to target total
+        distribute(dif)
+
+        # might happen that it still doesn't match -> force unequal distribution
+        # of remaining difference
+        current_total = sum(p.input.value for p in self._params)
+        dif = self.total - current_total
+        if dif != 0:
+            distribute(dif, equally=False)
+
         # change order for next time, so that another input is raised first
         # ToDo: can hit param currently changed, then same input is changed
         # again next round
         self._params.append(self._params.pop(0))
-        print(sum(p.input.get() for p in self._params))
+        print(sum(p.input.value for p in self._params))
 
 
 class Seperator:
@@ -299,7 +320,7 @@ class Params(QObject):
             # reset inputs
             for param in self.params:
                 if param.input:
-                    param.input.set(param.value)
+                    param.input.value = param.value
 
     def __getattr__(self, name):
         param = self._params.get(name, None)
