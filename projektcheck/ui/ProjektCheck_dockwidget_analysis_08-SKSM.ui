@@ -86,7 +86,7 @@ border: 0;
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="text">
-           <string>Märkte und Zenren anzeigen</string>
+           <string>Märkte und Zentren anzeigen</string>
           </property>
           <property name="icon">
            <iconset>
@@ -121,8 +121,8 @@ border: 0;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>592</width>
-         <height>793</height>
+         <width>520</width>
+         <height>540</height>
         </rect>
        </property>
        <attribute name="label">
@@ -513,8 +513,8 @@ border: 0;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>592</width>
-         <height>793</height>
+         <width>234</width>
+         <height>106</height>
         </rect>
        </property>
        <attribute name="label">
@@ -649,8 +649,8 @@ border: 0;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>592</width>
-         <height>793</height>
+         <width>133</width>
+         <height>84</height>
         </rect>
        </property>
        <attribute name="label">
@@ -758,8 +758,8 @@ border: 0;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>592</width>
-         <height>793</height>
+         <width>485</width>
+         <height>99</height>
         </rect>
        </property>
        <attribute name="label">
