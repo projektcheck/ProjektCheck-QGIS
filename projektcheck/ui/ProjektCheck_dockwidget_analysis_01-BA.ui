@@ -6,12 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
-    <height>805</height>
+    <width>575</width>
+    <height>857</height>
    </rect>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolBox:tab {
+	font: bold 10pt ;
+    color: Grey;
+}
+QToolBox:tab:selected {
 	font: bold 10pt ;
     color: black;
 }
@@ -19,7 +23,31 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-</string>
+QPushButton::flat{
+background-color: none;
+border: 0;
+border-style:none;
+border-color: blue;
+border-width: 0px;
+border-radius: 0px;
+padding:2px;
+}
+QPushButton::flat:hover{
+background-color: azure;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}
+QPushButton::flat:pressed{
+background-color: powderblue;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}</string>
   </property>
   <property name="windowTitle">
    <string>Projekt-Check Analyse-Tools // Bewohner und Arbeitsplätze</string>
@@ -42,8 +70,8 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>591</width>
-         <height>679</height>
+         <width>557</width>
+         <height>731</height>
         </rect>
        </property>
        <attribute name="label">
@@ -51,37 +79,49 @@ QGroupBox::title {
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QCheckBox" name="checkBox_3">
-          <property name="text">
-           <string>Teilfläche Quetzalcoatl</string>
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="checkBox">
-          <property name="text">
-           <string>Teilfläche Schubidu</string>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>Bewohneranzahl schätzen</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</iconset>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QCheckBox" name="checkBox_3">
+             <property name="text">
+              <string>Teilfläche Quetzalcoatl</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox">
+             <property name="text">
+              <string>Teilfläche Schubidu</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Bewohneranzahl schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -104,8 +144,8 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>591</width>
-         <height>682</height>
+         <width>557</width>
+         <height>731</height>
         </rect>
        </property>
        <attribute name="label">
@@ -113,47 +153,59 @@ QGroupBox::title {
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QCheckBox" name="checkBox_5">
-          <property name="text">
-           <string>Teilfläche Huitzilopochtli</string>
+         <widget class="QFrame" name="frame_2">
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="checkBox_6">
-          <property name="text">
-           <string>Buchholz in der Nordheide | 3.44 ha | Wohnen | Wohneinheiten: NICHT DEFINIERT</string>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="checkBox_4">
-          <property name="text">
-           <string>Teilfläche JWD</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>Arbeitsplätze schätzen</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</iconset>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QCheckBox" name="checkBox_5">
+             <property name="text">
+              <string>Teilfläche Huitzilopochtli</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_6">
+             <property name="text">
+              <string>Buchholz in der Nordheide | 3.44 ha | Wohnen | Wohneinheiten: NICHT DEFINIERT</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_4">
+             <property name="text">
+              <string>Teilfläche JWD</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Arbeitsplätze schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</iconset>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
