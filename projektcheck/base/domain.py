@@ -135,7 +135,7 @@ class Domain(PCDockWidget):
         database with all base data
     '''
     ui_label = None
-    ui_icon = None
+    ui_icon = ""
 
     def __init__(self, iface=None, position=Qt.RightDockWidgetArea):
         super().__init__(iface=iface, position=position)

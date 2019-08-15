@@ -4,6 +4,7 @@ import subprocess
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
+from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsVectorLayer
 
 from projektcheck.base import PCDockWidget, SettingsDialog
@@ -137,7 +138,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         # fill the analysis menu with available domains
         menu = QMenu()
         for domain in self.domains:
-            action = menu.addAction(domain.ui_label)
+            current_dir = os.path.dirname(os.path.realpath(__file__))
+            icon = QIcon(os.path.join(current_dir, domain.ui_icon))
+            action = menu.addAction(icon, domain.ui_label)
             action.triggered.connect(
                 lambda e, d=domain: self.show_dockwidget(d))
         self.ui.domain_button.setMenu(menu)
