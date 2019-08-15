@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>953</width>
-    <height>66</height>
+    <width>856</width>
+    <height>86</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -205,7 +205,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</iconset>
+          <normaloff>../../images/iconset_mob/20190619_iconset_mob_file_create_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_file_create_1.png</iconset>
         </property>
        </widget>
       </item>
