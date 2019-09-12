@@ -22,12 +22,20 @@ DATATYPES = {
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
         self.name = name
+        self.database = database
         self.path = self._fn(database, name)
         if not name:
             raise ValueError('workspace name can not be empty')
         if not os.path.exists(self.path):
             raise FileNotFoundError(f'{self.path} does not exist')
-        self._conn = ogr.Open(self.path, 0 if database.read_only else 1)
+        self._conn = None
+
+    @property
+    def conn(self):
+        if not(self._conn):
+            self._conn = ogr.Open(
+                self.path, 0 if self.database.read_only else 1)
+        return self._conn
 
     @staticmethod
     def _fn(database, name):
@@ -55,7 +63,7 @@ class GeopackageWorkspace(Workspace):
 
     @property
     def tables(self):
-        tables = [l.GetName() for l in self._conn]
+        tables = [l.GetName() for l in self.conn]
         return tables
 
     def get_table(self, name: str, field_names: list=None):
@@ -70,7 +78,7 @@ class GeopackageWorkspace(Workspace):
             adds geometry to layer, wkb geometry type string
         '''
         if overwrite and name in self.tables:
-            self._conn.DeleteLayer(name)
+            self.conn.DeleteLayer(name)
         kwargs = {}
         if geometry_type:
             wkb_types = self.wkb_types
@@ -82,7 +90,7 @@ class GeopackageWorkspace(Workspace):
                 )
             geometry_type = getattr(ogr, geometry_type)
             kwargs['geom_type'] = geometry_type
-        layer = self._conn.CreateLayer(name, **kwargs)
+        layer = self.conn.CreateLayer(name, **kwargs)
         for fieldname, typ in fields.items():
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
@@ -111,7 +119,7 @@ class GeopackageTable(Table):
         self.workspace = workspace
         self.name = name
         self._where = ''
-        self._layer = self.workspace._conn.GetLayerByName(self.name)
+        self._layer = self.workspace.conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
         if field_names:
@@ -178,6 +186,9 @@ class GeopackageTable(Table):
             #where = f'({self.where}) and ({where})'
         self.where = where
 
+    def spatial_filter(self, wkt):
+        self._layer.SetSpatialFilter(ogr.CreateGeometryFromWkt(wkt))
+
     @property
     def filters(self):
         return self._filters
@@ -190,7 +201,7 @@ class GeopackageTable(Table):
     def where(self, value):
         self._cursor = None
         self._where = value
-        self._layer = self.workspace._conn.GetLayerByName(self.name)
+        self._layer = self.workspace.conn.GetLayerByName(self.name)
         self._layer.SetAttributeFilter(value)
 
     def fields(self, cached=True):

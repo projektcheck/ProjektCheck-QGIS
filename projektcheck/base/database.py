@@ -72,6 +72,7 @@ class FeatureCollection:
             row = next(self._table)
             id = row.pop(self._table.id_field)
             geom = row.pop(self._table.geom_field)
+            self._it += 1
             return Feature(table=self._table, id=id, geom=geom, **row)
 
     def __len__(self):
@@ -238,7 +239,7 @@ class Table(ABC):
         '''
         raise NotImplementedError
 
-    def count(self):
+    def __len__(self):
         '''
         override
 
