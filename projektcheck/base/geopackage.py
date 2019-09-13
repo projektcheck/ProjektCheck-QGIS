@@ -178,17 +178,22 @@ class GeopackageTable(Table):
         # (but seperate  previous and new filters with brackets)
         self._filters.update(kwargs)
         for k, v in self._filters.items():
-            if '__' not in k:
-                if k not in self.field_names:
-                    raise ValueError(f'{k} not in fields')
-                terms.append(f'{k} = {v}')
-            elif k.endswith('__in'):
+            split = k.split('__')
+            field_name = split[0]
+            if field_name == 'id':
+                field_name = self.id_field
+            elif field_name not in self.field_names:
+                raise ValueError(f'{field_name} not in fields')
+
+            if len(split) == 1:
+                terms.append(f'{field_name} = {v}')
+            elif split[1] == 'in':
                 vstr = [str(i) for i in v]
-                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
-            elif k.endswith('__gt'):
-                terms.append(f'"{k.strip("__gt")}" > {v}')
-            elif k.endswith('__lt'):
-                terms.append(f'"{k.strip("__lt")}" < {v}')
+                terms.append(f'"{field_name}" in ({",".join(vstr)})')
+            elif split[1] == 'gt':
+                terms.append(f'"{field_name}" > {v}')
+            elif split[1] == 'lt':
+                terms.append(f'"{field_name}" < {v}')
         where = ' and '.join(terms)
         #if self.where:
             #where = f'({self.where}) and ({where})'
