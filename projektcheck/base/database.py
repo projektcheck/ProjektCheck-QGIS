@@ -79,8 +79,11 @@ class FeatureCollection:
         self._table.delete(id)
 
     def get(self, **kwargs):
-        row = self._table.get(id)
-        return self._row_to_feature(row)
+        table = self._table.copy()
+        table.filter(**kwargs)
+        if len(table) > 1:
+            raise ValueError('get returned more than one feature')
+        return self._row_to_feature(table[0])
 
     def add(self, **kwargs):
         if 'id' in kwargs:

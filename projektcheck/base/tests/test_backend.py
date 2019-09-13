@@ -51,6 +51,9 @@ class GeopackageTest(unittest.TestCase):
         assert len(features.filter(value=5)) == 2
         assert len(features.filter(value__lt=4)) == 1
         assert len(features.filter(value__gt=7)) == 0
+
+        features.get(value__lt=4).value < 4
+
         # test filter chain
         feat_f = features.filter(value__in=[5, 6])
         assert len(feat_f) == 3
