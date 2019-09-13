@@ -1,5 +1,7 @@
 from abc import ABC
 from typing import Union
+from collections import defaultdict
+import weakref
 
 from projektcheck.utils.singleton import SingletonABCMeta
 
@@ -163,9 +165,12 @@ class Workspace:
     abstract class for a workspace (e.g. file for file based dbs or
     scheme in sql)
     '''
+    __refs__ = []
+
     def __init__(self, name: str, database: Database):
         self.name = name
         self.database = database
+        self.__refs__.append(weakref.ref(self))
 
     def get_table(self, name):
         return self.database.get_table(name, self)
@@ -173,6 +178,13 @@ class Workspace:
     @property
     def tables(self):
         raise NotImplementedError
+
+    @classmethod
+    def get_instances(cls):
+        for inst_ref in cls.__refs__:
+            inst = inst_ref()
+            if inst is not None:
+                yield inst
 
 
 class Table(ABC):

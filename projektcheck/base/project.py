@@ -3,10 +3,10 @@ import sys
 import json
 import shutil
 from collections import OrderedDict
+from datetime import datetime
 
 from projektcheck.utils.singleton import Singleton
-from projektcheck.base import Field, Feature, Geopackage
-from datetime import datetime
+from projektcheck.base import Field, Feature, Geopackage, Layer
 
 
 APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
@@ -335,5 +335,22 @@ class ProjectTable:
         '''
 
 
+class ProjectLayer(Layer):
 
+    def __init__(self, layername, data_path, groupname='', project=None):
+        super().__init__(layername, data_path, groupname=groupname)
+        self.project = project or ProjectManager().active_project
+        projectgroup = self.root.findGroup(self.project.name)
+        if not projectgroup:
+            projectgroup = self.root.addGroup(self.project.name)
+        self.root = projectgroup
+
+    def draw(self, style_file=None, label=''):
+        style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)
+        super().draw(style_path=style_path, label=label)
+
+    @classmethod
+    def from_table(cls, table, groupname=''):
+        return ProjectLayer(table.name, data_path=table.workspace.path,
+                            groupname=groupname)
 

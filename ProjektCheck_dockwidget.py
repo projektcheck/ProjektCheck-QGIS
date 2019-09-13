@@ -7,7 +7,8 @@ from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsVectorLayer
 
-from projektcheck.base import PCDockWidget, SettingsDialog
+from projektcheck.base import PCDockWidget, SettingsDialog, ProjectLayer
+from projektcheck.project_definitions.definitiontables import Areas
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
                              Traffic, Reachabilities, Ecology,
                              LandUse, InfrastructuralCosts,
@@ -85,20 +86,23 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
+        self.ui.project_combo.model().item(0).setEnabled(False)
+        self.ui.domain_button.setEnabled(False)
+        self.ui.definition_button.setEnabled(False)
         for project in self.project_manager.projects:
             if project.name == '__test__':
                 continue
             self.ui.project_combo.addItem(project.name, project)
-        active_project = self.project_manager.active_project
-        if active_project:
-            index = self.ui.project_combo.findText(active_project.name)
-            self.ui.project_combo.setCurrentIndex(index)
         self.ui.project_combo.currentIndexChanged.connect(
             lambda index: self.change_project(
                 self.ui.project_combo.itemData(index))
         )
+        #active_project = self.project_manager.active_project
+        #if active_project:
+            #index = self.ui.project_combo.findText(active_project.name)
+            #self.ui.project_combo.setCurrentIndex(index)
         # load active project
-        self.change_project(self.project_manager.active_project)
+        #self.change_project(self.project_manager.active_project)
 
     def setup_definitions(self):
         '''setup project definitions widget'''
@@ -185,6 +189,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.setup_definitions()
         self.setup_domains()
+
+        table = Areas.get_table()
+        output = ProjectLayer.from_table(table, groupname='Hintergrund')
+        output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
 
         # ToDo: show last active widget
 

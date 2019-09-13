@@ -21,8 +21,7 @@ DATATYPES = {
 
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
-        self.name = name
-        self.database = database
+        super().__init__(name, database)
         self.path = self._fn(database, name)
         if not name:
             raise ValueError('workspace name can not be empty')

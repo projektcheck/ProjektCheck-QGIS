@@ -4,7 +4,7 @@ from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
 from datetime import datetime
 import numpy as np
 
-from projektcheck.project_definitions.definitiontables import Areas, Framework
+from projektcheck.project_definitions.definitiontables import Areas, ProjectData
 from projektcheck.project_definitions.traffictables import TrafficConnector
 from projektcheck.project_definitions.markettables import Centers
 from projektcheck.project_definitions.constants import Nutzungsart
@@ -73,7 +73,7 @@ def init_project(project, area_layer, epsg):
         )
 
     # general project data
-    project_frame = Framework.features(project=project, create=True)
+    project_frame = ProjectData.features(project=project, create=True)
     project_frame.add(
         ags=ags[0],
         gemeinde_name=gem_names[0],
