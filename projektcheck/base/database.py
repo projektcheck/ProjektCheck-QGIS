@@ -70,10 +70,8 @@ class FeatureCollection:
             raise StopIteration
         else:
             row = next(self._table)
-            id = row.pop(self._table.id_field)
-            geom = row.pop(self._table.geom_field)
             self._it += 1
-            return Feature(table=self._table, id=id, geom=geom, **row)
+            return self._row_to_feature(row)
 
     def __len__(self):
         return len(self._table)
@@ -81,11 +79,9 @@ class FeatureCollection:
     def delete(self, id):
         self._table.delete(id)
 
-    def get(self, id):
+    def get(self, **kwargs):
         row = self._table.get(id)
-        id = row.pop(self._table.id_field)
-        geom = row.pop(self._table.geom_field)
-        return Feature(self._table, id=id, geom=geom, **row)
+        return self._row_to_feature(row)
 
     def add(self, **kwargs):
         if 'id' in kwargs:
@@ -109,6 +105,15 @@ class FeatureCollection:
         table = self._table.copy()
         table.filter(**kwargs)
         return FeatureCollection(table)
+
+    def _row_to_feature(self, row):
+        id = row.pop(self._table.id_field)
+        geom = row.pop(self._table.geom_field)
+        return Feature(table=self._table, id=id, geom=geom, **row)
+
+    def __getitem__(self, idx):
+        row = self._table[idx]
+        return self._row_to_feature(row)
 
     def as_pandas(self):
         return self._table.as_pandas()

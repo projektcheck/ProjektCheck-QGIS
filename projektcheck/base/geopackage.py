@@ -161,8 +161,23 @@ class GeopackageTable(Table):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
+            self._layer.ResetReading()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
+
+    def __getitem__(self, idx):
+        # there is no indexing of ogr layers, so just iterate
+        length = len(self)
+        if idx == -1:
+            if length == 0:
+                raise IndexError(f'table is empty')
+            idx = length - 1
+        elif idx >= length:
+            raise IndexError(f'index {idx} exceeds table length of {length}')
+        for i, feat in enumerate(self._layer):
+            if i == idx:
+                self._layer.ResetReading()
+                return self._ogr_feat_to_row(feat)
 
     def filter(self, **kwargs):
         '''
