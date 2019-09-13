@@ -1,5 +1,5 @@
 import os
-from osgeo import ogr
+from osgeo import ogr, osr
 from qgis.core import QgsGeometry
 import pandas as pd
 import numpy as np
@@ -72,7 +72,7 @@ class GeopackageWorkspace(Workspace):
         return GeopackageTable(name, self, field_names=field_names)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
-                     overwrite: bool=False, defaults={}):
+                     overwrite: bool=False, defaults={}, epsg=None):
         '''
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
@@ -90,12 +90,20 @@ class GeopackageWorkspace(Workspace):
                 )
             geometry_type = getattr(ogr, geometry_type)
             kwargs['geom_type'] = geometry_type
+        if epsg is not None:
+            srs = osr.SpatialReference()
+            srs.ImportFromEPSG(epsg)
+            kwargs['srs'] = srs
         layer = self.conn.CreateLayer(name, **kwargs)
         for fieldname, typ in fields.items():
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
             if fieldname in defaults:
-                field.SetDefault(str(defaults[fieldname]))
+                default = str(defaults[fieldname])
+                # string default needs enclosing ""
+                if typ == str and not default.startswith('"'):
+                    default = f'"{default}"'
+                field.SetDefault(default)
             layer.CreateField(field)
         return self.get_table(name)
 

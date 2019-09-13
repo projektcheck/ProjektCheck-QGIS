@@ -316,7 +316,8 @@ class ProjectTable:
         types, defaults = cls._fields()
         return workspace.create_table(name, fields=types,
                                       defaults=defaults,
-                                      geometry_type=geometry_type)
+                                      geometry_type=geometry_type,
+                                      epsg=settings.EPSG)
 
     @classmethod
     def extra(cls):
