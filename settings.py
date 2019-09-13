@@ -13,3 +13,4 @@ settings.MAX_AREA_DISTANCE = 1000
 settings.TEMPLATE_PATH = os.path.join(base_path, 'templates')
 settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
                                read_only=True)
+settings.PROJECT_RADIUS = 20000

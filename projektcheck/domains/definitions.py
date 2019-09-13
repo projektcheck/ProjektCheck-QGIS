@@ -3,7 +3,7 @@ from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                                Slider, DoubleSpinBox, SumDependency)
 from projektcheck.utils.utils import clearLayout
 from projektcheck.project_definitions.constants import Nutzungsart
-from projektcheck.project_definitions.projecttables import Areas
+from projektcheck.project_definitions.definitiontables import Areas
 
 
 class ProjectDefinitions(Domain):

@@ -8,8 +8,8 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsVectorLayer
 
 from projektcheck.base import PCDockWidget, SettingsDialog
-from projektcheck.domains import (BewohnerArbeit, ProjectDefinitions,
-                             Verkehr, Erreichbarkeiten, Ecology,
+from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
+                             Traffic, Reachabilities, Ecology,
                              LandUse, InfrastructuralCosts,
                              MunicipalTaxRevenue,
                              SupermarketsCompetition)
@@ -111,13 +111,13 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.domains = []
 
-        bewohner_arbeit = BewohnerArbeit(self.iface)
+        bewohner_arbeit = JobsInhabitants(self.iface)
         self.domains.append(bewohner_arbeit)
 
-        erreichbarkeiten = Erreichbarkeiten(self.iface)
+        erreichbarkeiten = Reachabilities(self.iface)
         self.domains.append(erreichbarkeiten)
 
-        verkehr = Verkehr(self.iface)
+        verkehr = Traffic(self.iface)
         self.domains.append(verkehr)
 
         ecology = Ecology(self.iface)

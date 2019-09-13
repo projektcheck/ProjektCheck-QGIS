@@ -269,7 +269,7 @@ class ProjectTable:
     '''
 
     @classmethod
-    def get_table(cls, project=None, create=True):
+    def get_table(cls, project=None, create=False):
         project = project or ProjectManager().active_project
         Database = getattr(cls.Meta, 'database', Geopackage)
         workspace_name = getattr(cls.Meta, 'workspace', 'default')

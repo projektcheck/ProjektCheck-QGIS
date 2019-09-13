@@ -130,6 +130,8 @@ class GeopackageTable(Table):
         self._layer = self.workspace.conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
+        # reset spatial filter (ogr remembers it even on new connecion)
+        self.spatial_filter()
         if field_names:
             self.field_names = list(field_names)
         else:
@@ -156,6 +158,10 @@ class GeopackageTable(Table):
             geom = QgsGeometry.fromWkt(geom.ExportToWkt())
         items[self.geom_field] = geom
         return items
+
+    def __iter__(self):
+        self._layer.ResetReading()
+        return self
 
     def __next__(self):
         cursor = self._layer.GetNextFeature()
@@ -214,8 +220,10 @@ class GeopackageTable(Table):
             #where = f'({self.where}) and ({where})'
         self.where = where
 
-    def spatial_filter(self, wkt):
-        self._layer.SetSpatialFilter(ogr.CreateGeometryFromWkt(wkt))
+    def spatial_filter(self, wkt=None):
+        if wkt is not None:
+            wkt = ogr.CreateGeometryFromWkt(wkt)
+        self._layer.SetSpatialFilter(wkt)
 
     @property
     def filters(self):

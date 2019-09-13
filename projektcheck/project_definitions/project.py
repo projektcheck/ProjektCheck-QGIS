@@ -1,9 +1,12 @@
-from qgis.core import (QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransform, QgsProject)
+from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
+                       QgsCoordinateTransform, QgsProject,
+                       QgsGeometry)
 from datetime import datetime
 import numpy as np
 
-from projektcheck.project_definitions.projecttables import Areas
+from projektcheck.project_definitions.definitiontables import Areas, Framework
+from projektcheck.project_definitions.traffictables import TrafficConnector
+from projektcheck.project_definitions.markettables import Centers
 from projektcheck.project_definitions.constants import Nutzungsart
 from projektcheck.project_definitions.utils import get_ags
 from settings import settings
@@ -11,7 +14,7 @@ from settings import settings
 def init_project(project, area_layer, epsg):
     source_crs = area_layer.crs()
     target_crs = QgsCoordinateReferenceSystem(epsg)
-    project_features = Areas.features(project=project, create=True)
+    project_areas = Areas.features(project=project, create=True)
     layer_features = list(area_layer.getFeatures())
 
     trans_geoms = []
@@ -22,7 +25,12 @@ def init_project(project, area_layer, epsg):
         geom.transform(tr)
         trans_geoms.append(geom)
 
-    ags = get_ags(layer_features, source_crs=source_crs)
+    # gather additional information about areas
+
+    ags_feats = get_ags(layer_features, source_crs=source_crs)
+    ags = [f.AGS_0 for f in ags_feats]
+    gem_names = [f.GEN for f in ags_feats]
+    gem_types = [f.Gemeindetyp for f in ags_feats]
     if len(np.unique(ags)) > 1:
         raise Exception("Die Teilflächen liegen nicht in der selben Gemeinde")
 
@@ -44,57 +52,52 @@ def init_project(project, area_layer, epsg):
                             "Teilflächen darf nicht größer "
                             "als {} m sein!".format(max_dist))
 
-    for i, area in enumerate(layer_features):
-        project_features.add(
+    traffic_connectors = TrafficConnector.features(project=project, create=True)
+
+    # create areas and connections to roads
+    for i, feature in enumerate(layer_features):
+        area = project_areas.add(
             nutzungsart=Nutzungsart.UNDEFINIERT.value,
             name=f'Flaeche_{i+1}',
             validiert=0,
             aufsiedlungsdauer=1,
             nutzungsdauer=datetime.now().year,
+            ags_bkg=ags[i],
+            gemeinde_name=gem_names[i],
             geom=trans_geoms[i]
+        )
+        traffic_connectors.add(
+            id_teilflaeche=area.id,
+            name_teilflaeche=area.name,
+            geom=centroids[i]
+        )
+
+    # general project data
+    project_frame = Framework.features(project=project, create=True)
+    project_frame.add(
+        ags=ags[0],
+        gemeinde_name=gem_names[0],
+        gemeinde_typ=gem_types[0],
+        projekt_name=project.name
+    )
+
+    # create selectable centers around the areas for the market competition
+    # domain
+
+    sk_radius = getattr(settings, 'PROJECT_RADIUS', 20000)
+    basedata = settings.BASEDATA.get_workspace('Basisdaten_deutschland')
+    vg_table = basedata.get_table('Verwaltungsgemeinschaften')
+    buffer = QgsGeometry.fromPointXY(
+        QgsPointXY(*project_centroid)).buffer(sk_radius, 20)
+    vg_table.spatial_filter(buffer.asWkt())
+    centers = Centers.features(project=project, create=True)
+    for row in vg_table:
+        centers.add(
+            name=row['GEN'],
+            rs=row['RS'],
+            geom=row['geom'],
+            # -1 indicates that it is a vg for selection and output only
+            nutzerdefiniert=-1
         )
 
 
-
-def get_gemeinde(features, source_crs):
-    ags = get_ags(features, source_crs=source_crs)
-    max_dist = getattr(settings, 'MAX_AREA_DISTANCE', None)
-
-    if max_dist is not None:
-
-    """Verschneide Teilflächen mit Gemeinde"""
-    # to do (Stefaan)
-    arcpy.SetProgressorLabel('Verschneide Teilflächen mit Gemeinde')
-    arcpy.SetProgressorPosition(10)
-
-    # calculate Gauß-Krüger-Coordinates and append them to tfl
-    arcpy.AddGeometryAttributes_management(
-        Input_Features=tfl, Geometry_Properties="CENTROID_INSIDE")
-
-    # Check if the distances between the centroids is smaller than max_dist
-    toolbox = self.parent_tbx
-    XY_INSIDE = toolbox.query_table("Teilflaechen_Plangebiet",
-                                    ['INSIDE_X', 'INSIDE_Y'])
-    INSIDE_X = [row[0] for row in XY_INSIDE]
-    INSIDE_Y = [row[1] for row in XY_INSIDE]
-    self._project_centroid = (np.mean(INSIDE_X), np.mean(INSIDE_Y))
-    distances = []
-    if len(XY_INSIDE) > 1:
-        for i in range(len(XY_INSIDE)):
-            for j in range(i):
-                dist = np.linalg.norm(np.subtract(XY_INSIDE[i], XY_INSIDE[j]))
-                distances.append(dist)
-        if distances and max(distances) > max_dist:
-            raise Exception("Der Abstand zwischen den Schwerpunkten der "
-                            "Teilflächen darf nicht größer "
-                            "als {} m sein!".format(max_dist))
-
-    # get AGS and Gemeindename and check if AGS is unique
-    ags_gen = get_ags(tfl, id_column)
-    ags_project = [ID[0] for ID in ags_gen.values()]
-    gen_project =  [ID[1] for ID in ags_gen.values()]
-    if len(np.unique(ags_project)) != 1:
-        raise Exception("Die Teilflächen müssen in der selben Gemeinde"
-                        "liegen")
-
-    return ags_project[0], gen_project[0]

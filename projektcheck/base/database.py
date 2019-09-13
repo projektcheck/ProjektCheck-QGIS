@@ -61,11 +61,10 @@ class FeatureCollection:
         self._it = 0
 
     def __iter__(self):
-        self._it += 1
         return self
 
     def __next__(self):
-        if self._it > len(self._table):
+        if self._it >= len(self._table):
             self._it = 0
             raise StopIteration
         else:

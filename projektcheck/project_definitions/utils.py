@@ -7,18 +7,18 @@ from settings import settings
 
 def get_ags(features, source_crs=None):
     """
-    get the ags and names of the areas the centroids of all polygons in given
-    feature table or layer lie in, the bkg_gemeinden table is taken as a source
-    for ags and names
+    get the ags entry of the geometries of the given QGIS Features
 
     Parameters
     ----------
     feature : QgsFeature
         a feature table
+    source_crs : int
+        epsg code of the feature geometries
 
     Returns
     -------
-    ags : str
+    ags : list of Feature
     """
     basedata = settings.BASEDATA.get_workspace('Basisdaten_deutschland')
     ags_table = basedata.get_table('bkg_gemeinden')
@@ -32,7 +32,7 @@ def get_ags(features, source_crs=None):
 
     target_crs = QgsCoordinateReferenceSystem(settings.EPSG)
 
-    ags = []
+    ags_feats = []
 
     for feat in features:
         geom = feat.geometry()
@@ -46,6 +46,6 @@ def get_ags(features, source_crs=None):
         if len(ags_table) > 1:
             raise Exception(
                 f'Feature {feat.id} wurde mehreren Gemeinden zugeordnet.')
-        ags.append(list(ags_table.features())[0].AGS)
-    return ags
+        ags_feats.append(list(ags_table.features())[0])
+    return ags_feats
 
