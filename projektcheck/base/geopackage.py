@@ -1,5 +1,5 @@
 import os
-from osgeo import ogr
+from osgeo import ogr, osr
 from qgis.core import QgsGeometry
 import pandas as pd
 import numpy as np
@@ -22,12 +22,20 @@ DATATYPES = {
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
         self.name = name
+        self.database = database
         self.path = self._fn(database, name)
         if not name:
             raise ValueError('workspace name can not be empty')
         if not os.path.exists(self.path):
             raise FileNotFoundError(f'{self.path} does not exist')
-        self._conn = ogr.Open(self.path, 0 if database.read_only else 1)
+        self._conn = None
+
+    @property
+    def conn(self):
+        if not(self._conn):
+            self._conn = ogr.Open(
+                self.path, 0 if self.database.read_only else 1)
+        return self._conn
 
     @staticmethod
     def _fn(database, name):
@@ -55,7 +63,7 @@ class GeopackageWorkspace(Workspace):
 
     @property
     def tables(self):
-        tables = [l.GetName() for l in self._conn]
+        tables = [l.GetName() for l in self.conn]
         return tables
 
     def get_table(self, name: str, field_names: list=None):
@@ -64,13 +72,13 @@ class GeopackageWorkspace(Workspace):
         return GeopackageTable(name, self, field_names=field_names)
 
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
-                     overwrite: bool=False, defaults={}):
+                     overwrite: bool=False, defaults={}, epsg=None):
         '''
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
         '''
         if overwrite and name in self.tables:
-            self._conn.DeleteLayer(name)
+            self.conn.DeleteLayer(name)
         kwargs = {}
         if geometry_type:
             wkb_types = self.wkb_types
@@ -82,12 +90,20 @@ class GeopackageWorkspace(Workspace):
                 )
             geometry_type = getattr(ogr, geometry_type)
             kwargs['geom_type'] = geometry_type
-        layer = self._conn.CreateLayer(name, **kwargs)
+        if epsg is not None:
+            srs = osr.SpatialReference()
+            srs.ImportFromEPSG(epsg)
+            kwargs['srs'] = srs
+        layer = self.conn.CreateLayer(name, **kwargs)
         for fieldname, typ in fields.items():
             dt = DATATYPES[typ]
             field = ogr.FieldDefn(fieldname, dt)
             if fieldname in defaults:
-                field.SetDefault(str(defaults[fieldname]))
+                default = str(defaults[fieldname])
+                # string default needs enclosing ""
+                if typ == str and not default.startswith('"'):
+                    default = f'"{default}"'
+                field.SetDefault(default)
             layer.CreateField(field)
         return self.get_table(name)
 
@@ -111,9 +127,11 @@ class GeopackageTable(Table):
         self.workspace = workspace
         self.name = name
         self._where = ''
-        self._layer = self.workspace._conn.GetLayerByName(self.name)
+        self._layer = self.workspace.conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
+        # reset spatial filter (ogr remembers it even on new connecion)
+        self.spatial_filter()
         if field_names:
             self.field_names = list(field_names)
         else:
@@ -141,12 +159,31 @@ class GeopackageTable(Table):
         items[self.geom_field] = geom
         return items
 
+    def __iter__(self):
+        self._layer.ResetReading()
+        return self
+
     def __next__(self):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
+            self._layer.ResetReading()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
+
+    def __getitem__(self, idx):
+        # there is no indexing of ogr layers, so just iterate
+        length = len(self)
+        if idx == -1:
+            if length == 0:
+                raise IndexError(f'table is empty')
+            idx = length - 1
+        elif idx >= length:
+            raise IndexError(f'index {idx} exceeds table length of {length}')
+        for i, feat in enumerate(self._layer):
+            if i == idx:
+                self._layer.ResetReading()
+                return self._ogr_feat_to_row(feat)
 
     def filter(self, **kwargs):
         '''
@@ -162,21 +199,31 @@ class GeopackageTable(Table):
         # (but seperate  previous and new filters with brackets)
         self._filters.update(kwargs)
         for k, v in self._filters.items():
-            if '__' not in k:
-                if k not in self.field_names:
-                    raise ValueError(f'{k} not in fields')
-                terms.append(f'{k} = {v}')
-            elif k.endswith('__in'):
+            split = k.split('__')
+            field_name = split[0]
+            if field_name == 'id':
+                field_name = self.id_field
+            elif field_name not in self.field_names:
+                raise ValueError(f'{field_name} not in fields')
+
+            if len(split) == 1:
+                terms.append(f'{field_name} = {v}')
+            elif split[1] == 'in':
                 vstr = [str(i) for i in v]
-                terms.append(f'"{k.strip("__in")}" in ({",".join(vstr)})')
-            elif k.endswith('__gt'):
-                terms.append(f'"{k.strip("__gt")}" > {v}')
-            elif k.endswith('__lt'):
-                terms.append(f'"{k.strip("__lt")}" < {v}')
+                terms.append(f'"{field_name}" in ({",".join(vstr)})')
+            elif split[1] == 'gt':
+                terms.append(f'"{field_name}" > {v}')
+            elif split[1] == 'lt':
+                terms.append(f'"{field_name}" < {v}')
         where = ' and '.join(terms)
         #if self.where:
             #where = f'({self.where}) and ({where})'
         self.where = where
+
+    def spatial_filter(self, wkt=None):
+        if wkt is not None:
+            wkt = ogr.CreateGeometryFromWkt(wkt)
+        self._layer.SetSpatialFilter(wkt)
 
     @property
     def filters(self):
@@ -190,7 +237,7 @@ class GeopackageTable(Table):
     def where(self, value):
         self._cursor = None
         self._where = value
-        self._layer = self.workspace._conn.GetLayerByName(self.name)
+        self._layer = self.workspace.conn.GetLayerByName(self.name)
         self._layer.SetAttributeFilter(value)
 
     def fields(self, cached=True):

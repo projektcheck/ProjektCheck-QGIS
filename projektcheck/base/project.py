@@ -269,7 +269,7 @@ class ProjectTable:
     '''
 
     @classmethod
-    def get_table(cls, project=None, create=True):
+    def get_table(cls, project=None, create=False):
         project = project or ProjectManager().active_project
         Database = getattr(cls.Meta, 'database', Geopackage)
         workspace_name = getattr(cls.Meta, 'workspace', 'default')
@@ -316,7 +316,8 @@ class ProjectTable:
         types, defaults = cls._fields()
         return workspace.create_table(name, fields=types,
                                       defaults=defaults,
-                                      geometry_type=geometry_type)
+                                      geometry_type=geometry_type,
+                                      epsg=settings.EPSG)
 
     @classmethod
     def extra(cls):

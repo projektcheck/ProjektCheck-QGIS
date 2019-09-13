@@ -58,6 +58,10 @@ class GeopackageTest(unittest.TestCase):
         assert len(feat_f.filter(value__lt=4)) == 0
         assert len(feat_f.filter(value__gt=4)) == 3
 
+        assert len(feat_f.filter(id=1)) == 1
+        assert len(feat_f.filter(id=20)) == 0
+        assert len(feat_f.filter(id__in=[1, 2])) == 2
+
     def test_cursor(self):
         for i, row in enumerate(self.table):
             row['value'] = i
@@ -69,6 +73,10 @@ class GeopackageTest(unittest.TestCase):
         assert len(self.table) == 1
         self.table.where = ''
         assert len(self.table)  == 4
+
+        assert self.table[2]['value'] == 2
+        assert self.table[0]['value'] == 0
+        assert self.table[-1]['value'] == 3
 
     def test_add_delete(self):
         assert len(self.table) == 4
