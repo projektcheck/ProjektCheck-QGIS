@@ -65,6 +65,21 @@ class GeopackageTest(unittest.TestCase):
         assert len(feat_f.filter(id=20)) == 0
         assert len(feat_f.filter(id__in=[1, 2])) == 2
 
+    def test_feature_iterator(self):
+        features = self.table.features()
+        count = len(features)
+        # test stability
+        for i in range(5):
+            j = 0
+            for j, feat in enumerate(features):
+                pass
+            assert j == count - 1
+        for i in range(5):
+            j = 0
+            for j, feat in enumerate(self.table.features()):
+                pass
+            assert j == count - 1
+
     def test_cursor(self):
         for i, row in enumerate(self.table):
             row['value'] = i

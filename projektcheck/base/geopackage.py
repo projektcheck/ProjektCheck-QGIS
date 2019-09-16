@@ -166,13 +166,13 @@ class GeopackageTable(Table):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
-            self._layer.ResetReading()
+            #self.reset()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
 
-    #def reset(self):
-        #self._layer.ResetReading()
-        #self._cursor = None
+    def reset(self):
+        self._layer.ResetReading()
+        self._cursor = None
 
     def __getitem__(self, idx):
         # there is no indexing of ogr layers, so just iterate
