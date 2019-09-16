@@ -170,6 +170,10 @@ class GeopackageTable(Table):
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
 
+    #def reset(self):
+        #self._layer.ResetReading()
+        #self._cursor = None
+
     def __getitem__(self, idx):
         # there is no indexing of ogr layers, so just iterate
         length = len(self)
@@ -351,7 +355,8 @@ class GeopackageTable(Table):
         return df
 
     def __len__(self):
-        return self._layer.GetFeatureCount()
+        count = self._layer.GetFeatureCount()
+        return 0 if count < 0 else count
 
     def __repr__(self):
         return f"GeopackageTable {self.name} {self._layer}"

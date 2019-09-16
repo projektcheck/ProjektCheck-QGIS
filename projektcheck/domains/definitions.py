@@ -12,9 +12,6 @@ class ProjectDefinitions(Domain):
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
 
     def setupUi(self):
-        self.areas = Areas.features()
-        for area in self.areas:
-            self.ui.area_combo.addItem(area.name, area.id)
         self.ui.area_combo.currentIndexChanged.connect(self.change_area)
 
         self.building_types = self.basedata.get_table(
@@ -27,6 +24,12 @@ class ProjectDefinitions(Domain):
             'Gewerbe_Branchen', 'Definition_Projekt'
         )
 
+        self.areas = Areas.features()
+        self.ui.area_combo.blockSignals(True)
+        self.ui.area_combo.clear()
+        for area in self.areas:
+            self.ui.area_combo.addItem(area.name, area.id)
+        self.ui.area_combo.blockSignals(False)
         self.setup_type()
         self.setup_type_params()
 
@@ -37,7 +40,7 @@ class ProjectDefinitions(Domain):
     def setup_type(self):
 
         area_id = self.ui.area_combo.itemData(self.ui.area_combo.currentIndex())
-        self.area = self.areas.get(area_id)
+        self.area = self.areas.get(id=area_id)
         layout = self.ui.parameter_group.layout()
         clearLayout(layout)
         self.params = Params(layout)

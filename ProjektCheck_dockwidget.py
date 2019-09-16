@@ -7,7 +7,9 @@ from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsVectorLayer
 
-from projektcheck.base import PCDockWidget, SettingsDialog, ProjectLayer
+from projektcheck.base import (PCDockWidget, SettingsDialog,
+                               ProjectLayer, OSMBackgroundLayer,
+                               TerrestrisBackgroundLayer)
 from projektcheck.project_definitions.definitiontables import Areas
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
                              Traffic, Reachabilities, Ecology,
@@ -107,6 +109,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
     def setup_definitions(self):
         '''setup project definitions widget'''
         self.project_definitions = ProjectDefinitions(self.iface)
+        #self.project_definitions.reset()
         self.ui.definition_button.clicked.connect(
             lambda: self.show_dockwidget(self.project_definitions))
 
@@ -194,6 +197,12 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         output = ProjectLayer.from_table(table, groupname='Hintergrund')
         output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
 
+        backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
+        backgroundOSM.draw()
+        backgroundGrey = TerrestrisBackgroundLayer(groupname='Hintergrundkarten')
+        backgroundGrey.draw()
+
+        output.zoom_to()
         # ToDo: show last active widget
 
     def show_setting(self):
