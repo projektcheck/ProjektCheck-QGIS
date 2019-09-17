@@ -118,23 +118,21 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="settings_button">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QPushButton" name="settings_button">
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
         </property>
-        <property name="font">
-         <font>
-          <family>MS Shell Dlg 2</family>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>incl. updates, if not via plugin-updater</string>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="text">
-         <string>Einst</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset>
@@ -189,6 +187,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="create_project_button">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>30</width>
