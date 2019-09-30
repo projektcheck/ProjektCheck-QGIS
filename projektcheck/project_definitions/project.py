@@ -12,6 +12,7 @@ from projektcheck.project_definitions.utils import get_ags
 from settings import settings
 
 def init_project(project, area_layer, epsg):
+    print(area_layer)
     source_crs = area_layer.crs()
     target_crs = QgsCoordinateReferenceSystem(epsg)
     project_areas = Areas.features(project=project, create=True)

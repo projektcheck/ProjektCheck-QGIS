@@ -9,7 +9,7 @@ from qgis.core import QgsVectorLayer
 
 from projektcheck.base import (PCDockWidget, SettingsDialog,
                                ProjectLayer, OSMBackgroundLayer,
-                               TerrestrisBackgroundLayer)
+                               TerrestrisBackgroundLayer, NewProjectDialog)
 from projektcheck.project_definitions.definitiontables import Areas
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
                              Traffic, Reachabilities, Ecology,
@@ -39,25 +39,19 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             lambda: set_project_path(settings_dialog.show()))
 
         def create_project():
-            name, ok = QInputDialog.getText(
-                self.ui, 'Neues Projekt erstellen', 'Projektname')
+            dialog = NewProjectDialog()
+            ok, name, layer = dialog.show()
+
             if ok:
-                project_names = [p.name for p in self.project_manager.projects]
-                if name in project_names:
-                    QMessageBox.warning(
-                        self.ui,
-                        'Fehler',
-                        f'Ein Projekt mit dem Namen {name} existiert bereits!\n'
-                        'Projektnamen müssen einzigartig sein.'
-                    )
-                    return
                 project = self.project_manager.create_project(name)
-                shape = os.path.join(
-                    self.project_manager.settings.TEMPLATE_PATH,
-                    'projektflaechen', 'projektflaechen_template.shp')
-                layer = QgsVectorLayer(shape, 'testlayer_shp', 'ogr')
-                init_project(project, layer, self.project_manager.settings.EPSG)
+                try:
+                    init_project(project, layer,
+                                 self.project_manager.settings.EPSG)
+                except Exception as e:
+                    print(e)
                 self.ui.project_combo.addItem(project.name, project)
+                self.ui.project_combo.setCurrentIndex(
+                    self.ui.project_combo.count() - 1)
                 self.project_manager.active_project = project
 
         self.ui.create_project_button.clicked.connect(create_project)
@@ -108,7 +102,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def setup_definitions(self):
         '''setup project definitions widget'''
-        self.project_definitions = ProjectDefinitions(self.iface)
+        self.project_definitions = ProjectDefinitions()
         #self.project_definitions.reset()
         self.ui.definition_button.clicked.connect(
             lambda: self.show_dockwidget(self.project_definitions))
@@ -118,28 +112,28 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.domains = []
 
-        bewohner_arbeit = JobsInhabitants(self.iface)
+        bewohner_arbeit = JobsInhabitants()
         self.domains.append(bewohner_arbeit)
 
-        erreichbarkeiten = Reachabilities(self.iface)
+        erreichbarkeiten = Reachabilities()
         self.domains.append(erreichbarkeiten)
 
-        verkehr = Traffic(self.iface)
+        verkehr = Traffic()
         self.domains.append(verkehr)
 
-        ecology = Ecology(self.iface)
+        ecology = Ecology()
         self.domains.append(ecology)
 
-        landuse = LandUse(self.iface)
+        landuse = LandUse()
         self.domains.append(landuse)
 
-        infrastructuralcosts = InfrastructuralCosts(self.iface)
+        infrastructuralcosts = InfrastructuralCosts()
         self.domains.append(infrastructuralcosts)
 
-        municipaltaxrevenue = MunicipalTaxRevenue(self.iface)
+        municipaltaxrevenue = MunicipalTaxRevenue()
         self.domains.append(municipaltaxrevenue)
 
-        supermarkets = SupermarketsCompetition(self.iface)
+        supermarkets = SupermarketsCompetition()
         self.domains.append(supermarkets)
 
         # fill the analysis menu with available domains
@@ -194,7 +188,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.setup_domains()
 
         table = Areas.get_table()
-        output = ProjectLayer.from_table(table, groupname='Hintergrund')
+        output = ProjectLayer.from_table(table, groupname='Projektdefinition')
+        output.draw(label='Nutzungen des Plangebiets',
+                    style_file='definitions.qml')
+        output = ProjectLayer.from_table(table, groupname='Hintergrund',
+                                         prepend=False)
         output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
 
         backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
@@ -204,9 +202,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         output.zoom_to()
         # ToDo: show last active widget
-
-    def show_setting(self):
-        dialog = SettingsDialog
 
     def close(self):
         if getattr(self, 'project_definitions', None):
