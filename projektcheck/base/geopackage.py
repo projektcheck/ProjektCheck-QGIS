@@ -114,6 +114,7 @@ class GeopackageWorkspace(Workspace):
         return f"GeopackageWorkspace {self.name} {self.path}"
 
     def close(self):
+        del(self._conn)
         self._conn = None
 
 

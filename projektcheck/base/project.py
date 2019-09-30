@@ -148,6 +148,7 @@ class Project:
     '''
     def __init__(self, name, path=''):
         self.name = name
+        self.groupname = f'Projekt "{self.name}"'
         path = path or settings.project_path
         self.path = os.path.join(path, name)
 
@@ -342,7 +343,7 @@ class ProjectLayer(Layer):
                  prepend=True):
         self.project = project or ProjectManager().active_project
         super().__init__(layername, data_path, prepend=prepend,
-                         groupname=f'Projekt "{self.project.name}"')
+                         groupname=self.project.groupname)
         projectgroup = self.root.findGroup(groupname)
         if not projectgroup:
             projectgroup = self.root.addGroup(groupname)

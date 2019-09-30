@@ -5,11 +5,12 @@ from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsVectorLayer
+from qgis.core import QgsVectorLayer, QgsProject
 
 from projektcheck.base import (PCDockWidget, SettingsDialog,
                                ProjectLayer, OSMBackgroundLayer,
-                               TerrestrisBackgroundLayer, NewProjectDialog)
+                               TerrestrisBackgroundLayer, NewProjectDialog,
+                               Workspace)
 from projektcheck.project_definitions.definitiontables import Areas
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
                              Traffic, Reachabilities, Ecology,
@@ -72,6 +73,20 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 self.ui.project_combo.setCurrentIndex(0)
                 self.ui.project_combo.removeItem(idx)
                 self.project_manager.active_project = ''
+                for ws in Workspace.get_instances():
+                    # close all writable workspaces (read_only indicate the
+                    # base data)
+                    # ToDo: adress project workspaces somehow else
+                    if not ws.database.read_only:
+                        ws.close()
+                # close and remove layers in project group (in TOC)
+                qgisproject = QgsProject.instance()
+                root = qgisproject.layerTreeRoot()
+                project_group = root.findGroup(project.groupname)
+                for layer in project_group.findLayers():
+                    qgisproject.removeMapLayer(layer.layerId())
+                project_group.removeAllChildren()
+                root.removeChildNode(project_group)
                 self.project_manager.remove_project(project)
         self.ui.remove_project_button.clicked.connect(remove_project)
 
@@ -173,6 +188,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         for domain in self.domains:
             domain.unload()
             del domain
+        for ws in Workspace.get_instances():
+            if not ws.database.read_only:
+                ws.close()
 
         if not project:
             self.ui.domain_button.setEnabled(False)
