@@ -3,10 +3,10 @@ import sys
 import json
 import shutil
 from collections import OrderedDict
+from datetime import datetime
 
 from projektcheck.utils.singleton import Singleton
-from projektcheck.base import Field, Feature, Geopackage
-from datetime import datetime
+from projektcheck.base import Field, Feature, Geopackage, Layer, TileLayer
 
 
 APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
@@ -15,6 +15,7 @@ DEFAULT_SETTINGS = {
     'active_project': u'',
     'project_path': os.path.join(APPDATA_PATH, 'Projekte')
 }
+
 
 class Settings:
     '''
@@ -335,5 +336,47 @@ class ProjectTable:
         '''
 
 
+class ProjectLayer(Layer):
+
+    def __init__(self, layername, data_path, groupname='', project=None,
+                 prepend=True):
+        self.project = project or ProjectManager().active_project
+        super().__init__(layername, data_path, prepend=prepend,
+                         groupname=f'Projekt "{self.project.name}"')
+        projectgroup = self.root.findGroup(groupname)
+        if not projectgroup:
+            projectgroup = self.root.addGroup(groupname)
+        self.root = projectgroup
+
+    def draw(self, style_file=None, label=''):
+        style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)
+        super().draw(style_path=style_path, label=label)
+
+    @classmethod
+    def from_table(cls, table, groupname='', prepend=True):
+        return ProjectLayer(table.name, data_path=table.workspace.path,
+                            groupname=groupname, prepend=prepend)
 
 
+class OSMBackgroundLayer(TileLayer):
+
+    def __init__(self, groupname='', prepend=False):
+
+        url = ('type=xyz&url=https://a.tile.openstreetmap.org//{z}/{x}/{y}.png'
+               f'&crs=EPSG{settings.EPSG}')
+        super().__init__(url, groupname=groupname, prepend=prepend)
+
+    def draw(self):
+        super().draw('OpenStreetMap')
+
+class TerrestrisBackgroundLayer(TileLayer):
+
+    def __init__(self, groupname='', prepend=False):
+
+        url = (f'crs=EPSG:{settings.EPSG}&dpiMode=7&format=image/png'
+               '&layers=OSM-WMS&styles=&url=http://ows.terrestris.de/osm-gray/'
+               'service')
+        super().__init__(url, groupname=groupname, prepend=prepend)
+
+    def draw(self):
+        super().draw('Terrestris')

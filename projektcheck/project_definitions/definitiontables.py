@@ -1,7 +1,7 @@
 from projektcheck.base import ProjectTable, Field, settings
 
 
-class Framework(ProjectTable):
+class ProjectData(ProjectTable):
     ags = Field(int, 0)
     gemeinde_name = Field(str, '')
     gemeinde_typ = Field(int, 0)

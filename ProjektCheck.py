@@ -3,6 +3,7 @@ from qgis.PyQt.QtCore import (QSettings, QTranslator, qVersion,
                               QCoreApplication, Qt)
 from qgis.PyQt.QtGui import QIcon, QPixmap, QPalette, QBrush
 from qgis.PyQt.QtWidgets import QAction
+from qgis import utils
 
 # Initialize Qt resources from file resources_rc.py
 from projektcheck.ui.resources_rc import *
@@ -15,7 +16,7 @@ import os.path
 class ProjektCheck:
     """QGIS Plugin Implementation."""
 
-    def __init__(self, iface):
+    def __init__(self, iface=None):
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class
@@ -24,7 +25,7 @@ class ProjektCheck:
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
-        self.iface = iface
+        self.iface = iface or utils.iface
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)

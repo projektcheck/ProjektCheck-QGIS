@@ -42,10 +42,10 @@ def get_ags(features, source_crs=None):
             geom.transform(tr)
         ags_table.spatial_filter(geom.asWkt())
         if len(ags_table) < 1:
-            raise Exception(f'Feature {feat.id} liegt nicht in Deutschland.')
+            raise Exception(f'Feature {feat.id()} liegt nicht in Deutschland.')
         if len(ags_table) > 1:
             raise Exception(
-                f'Feature {feat.id} wurde mehreren Gemeinden zugeordnet.')
+                f'Feature {feat.id()} wurde mehreren Gemeinden zugeordnet.')
         ags_feats.append(list(ags_table.features())[0])
     return ags_feats
 

@@ -21,8 +21,7 @@ DATATYPES = {
 
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
-        self.name = name
-        self.database = database
+        super().__init__(name, database)
         self.path = self._fn(database, name)
         if not name:
             raise ValueError('workspace name can not be empty')
@@ -167,9 +166,13 @@ class GeopackageTable(Table):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
-            self._layer.ResetReading()
+            #self.reset()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
+
+    def reset(self):
+        self._layer.ResetReading()
+        self._cursor = None
 
     def __getitem__(self, idx):
         # there is no indexing of ogr layers, so just iterate
@@ -352,7 +355,8 @@ class GeopackageTable(Table):
         return df
 
     def __len__(self):
-        return self._layer.GetFeatureCount()
+        count = self._layer.GetFeatureCount()
+        return 0 if count < 0 else count
 
     def __repr__(self):
         return f"GeopackageTable {self.name} {self._layer}"
