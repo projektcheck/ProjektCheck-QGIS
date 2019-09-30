@@ -338,9 +338,10 @@ class ProjectTable:
 
 class ProjectLayer(Layer):
 
-    def __init__(self, layername, data_path, groupname='', project=None):
+    def __init__(self, layername, data_path, groupname='', project=None,
+                 prepend=True):
         self.project = project or ProjectManager().active_project
-        super().__init__(layername, data_path,
+        super().__init__(layername, data_path, prepend=prepend,
                          groupname=f'Projekt "{self.project.name}"')
         projectgroup = self.root.findGroup(groupname)
         if not projectgroup:
@@ -352,9 +353,9 @@ class ProjectLayer(Layer):
         super().draw(style_path=style_path, label=label)
 
     @classmethod
-    def from_table(cls, table, groupname=''):
+    def from_table(cls, table, groupname='', prepend=True):
         return ProjectLayer(table.name, data_path=table.workspace.path,
-                            groupname=groupname)
+                            groupname=groupname, prepend=prepend)
 
 
 class OSMBackgroundLayer(TileLayer):

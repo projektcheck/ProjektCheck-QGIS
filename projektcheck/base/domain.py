@@ -1,5 +1,6 @@
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject
+from qgis import utils
 import os
 
 from projektcheck.base.project import ProjectManager
@@ -33,7 +34,7 @@ class PCDockWidget(QObject):
     ui_file = None
     closingWidget = pyqtSignal()
 
-    def __init__(self, iface, position=Qt.RightDockWidgetArea):
+    def __init__(self, iface=None, canvas=None, position=Qt.RightDockWidgetArea):
         '''
         Parameters
         ----------
@@ -44,7 +45,8 @@ class PCDockWidget(QObject):
         '''
         super().__init__()
         self.project_manager = ProjectManager()
-        self.iface = iface
+        self.iface = iface or utils.iface
+        self.canvas = canvas or self.iface.mapCanvas()
         self.initial_position = position
         self.ui = QtWidgets.QDockWidget()
         # look for file ui folder if not found
@@ -137,8 +139,8 @@ class Domain(PCDockWidget):
     ui_label = None
     ui_icon = ""
 
-    def __init__(self, iface=None, position=Qt.RightDockWidgetArea):
-        super().__init__(iface=iface, position=position)
+    def __init__(self, iface=None, canvas=None, position=Qt.RightDockWidgetArea):
+        super().__init__(iface=iface, canvas=canvas, position=position)
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
 
     def connect(self):

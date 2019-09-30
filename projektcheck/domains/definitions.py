@@ -64,6 +64,7 @@ class ProjectDefinitions(Domain):
             self.area.name = name
             self.area.save()
             self.setup_type_params()
+            self.canvas.refreshAllLayers()
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
@@ -141,6 +142,7 @@ class ProjectDefinitions(Domain):
                 value = getattr(self.type_params, param_name).value
                 setattr(self.area, param_name, value)
         self.area.save()
+        self.canvas.refreshAllLayers()
 
         #if we_changed:
             #we_idx = self.df_acc_units['IDTeilflaeche'] == area['id_teilflaeche']
