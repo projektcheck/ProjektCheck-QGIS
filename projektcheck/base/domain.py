@@ -1,5 +1,5 @@
 from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject
+from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject, QThread
 from qgis import utils
 import os
 
@@ -145,5 +145,72 @@ class Domain(PCDockWidget):
 
     def connect(self):
         pass
+
+
+class Worker(QThread):
+    '''
+    abstract worker
+    '''
+
+    # available signals to be used in the concrete worker
+    finished = pyqtSignal(object)
+    error = pyqtSignal(str)
+    message = pyqtSignal(str)
+    progress = pyqtSignal(float)
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+    def run(self, on_success=None):
+        '''
+        runs code defined in self.work
+        emits self.finished on success and self.error on exception
+
+        Parameters
+        ----------
+        on_success : function
+            function to executed on success
+        '''
+        try:
+            result = self.work()
+            self.finished.emit(result)
+            if on_success:
+                on_success()
+        except Exception as e:
+            self.error.emit(str(e))
+
+    def work(self):
+        '''
+        override
+        code to be executed when running worker
+
+        Returns
+        -------
+        result : object
+            result of work, emitted when code was run succesfully
+        '''
+        raise NotImplementedError
+
+    def log(self, message):
+        '''
+        emits message
+
+        Parameters
+        ----------
+        message : str
+        '''
+        print(message)
+        self.message.emit(str(message))
+
+    def set_progress(self, progress):
+        '''
+        emits progress
+
+        Parameters
+        ----------
+        progress : int
+            progress in percent, value in range [0, 100]
+        '''
+        self.progress.emit(progress)
 
 

@@ -10,14 +10,14 @@ from qgis.core import QgsVectorLayer, QgsProject
 from projektcheck.base import (PCDockWidget, SettingsDialog,
                                ProjectLayer, OSMBackgroundLayer,
                                TerrestrisBackgroundLayer, NewProjectDialog,
-                               Workspace)
-from projektcheck.project_definitions.definitiontables import Areas
+                               Workspace, ProgressDialog)
+from projektcheck.domains.definitions.tables import Areas
+from projektcheck.domains.definitions.project import ProjectInitialization
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
-                             Traffic, Reachabilities, Ecology,
-                             LandUse, InfrastructuralCosts,
-                             MunicipalTaxRevenue,
-                             SupermarketsCompetition)
-from projektcheck.project_definitions.project import init_project
+                                  Traffic, Reachabilities, Ecology,
+                                  LandUse, InfrastructuralCosts,
+                                  MunicipalTaxRevenue,
+                                  SupermarketsCompetition)
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -44,16 +44,17 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             ok, name, layer = dialog.show()
 
             if ok:
-                project = self.project_manager.create_project(name)
-                try:
-                    init_project(project, layer,
-                                 self.project_manager.settings.EPSG)
-                except Exception as e:
-                    print(e)
-                self.ui.project_combo.addItem(project.name, project)
-                self.ui.project_combo.setCurrentIndex(
-                    self.ui.project_combo.count() - 1)
-                self.project_manager.active_project = project
+                job = ProjectInitialization(name, layer,
+                                            self.project_manager.settings.EPSG,
+                                            parent=self.ui)
+                def on_success(project):
+                    self.ui.project_combo.addItem(project.name, project)
+                    self.ui.project_combo.setCurrentIndex(
+                        self.ui.project_combo.count() - 1)
+                    self.project_manager.active_project = project
+
+                dialog = ProgressDialog(job, on_success=on_success)
+                dialog.exec_()
 
         self.ui.create_project_button.clicked.connect(create_project)
 
@@ -83,10 +84,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 qgisproject = QgsProject.instance()
                 root = qgisproject.layerTreeRoot()
                 project_group = root.findGroup(project.groupname)
-                for layer in project_group.findLayers():
-                    qgisproject.removeMapLayer(layer.layerId())
-                project_group.removeAllChildren()
-                root.removeChildNode(project_group)
+                if project_group:
+                    for layer in project_group.findLayers():
+                        qgisproject.removeMapLayer(layer.layerId())
+                    project_group.removeAllChildren()
+                    root.removeChildNode(project_group)
                 self.project_manager.remove_project(project)
         self.ui.remove_project_button.clicked.connect(remove_project)
 
@@ -179,47 +181,59 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
-        active_project = self.project_manager.active_project
-        if active_project:
-            active_project.close()
-        if getattr(self, 'project_definitions', None):
-            self.project_definitions.unload()
-            del self.project_definitions
-        for domain in self.domains:
-            domain.unload()
-            del domain
-        for ws in Workspace.get_instances():
-            if not ws.database.read_only:
-                ws.close()
+        try:
+            active_project = self.project_manager.active_project
+            if active_project:
+                active_project.close()
+            if getattr(self, 'project_definitions', None):
+                self.project_definitions.unload()
+                del self.project_definitions
+            for domain in self.domains:
+                domain.unload()
+                del domain
+            for ws in Workspace.get_instances():
+                if not ws.database.read_only:
+                    ws.close()
 
-        if not project:
-            self.ui.domain_button.setEnabled(False)
-            self.ui.definition_button.setEnabled(False)
-            return
-        else:
-            self.ui.domain_button.setEnabled(True)
-            self.ui.definition_button.setEnabled(True)
+            if not project:
+                self.ui.domain_button.setEnabled(False)
+                self.ui.definition_button.setEnabled(False)
+                return
+            else:
+                self.ui.domain_button.setEnabled(True)
+                self.ui.definition_button.setEnabled(True)
 
-        self.project_manager.active_project = project
+            self.project_manager.active_project = project
 
-        self.setup_definitions()
-        self.setup_domains()
+            self.setup_definitions()
+            self.setup_domains()
 
-        table = Areas.get_table()
-        output = ProjectLayer.from_table(table, groupname='Projektdefinition')
-        output.draw(label='Nutzungen des Plangebiets',
-                    style_file='definitions.qml')
-        output = ProjectLayer.from_table(table, groupname='Hintergrund',
-                                         prepend=False)
-        output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
+            table = Areas.get_table()
+            output = ProjectLayer.from_table(table, groupname='Projektdefinition')
+            output.draw(label='Nutzungen des Plangebiets',
+                        style_file='definitions.qml')
+            output = ProjectLayer.from_table(table, groupname='Hintergrund',
+                                             prepend=False)
+            output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
 
-        backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
-        backgroundOSM.draw()
-        backgroundGrey = TerrestrisBackgroundLayer(groupname='Hintergrundkarten')
-        backgroundGrey.draw()
+            backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
+            backgroundOSM.draw()
+            backgroundGrey = TerrestrisBackgroundLayer(groupname='Hintergrundkarten')
+            backgroundGrey.draw()
 
-        output.zoom_to()
-        # ToDo: show last active widget
+            output.zoom_to()
+            # ToDo: show last active widget
+        # ToDo: specific exceptions
+        except Exception as e:
+            print(e)
+            message = QMessageBox()
+            message.setIcon(QMessageBox.Warning)
+            message.setText(f'Das Projekt "{project.name}" ist beschädigt.')
+            message.setInformativeText('Bitte löschen Sie das Projekt oder '
+                                       'wenden Sie sich an den Administrator')
+            message.setWindowTitle('Fehler')
+            message.setDetailedText(str(e))
+            message.exec_()
 
     def close(self):
         if getattr(self, 'project_definitions', None):

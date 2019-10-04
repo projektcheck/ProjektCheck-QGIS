@@ -1,11 +1,13 @@
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QThread
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
-                          QSizePolicy)
+                          QSizePolicy, QTimer, QVariant, QTextCursor)
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 import os
+import datetime
 
 from projektcheck.base.domain import UI_PATH
 from projektcheck.base.project import ProjectManager
@@ -126,25 +128,137 @@ class NewProjectDialog(Dialog):
 
 
 class ProgressDialog(Dialog):
-    '''
-    dialog showing the progress of a thread
-    '''
-    ui_file = None
+    """
+    Dialog showing progress in textfield and bar after starting a certain task with run()
+    """
+    ui_file = 'progress.ui'
 
-    def __init__(self):
-        pass
+    def __init__(self, worker, on_success=None,
+                 parent=None, auto_close=False, auto_run=True):
+        super().__init__(self.ui_file, modal=True, parent=parent)
+        self.parent = parent
+        self.setupUi()
+        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.progress_bar.setValue(0)
+        self.close_button.clicked.connect(self.close)
+        self.stop_button.setVisible(False)
+        self.close_button.setVisible(False)
+        self.auto_close = auto_close
+        self.auto_run = auto_run
+        self.on_success = on_success
+
+        self.worker = worker
+        #self.thread = QThread(self.parent)
+        #self.worker.moveToThread(self.thread)
+
+        #self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.success)
+        self.worker.error.connect(lambda msg: self.show_status(
+            f'<span style="color:red;">{msg}</span>'))
+        self.worker.message.connect(self.show_status)
+        self.worker.progress.connect(self.progress)
+
+        self.start_button.clicked.connect(self.run)
+        self.stop_button.clicked.connect(self.stop)
+        self.close_button.clicked.connect(self.close)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_timer)
 
     def show(self):
-        pass
+        QDialog.show(self)
+        if self.auto_run:
+            self.run()
 
-    def message(self):
-        pass
+    def running(self):
+        self.close_button.setVisible(True)
+        self.cancelButton.setText('Stoppen')
+        self.cancelButton.clicked.disconnect(self.close)
 
-    def connect(self):
-        pass
+    def success(self, result):
+        self.finished()
+        self.progress(100)
+        self.show_status('fertig')
+        if self.on_success:
+            self.on_success(result)
 
-    def setupUi(self):
-        pass
+    def finished(self):
+        # already gone if killed
+        #try:
+            #self.worker.deleteLater()
+        #except:
+            #pass
+        #self.thread.quit()
+        #self.thread.wait()
+        #self.thread.deleteLater()
+        self.timer.stop()
+        self.close_button.setVisible(True)
+        self.stop_button.setVisible(False)
+        if self.auto_close:
+            self.close()
+
+    def show_status(self, text):
+        print(text)
+        self.log_edit.appendHtml(text)
+        #self.log_edit.moveCursor(QTextCursor.Down)
+        scrollbar = self.log_edit.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum());
+
+    def progress(self, progress, obj=None):
+        if isinstance(progress, QVariant):
+            progress = progress.toInt()[0]
+        self.progress_bar.setValue(progress)
+
+    def start_timer(self):
+        self.start_time = datetime.datetime.now()
+        self.timer.start(1000)
+
+    # task needs to be overridden
+    def run(self):
+        self.start_timer()
+        self.stop_button.setVisible(True)
+        self.start_button.setVisible(False)
+        self.worker.start()
+        self.finished()
+
+    def stop(self):
+        self.timer.stop()
+        self.worker.kill()
+        self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
+        self.log_edit.moveCursor(QTextCursor.End)
+        self.finished()
+
+    def update_timer(self):
+        delta = datetime.datetime.now() - self.start_time
+        h, remainder = divmod(delta.seconds, 3600)
+        m, s = divmod(remainder, 60)
+        timer_text = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
+        self.elapsed_time_label.setText(timer_text)
+
+
+#class DomainProgressDialog(ProgressDialog):
+    #'''
+    #dialog showing progress on threaded geocoding
+    #'''
+    #feature_done = pyqtSignal(int, Results)
+
+    #def __init__(self, geocoder, layer, field_map, on_progress,
+                 #on_done, feature_ids=None, parent=None, area_wkt=None):
+        #queries = []
+        #features = layer.getFeatures(feature_ids) if feature_ids \
+            #else layer.getFeatures()
+
+        #for feature in features:
+            #args, kwargs = field_map.to_args(feature)
+            #if area_wkt:
+                #kwargs['geometry'] = area_wkt
+            #queries.append((feature.id(), (args, kwargs)))
+
+        #worker = GeocodeWorker(geocoder, queries)
+        #worker.feature_done.connect(on_progress)
+        #worker.finished.connect(on_done)
+        #super().__init__(worker, parent=parent, auto_run=True)
+
 
 
 class Message:
