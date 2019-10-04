@@ -133,7 +133,7 @@ class ProgressDialog(Dialog):
     """
     ui_file = 'progress.ui'
 
-    def __init__(self, worker, on_success=None,
+    def __init__(self, thread, on_success=None,
                  parent=None, auto_close=False, auto_run=True):
         super().__init__(self.ui_file, modal=True, parent=parent)
         self.parent = parent
@@ -147,16 +147,11 @@ class ProgressDialog(Dialog):
         self.auto_run = auto_run
         self.on_success = on_success
 
-        self.worker = worker
-        #self.thread = QThread(self.parent)
-        #self.worker.moveToThread(self.thread)
-
-        #self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.success)
-        self.worker.error.connect(lambda msg: self.show_status(
-            f'<span style="color:red;">{msg}</span>'))
-        self.worker.message.connect(self.show_status)
-        self.worker.progress.connect(self.progress)
+        self.thread = thread
+        self.thread.finished.connect(self.success)
+        self.thread.error.connect(self.on_error)
+        self.thread.message.connect(self.show_status)
+        self.thread.progress.connect(self.progress)
 
         self.start_button.clicked.connect(self.run)
         self.stop_button.clicked.connect(self.stop)
@@ -166,7 +161,7 @@ class ProgressDialog(Dialog):
         self.timer.timeout.connect(self.update_timer)
 
     def show(self):
-        QDialog.show(self)
+        super().show()
         if self.auto_run:
             self.run()
 
@@ -178,16 +173,11 @@ class ProgressDialog(Dialog):
     def success(self, result):
         self.finished()
         self.progress(100)
-        self.show_status('fertig')
+        self.show_status('<br>fertig')
         if self.on_success:
             self.on_success(result)
 
     def finished(self):
-        # already gone if killed
-        #try:
-            #self.worker.deleteLater()
-        #except:
-            #pass
         #self.thread.quit()
         #self.thread.wait()
         #self.thread.deleteLater()
@@ -197,8 +187,12 @@ class ProgressDialog(Dialog):
         if self.auto_close:
             self.close()
 
+    def on_error(self, message):
+        self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
+        self.progress_bar.setStyleSheet(
+            'QProgressBar::chunk { background-color: red; }')
+
     def show_status(self, text):
-        print(text)
         self.log_edit.appendHtml(text)
         #self.log_edit.moveCursor(QTextCursor.Down)
         scrollbar = self.log_edit.verticalScrollBar()
@@ -218,12 +212,12 @@ class ProgressDialog(Dialog):
         self.start_timer()
         self.stop_button.setVisible(True)
         self.start_button.setVisible(False)
-        self.worker.start()
+        self.thread.start()
         self.finished()
 
     def stop(self):
         self.timer.stop()
-        self.worker.kill()
+        self.thread.kill()
         self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
         self.log_edit.moveCursor(QTextCursor.End)
         self.finished()

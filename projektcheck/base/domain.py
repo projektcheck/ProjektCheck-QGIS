@@ -199,7 +199,6 @@ class Worker(QThread):
         ----------
         message : str
         '''
-        print(message)
         self.message.emit(str(message))
 
     def set_progress(self, progress):

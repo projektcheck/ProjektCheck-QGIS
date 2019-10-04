@@ -22,33 +22,26 @@ class ProjectInitialization(Worker):
         self.epsg = epsg
 
     def work(self):
+        try:
+            return self.create_project()
+        except Exception as e:
+            if self.project_areas is not None:
+                self.project_areas.workspace.close()
+            self.project.remove()
+            self.log('Projekt nach Fehler wieder entfernt.')
+            raise e
 
-        #import time
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #self.log(time.time())
-        #time.sleep(1)
-        #return
+    def create_project(self):
 
         self.project = self.project_manager.create_project(self.project_name)
-        self.log(f'Neues Projekt angelegt im Ordner {self.project.path}')
-        self.set_progress(10)
+        self.project_areas = None
         source_crs = self.area_layer.crs()
         target_crs = QgsCoordinateReferenceSystem(self.epsg)
-        project_areas = Areas.features(project=self.project, create=True)
+        self.project_areas = Areas.features(project=self.project, create=True)
         layer_features = list(self.area_layer.getFeatures())
+
+        self.log(f'Neues Projekt angelegt im Ordner {self.project.path}')
+        self.set_progress(10)
 
         trans_geoms = []
 
@@ -99,7 +92,7 @@ class ProjectInitialization(Worker):
         self.log(f'Berechne Projektrahmendaten...')
         # create areas and connections to roads
         for i, feature in enumerate(layer_features):
-            area = project_areas.add(
+            area = self.project_areas.add(
                 nutzungsart=Nutzungsart.UNDEFINIERT.value,
                 name=f'Flaeche_{i+1}',
                 validiert=0,

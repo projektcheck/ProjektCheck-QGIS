@@ -81,6 +81,10 @@ class FeatureCollection:
     def delete(self, id):
         self._table.delete(id)
 
+    @property
+    def workspace(self):
+        return self._table.workspace
+
     def get(self, **kwargs):
         table = self._table.copy()
         table.filter(**kwargs)
