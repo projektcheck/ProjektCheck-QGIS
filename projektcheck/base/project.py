@@ -282,6 +282,11 @@ class ProjectTable:
         try:
             fields, defaults = cls._fields()
             table = workspace.get_table(table_name, field_names=fields.keys())
+            table_fields = [f.name for f in table.fields()]
+            for field_name, typ in fields.items():
+                if field_name not in table_fields:
+                    table.add_field(Field(typ, name=field_name,
+                                          default=defaults.get(field_name)))
         except FileNotFoundError as e:
             if not create:
                 raise e
@@ -350,9 +355,9 @@ class ProjectLayer(Layer):
         self.root.setItemVisibilityChecked(True)
         self.root = projectgroup
 
-    def draw(self, style_file=None, label=''):
+    def draw(self, style_file=None, label='', checked=True):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)
-        super().draw(style_path=style_path, label=label)
+        super().draw(style_path=style_path, label=label, checked=checked)
 
     @classmethod
     def from_table(cls, table, groupname='', prepend=True):
@@ -368,8 +373,8 @@ class OSMBackgroundLayer(TileLayer):
                f'&crs=EPSG{settings.EPSG}')
         super().__init__(url, groupname=groupname, prepend=prepend)
 
-    def draw(self):
-        super().draw('OpenStreetMap')
+    def draw(self, checked=True):
+        super().draw('OpenStreetMap', checked=checked)
 
 class TerrestrisBackgroundLayer(TileLayer):
 
@@ -380,5 +385,5 @@ class TerrestrisBackgroundLayer(TileLayer):
                'service')
         super().__init__(url, groupname=groupname, prepend=prepend)
 
-    def draw(self):
-        super().draw('Terrestris')
+    def draw(self, checked=True):
+        super().draw('Terrestris', checked=checked)
