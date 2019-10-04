@@ -53,8 +53,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                         self.ui.project_combo.count() - 1)
                     self.project_manager.active_project = project
 
-                dialog = ProgressDialog(job, on_success=on_success)
-                dialog.exec_()
+                dialog = ProgressDialog(job, parent=self.ui,
+                                        on_success=on_success)
+                dialog.show()
 
         self.ui.create_project_button.clicked.connect(create_project)
 
@@ -225,7 +226,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             # ToDo: show last active widget
         # ToDo: specific exceptions
         except Exception as e:
-            print(e)
             message = QMessageBox()
             message.setIcon(QMessageBox.Warning)
             message.setText(f'Das Projekt "{project.name}" ist beschädigt.')

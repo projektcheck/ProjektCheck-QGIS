@@ -161,7 +161,7 @@ class ProgressDialog(Dialog):
         self.timer.timeout.connect(self.update_timer)
 
     def show(self):
-        super().show()
+        QDialog.show(self)
         if self.auto_run:
             self.run()
 
@@ -228,31 +228,6 @@ class ProgressDialog(Dialog):
         m, s = divmod(remainder, 60)
         timer_text = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
         self.elapsed_time_label.setText(timer_text)
-
-
-#class DomainProgressDialog(ProgressDialog):
-    #'''
-    #dialog showing progress on threaded geocoding
-    #'''
-    #feature_done = pyqtSignal(int, Results)
-
-    #def __init__(self, geocoder, layer, field_map, on_progress,
-                 #on_done, feature_ids=None, parent=None, area_wkt=None):
-        #queries = []
-        #features = layer.getFeatures(feature_ids) if feature_ids \
-            #else layer.getFeatures()
-
-        #for feature in features:
-            #args, kwargs = field_map.to_args(feature)
-            #if area_wkt:
-                #kwargs['geometry'] = area_wkt
-            #queries.append((feature.id(), (args, kwargs)))
-
-        #worker = GeocodeWorker(geocoder, queries)
-        #worker.feature_done.connect(on_progress)
-        #worker.finished.connect(on_done)
-        #super().__init__(worker, parent=parent, auto_run=True)
-
 
 
 class Message:
