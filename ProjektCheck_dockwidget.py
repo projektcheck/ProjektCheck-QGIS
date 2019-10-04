@@ -184,14 +184,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
     def change_project(self, project):
         try:
             active_project = self.project_manager.active_project
-            if active_project:
-                active_project.close()
+            #if active_project:
+                #active_project.close()
             if getattr(self, 'project_definitions', None):
                 self.project_definitions.unload()
                 del self.project_definitions
             for domain in self.domains:
                 domain.unload()
                 del domain
+            # ToDo: put that in project.close() and get workspaces of this project only
             for ws in Workspace.get_instances():
                 if not ws.database.read_only:
                     ws.close()

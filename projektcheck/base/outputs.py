@@ -39,14 +39,13 @@ class Layer(Output):
 
     def draw(self, style_path=None, label='', redraw=True):
         # ToDo: force redraw (delete and add)
-        if redraw:
-            self.remove()
-        else:
-            self.layer = None
+        if not self.layer:
             for child in self.root.children():
                 if child.name() == label:
                     self.layer = child.layer()
                     break
+        if redraw:
+            self.remove()
         if not self.layer:
             self.layer = QgsVectorLayer(self.data_path, self.layername, "ogr")
             if label:
