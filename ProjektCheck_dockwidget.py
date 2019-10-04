@@ -211,6 +211,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.setup_domains()
 
             table = Areas.get_table()
+            layer_root = QgsProject.instance().layerTreeRoot()
+            for child in layer_root.children():
+                if child.name().startswith('Projekt'):
+                    child.setItemVisibilityChecked(False)
+
             output = ProjectLayer.from_table(table, groupname='Projektdefinition')
             output.draw(label='Nutzungen des Plangebiets',
                         style_file='definitions.qml')

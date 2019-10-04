@@ -347,6 +347,7 @@ class ProjectLayer(Layer):
         projectgroup = self.root.findGroup(groupname)
         if not projectgroup:
             projectgroup = self.root.addGroup(groupname)
+        self.root.setItemVisibilityChecked(True)
         self.root = projectgroup
 
     def draw(self, style_file=None, label=''):
