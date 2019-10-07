@@ -37,7 +37,7 @@ class Layer(Output):
                     group = self.root.addGroup(groupname)
             self.root = group
 
-    def draw(self, style_path=None, label='', redraw=True):
+    def draw(self, style_path=None, label='', redraw=True, checked=True):
         # ToDo: force redraw (delete and add)
         if not self.layer:
             for child in self.root.children():
@@ -52,7 +52,8 @@ class Layer(Output):
                 self.layer.setName(label)
             QgsProject.instance().addMapLayer(self.layer, False)
             self.layer.loadNamedStyle(style_path)
-            self.root.addLayer(self.layer)
+            l = self.root.addLayer(self.layer)
+            l.setItemVisibilityChecked(checked)
 
     def zoom_to(self):
         canvas = iface.mapCanvas()
@@ -71,7 +72,7 @@ class TileLayer(Layer):
         super().__init__(None, None, groupname=groupname, prepend=prepend)
         self.url = url
 
-    def draw(self, label):
+    def draw(self, label, checked=True):
         self.layer = None
         for child in self.root.children():
             if child.name() == label:
@@ -80,4 +81,5 @@ class TileLayer(Layer):
         if not self.layer:
             self.layer = QgsRasterLayer(self.url, label, 'wms')
             QgsProject.instance().addMapLayer(self.layer, False)
-            self.root.addLayer(self.layer)
+            l = self.root.addLayer(self.layer)
+            l.setItemVisibilityChecked(checked)

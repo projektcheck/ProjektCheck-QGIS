@@ -1,6 +1,6 @@
 from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                                Title, Seperator, LineEdit, Geopackage, Field,
-                               Slider, DoubleSpinBox, SumDependency)
+                               Slider, DoubleSpinBox, SumDependency, Checkbox)
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.domains.definitions.tables import Areas
@@ -10,6 +10,9 @@ class ProjectDefinitions(Domain):
     """"""
     ui_label = 'Projekt-Definitionen'
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
+
+    # Default Gewerbegebietstyp
+    _default_industry_type_id = 2
 
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(self.change_area)
@@ -23,6 +26,25 @@ class ProjectDefinitions(Domain):
         self.industries = self.basedata.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt'
         )
+        presets = self.basedata.get_table(
+            'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
+        )
+        self.df_presets = presets.as_pandas()
+
+        density = self.basedata.get_table(
+            'Dichtekennwerte_Gewerbe', 'Definition_Projekt'
+        )
+        self.df_density = density.as_pandas()
+
+        comm_types = self.basedata.get_table(
+            'Gewerbegebietstypen', 'Definition_Projekt'
+        )
+        self.df_comm_types = comm_types.as_pandas()
+
+        default_idx = self.df_comm_types['IDGewerbegebietstyp'] == \
+            self._default_industry_type_id
+        self.df_comm_types.loc[
+            default_idx, 'Name_Gewerbegebietstyp'] += ' (default)'
 
         self.areas = Areas.features()
         self.ui.area_combo.blockSignals(True)
@@ -136,11 +158,17 @@ class ProjectDefinitions(Domain):
                 param_name = branche.param_gewerbenutzung
                 value = getattr(self.type_params, param_name).value
                 setattr(self.area, param_name, value)
+            self.area.ap_gesamt = \
+                self.type_params.arbeitsplaetze_insgesamt.value
+            self.area.ap_is_custom = self.type_params.auto_check.value
         elif typ == 'Einzelhandel':
             for assortment in self.assortments.features():
                 param_name = assortment.param_vfl
                 value = getattr(self.type_params, param_name).value
                 setattr(self.area, param_name, value)
+        if typ in ['Wohnen', 'Einzelhandel']:
+            self.area.beginn_nutzung = self.type_params.begin
+            self.area.aufsiedlungsdauer = self.type_params.period
         self.area.save()
         self.canvas.refreshAllLayers()
 
@@ -161,31 +189,59 @@ class ProjectDefinitions(Domain):
             1, SpinBox(minimum=1, maximum=100),
             label='Dauer des Bezuges (Jahre, 1 = Bezug wird noch\n'
             'im Jahr des Bezugsbeginns abgeschlossen)')
-        self.type_params.add(Seperator())
 
         self.type_params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
 
+        self.type_params.add(Seperator())
+
+        self.i =0
+        def calculate():
+            print(self.i)
+            self.i += 1
+
+        comm_names = self.df_comm_types['Name_Gewerbegebietstyp'].values
+        preset_combo = ComboBox(['Benutzerdefiniert'] + list(comm_names))
+
         dependency = SumDependency(100)
         for branche in self.industries.features():
+            slider = Slider(maximum=100, width=200)
             param = Param(
                 getattr(self.area, branche.param_gewerbenutzung),
-                Slider(maximum=100, width=200),
-                # great column naming by the way ^^
-                label=f'{branche.Name_Branche_ProjektCheck}', unit='%'
+                slider, label=f'{branche.Name_Branche_ProjektCheck}', unit='%'
             )
+            slider.changed.connect(calculate)
             dependency.add(param)
             self.type_params.add(param, name=branche.param_gewerbenutzung)
+
+        self.type_params.add(preset_combo)
+        preset_combo.changed.connect(calculate)
 
         self.type_params.add(Seperator())
 
         self.type_params.add(Title('Voraussichtliche Anzahl an Arbeitsplätzen'))
 
+        auto_check = Checkbox()
+        self.type_params.auto_check = Param(
+            bool(self.area.ap_is_custom), auto_check,
+            label='Automatische Schätzung'
+        )
+
+        ap_slider = Slider(maximum=10000)
         self.type_params.arbeitsplaetze_insgesamt = Param(
-            0, Slider(maximum=10000),
-            label='Schätzung der Zahl der Arbeitsplätze\n'
+            self.area.ap_gesamt, ap_slider,
+            label='Zahl der Arbeitsplätze\n'
             'nach Vollbezug (Summe über alle Branchen)'
         )
+
+        def toggle_auto_check():
+            enabled = not auto_check.value
+            for _input in [ap_slider.slider, ap_slider.spinbox]:
+                _input.setEnabled(enabled)
+                _input.update()
+
+        auto_check.changed.connect(toggle_auto_check)
+        toggle_auto_check()
 
     def setup_retail_params(self):
         self.type_params.add(Title('Verkaufsfläche'))

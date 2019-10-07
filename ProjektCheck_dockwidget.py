@@ -91,6 +91,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                     project_group.removeAllChildren()
                     root.removeChildNode(project_group)
                 self.project_manager.remove_project(project)
+                self.canvas.refreshAllLayers()
         self.ui.remove_project_button.clicked.connect(remove_project)
 
         self.setup_projects()
@@ -192,7 +193,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             for domain in self.domains:
                 domain.unload()
                 del domain
-            # ToDo: put that in project.close() and get workspaces of this project only
+            # ToDo: put that in project.close() and get
+            # workspaces of this project only
             for ws in Workspace.get_instances():
                 if not ws.database.read_only:
                     ws.close()
@@ -216,7 +218,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 if child.name().startswith('Projekt'):
                     child.setItemVisibilityChecked(False)
 
-            output = ProjectLayer.from_table(table, groupname='Projektdefinition')
+            output = ProjectLayer.from_table(
+                table, groupname='Projektdefinition')
             output.draw(label='Nutzungen des Plangebiets',
                         style_file='definitions.qml')
             output = ProjectLayer.from_table(table, groupname='Hintergrund',
@@ -224,8 +227,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
 
             backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
-            backgroundOSM.draw()
-            backgroundGrey = TerrestrisBackgroundLayer(groupname='Hintergrundkarten')
+            backgroundOSM.draw(checked=False)
+            backgroundGrey = TerrestrisBackgroundLayer(
+                groupname='Hintergrundkarten')
             backgroundGrey.draw()
 
             output.zoom_to()

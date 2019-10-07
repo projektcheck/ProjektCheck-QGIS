@@ -44,16 +44,22 @@ class Param(QObject):
         if self.input:
             self.input.value = value
         self.unit = unit
-        self._value_label = QLabel(str(value))
+        self._value_label = QLabel(self._v_repr(value))
 
     @property
     def value(self):
         return self._value
 
+    def _v_repr(self, value):
+        v_repr = str(value)
+        if isinstance(value, bool):
+            v_repr = 'ja' if value == True else 'nein'
+        return v_repr
+
     @value.setter
     def value(self, value):
         self._value = value
-        self._value_label.setText(str(value))
+        self._value_label.setText(self._v_repr(value))
         if self.input:
             self.input.value = value
         self.changed.emit()
@@ -279,7 +285,10 @@ class Params(QObject):
             return row
 
         for element in self._elements:
-            element.draw(layout)
+            # overview
+            if not getattr(element, 'hide_in_overview', None):
+                element.draw(layout)
+            # dialog
             if isinstance(element, Param):
                 element.draw(self.dialog.param_layout, edit=True)
             else:

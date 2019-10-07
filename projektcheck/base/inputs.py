@@ -1,6 +1,7 @@
 from abc import ABC
 from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
-                          QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout)
+                          QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout,
+                          QCheckBox)
 from qgis.PyQt.QtCore import pyqtSignal
 
 
@@ -10,7 +11,8 @@ class InputType(QObject):
     '''
     changed = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, hide_in_overview=True):
+        self.hide_in_overview = hide_in_overview
         super().__init__()
 
     def draw(self, layout):
@@ -29,6 +31,22 @@ class InputType(QObject):
 
     def get_value(self):
         raise NotImplementedError
+
+
+class Checkbox(InputType):
+    '''
+    checkbox input
+    '''
+    def __init__(self):
+        super().__init__()
+        self.input = QCheckBox()
+        self.input.stateChanged.connect(lambda: self.changed.emit())
+
+    def set_value(self, checked):
+        self.input.setChecked(checked)
+
+    def get_value(self):
+        return self.input.isChecked()
 
 
 class Slider(InputType):
@@ -76,12 +94,15 @@ class Slider(InputType):
 
 
 class ComboBox(InputType):
-    def __init__(self, values):
+    def __init__(self, values=[]):
         super().__init__()
         self.input = QComboBox()
         self.input.currentIndexChanged.connect(lambda: self.changed.emit())
         for value in values:
-            self.input.addItem(value)
+            self.add_value(value)
+
+    def add_value(self, value):
+        self.input.addItem(value)
 
     def set_value(self, value):
         self.input.setCurrentText(str(value))

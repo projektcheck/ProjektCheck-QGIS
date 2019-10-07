@@ -22,6 +22,7 @@ class Areas(ProjectTable):
     gemeinde_name = Field(str, '')
     we_gesamt = Field(int, 0)
     ap_gesamt = Field(int, 0)
+    ap_is_custom = Field(bool, False)
     vf_gesamt = Field(int, 0)
     ew = Field(int, 0)
     wege_gesamt = Field(int, 0)
