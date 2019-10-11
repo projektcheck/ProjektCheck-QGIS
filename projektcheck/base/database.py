@@ -78,8 +78,9 @@ class FeatureCollection:
     def __len__(self):
         return len(self._table)
 
-    def delete(self, id):
-        self._table.delete(id)
+    def delete(self):
+        for feat in self:
+            self._table.delete(feat.id)
 
     @property
     def workspace(self):
@@ -88,6 +89,8 @@ class FeatureCollection:
     def get(self, **kwargs):
         table = self._table.copy()
         table.filter(**kwargs)
+        if len(table) == 0:
+            return
         if len(table) > 1:
             raise ValueError('get returned more than one feature')
         return self._row_to_feature(table[0])

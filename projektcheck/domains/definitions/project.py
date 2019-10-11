@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy as np
 
 from projektcheck.base import Worker, ProjectManager
-from projektcheck.domains.definitions.tables import Areas, ProjectData
+from projektcheck.domains.definitions.tables import Teilflaechen, Projektrahmendaten
 from projektcheck.domains.traffic.tables import TrafficConnector
 from projektcheck.domains.marketcompetition.tables import Centers
 from projektcheck.domains.constants import Nutzungsart
@@ -37,7 +37,7 @@ class ProjectInitialization(Worker):
         self.project_areas = None
         source_crs = self.area_layer.crs()
         target_crs = QgsCoordinateReferenceSystem(self.epsg)
-        self.project_areas = Areas.features(project=self.project, create=True)
+        self.project_areas = Teilflaechen.features(project=self.project, create=True)
         layer_features = list(self.area_layer.getFeatures())
 
         self.log(f'Neues Projekt angelegt im Ordner {self.project.path}')
@@ -100,6 +100,7 @@ class ProjectInitialization(Worker):
                 nutzungsdauer=datetime.now().year,
                 ags_bkg=ags[i],
                 gemeinde_name=gem_names[i],
+                gemeinde_typ=gem_types[i],
                 geom=trans_geoms[i]
             )
             traffic_connectors.add(
@@ -110,7 +111,7 @@ class ProjectInitialization(Worker):
         self.set_progress(66)
 
         # general project data
-        project_frame = ProjectData.features(project=self.project, create=True)
+        project_frame = Projektrahmendaten.features(project=self.project, create=True)
         project_frame.add(
             ags=ags[0],
             gemeinde_name=gem_names[0],

@@ -22,7 +22,7 @@ class Param(QObject):
     changed : pyqtSignal
         fired on change of value
     '''
-    changed = pyqtSignal()
+    changed = pyqtSignal(object)
 
     def __init__(self, value, input: InputType = None, label: str = '',
                  unit=''):
@@ -62,7 +62,7 @@ class Param(QObject):
         self._value_label.setText(self._v_repr(value))
         if self.input:
             self.input.value = value
-        self.changed.emit()
+        self.changed.emit(value)
 
     def draw(self, layout, edit=False):
         '''

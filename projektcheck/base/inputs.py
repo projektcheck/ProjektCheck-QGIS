@@ -9,7 +9,7 @@ class InputType(QObject):
     '''
     abstract class for an input ui element
     '''
-    changed = pyqtSignal()
+    changed = pyqtSignal(object)
 
     def __init__(self, hide_in_overview=True):
         self.hide_in_overview = hide_in_overview
@@ -40,7 +40,7 @@ class Checkbox(InputType):
     def __init__(self):
         super().__init__()
         self.input = QCheckBox()
-        self.input.stateChanged.connect(lambda: self.changed.emit())
+        self.input.stateChanged.connect(self.changed.emit)
 
     def set_value(self, checked):
         self.input.setChecked(checked)
@@ -73,8 +73,11 @@ class Slider(InputType):
             lambda: self.set_value(self.slider.value()))
         self.spinbox.valueChanged.connect(
             lambda: self.set_value(self.spinbox.value()))
-        self.slider.valueChanged.connect(lambda: self.changed.emit())
-        self.spinbox.valueChanged.connect(lambda: self.changed.emit())
+        self.slider.valueChanged.connect(
+            lambda: self.changed.emit(self.get_value()))
+        self.spinbox.valueChanged.connect(
+            lambda: self.changed.emit(self.get_value())
+        )
 
     def set_value(self, value):
         for element in [self.slider, self.spinbox]:
@@ -94,15 +97,19 @@ class Slider(InputType):
 
 
 class ComboBox(InputType):
-    def __init__(self, values=[]):
+    def __init__(self, values=[], data=[]):
         super().__init__()
         self.input = QComboBox()
-        self.input.currentIndexChanged.connect(lambda: self.changed.emit())
-        for value in values:
-            self.add_value(value)
+        self.input.currentIndexChanged.connect(
+            lambda: self.changed.emit(self.get_value()))
+        for i, value in enumerate(values):
+            args = [value]
+            if data:
+                args.append(data[i])
+            self.add_value(*args)
 
-    def add_value(self, value):
-        self.input.addItem(value)
+    def add_value(self, value, data=None):
+        self.input.addItem(value, userData=data)
 
     def set_value(self, value):
         self.input.setCurrentText(str(value))
@@ -115,7 +122,7 @@ class LineEdit(InputType):
     def __init__(self):
         super().__init__()
         self.input = QLineEdit()
-        self.input.textChanged.connect(lambda: self.changed.emit())
+        self.input.textChanged.connect(self.changed.emit)
 
     def set_value(self, value):
         self.input.setText(str(value))
@@ -134,7 +141,7 @@ class SpinBox(InputType):
         self.input.setMinimum(minimum)
         self.input.setMaximum(maximum)
         self.input.setSingleStep(step)
-        self.input.valueChanged.connect(lambda: self.changed.emit())
+        self.input.valueChanged.connect(self.changed.emit)
 
     def set_value(self, value):
         self.input.setValue(value)

@@ -3,7 +3,294 @@ from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                                Slider, DoubleSpinBox, SumDependency, Checkbox)
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
-from projektcheck.domains.definitions.tables import Areas
+from projektcheck.domains.definitions.tables import (
+    Teilflaechen, Verkaufsflaechen, Wohneinheiten,
+    WohnenStruktur, Gewerbeanteile)
+
+
+class Wohnen:
+    def __init__(self, basedata, layout):
+        self.gebaeudetypen = basedata.get_table(
+            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
+        )
+        self.wohneinheiten = Wohneinheiten.features(create=True)
+        self.layout = layout
+
+    def setup_params(self, area):
+        self.area = area
+        clearLayout(self.layout)
+        self.params = Params(self.layout)
+        self.params.add(Title('Bezugszeitraum'))
+        #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
+                                  #label='Beginn des Bezuges')
+        self.params.begin = Param(
+            2000, SpinBox(minimum=2000, maximum=2100),
+            label='Beginn des Bezuges'
+        )
+        self.params.period = Param(1, SpinBox(minimum=1, maximum=100),
+                                        label='Dauer des Bezuges')
+        self.params.add(Seperator())
+
+        self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
+
+        for bt in self.gebaeudetypen.features():
+            param_name = bt.param_we
+            feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
+                                             id_teilflaeche=self.area.id)
+            value = feature.we if feature else 0
+            self.params.add(Param(
+                value, Slider(maximum=500),
+                label=f'... in {bt.display_name}'),
+                name=param_name
+            )
+        self.params.add(Seperator())
+
+        self.params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
+                              '(3 Jahre nach Bezug)'))
+
+        for bt in self.gebaeudetypen.features():
+            param_name = bt.param_ew_je_we
+            feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
+                                             id_teilflaeche=self.area.id)
+            value = feature.ew_je_we if feature else 0
+            self.params.add(Param(
+                value,
+                DoubleSpinBox(step=0.1, maximum=50),
+                label=f'... in {bt.display_name}'),
+                name=param_name
+            )
+        self.params.changed.connect(self.save)
+        self.params.show()
+
+    def save(self):
+        for bt in self.gebaeudetypen.features():
+            feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
+                                             id_teilflaeche=self.area.id)
+            if not feature:
+                feature = self.wohneinheiten.add(
+                    id_gebaeudetyp=bt.id, id_teilflaeche=self.area.id)
+            feature.we = getattr(self.params, bt.param_we).value
+            feature.ew_je_we = getattr(self.params, bt.param_ew_je_we).value
+            feature.name_gebaeudetyp = bt.NameGebaeudetyp
+            feature.save()
+
+    def clear(self, area):
+        self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
+
+
+class Gewerbe:
+    # Default Gewerbegebietstyp
+    _default_industry_type_id = 2
+
+    def __init__(self, basedata, layout):
+        self.layout = layout
+        self.gewerbeanteile = Gewerbeanteile.features(create=True)
+        self.branchen = basedata.get_table(
+            'Gewerbe_Branchen', 'Definition_Projekt'
+        ).features()
+
+        presets = basedata.get_table(
+            'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
+        )
+        self.df_presets = presets.as_pandas()
+
+        density = basedata.get_table(
+            'Dichtekennwerte_Gewerbe', 'Definition_Projekt'
+        )
+        self.df_density = density.as_pandas()
+
+        industry_types = basedata.get_table(
+            'Gewerbegebietstypen', 'Definition_Projekt'
+        )
+        self.df_industry_types = industry_types.as_pandas()
+
+        default_idx = self.df_industry_types['IDGewerbegebietstyp'] == \
+            self._default_industry_type_id
+        self.df_industry_types.loc[
+            default_idx, 'Name_Gewerbegebietstyp'] += ' (default)'
+
+    def set_industry_presets(self, preset_id):
+        """set all branche values to db-presets of given gewerbe-id"""
+        if preset_id == -1:
+            return
+        idx = self.df_presets['IDGewerbegebietstyp'] == preset_id
+        presets = self.df_presets[idx]
+        for branche in self.branchen:
+            param = getattr(self.params, branche.param_gewerbenutzung)
+            p_idx = presets['ID_Branche_ProjektCheck'] == branche.id
+            preset = int(presets[p_idx]['Vorschlagswert_in_Prozent'].values[0])
+            param.value = preset
+
+    def estimate_jobs(self):
+        """calculate estimation of number of jobs
+        sets estimated jobs to branchen"""
+        gemeindetyp = self.area.gemeinde_typ
+        df_kennwerte = self.df_density[
+            self.df_density['Gemeindetyp_ProjektCheck'] == gemeindetyp]
+
+        jobs_sum = 0
+        for branche in self.branchen:
+            param = getattr(self.params, branche.param_gewerbenutzung)
+            idx = df_kennwerte['ID_Branche_ProjektCheck'] == branche.id
+            jobs_per_ha = df_kennwerte[idx]['AP_pro_ha_brutto'].values[0]
+            jobs_ind = (self.area.area * (param.input.value / 100.)
+                        * jobs_per_ha)
+            branche.estimated_jobs = jobs_ind
+            jobs_sum += jobs_ind
+
+        return jobs_sum
+
+    def setup_params(self, area):
+        self.area = area
+        clearLayout(self.layout)
+        self.params = Params(self.layout)
+
+        self.params.add(Title('Bezugszeitraum'))
+        self.params.begin = Param(
+            2000, SpinBox(minimum=2000, maximum=2100),
+            label='Beginn des Bezuges'
+        )
+        self.params.period = Param(
+            1, SpinBox(minimum=1, maximum=100),
+            label='Dauer des Bezuges (Jahre, 1 = Bezug wird noch\n'
+            'im Jahr des Bezugsbeginns abgeschlossen)')
+
+        self.params.add(
+            Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
+
+        self.params.add(Seperator())
+
+        preset_names = self.df_industry_types['Name_Gewerbegebietstyp'].values
+        preset_ids = self.df_industry_types['IDGewerbegebietstyp'].values
+        self.preset_combo = ComboBox(
+            ['Benutzerdefiniert'] + list(preset_names), [-1] + list(preset_ids))
+
+        self.i = 0
+
+        def values_changed():
+            if self.auto_check.value:
+                n_jobs = self.estimate_jobs()
+                print(n_jobs)
+                self.ap_slider.set_value(n_jobs)
+
+        def slider_changed():
+            self.preset_combo.set_value('Benutzerdefiniert')
+            values_changed()
+
+        def preset_changed():
+            self.set_industry_presets(self.preset_combo.input.currentData())
+            values_changed()
+
+        self.params.add(self.preset_combo)
+        self.preset_combo.changed.connect(preset_changed)
+
+        dependency = SumDependency(100)
+        for branche in self.branchen:
+            param_name = branche.param_gewerbenutzung
+            feature = self.gewerbeanteile.get(id_branche=branche.id,
+                                              id_teilflaeche=self.area.id)
+            value = feature.anteil if feature else 0
+            slider = Slider(maximum=100, width=200)
+            param = Param(
+                value,  slider, label=f'{branche.Name_Branche_ProjektCheck}',
+                unit='%'
+            )
+            slider.changed.connect(slider_changed)
+            dependency.add(param)
+            self.params.add(param, name=branche.param_gewerbenutzung)
+
+        self.params.add(Seperator())
+
+        self.params.add(Title('Voraussichtliche Anzahl an Arbeitsplätzen'))
+
+        self.auto_check = Checkbox()
+        self.params.auto_check = Param(
+            bool(self.area.ap_ist_geschaetzt), self.auto_check,
+            label='Automatische Schätzung'
+        )
+
+        self.ap_slider = Slider(maximum=10000)
+        self.params.arbeitsplaetze_insgesamt = Param(
+            self.area.ap_gesamt, self.ap_slider,
+            label='Zahl der Arbeitsplätze\n'
+            'nach Vollbezug (Summe über alle Branchen)'
+        )
+
+        def toggle_auto_check():
+            enabled = not self.auto_check.value
+            for _input in [self.ap_slider.slider, self.ap_slider.spinbox]:
+                _input.setEnabled(enabled)
+                _input.update()
+            values_changed()
+
+        self.auto_check.changed.connect(toggle_auto_check)
+        toggle_auto_check()
+
+        self.params.changed.connect(self.save)
+        self.params.show()
+
+    def save(self):
+        for branche in self.branchen:
+            feature = self.gewerbeanteile.get(id_branche=branche.id,
+                                              id_teilflaeche=self.area.id)
+            if not feature:
+                feature = self.gewerbeanteile.add(
+                    id_branche=branche.id, id_teilflaeche=self.area.id)
+            feature.anteil = getattr(
+                self.params, branche.param_gewerbenutzung).value
+            feature.name_branche = branche.Name_Branche_ProjektCheck
+            feature.anzahl_jobs_schaetzung = getattr(
+                branche, 'estimated_jobs', 0)
+            feature.save()
+
+        self.area.ap_gesamt = self.params.arbeitsplaetze_insgesamt.value
+        self.area.ap_ist_geschaetzt = self.params.auto_check.value
+        self.area.save()
+
+    def clear(self, area):
+        self.gewerbeanteile.filter(id_teilflaeche=area.id).delete()
+
+
+class Einzelhandel:
+    def __init__(self, basedata, layout):
+        self.sortimente = basedata.get_table(
+            'Einzelhandel_Sortimente', 'Definition_Projekt'
+        )
+        self.verkaufsflaechen = Verkaufsflaechen.features(create=True)
+        self.layout = layout
+
+    def setup_params(self, area):
+        self.area = area
+        clearLayout(self.layout)
+        self.params = Params(self.layout)
+
+        for sortiment in self.sortimente.features():
+            feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
+                                                id_teilflaeche=self.area.id)
+            value = feature.verkaufsflaeche_qm if feature else 0
+            self.params.add(Param(
+                value,
+                Slider(maximum=20000),
+                label=f'{sortiment.Name_Sortiment_ProjektCheck}', unit='m²'),
+                name=sortiment.param_vfl
+            )
+        self.params.changed.connect(self.save)
+        self.params.show()
+
+    def save(self):
+        for sortiment in self.sortimente.features():
+            feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
+                                                id_teilflaeche=self.area.id)
+            if not feature:
+                feature = self.verkaufsflaechen.add(
+                    id_sortiment=sortiment.id, id_teilflaeche=self.area.id)
+            feature.verkaufsflaeche_qm = getattr(
+                self.params, sortiment.param_vfl).value
+            feature.name_sortiment = sortiment.Name_Sortiment_ProjektCheck
+            feature.save()
+
+    def clear(self, area):
+        self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
 
 
 class ProjectDefinitions(Domain):
@@ -11,47 +298,23 @@ class ProjectDefinitions(Domain):
     ui_label = 'Projekt-Definitionen'
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
 
-    # Default Gewerbegebietstyp
-    _default_industry_type_id = 2
-
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(self.change_area)
-
-        self.building_types = self.basedata.get_table(
-            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
-        )
-        self.assortments = self.basedata.get_table(
-            'Einzelhandel_Sortimente', 'Definition_Projekt'
-        )
-        self.industries = self.basedata.get_table(
-            'Gewerbe_Branchen', 'Definition_Projekt'
-        )
-        presets = self.basedata.get_table(
-            'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
-        )
-        self.df_presets = presets.as_pandas()
-
-        density = self.basedata.get_table(
-            'Dichtekennwerte_Gewerbe', 'Definition_Projekt'
-        )
-        self.df_density = density.as_pandas()
-
-        comm_types = self.basedata.get_table(
-            'Gewerbegebietstypen', 'Definition_Projekt'
-        )
-        self.df_comm_types = comm_types.as_pandas()
-
-        default_idx = self.df_comm_types['IDGewerbegebietstyp'] == \
-            self._default_industry_type_id
-        self.df_comm_types.loc[
-            default_idx, 'Name_Gewerbegebietstyp'] += ' (default)'
-
-        self.areas = Areas.features()
+        self.areas = Teilflaechen.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:
             self.ui.area_combo.addItem(area.name, area.id)
         self.ui.area_combo.blockSignals(False)
+
+        type_layout = self.ui.type_parameter_group.layout()
+        self.types = {
+            'Undefiniert': None,
+            'Wohnen': Wohnen(self.basedata, type_layout),
+            'Gewerbe': Gewerbe(self.basedata, type_layout),
+            'Einzelhandel': Einzelhandel(self.basedata, type_layout)
+        }
+        self.typ = None
         self.setup_type()
         self.setup_type_params()
 
@@ -67,7 +330,9 @@ class ProjectDefinitions(Domain):
         clearLayout(layout)
         self.params = Params(layout)
         self.params.name = Param(self.area.name, LineEdit(), label='Name')
-        self.params.area = Param(round(self.area.geom.area()), label='Größe')
+        ha = round(self.area.geom.area()) / 10000
+        self.area.area = ha
+        self.params.area = Param(ha, label='Größe', unit='ha')
         type_names = [n.capitalize() for n in Nutzungsart._member_names_]
 
         self.params.typ = Param(
@@ -85,174 +350,20 @@ class ProjectDefinitions(Domain):
                 self.ui.area_combo.currentIndex(), name)
             self.area.name = name
             self.area.save()
+            if self.typ:
+                self.typ.clear(self.area)
             self.setup_type_params()
             self.canvas.refreshAllLayers()
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
         typ = self.params.typ.value
-        if getattr(self, 'type_params', None):
-            self.type_params.close()
-            del self.type_params
-        layout = self.ui.type_parameter_group.layout()
-        # clear layout with parameters
-        clearLayout(layout)
-        self.type_params = Params(layout)
-        if typ == 'Wohnen':
-            self.setup_living_params()
-        elif typ == 'Gewerbe':
-            self.setup_industry_params()
-        elif typ == 'Einzelhandel':
-            self.setup_retail_params()
-        else:
+        clearLayout(self.ui.type_parameter_group.layout())
+        self.typ = self.types[typ]
+        if self.typ is None:
             return
-
-        self.type_params.show()
-        self.type_params.changed.connect(lambda: self.save_params(typ))
-
-    def setup_living_params(self):
-        #table = self.workspace.get_table('Wohnen_Struktur_und_Alterung_WE')
-
-        self.type_params.add(Title('Bezugszeitraum'))
-        #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
-                                  #label='Beginn des Bezuges')
-        self.type_params.begin = Param(
-            2000, SpinBox(minimum=2000, maximum=2100),
-            label='Beginn des Bezuges'
-        )
-        self.type_params.period = Param(1, SpinBox(minimum=1, maximum=100),
-                                        label='Dauer des Bezuges')
-        self.type_params.add(Seperator())
-
-        self.type_params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
-
-        for bt in self.building_types.features():
-            param_name = bt.param_we
-            self.type_params.add(Param(
-                getattr(self.area, param_name), Slider(maximum=500),
-                label=f'... in {bt.display_name}'),
-                name=param_name
-            )
-        self.type_params.add(Seperator())
-
-        self.type_params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
-                                   '(3 Jahre nach Bezug)'))
-
-        for bt in self.building_types.features():
-            param_name = bt.param_ew_je_we
-            self.type_params.add(Param(
-                getattr(self.area, param_name),
-                DoubleSpinBox(step=0.1, maximum=50),
-                label=f'... in {bt.display_name}'),
-                name=param_name
-            )
-
-    def save_params(self, typ):
-        if typ == 'Wohnen':
-            for bt in self.building_types.features():
-                for param_name in [bt.param_we, bt.param_ew_je_we]:
-                    value = getattr(self.type_params, param_name).value
-                    setattr(self.area, param_name, value)
-        elif typ == 'Gewerbe':
-            for branche in self.industries.features():
-                param_name = branche.param_gewerbenutzung
-                value = getattr(self.type_params, param_name).value
-                setattr(self.area, param_name, value)
-            self.area.ap_gesamt = \
-                self.type_params.arbeitsplaetze_insgesamt.value
-            self.area.ap_is_custom = self.type_params.auto_check.value
-        elif typ == 'Einzelhandel':
-            for assortment in self.assortments.features():
-                param_name = assortment.param_vfl
-                value = getattr(self.type_params, param_name).value
-                setattr(self.area, param_name, value)
-        if typ in ['Wohnen', 'Einzelhandel']:
-            self.area.beginn_nutzung = self.type_params.begin
-            self.area.aufsiedlungsdauer = self.type_params.period
-        self.area.save()
-        self.canvas.refreshAllLayers()
-
-        #if we_changed:
-            #we_idx = self.df_acc_units['IDTeilflaeche'] == area['id_teilflaeche']
-            #sums = self.df_acc_units[we_idx]['WE'].sum()
-            #self.df_areas.loc[area_idx, 'WE_gesamt'] = sums
-            #self.update_pretty_name()
-
-    def setup_industry_params(self):
-
-        self.type_params.add(Title('Bezugszeitraum'))
-        self.type_params.begin = Param(
-            2000, SpinBox(minimum=2000, maximum=2100),
-            label='Beginn des Bezuges'
-        )
-        self.type_params.period = Param(
-            1, SpinBox(minimum=1, maximum=100),
-            label='Dauer des Bezuges (Jahre, 1 = Bezug wird noch\n'
-            'im Jahr des Bezugsbeginns abgeschlossen)')
-
-        self.type_params.add(
-            Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
-
-        self.type_params.add(Seperator())
-
-        self.i =0
-        def calculate():
-            print(self.i)
-            self.i += 1
-
-        comm_names = self.df_comm_types['Name_Gewerbegebietstyp'].values
-        preset_combo = ComboBox(['Benutzerdefiniert'] + list(comm_names))
-
-        dependency = SumDependency(100)
-        for branche in self.industries.features():
-            slider = Slider(maximum=100, width=200)
-            param = Param(
-                getattr(self.area, branche.param_gewerbenutzung),
-                slider, label=f'{branche.Name_Branche_ProjektCheck}', unit='%'
-            )
-            slider.changed.connect(calculate)
-            dependency.add(param)
-            self.type_params.add(param, name=branche.param_gewerbenutzung)
-
-        self.type_params.add(preset_combo)
-        preset_combo.changed.connect(calculate)
-
-        self.type_params.add(Seperator())
-
-        self.type_params.add(Title('Voraussichtliche Anzahl an Arbeitsplätzen'))
-
-        auto_check = Checkbox()
-        self.type_params.auto_check = Param(
-            bool(self.area.ap_is_custom), auto_check,
-            label='Automatische Schätzung'
-        )
-
-        ap_slider = Slider(maximum=10000)
-        self.type_params.arbeitsplaetze_insgesamt = Param(
-            self.area.ap_gesamt, ap_slider,
-            label='Zahl der Arbeitsplätze\n'
-            'nach Vollbezug (Summe über alle Branchen)'
-        )
-
-        def toggle_auto_check():
-            enabled = not auto_check.value
-            for _input in [ap_slider.slider, ap_slider.spinbox]:
-                _input.setEnabled(enabled)
-                _input.update()
-
-        auto_check.changed.connect(toggle_auto_check)
-        toggle_auto_check()
-
-    def setup_retail_params(self):
-        self.type_params.add(Title('Verkaufsfläche'))
-
-        for assortment in self.assortments.features():
-            self.type_params.add(Param(
-                getattr(self.area, assortment.param_vfl),
-                Slider(maximum=20000),
-                label=f'{assortment.Name_Sortiment_ProjektCheck}', unit='m²'),
-                name=assortment.param_vfl
-            )
+        self.typ.setup_params(self.area)
+        self.typ.params.changed.connect(lambda: self.canvas.refreshAllLayers())
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)

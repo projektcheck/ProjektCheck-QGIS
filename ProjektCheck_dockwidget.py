@@ -11,7 +11,7 @@ from projektcheck.base import (PCDockWidget, SettingsDialog,
                                ProjectLayer, OSMBackgroundLayer,
                                TerrestrisBackgroundLayer, NewProjectDialog,
                                Workspace, ProgressDialog)
-from projektcheck.domains.definitions.tables import Areas
+from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.definitions.project import ProjectInitialization
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
                                   Traffic, Reachabilities, Ecology,
@@ -212,7 +212,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.setup_definitions()
             self.setup_domains()
 
-            table = Areas.get_table()
+            table = Teilflaechen.get_table()
             layer_root = QgsProject.instance().layerTreeRoot()
             for child in layer_root.children():
                 if child.name().startswith('Projekt'):
