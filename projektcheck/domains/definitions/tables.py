@@ -54,7 +54,7 @@ class Gewerbeanteile(ProjectTable):
     id_branche = Field(int, 0)
     name_branche = Field(str, '')
     anteil = Field(int, 0)
-    anzahl_jobs_schaetzung = Field(int, 0)
+    #anzahl_jobs_schaetzung = Field(int, 0)
     dichtekennwert = Field(int, 0)
 
     class Meta:

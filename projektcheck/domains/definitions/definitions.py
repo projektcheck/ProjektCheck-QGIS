@@ -87,7 +87,7 @@ class Gewerbe:
         self.gewerbeanteile = Gewerbeanteile.features(create=True)
         self.branchen = basedata.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt'
-        ).features()
+        )
 
         presets = basedata.get_table(
             'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
@@ -115,7 +115,7 @@ class Gewerbe:
             return
         idx = self.df_presets['IDGewerbegebietstyp'] == preset_id
         presets = self.df_presets[idx]
-        for branche in self.branchen:
+        for branche in self.branchen.features():
             param = getattr(self.params, branche.param_gewerbenutzung)
             p_idx = presets['ID_Branche_ProjektCheck'] == branche.id
             preset = int(presets[p_idx]['Vorschlagswert_in_Prozent'].values[0])
@@ -129,13 +129,13 @@ class Gewerbe:
             self.df_density['Gemeindetyp_ProjektCheck'] == gemeindetyp]
 
         jobs_sum = 0
-        for branche in self.branchen:
+        for branche in self.branchen.features():
             param = getattr(self.params, branche.param_gewerbenutzung)
             idx = df_kennwerte['ID_Branche_ProjektCheck'] == branche.id
             jobs_per_ha = df_kennwerte[idx]['AP_pro_ha_brutto'].values[0]
             jobs_ind = (self.area.area * (param.input.value / 100.)
                         * jobs_per_ha)
-            branche.estimated_jobs = jobs_ind
+            #branche.estimated_jobs = jobs_ind
             jobs_sum += jobs_ind
 
         return jobs_sum
@@ -185,7 +185,7 @@ class Gewerbe:
         self.preset_combo.changed.connect(preset_changed)
 
         dependency = SumDependency(100)
-        for branche in self.branchen:
+        for branche in self.branchen.features():
             param_name = branche.param_gewerbenutzung
             feature = self.gewerbeanteile.get(id_branche=branche.id,
                                               id_teilflaeche=self.area.id)
@@ -230,7 +230,7 @@ class Gewerbe:
         self.params.show()
 
     def save(self):
-        for branche in self.branchen:
+        for branche in self.branchen.features():
             feature = self.gewerbeanteile.get(id_branche=branche.id,
                                               id_teilflaeche=self.area.id)
             if not feature:
@@ -239,8 +239,8 @@ class Gewerbe:
             feature.anteil = getattr(
                 self.params, branche.param_gewerbenutzung).value
             feature.name_branche = branche.Name_Branche_ProjektCheck
-            feature.anzahl_jobs_schaetzung = getattr(
-                branche, 'estimated_jobs', 0)
+            #feature.anzahl_jobs_schaetzung = getattr(
+                #branche, 'estimated_jobs', 0)
             feature.save()
 
         self.area.ap_gesamt = self.params.arbeitsplaetze_insgesamt.value
