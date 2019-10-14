@@ -7,6 +7,8 @@ from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy, QPushButton
 from typing import Union
 from collections import OrderedDict
 import math
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 from projektcheck.base import InputType, Dialog
 
@@ -51,7 +53,10 @@ class Param(QObject):
         return self._value
 
     def _v_repr(self, value):
-        v_repr = str(value)
+        if isinstance(value, float):
+            v_repr = locale.str(value)
+        else:
+            v_repr = str(value)
         if isinstance(value, bool):
             v_repr = 'ja' if value == True else 'nein'
         return v_repr

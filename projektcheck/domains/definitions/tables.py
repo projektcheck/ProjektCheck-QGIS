@@ -17,7 +17,7 @@ class Teilflaechen(ProjectTable):
     name = Field(str, '')
     aufsiedlungsdauer = Field(int, 0)
     validiert = Field(int, 0)
-    begin_nutzung = Field(int, 0)
+    beginn_nutzung = Field(int, 0)
 
     # actually redundant, but maybe at some point areas might be have
     # different "gemeinden" again

@@ -123,7 +123,7 @@ class GeopackageTable(Table):
     geom_field = 'geom'
 
     def __init__(self, name, workspace: GeopackageWorkspace,
-                 field_names: list=None, filters: str=''):
+                 field_names: list=None, filters: dict={}):
         self.workspace = workspace
         self.name = name
         self._where = ''
@@ -139,8 +139,7 @@ class GeopackageTable(Table):
             self.field_names = [defn.GetFieldDefn(i).GetName()
                                 for i in range(defn.GetFieldCount())]
         self._filters = {}
-        if filters:
-            self.filter(**filters)
+        self.filter(**filters)
 
     def copy(self):
         return GeopackageTable(self.name, self.workspace,

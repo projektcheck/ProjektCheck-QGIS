@@ -11,6 +11,8 @@ from projektcheck.domains.jobs_inhabitants.tables import (
 
 
 class Wohnen:
+    BETRACHTUNGSZEITRAUM_JAHRE = 25
+
     def __init__(self, basedata, layout):
         self.gebaeudetypen = basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
@@ -76,6 +78,57 @@ class Wohnen:
             feature.name_gebaeudetyp = bt.NameGebaeudetyp
             feature.save()
 
+        self.area.beginn_nutzung = self.params.beginn_nutzung.value
+        self.area.aufsiedlungsdauer = self.params.aufsiedlungsdauer.value
+        self.area.ap_gesamt = self.params.arbeitsplaetze_insgesamt.value
+        self.area.ap_ist_geschaetzt = self.params.auto_check.value
+
+        self.area.save()
+
+        self.set_development(self.area)
+
+    def set_development(self, area):
+        pass
+        #n_jobs = area.ap_gesamt
+        #begin = area.beginn_nutzung
+        #duration = area.aufsiedlungsdauer
+
+        #end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
+
+        #self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
+
+        #for progress in range(0, end - begin + 1):
+            #proc_factor = (float(progress + 1) / duration
+                           #if progress + 1 <= duration
+                           #else 1)
+            #year = begin + progress
+
+            #self.ap_nach_jahr.add(
+                #id_teilflaeche=self.area.id, jahr=year,
+                #arbeitsplaetze=n_jobs * proc_factor
+            #)
+
+    def set_ways(self, area):
+        pass
+        #df_anteile = self.gewerbeanteile.filter(
+            #id_teilflaeche=area.id).to_pandas()
+        #df_basedata = (self.basedata.get_table(
+            #'Gewerbe_Branchen', 'Definition_Projekt').to_pandas())
+        #df_basedata.rename(columns={'ID_Branche_ProjektCheck': 'id_branche'},
+                           #inplace=True)
+        #estimated = df_anteile['anzahl_jobs_schaetzung']
+        #estimated_sum = estimated.sum()
+        #preset = area.ap_gesamt
+        #cor_factor = preset / estimated_sum if estimated_sum > 0 else 0
+        #joined = df_anteile.merge(df_basedata, on='id_branche', how='left')
+        #n_ways = estimated * cor_factor * joined['Wege_je_Beschäftigten']
+        #n_ways_miv = estimated * cor_factor * joined['Anteil_Pkw_Fahrer'] / 100
+
+        #area.wege_gesamt = int(n_ways.sum())
+        #area.wege_miv = int(n_ways_miv.sum())
+
+        #area.save()
+
     def clear(self, area):
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
 
@@ -92,21 +145,21 @@ class Gewerbe:
         self.projektrahmendaten = Projektrahmendaten.features()
         self.basedata = basedata
 
-        self.branchen = list(self.basedata.get_table(
+        self.branchen = list(basedata.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt'
-        ).features())
+        ).features().filter(ID_Branche_ProjektCheck__gt=0))
 
-        presets = self.basedata.get_table(
+        presets = basedata.get_table(
             'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
         )
         self.df_presets = presets.to_pandas()
 
-        density = self.basedata.get_table(
+        density = basedata.get_table(
             'Dichtekennwerte_Gewerbe', 'Definition_Projekt'
         )
         self.df_density = density.to_pandas()
 
-        industry_types = self.basedata.get_table(
+        industry_types = basedata.get_table(
             'Gewerbegebietstypen', 'Definition_Projekt'
         )
         self.df_industry_types = industry_types.to_pandas()
@@ -154,8 +207,8 @@ class Gewerbe:
         self.params = Params(self.layout)
 
         self.params.add(Title('Bezugszeitraum'))
-        self.params.begin_nutzung = Param(
-            area.begin_nutzung, SpinBox(minimum=2000, maximum=2100),
+        self.params.beginn_nutzung = Param(
+            area.beginn_nutzung, SpinBox(minimum=2000, maximum=2100),
             label='Beginn des Bezuges'
         )
         self.params.aufsiedlungsdauer = Param(
@@ -164,10 +217,10 @@ class Gewerbe:
             'im Jahr des Bezugsbeginns abgeschlossen)'
         )
 
+        self.params.add(Seperator())
+
         self.params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
-
-        self.params.add(Seperator())
 
         preset_names = self.df_industry_types['Name_Gewerbegebietstyp'].values
         preset_ids = self.df_industry_types['IDGewerbegebietstyp'].values
@@ -253,37 +306,34 @@ class Gewerbe:
                 branche, 'jobs_per_ha', 0)
             feature.save()
 
-        self.area.begin_nutzung = self.params.begin_nutzung.value
+        self.area.beginn_nutzung = self.params.beginn_nutzung.value
         self.area.aufsiedlungsdauer = self.params.aufsiedlungsdauer.value
         self.area.ap_gesamt = self.params.arbeitsplaetze_insgesamt.value
         self.area.ap_ist_geschaetzt = self.params.auto_check.value
 
+        self.area.save()
+
         # just estimate for output in case auto estimation is deactivated
         # (estimated values needed in any case)
         self.estimate_jobs()
-        self.calculate_growth(self.area)
-        self.calculate_percentages(self.area)
-        self.calculate_ways(self.area)
+        self.set_growth(self.area)
+        self.set_percentages(self.area)
+        self.set_ways(self.area)
 
     def clear(self, area):
         self.gewerbeanteile.filter(id_teilflaeche=area.id).delete()
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
 
-    def calculate_growth(self, area): ### Structure and age ###
-        #flaechen_table = 'Teilflaechen_Plangebiet'
-        #project_table = 'Projektrahmendaten'
-        #jobs_year_table = 'AP_nach_Jahr'
-        #results_workspace = 'FGDB_Bewohner_Arbeitsplaetze.gdb'
+    def set_growth(self, area):
 
-        n_jobs = self.params.arbeitsplaetze_insgesamt.value
-        begin = self.params.begin_nutzung.value
-        duration = self.params.aufsiedlungsdauer.value
+        n_jobs = area.ap_gesamt
+        begin = area.beginn_nutzung
+        duration = area.aufsiedlungsdauer
 
         end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
 
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
-
 
         for progress in range(0, end - begin + 1):
             proc_factor = (float(progress + 1) / duration
@@ -296,7 +346,7 @@ class Gewerbe:
                 arbeitsplaetze=n_jobs * proc_factor
             )
 
-    def calculate_percentages(self, area):
+    def set_percentages(self, area):
         '''this already could have done when saving,
         but is here based on the old code'''
         df = self.gewerbeanteile.filter(id_teilflaeche=area.id).to_pandas()
@@ -304,14 +354,15 @@ class Gewerbe:
         df['anteil_branche'] /= df['anteil_branche'].sum()
         self.gewerbeanteile.update_pandas(df)
 
-    def calculate_ways(self, area):
+    def set_ways(self, area):
         df_anteile = self.gewerbeanteile.filter(
             id_teilflaeche=area.id).to_pandas()
         df_basedata = (self.basedata.get_table(
-            'Gewerbe_Branchen', 'Definition_Projekt').to_pandas())
+            'Gewerbe_Branchen', 'Definition_Projekt').features().filter(
+                ID_Branche_ProjektCheck__gt=0).to_pandas())
         df_basedata.rename(columns={'ID_Branche_ProjektCheck': 'id_branche'},
                            inplace=True)
-        estimated = df['anzahl_jobs_schaetzung']
+        estimated = df_anteile['anzahl_jobs_schaetzung']
         estimated_sum = estimated.sum()
         preset = area.ap_gesamt
         cor_factor = preset / estimated_sum if estimated_sum > 0 else 0
@@ -327,6 +378,7 @@ class Gewerbe:
 
 class Einzelhandel:
     def __init__(self, basedata, layout):
+        self.basedata = basedata
         self.sortimente = basedata.get_table(
             'Einzelhandel_Sortimente', 'Definition_Projekt'
         )
@@ -352,19 +404,61 @@ class Einzelhandel:
         self.params.show()
 
     def save(self):
+        vkfl_sum = 0
         for sortiment in self.sortimente.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
                                                 id_teilflaeche=self.area.id)
             if not feature:
                 feature = self.verkaufsflaechen.add(
                     id_sortiment=sortiment.id, id_teilflaeche=self.area.id)
-            feature.verkaufsflaeche_qm = getattr(
-                self.params, sortiment.param_vfl).value
+            vkfl = getattr(self.params, sortiment.param_vfl).value
+            feature.verkaufsflaeche_qm = vkfl
+            vkfl_sum += vkfl
             feature.name_sortiment = sortiment.Name_Sortiment_ProjektCheck
             feature.save()
 
+        self.area.vf_gesamt = vkfl_sum
+        self.area.save()
+
+        # ToDo: create market if verkaufsflaeche lebensmittel
+        #self.create_market()
+        self.set_ways(self.area)
+
     def clear(self, area):
         self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
+
+    def create_market(self):
+        raise NotImplementedError
+
+    def set_ways(self, area):
+        df_verkaufsflaechen = self.verkaufsflaechen.filter(
+            id_teilflaeche=area.id).to_pandas()
+        default_branche = self.basedata.get_table(
+            'Gewerbe_Branchen', 'Definition_Projekt').features().get(
+                ID_Branche_ProjektCheck=0)
+        df_sortimente = self.sortimente.to_pandas()
+        df_sortimente.rename(
+            columns={'ID_Sortiment_ProjektCheck': 'id_sortiment'}, inplace=True)
+
+        joined = df_verkaufsflaechen.merge(df_sortimente, on='id_sortiment',
+                                           how='left')
+
+        n_ways = (joined['verkaufsflaeche_qm'] *
+                  joined['Besucher_je_qm_Vfl'] *
+                  joined['Wege_je_Besucher'])
+        n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
+
+        # ToDo: wege arbeitsplaetze?
+        n_jobs = joined['AP_je_qm_Vfl'] * joined['verkaufsflaeche_qm']
+        n_job_ways = (joined['verkaufsflaeche_qm'] *
+                      joined['AP_je_qm_Vfl'] *
+                      default_branche.Wege_je_Beschäftigten)
+        n_job_miv = n_job_ways * default_branche.Anteil_Pkw_Fahrer / 100
+
+        area.wege_gesamt = int(n_ways.sum() + n_job_ways.sum())
+        area.wege_miv = int(n_ways_miv.sum() + n_job_miv.sum())
+
+        area.save()
 
 
 class ProjectDefinitions(Domain):
