@@ -347,13 +347,27 @@ class GeopackageTable(Table):
             self._cursor.SetField(field_name, value)
         self._layer.SetFeature(self._cursor)
 
-    def as_pandas(self):
+    def to_pandas(self):
         rows = []
         for row in self:
             rows.append(row)
         df = pd.DataFrame.from_records(
             rows, columns=[self.id_field, self.geom_field] + self.field_names)
         return df
+
+    def update_pandas(self, dataframe):
+        '''
+        updates
+        rows with no id ('fid') will be added to table
+        rows with id will be updated (all fields overwritten with column values)
+        '''
+        for i, df_row in dataframe.iterrows():
+            items = df_row.to_dict()
+            id = items.pop(self.id_field, None)
+            if id is not None:
+                self.set(id, **items)
+            else:
+                self.add(**items)
 
     def __len__(self):
         count = self._layer.GetFeatureCount()

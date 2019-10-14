@@ -127,8 +127,11 @@ class FeatureCollection:
         row = self._table[idx]
         return self._row_to_feature(row)
 
-    def as_pandas(self):
-        return self._table.as_pandas()
+    def to_pandas(self):
+        return self._table.to_pandas()
+
+    def update_pandas(self, dataframe):
+        self._table.update_pandas(dataframe)
 
 
 class Database(ABC):
@@ -254,7 +257,7 @@ class Table(ABC):
         '''
         return FeatureCollection(self)
 
-    def as_pandas(self):
+    def to_pandas(self):
         '''
         override
 
