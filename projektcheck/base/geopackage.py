@@ -271,8 +271,9 @@ class GeopackageTable(Table):
         feature = ogr.Feature(self._layer.GetLayerDefn())
         for field, value in kwargs.items():
             if field not in self.field_names:
-                raise ValueError(f'{field} is not in fields of '
-                                 f'table {self.name}')
+                continue
+                #raise ValueError(f'{field} is not in fields of '
+                                 #f'table {self.name}')
             feature.SetField(field, value)
         if geom:
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())

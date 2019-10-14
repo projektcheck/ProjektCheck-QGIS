@@ -17,7 +17,7 @@ class Teilflaechen(ProjectTable):
     name = Field(str, '')
     aufsiedlungsdauer = Field(int, 0)
     validiert = Field(int, 0)
-    beginn_nutzung = Field(int, 0)
+    begin_nutzung = Field(int, 0)
 
     # actually redundant, but maybe at some point areas might be have
     # different "gemeinden" again
@@ -27,7 +27,7 @@ class Teilflaechen(ProjectTable):
 
     we_gesamt = Field(int, 0)
     ap_gesamt = Field(int, 0)
-    ap_ist_geschaetzt = Field(bool, False)
+    ap_ist_geschaetzt = Field(bool, True)
     vf_gesamt = Field(int, 0)
     ew = Field(int, 0)
     wege_gesamt = Field(int, 0)
@@ -53,8 +53,9 @@ class Gewerbeanteile(ProjectTable):
     id_teilflaeche = Field(int, 0)
     id_branche = Field(int, 0)
     name_branche = Field(str, '')
-    anteil = Field(int, 0)
-    #anzahl_jobs_schaetzung = Field(int, 0)
+    anteil_definition = Field(int, 0)
+    anteil_branche = Field(float, 0)
+    anzahl_jobs_schaetzung = Field(int, 0)
     dichtekennwert = Field(int, 0)
 
     class Meta:
