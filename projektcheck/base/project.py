@@ -376,6 +376,7 @@ class OSMBackgroundLayer(TileLayer):
     def draw(self, checked=True):
         super().draw('OpenStreetMap', checked=checked)
 
+
 class TerrestrisBackgroundLayer(TileLayer):
 
     def __init__(self, groupname='', prepend=False):

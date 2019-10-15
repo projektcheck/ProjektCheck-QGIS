@@ -5,9 +5,9 @@ from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
-    WohnenStruktur, Gewerbeanteile, Projektrahmendaten)
+    Gewerbeanteile, Projektrahmendaten)
 from projektcheck.domains.jobs_inhabitants.tables import (
-    ApProJahr, Branchenanteile)
+    ApProJahr, Branchenanteile, WohnenStruktur)
 
 
 class Wohnen:
@@ -25,14 +25,13 @@ class Wohnen:
         clearLayout(self.layout)
         self.params = Params(self.layout)
         self.params.add(Title('Bezugszeitraum'))
-        #params.begin = Param(0, Slider(minimum=2000, maximum=2100),
-                                  #label='Beginn des Bezuges')
-        self.params.begin = Param(
-            2000, SpinBox(minimum=2000, maximum=2100),
+        self.params.beginn_nutzung = Param(
+            area.beginn_nutzung, SpinBox(minimum=2000, maximum=2100),
             label='Beginn des Bezuges'
         )
-        self.params.period = Param(1, SpinBox(minimum=1, maximum=100),
-                                        label='Dauer des Bezuges')
+        self.params.aufsiedlungsdauer = Param(
+            area.aufsiedlungsdauer, SpinBox(minimum=1, maximum=100),
+            label='Dauer des Bezuges')
         self.params.add(Seperator())
 
         self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
@@ -56,32 +55,39 @@ class Wohnen:
             param_name = bt.param_ew_je_we
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
-            value = feature.ew_je_we if feature else 0
+            # set to default if no feature yet
+            value = feature.ew_je_we if feature else bt.default_ew_je_we
             self.params.add(Param(
                 value,
                 DoubleSpinBox(step=0.1, maximum=50),
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )
+
         self.params.changed.connect(self.save)
         self.params.show()
 
     def save(self):
+        we_sum = 0
         for bt in self.gebaeudetypen.features():
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
             if not feature:
                 feature = self.wohneinheiten.add(
                     id_gebaeudetyp=bt.id, id_teilflaeche=self.area.id)
-            feature.we = getattr(self.params, bt.param_we).value
-            feature.ew_je_we = getattr(self.params, bt.param_ew_je_we).value
+            we = getattr(self.params, bt.param_we).value
+            feature.we = we
+            we_sum += we
+            ew_je_we = getattr(self.params, bt.param_ew_je_we).value
+            feature.ew_je_we = ew_je_we
+            cor_factor = ew_je_we / bt.Ew_pro_WE_Referenz
+            feature.korrekturfaktor = cor_factor
             feature.name_gebaeudetyp = bt.NameGebaeudetyp
             feature.save()
 
         self.area.beginn_nutzung = self.params.beginn_nutzung.value
         self.area.aufsiedlungsdauer = self.params.aufsiedlungsdauer.value
-        self.area.ap_gesamt = self.params.arbeitsplaetze_insgesamt.value
-        self.area.ap_ist_geschaetzt = self.params.auto_check.value
+        self.area.we_gesamt = we_sum
 
         self.area.save()
 
@@ -131,6 +137,8 @@ class Wohnen:
 
     def clear(self, area):
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
+        area.we_gesamt = None
+        area.save()
 
 
 class Gewerbe:
@@ -217,7 +225,7 @@ class Gewerbe:
             'im Jahr des Bezugsbeginns abgeschlossen)'
         )
 
-        self.params.add(Seperator())
+        self.params.add(Seperator(margin=10))
 
         self.params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
@@ -287,6 +295,10 @@ class Gewerbe:
         self.auto_check.changed.connect(toggle_auto_check)
         toggle_auto_check()
 
+        ## set to default preset if assignment is new
+        #if len(self.gewerbeanteile) == 0:
+            #self.set_industry_presets(self.DEFAULT_INDUSTRY_ID)
+
         self.params.changed.connect(self.save)
         self.params.show()
 
@@ -323,7 +335,8 @@ class Gewerbe:
     def clear(self, area):
         self.gewerbeanteile.filter(id_teilflaeche=area.id).delete()
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
-        self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
+        area.ap_gesamt = None
+        area.save()
 
     def set_growth(self, area):
 
@@ -426,6 +439,8 @@ class Einzelhandel:
 
     def clear(self, area):
         self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
+        area.vf_gesamt = None
+        area.save()
 
     def create_market(self):
         raise NotImplementedError
@@ -497,7 +512,11 @@ class ProjectDefinitions(Domain):
         layout = self.ui.parameter_group.layout()
         clearLayout(layout)
         self.params = Params(layout)
-        self.params.name = Param(self.area.name, LineEdit(), label='Name')
+        self.params.name = Param(self.area.name, LineEdit(width=300),
+                                 label='Name')
+
+        self.params.add(Seperator(margin=0))
+
         ha = round(self.area.geom.area()) / 10000
         self.area.area = ha
         self.params.area = Param(ha, label='Größe', unit='ha')
@@ -505,7 +524,7 @@ class ProjectDefinitions(Domain):
 
         self.params.typ = Param(
             Nutzungsart(self.area.nutzungsart).name.capitalize(),
-            ComboBox(type_names),
+            ComboBox(type_names, width=300),
             label='Nutzungsart'
         )
         self.params.show()

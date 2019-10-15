@@ -37,13 +37,13 @@ class Checkbox(InputType):
     '''
     checkbox input
     '''
-    def __init__(self):
+    def __init__(self, width=None):
         super().__init__()
         self.input = QCheckBox()
         self.input.stateChanged.connect(self.changed.emit)
 
     def set_value(self, checked):
-        self.input.setChecked(checked)
+        self.input.setChecked(checked or False)
 
     def get_value(self):
         return self.input.isChecked()
@@ -64,11 +64,12 @@ class Slider(InputType):
         self.slider.setMinimum(minimum)
         self.slider.setMaximum(maximum)
         self.slider.setTickInterval(step)
-        self.slider.setMinimumWidth(width)
+        self.slider.setFixedWidth(width)
         self.spinbox = QSpinBox()
         self.spinbox.setMinimum(minimum)
         self.spinbox.setMaximum(maximum)
         self.spinbox.setSingleStep(step)
+        self.spinbox.setFixedWidth(50)
         self.slider.valueChanged.connect(
             lambda: self.set_value(self.slider.value()))
         self.spinbox.valueChanged.connect(
@@ -83,7 +84,7 @@ class Slider(InputType):
         for element in [self.slider, self.spinbox]:
             # avoid infinite recursion
             element.blockSignals(True)
-            element.setValue(value)
+            element.setValue(value or 0)
             element.blockSignals(False)
 
     def draw(self, layout):
@@ -97,9 +98,11 @@ class Slider(InputType):
 
 
 class ComboBox(InputType):
-    def __init__(self, values=[], data=[]):
+    def __init__(self, values=[], data=[], width=None):
         super().__init__()
         self.input = QComboBox()
+        if width is not None:
+            self.input.setFixedWidth(width)
         self.input.currentIndexChanged.connect(
             lambda: self.changed.emit(self.get_value()))
         for i, value in enumerate(values):
@@ -119,13 +122,15 @@ class ComboBox(InputType):
 
 
 class LineEdit(InputType):
-    def __init__(self):
+    def __init__(self, width=None):
         super().__init__()
         self.input = QLineEdit()
+        if width is not None:
+            self.input.setFixedWidth(width)
         self.input.textChanged.connect(self.changed.emit)
 
     def set_value(self, value):
-        self.input.setText(str(value))
+        self.input.setText(str(value or ''))
 
     def get_value(self):
         return self.input.text()
@@ -144,7 +149,7 @@ class SpinBox(InputType):
         self.input.valueChanged.connect(self.changed.emit)
 
     def set_value(self, value):
-        self.input.setValue(value)
+        self.input.setValue(value or 0)
 
     def get_value(self):
         return self.input.value()

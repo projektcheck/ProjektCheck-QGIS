@@ -2,15 +2,16 @@ from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
                           QLabel)
-from qgis.PyQt.QtGui import QFont
+from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy, QPushButton
 from typing import Union
 from collections import OrderedDict
 import math
+import os
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
-from projektcheck.base import InputType, Dialog
+from projektcheck.base import InputType, Dialog, settings
 
 
 class Param(QObject):
@@ -55,10 +56,12 @@ class Param(QObject):
     def _v_repr(self, value):
         if isinstance(value, float):
             v_repr = locale.str(value)
+        elif value is None:
+            v_repr = '-'
+        elif isinstance(value, bool):
+            v_repr = 'ja' if value == True else 'nein'
         else:
             v_repr = str(value)
-        if isinstance(value, bool):
-            v_repr = 'ja' if value == True else 'nein'
         return v_repr
 
     @value.setter
@@ -172,6 +175,10 @@ class SumDependency(Dependency):
 
 
 class Seperator:
+
+    def __init__(self, margin=3):
+        self.margin = margin
+
     '''
     seperator appendable to ui layout
     '''
@@ -187,7 +194,13 @@ class Seperator:
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
+        if self.margin:
+            layout.addItem(QSpacerItem(0, self.margin, QSizePolicy.Fixed,
+                                       QSizePolicy.Minimum))
         layout.addWidget(line)
+        if self.margin:
+            layout.addItem(QSpacerItem(0, self.margin, QSizePolicy.Fixed,
+                                       QSizePolicy.Minimum))
 
 
 class Title:
@@ -300,10 +313,14 @@ class Params(QObject):
                 element.draw(self.dialog.param_layout)
 
         row = QHBoxLayout()
-        button = QPushButton('ändern')
+        button = QPushButton('Editieren')
+        icon = QIcon(os.path.join(settings.IMAGE_PATH, 'edit.png'))
+        button.setIcon(icon)
         row.addItem(
             QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
         row.addWidget(button)
+        layout.addItem(
+            QSpacerItem(10, 10, QSizePolicy.Fixed, QSizePolicy.Minimum))
         layout.addLayout(row)
         self.parent.addLayout(layout, *args)
 
