@@ -79,8 +79,9 @@ class FeatureCollection:
         return len(self._table)
 
     def delete(self):
-        for feat in self:
-            self._table.delete(feat.id)
+        ids = [feat.id for feat in self]
+        for id in ids:
+            self._table.delete(id)
 
     @property
     def workspace(self):

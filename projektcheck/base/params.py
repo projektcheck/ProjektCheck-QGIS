@@ -314,7 +314,8 @@ class Params(QObject):
 
         row = QHBoxLayout()
         button = QPushButton('Editieren')
-        icon = QIcon(os.path.join(settings.IMAGE_PATH, 'edit.png'))
+        icon = QIcon(os.path.join(settings.IMAGE_PATH, 'iconset_mob',
+                                  '20190619_iconset_mob_edit_1.png'))
         button.setIcon(icon)
         row.addItem(
             QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))

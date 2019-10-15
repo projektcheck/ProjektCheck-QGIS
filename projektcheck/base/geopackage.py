@@ -6,6 +6,7 @@ import numpy as np
 from typing import Union
 from collections import OrderedDict
 import shutil
+import numpy as np
 
 from projektcheck.base import (Database, Table, Workspace, Feature, Field,
                                FeatureCollection)
@@ -273,11 +274,14 @@ class GeopackageTable(Table):
                 continue
                 #raise ValueError(f'{field} is not in fields of '
                                  #f'table {self.name}')
-            feature.SetField(field, value)
+            ret = feature.SetField(field, value)
         if geom:
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())
             feature.SetGeometry(geom)
-        self._layer.CreateFeature(feature)
+        ret = self._layer.CreateFeature(feature)
+        if ret != 0:
+            raise Exception(f'Feature could not be created in table {self.name}. '
+                            f'Ogr declined creation with error code {ret}')
         return self._ogr_feat_to_row(feature)
 
     def add_field(self, field):
@@ -363,9 +367,12 @@ class GeopackageTable(Table):
         '''
         for i, df_row in dataframe.iterrows():
             items = df_row.to_dict()
+            geom = items.get('geom', None)
+            if geom is not None and np.isnan(geom):
+                items['geom'] = None
             id = items.pop(self.id_field, None)
-            if id is not None:
-                self.set(id, **items)
+            if not (id is None or np.isnan(id)):
+                self.set(int(id), **items)
             else:
                 self.add(**items)
 

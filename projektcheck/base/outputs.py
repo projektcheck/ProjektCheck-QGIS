@@ -83,3 +83,4 @@ class TileLayer(Layer):
             QgsProject.instance().addMapLayer(self.layer, False)
             l = self.root.addLayer(self.layer)
             l.setItemVisibilityChecked(checked)
+            l.setExpanded(False)

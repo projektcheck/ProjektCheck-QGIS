@@ -1,3 +1,4 @@
+import pandas as pd
 from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
                                Title, Seperator, LineEdit, Geopackage, Field,
                                Slider, DoubleSpinBox, SumDependency, Checkbox)
@@ -7,17 +8,22 @@ from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
     Gewerbeanteile, Projektrahmendaten)
 from projektcheck.domains.jobs_inhabitants.tables import (
-    ApProJahr, Branchenanteile, WohnenStruktur)
+    ApProJahr, Branchenanteile, WohnenProJahr, WohnenStruktur)
 
 
 class Wohnen:
     BETRACHTUNGSZEITRAUM_JAHRE = 25
 
     def __init__(self, basedata, layout):
-        self.gebaeudetypen = basedata.get_table(
+        self.gebaeudetypen_base = basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         )
+        self.einwohner_base = basedata.get_table(
+            'Einwohner_pro_WE', 'Bewohner_Arbeitsplaetze'
+        )
         self.wohneinheiten = Wohneinheiten.features(create=True)
+        self.wohnen_struktur = WohnenStruktur.features(create=True)
+        self.wohnen_pro_jahr = WohnenProJahr.features(create=True)
         self.layout = layout
 
     def setup_params(self, area):
@@ -36,7 +42,7 @@ class Wohnen:
 
         self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
-        for bt in self.gebaeudetypen.features():
+        for bt in self.gebaeudetypen_base.features():
             param_name = bt.param_we
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
@@ -51,7 +57,7 @@ class Wohnen:
         self.params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
                               '(3 Jahre nach Bezug)'))
 
-        for bt in self.gebaeudetypen.features():
+        for bt in self.gebaeudetypen_base.features():
             param_name = bt.param_ew_je_we
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
@@ -69,7 +75,7 @@ class Wohnen:
 
     def save(self):
         we_sum = 0
-        for bt in self.gebaeudetypen.features():
+        for bt in self.gebaeudetypen_base.features():
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
             if not feature:
@@ -92,48 +98,97 @@ class Wohnen:
         self.area.save()
 
         self.set_development(self.area)
+        self.set_ways(self.area)
 
     def set_development(self, area):
-        pass
-        #n_jobs = area.ap_gesamt
-        #begin = area.beginn_nutzung
-        #duration = area.aufsiedlungsdauer
+        begin = area.beginn_nutzung
+        duration = area.aufsiedlungsdauer
+        end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
 
-        #end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
+        df_einwohner_base = self.einwohner_base.to_pandas()
+        df_wohneinheiten_tfl = self.wohneinheiten.filter(
+            id_teilflaeche=area.id).to_pandas()
 
-        #self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
+        wohnen_struktur_tfl = self.wohnen_struktur.filter(
+            id_teilflaeche=area.id)
+        wohnen_struktur_tfl.delete()
+        wohnen_pro_jahr_tfl = self.wohnen_pro_jahr.filter(
+            id_teilflaeche=area.id)
+        wohnen_pro_jahr_tfl.delete()
 
-        #for progress in range(0, end - begin + 1):
-            #proc_factor = (float(progress + 1) / duration
-                           #if progress + 1 <= duration
-                           #else 1)
-            #year = begin + progress
+        df_wohnen_struktur = wohnen_struktur_tfl.to_pandas()
 
-            #self.ap_nach_jahr.add(
-                #id_teilflaeche=self.area.id, jahr=year,
-                #arbeitsplaetze=n_jobs * proc_factor
-            #)
+        flaechen_template = pd.DataFrame()
+        geb_types = df_wohneinheiten_tfl['id_gebaeudetyp'].values
+        flaechen_template['id_gebaeudetyp'] = geb_types
+        flaechen_template['id_teilflaeche'] = area.id
+        flaechen_template['wohnungen'] = list(
+                df_wohneinheiten_tfl['we'].values.astype(float) *
+                df_wohneinheiten_tfl['ew_je_we'] /
+                duration)
+        for j in range(begin, end + 1):
+            for i in range(1, duration + 1):
+                if j - begin + i - duration + 1 > 0:
+                    df = flaechen_template.copy()
+                    df['jahr'] = j
+                    df['alter_we'] = j - begin + i - duration + 1
+                    df_wohnen_struktur = df_wohnen_struktur.append(df)
+
+        self.wohnen_struktur.update_pandas(df_wohnen_struktur)
+
+        # prepare the base table, take duration as age reference for development
+        # over years
+        df_einwohner_base['reference'] = 1
+        for geb_typ, group in df_einwohner_base.groupby('IDGebaeudetyp'):
+            reference = group[group['AlterWE'] == 3]['Einwohner'].sum()
+            df_einwohner_base.loc[df_einwohner_base['IDGebaeudetyp'] == geb_typ,
+                                  'reference'] = reference
+
+        # fun with great column names in base data
+        df_einwohner_base.rename(columns={'Jahr': 'jahr',
+                                          'IDGebaeudetyp': 'id_gebaeudetyp',
+                                          'AlterWE': 'alter_we',
+                                          'Altersklasse': 'altersklasse',
+                                          'IDAltersklasse': 'id_altersklasse',},
+                                 inplace=True)
+
+        joined = df_wohnen_struktur.merge(df_einwohner_base, how='left',
+                                          on=['id_gebaeudetyp', 'alter_we'])
+        grouped = joined.groupby(['jahr', 'id_altersklasse'])
+        # make an appendable copy of the (empty) bewohner dataframe
+        df_wohnen_pro_jahr = wohnen_pro_jahr_tfl.to_pandas()
+        group_template = df_wohnen_pro_jahr.copy()
+
+        for idx, group in grouped:
+            entry = group_template.copy()
+            # corresponding SQL:  Sum([Einwohner]*[Wohnungen])
+            n_bewohner = (group['wohnungen'] * group['Einwohner']
+                          / group['reference']).sum()
+            entry['bewohner'] = [n_bewohner]
+            entry['id_altersklasse'] = group['id_altersklasse'].unique()
+            entry['altersklasse'] = group['altersklasse'].unique()
+            entry['jahr'] = group['jahr'].unique()
+            entry['id_teilflaeche'] = area.id
+            df_wohnen_pro_jahr = df_wohnen_pro_jahr.append(entry)
+
+        self.wohnen_pro_jahr.update_pandas(df_wohnen_pro_jahr)
 
     def set_ways(self, area):
-        pass
-        #df_anteile = self.gewerbeanteile.filter(
-            #id_teilflaeche=area.id).to_pandas()
-        #df_basedata = (self.basedata.get_table(
-            #'Gewerbe_Branchen', 'Definition_Projekt').to_pandas())
-        #df_basedata.rename(columns={'ID_Branche_ProjektCheck': 'id_branche'},
-                           #inplace=True)
-        #estimated = df_anteile['anzahl_jobs_schaetzung']
-        #estimated_sum = estimated.sum()
-        #preset = area.ap_gesamt
-        #cor_factor = preset / estimated_sum if estimated_sum > 0 else 0
-        #joined = df_anteile.merge(df_basedata, on='id_branche', how='left')
-        #n_ways = estimated * cor_factor * joined['Wege_je_Beschäftigten']
-        #n_ways_miv = estimated * cor_factor * joined['Anteil_Pkw_Fahrer'] / 100
+        df_wohneinheiten = self.wohneinheiten.filter(
+            id_teilflaeche=area.id).to_pandas()
+        df_gebaeudetypen = self.gebaeudetypen_base.to_pandas()
+        df_gebaeudetypen.rename(columns={'IDGebaeudetyp': 'id_gebaeudetyp'},
+                                inplace=True)
+        joined = df_wohneinheiten.merge(df_gebaeudetypen, on='id_gebaeudetyp')
 
-        #area.wege_gesamt = int(n_ways.sum())
-        #area.wege_miv = int(n_ways_miv.sum())
+        n_ew = joined['ew_je_we'] * joined['we']
+        n_ways = n_ew * joined['Wege_je_Einwohner']
+        n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
 
-        #area.save()
+        area.wege_gesamt = int(n_ways.sum())
+        area.wege_miv = int(n_ways_miv.sum())
+
+        area.save()
 
     def clear(self, area):
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
@@ -160,29 +215,29 @@ class Gewerbe:
         presets = basedata.get_table(
             'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
         )
-        self.df_presets = presets.to_pandas()
+        self.df_presets_base = presets.to_pandas()
 
         density = basedata.get_table(
             'Dichtekennwerte_Gewerbe', 'Definition_Projekt'
         )
-        self.df_density = density.to_pandas()
+        self.df_density_base = density.to_pandas()
 
         industry_types = basedata.get_table(
             'Gewerbegebietstypen', 'Definition_Projekt'
         )
-        self.df_industry_types = industry_types.to_pandas()
+        self.df_industry_types_base = industry_types.to_pandas()
 
-        default_idx = self.df_industry_types['IDGewerbegebietstyp'] == \
+        default_idx = self.df_industry_types_base['IDGewerbegebietstyp'] == \
             self.DEFAULT_INDUSTRY_ID
-        self.df_industry_types.loc[
+        self.df_industry_types_base.loc[
             default_idx, 'Name_Gewerbegebietstyp'] += ' (default)'
 
     def set_industry_presets(self, preset_id):
         """set all branche values to db-presets of given gewerbe-id"""
         if preset_id == -1:
             return
-        idx = self.df_presets['IDGewerbegebietstyp'] == preset_id
-        presets = self.df_presets[idx]
+        idx = self.df_presets_base['IDGewerbegebietstyp'] == preset_id
+        presets = self.df_presets_base[idx]
         for branche in self.branchen:
             param = getattr(self.params, branche.param_gewerbenutzung)
             p_idx = presets['ID_Branche_ProjektCheck'] == branche.id
@@ -193,8 +248,8 @@ class Gewerbe:
         """calculate estimation of number of jobs
         sets estimated jobs to branchen"""
         gemeindetyp = self.area.gemeinde_typ
-        df_kennwerte = self.df_density[
-            self.df_density['Gemeindetyp_ProjektCheck'] == gemeindetyp]
+        df_kennwerte = self.df_density_base[
+            self.df_density_base['Gemeindetyp_ProjektCheck'] == gemeindetyp]
 
         jobs_sum = 0
         for branche in self.branchen:
@@ -230,8 +285,8 @@ class Gewerbe:
         self.params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
 
-        preset_names = self.df_industry_types['Name_Gewerbegebietstyp'].values
-        preset_ids = self.df_industry_types['IDGewerbegebietstyp'].values
+        preset_names = self.df_industry_types_base['Name_Gewerbegebietstyp'].values
+        preset_ids = self.df_industry_types_base['IDGewerbegebietstyp'].values
         self.preset_combo = ComboBox(
             ['Benutzerdefiniert'] + list(preset_names), [-1] + list(preset_ids))
 
@@ -392,7 +447,7 @@ class Gewerbe:
 class Einzelhandel:
     def __init__(self, basedata, layout):
         self.basedata = basedata
-        self.sortimente = basedata.get_table(
+        self.sortimente_base = basedata.get_table(
             'Einzelhandel_Sortimente', 'Definition_Projekt'
         )
         self.verkaufsflaechen = Verkaufsflaechen.features(create=True)
@@ -403,7 +458,7 @@ class Einzelhandel:
         clearLayout(self.layout)
         self.params = Params(self.layout)
 
-        for sortiment in self.sortimente.features():
+        for sortiment in self.sortimente_base.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
                                                 id_teilflaeche=self.area.id)
             value = feature.verkaufsflaeche_qm if feature else 0
@@ -418,7 +473,7 @@ class Einzelhandel:
 
     def save(self):
         vkfl_sum = 0
-        for sortiment in self.sortimente.features():
+        for sortiment in self.sortimente_base.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
                                                 id_teilflaeche=self.area.id)
             if not feature:
@@ -451,7 +506,7 @@ class Einzelhandel:
         default_branche = self.basedata.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt').features().get(
                 ID_Branche_ProjektCheck=0)
-        df_sortimente = self.sortimente.to_pandas()
+        df_sortimente = self.sortimente_base.to_pandas()
         df_sortimente.rename(
             columns={'ID_Sortiment_ProjektCheck': 'id_sortiment'}, inplace=True)
 

@@ -30,4 +30,16 @@ class WohnenStruktur(ProjectTable):
     wohnungen = Field(float, 0)
 
     class Meta:
-        workspace = 'definitions'
+        workspace = 'bewohner_arbeitsplaetze'
+
+
+class WohnenProJahr(ProjectTable):
+
+    id_teilflaeche = Field(int, 0)
+    jahr = Field(int, 0)
+    id_altersklasse = Field(int, 0)
+    altersklasse = Field(str, '')
+    bewohner = Field(float, 0)
+
+    class Meta:
+        workspace = 'bewohner_arbeitsplaetze'
