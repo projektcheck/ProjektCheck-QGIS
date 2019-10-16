@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="images">
-    <file>../../images/banner_anamorphic_fading.png</file>
+    <file>../../images/banner_anamorphic_fading_2.png</file>
+    <file>../../images/banner_anamorphic_fading_3.png</file>
     <file>../../images/icon.png</file>
     <file>../../images/banner.png</file>
     <file>../../images/banner_anamorphic.png</file>
