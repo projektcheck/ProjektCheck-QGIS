@@ -250,6 +250,9 @@ QLabel{
              <family>MS Shell Dlg 2</family>
             </font>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::WheelFocus</enum>
+           </property>
            <property name="editable">
             <bool>false</bool>
            </property>
@@ -258,6 +261,9 @@ QLabel{
            </property>
            <property name="maxVisibleItems">
             <number>10</number>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <item>
             <property name="text">
