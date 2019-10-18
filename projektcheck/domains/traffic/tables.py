@@ -1,4 +1,5 @@
-from projektcheck.base import ProjectTable, Field
+from projektcheck.base.project import ProjectTable
+from projektcheck.base.database import Field
 
 
 class TrafficConnector(ProjectTable):

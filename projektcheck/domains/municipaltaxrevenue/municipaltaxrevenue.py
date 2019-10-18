@@ -1,4 +1,4 @@
-from projektcheck.base import Domain
+from projektcheck.base.domain import Domain
 
 
 class MunicipalTaxRevenue(Domain):

@@ -1,7 +1,11 @@
 import pandas as pd
-from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
-                               Title, Seperator, LineEdit, Geopackage, Field,
-                               Slider, DoubleSpinBox, SumDependency, Checkbox)
+from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
+                                      Slider, DoubleSpinBox)
+from projektcheck.base.params import (Params, Param, Title,
+                                      Seperator, SumDependency)
+from projektcheck.base.domain import (Domain)
+from projektcheck.base.geopackage import (Geopackage, Field)
+
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.domains.definitions.tables import (

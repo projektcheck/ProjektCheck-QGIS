@@ -3,25 +3,7 @@ from qgis.core import QgsProject, QgsVectorLayer, QgsRasterLayer
 from qgis.utils import iface
 
 
-class Output(ABC):
-    '''
-    abstract class for visual outputs of tools
-    '''
-
-    def draw(self):
-        raise NotImplementedError
-
-
-class Diagram(Output, ABC):
-    '''
-    abstract class for diagrams
-    '''
-
-    def draw(self):
-        pass
-
-
-class Layer(Output):
+class Layer(ABC):
 
     def __init__(self, layername, data_path, groupname='', prepend=True):
         self.root = QgsProject.instance().layerTreeRoot()

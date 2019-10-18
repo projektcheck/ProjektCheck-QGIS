@@ -7,7 +7,8 @@ import unittest
 import random
 import os
 
-from projektcheck.base import Geopackage, Field
+from projektcheck.base.geopackage import Geopackage
+from projektcheck.base.database import Field
 
 
 class GeopackageTest(unittest.TestCase):

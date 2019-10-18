@@ -6,6 +6,10 @@ from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
+from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
+                                                NavigationToolbar2QT)
+from matplotlib.figure import Figure
+
 import os
 import datetime
 
@@ -271,3 +275,36 @@ class SettingsDialog(Dialog):
         else:
             self.project_path_edit.setText(self.project_path)
 
+
+class DiagramDialog(Dialog):
+
+    def __init__(self, title='Diagramm', modal=False):
+        super().__init__(modal=modal)
+        if title:
+            self.setWindowTitle(title)
+        self.figure = Figure()
+        # it takes the `figure` instance as a parameter to __init__
+        self.canvas = FigureCanvasQTAgg(self.figure)
+
+        # this is the Navigation widget
+        # it takes the Canvas widget and a parent
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
+
+        ## Just some button connected to `plot` method
+        #self.button = QPushButton('Plot')
+        #self.button.clicked.connect(self.plot)
+
+        # set the layout
+        layout = QVBoxLayout()
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.canvas)
+        self.setLayout(layout)
+
+    def show(self, ax):
+        self.figure.clear()
+        subplot = self.figure.add_subplot(111)
+        subplot.add_child_axes(ax)
+        self.canvas.draw()
+
+        self.adjustSize()
+        QDialog.show(self)

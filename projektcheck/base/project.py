@@ -6,8 +6,9 @@ from collections import OrderedDict
 from datetime import datetime
 
 from projektcheck.utils.singleton import Singleton
-from projektcheck.base import Field, Feature, Geopackage, Layer, TileLayer
-
+from projektcheck.base.database import Field, Feature
+from projektcheck.base.geopackage import Geopackage
+from projektcheck.base.layers import Layer, TileLayer
 
 APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
 

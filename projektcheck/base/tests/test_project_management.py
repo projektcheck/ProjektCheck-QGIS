@@ -7,7 +7,9 @@ __copyright__ = 'Copyright 2019, GGR Planungsbuero'
 import unittest
 import shutil
 
-from projektcheck.base import (ProjectManager, ProjectTable, Field, Geopackage)
+from projektcheck.base.project import (ProjectManager, ProjectTable)
+from projektcheck.base.geopackage import Geopackage
+from projektcheck.base.database import Field
 from settings import settings
 from qgis.core import QgsGeometry, QgsPointXY
 

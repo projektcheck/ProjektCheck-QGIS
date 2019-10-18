@@ -8,8 +8,8 @@ from collections import OrderedDict
 import shutil
 import numpy as np
 
-from projektcheck.base import (Database, Table, Workspace, Feature, Field,
-                               FeatureCollection)
+from projektcheck.base.database import (Database, Table, Workspace, Feature,
+                                        Field, FeatureCollection)
 
 driver = ogr.GetDriverByName('GPKG')
 
