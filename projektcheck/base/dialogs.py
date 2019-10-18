@@ -9,6 +9,7 @@ from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 import os
 import datetime
@@ -18,8 +19,11 @@ from projektcheck.base.project import ProjectManager
 
 
 class Dialog(QDialog):
-    def __init__(self, ui_file=None, modal=True, parent=None):
+    def __init__(self, ui_file=None, modal=True, parent=None, title=None):
         super().__init__(parent=parent)
+        if title:
+            self.setWindowTitle(title)
+
         if ui_file:
             # look for file ui folder if not found
             ui_file = ui_file if os.path.exists(ui_file) \
@@ -278,21 +282,14 @@ class SettingsDialog(Dialog):
 
 class DiagramDialog(Dialog):
 
-    def __init__(self, title='Diagramm', modal=False):
-        super().__init__(modal=modal)
-        if title:
-            self.setWindowTitle(title)
-        self.figure = Figure()
+    def __init__(self, figure, title='Diagramm', modal=False):
+        super().__init__(modal=modal, title=title)
         # it takes the `figure` instance as a parameter to __init__
-        self.canvas = FigureCanvasQTAgg(self.figure)
+        self.canvas = FigureCanvasQTAgg(figure)
 
         # this is the Navigation widget
         # it takes the Canvas widget and a parent
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
-
-        ## Just some button connected to `plot` method
-        #self.button = QPushButton('Plot')
-        #self.button.clicked.connect(self.plot)
 
         # set the layout
         layout = QVBoxLayout()
@@ -300,11 +297,8 @@ class DiagramDialog(Dialog):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-    def show(self, ax):
-        self.figure.clear()
-        subplot = self.figure.add_subplot(111)
-        subplot.add_child_axes(ax)
-        self.canvas.draw()
-
+    def show(self):
+        #subplot.set_axis_off()
+        plt.gcf().canvas.draw_idle()
         self.adjustSize()
         QDialog.show(self)

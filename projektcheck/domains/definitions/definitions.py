@@ -12,7 +12,7 @@ from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
     Gewerbeanteile, Projektrahmendaten)
 from projektcheck.domains.jobs_inhabitants.tables import (
-    ApProJahr, Branchenanteile, WohnenProJahr, WohnenStruktur)
+    ApProJahr, WohnenProJahr, WohnenStruktur)
 
 
 class Wohnen:

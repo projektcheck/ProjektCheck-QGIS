@@ -11,22 +11,19 @@ from projektcheck.utils import diagram_exec
 from projektcheck.base.project import settings
 from projektcheck.base.dialogs import DiagramDialog
 
+stylesheet = os.path.join(settings.TEMPLATE_PATH, 'styles', 'pc.mplstyle')
+plt.style.use(stylesheet)
+
 
 class MatplotDiagram(ABC):
     '''
     superclass to plot diagrams with matplotlib
     '''
-    # USE THIS PLT, NEVER IMPORT MATPLOTLIB SOMEWHERE ELSE!!!!
-    # possible stylesheets: 'rpc.mplstyle' and 'rpc2.mplstyle'
-    stylesheet = os.path.join(settings.TEMPLATE_PATH, 'styles', 'pc.mplstyle')
-    plt = plt
-    plt.style.use(stylesheet)
-
     def __init__(self, **kwargs):
         """
         title : str
         """
-        self.ax = None
+        self.dialog = None
         self.kwargs = kwargs
         self.title = kwargs.get('title', '')
 
@@ -42,12 +39,12 @@ class MatplotDiagram(ABC):
             show the plot in an external process
             defaults to True
         '''
-        self.dialog = DiagramDialog(title=self.title)
-        if not self.ax:
-            self.ax = self.create(**self.kwargs)
-        self.dialog.show(self.ax)
+        if not self.dialog:
+            figure = self.create(**self.kwargs)
+            self.dialog = DiagramDialog(figure, title=self.title)
+        self.dialog.show()
 
-    def create(self):
+    def create(self, **kwargs):
         """to be implemented by subclasses,
         has to return the axes-object of the plot"""
         raise NotImplementedError
