@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>80</height>
+    <width>1024</width>
+    <height>256</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>690</width>
-    <height>80</height>
+    <height>96</height>
    </size>
   </property>
   <property name="palette">
@@ -86,20 +86,13 @@
     </disabled>
    </palette>
   </property>
-  <property name="accessibleName">
-   <string/>
-  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget[objectName=&quot;dockWidgetContents&quot;]{	
-	background-image: url(:/images/images/banner_anamorphic.png);
-	background-size:  cover; 
-	background-position: center center; 
-}
-QFrame[objectName=&quot;frame&quot;] {
-	background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 white, stop:1 transparent);
+   <string notr="true">QFrame {
+	image: url(:/images/images/banner_anamorphic_fading_3.png);
+	image-position: top right;
 }
 QLabel{
 	image: none;
@@ -112,36 +105,9 @@ QLabel{
    <string>Projekt-Check // Projekt-Verwaltung</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <property name="maximumSize">
-    <size>
-     <width>900</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="accessibleName">
-    <string>main-widget</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing">
-     <number>0</number>
-    </property>
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="QFrame" name="frame">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -153,18 +119,6 @@ QLabel{
         <width>56</width>
         <height>56</height>
        </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="accessibleName">
-       <string>main-frame</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
