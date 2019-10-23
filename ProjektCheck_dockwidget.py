@@ -26,7 +26,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     ui_file = 'ProjektCheck_dockwidget_base.ui'
 
-    def setupUi(self):
+    def load_content(self):
         #self.ui.pandas_button.clicked.connect(self.install_pandas)
         self.domains = []
         self.active_dockwidget = None

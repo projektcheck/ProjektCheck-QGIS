@@ -542,6 +542,8 @@ class ProjectDefinitions(Domain):
 
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(self.change_area)
+
+    def load_content(self):
         self.areas = Teilflaechen.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
