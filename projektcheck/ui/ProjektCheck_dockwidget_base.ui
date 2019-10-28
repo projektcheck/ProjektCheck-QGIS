@@ -443,7 +443,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                <enum>Qt::DefaultContextMenu</enum>
               </property>
               <property name="text">
-               <string>Analyse-Tools</string>
+               <string>Analyse-Tools  </string>
               </property>
               <property name="checkable">
                <bool>false</bool>
