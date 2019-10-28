@@ -105,13 +105,15 @@
 	background-position: center center; 
 }
 QFrame[objectName=&quot;mainframe&quot;]{
-	background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 white, stop:1 transparent);
+	background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 rgba(240, 240, 240, 100), stop: 0.4 rgba(240, 240, 240, 100),
+                stop:1 rgba(240, 240, 240, 255))
 }
 QLabel{
 	image: none;
 }
 QFrame[objectName=&quot;buttonframe&quot;]{
-	background: rgba(255, 255, 255, 75%)
+	background: rgba(245, 245, 245, 75%)
 }</string>
   </property>
   <property name="features">
@@ -248,8 +250,8 @@ QFrame[objectName=&quot;buttonframe&quot;]{
              <widget class="QPushButton" name="settings_button">
               <property name="maximumSize">
                <size>
-                <width>30</width>
-                <height>30</height>
+                <width>500</width>
+                <height>500</height>
                </size>
               </property>
               <property name="sizeIncrement">
@@ -259,13 +261,29 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                </size>
               </property>
               <property name="text">
-               <string/>
+               <string>Einstellungen</string>
               </property>
               <property name="icon">
                <iconset>
                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_settings_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_settings_2.png</iconset>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>30</width>
+                <height>17</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QComboBox" name="project_combo">
@@ -376,22 +394,6 @@ QFrame[objectName=&quot;buttonframe&quot;]{
             </item>
             <item>
              <spacer name="horizontalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>17</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

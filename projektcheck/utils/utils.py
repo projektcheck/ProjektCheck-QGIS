@@ -1,9 +1,29 @@
 from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsProject)
+from qgis.PyQt.QtGui import QIcon
                        #QgsVectorLayer, QgsApplication, QgsSpatialIndex)
 from collections import OrderedDict
+import os
 
 from settings import settings
+
+def add_selection_icons(toolbox):
+
+    triangle_right = QIcon(os.path.join(
+        settings.IMAGE_PATH, 'triangle-right.png'))
+    triangle_down = QIcon(os.path.join(
+        settings.IMAGE_PATH, 'triangle-down.png'))
+
+    def set_closed():
+        for i in range(toolbox.count()):
+            toolbox.setItemIcon(i, triangle_right)
+
+    def on_select(idx):
+        set_closed()
+        toolbox.setItemIcon(idx, triangle_down)
+
+    toolbox.currentChanged.connect(on_select)
+    on_select(toolbox.currentIndex())
 
 def get_ags(features, source_crs=None):
     """
