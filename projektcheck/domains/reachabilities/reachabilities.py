@@ -67,8 +67,33 @@ class Reachabilities(Domain):
 
     def setupUi(self):
         self.ui.haltestellen_button.clicked.connect(self.query_stops)
+        self.ui.show_haltestellen_button.clicked.connect(self.draw_haltestellen)
+        self.ui.haltestellen_combo.currentIndexChanged.connect(
+            lambda index: self.zoom_to(
+                self.ui.haltestellen_combo.itemData(index)))
         self.haltestellen = Haltestellen.features(create=True)
         self.zentrale_orte = ZentraleOrte.features(create=True)
+        self.fill_haltestellen()
+
+    def zoom_to(self, feature):
+        if not feature:
+            return
+        #target_srid = self.canvas.mapSettings().destinationCrs().authid()
+        #point = feature.geom.asPoint()
+        #point = Point(point.x(), point.y(), epsg=settings.EPSG)
+        #point.transform(target_srid)
+        #self.canvas.zoomWithCenter(point.x, point.y, False)
+        # ToDo: get layer and zoom to
+        #self.canvas.zoomToSelected(layer)
+
+    def fill_haltestellen(self):
+        self.ui.haltestellen_combo.blockSignals(True)
+        self.ui.haltestellen_combo.clear()
+        self.haltestellen.filter(flaechenzugehoerig=True)
+        for stop in self.haltestellen:
+            self.ui.haltestellen_combo.addItem(stop.name, stop)
+        self.haltestellen.filter()
+        self.ui.haltestellen_combo.blockSignals(False)
 
     def query_stops(self):
         self.query = BahnQuery(date=next_working_day())
@@ -82,6 +107,7 @@ class Reachabilities(Domain):
         #arcpy.AddMessage('Ermittle die Anzahl der Abfahrten je Haltestelle...')
         self.update_departures(projectarea_only=True)
         self.draw_haltestellen()
+        self.fill_haltestellen()
 
     def draw_haltestellen(self):
         output = ProjectLayer.from_table(
