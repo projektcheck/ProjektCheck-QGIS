@@ -149,7 +149,8 @@ class GeopackageTable(Table):
 
     def _ogr_feat_to_row(self, feat):
         if self.field_names is not None:
-            items = OrderedDict([(f, feat[f]) for f in self.field_names])
+            items = OrderedDict([(f, feat[f]) for f in self.field_names
+                                 if hasattr(feat, f)])
         else:
             items = OrderedDict(self._cursor.items())
         items[self.id_field] = feat.GetFID()

@@ -16,6 +16,7 @@ class Haltestellen(ProjectTable):
     abfahrten = Field(int, 0)
     id_bahn = Field(int, 0)
     flaechenzugehoerig = Field(bool, False)
+    name = Field(str, '')
 
     class Meta:
         workspace = 'erreichbarkeiten'
