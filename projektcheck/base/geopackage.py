@@ -365,13 +365,18 @@ class GeopackageTable(Table):
         rows with no id ('fid') will be added to table
         rows with id will be updated (all fields overwritten with column values)
         '''
+        def isnan(v):
+            if type(v).__module__ == 'numpy':
+                return np.isnan(v)
+            return v is None
+
         for i, df_row in dataframe.iterrows():
             items = df_row.to_dict()
             geom = items.get('geom', None)
-            if geom is not None and np.isnan(geom):
+            if not isnan(geom):
                 items['geom'] = None
             id = items.pop(self.id_field, None)
-            if not (id is None or np.isnan(id)):
+            if not isnan(id):
                 self.set(int(id), **items)
             else:
                 self.add(**items)

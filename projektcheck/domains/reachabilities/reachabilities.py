@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-from projektcheck.base import Domain
+from projektcheck.base import Domain, ProjectLayer
 from projektcheck.domains.reachabilities.bahn_query import BahnQuery
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.domains.reachabilities.tables import (Haltestellen,
@@ -67,6 +67,8 @@ class Reachabilities(Domain):
 
     def setupUi(self):
         self.ui.haltestellen_button.clicked.connect(self.query_stops)
+        self.haltestellen = Haltestellen.features(create=True)
+        self.zentrale_orte = ZentraleOrte.features(create=True)
 
     def query_stops(self):
         self.query = BahnQuery(date=next_working_day())
@@ -79,14 +81,21 @@ class Reachabilities(Domain):
             return
         #arcpy.AddMessage('Ermittle die Anzahl der Abfahrten je Haltestelle...')
         self.update_departures(projectarea_only=True)
+        self.draw_haltestellen()
+
+    def draw_haltestellen(self):
+        output = ProjectLayer.from_table(
+            self.haltestellen, groupname='Projektdefinition')
+        output.draw(label='Haltestellen',
+                    style_file='definitions.qml')
 
     def write_centers_stops(self):
         '''get centers in radius around project centroid, write their closest
         stops and the stops near the project to the db
         '''
         # truncate tables, will be filled in progress
-        haltestellen = Haltestellen.features(create=True)
-        zentrale_orte = ZentraleOrte.features(create=True)
+        self.haltestellen.delete()
+        self.zentrale_orte.delete()
 
         project_frame = Projektrahmendaten.features()[0]
         centroid = project_frame.geom.asPoint()
@@ -124,12 +133,13 @@ class Reachabilities(Domain):
 
         df_within = pd.concat([df_oz_within, df_mz_within])
         df_within['name'] = df_within['GEN']
-        df_within['id_zentraler_ort'] = df_within['OBJECTID']
+        df_within['id_zentraler_ort'] = df_within['fid']
 
-        self.parent_tbx.insert_dataframe_in_table('Zentrale_Orte', df_within)
+        del df_within['fid']
+        self.zentrale_orte.update_pandas(df_within)
 
-        p_centroid = Point(centroid.x, centroid.y,
-                           epsg=self.parent_tbx.config.epsg)
+        p_centroid = Point(centroid.x(), centroid.y(),
+                           epsg=settings.EPSG)
         p_centroid.transform(4326)
         tfl_stops = self.query.stops_near(p_centroid, n=10)
 
@@ -141,15 +151,15 @@ class Reachabilities(Domain):
         '''update the db-column 'abfahrten' of the stops with the number
         of departures
         '''
-        where = 'flaechenzugehoerig = 1' if projectarea_only else None
-        df_stops = self.parent_tbx.table_to_dataframe('Haltestellen',
-                                                      where=where)
+        df_stops = self.haltestellen.filter(
+            flaechenzugehoerig=projectarea_only).to_pandas()
         ids = df_stops['id_bahn'].values
         n_departures = self.query.n_departures(ids)
         df_stops['abfahrten'] = n_departures
-        self.parent_tbx.dataframe_to_table('Haltestellen', df_stops, ['id_bahn'])
+        self.haltestellen.filter()
+        self.haltestellen.update_pandas(df_stops)
 
-    def _stops_to_db(self, stops, is_project_stop=0):
+    def _stops_to_db(self, stops, is_project_stop=False):
         '''(warning: changes projection of point!)'''
         ids = []
         names = []
@@ -157,20 +167,12 @@ class Reachabilities(Domain):
         distances = []
 
         for stop in stops:
-            stop.transform(self.parent_tbx.config.epsg)
-            shapes.append(arcpy.Point(stop.x, stop.y))
-            ids.append(stop.id)
-            names.append(stop.name)
-            distances.append(stop.distance)
-
-        column_values = {
-            'SHAPE': shapes,
-            'id': ids,
-            'name': names,
-            'flaechenzugehoerig': [is_project_stop] * len(stops),
-            'abfahrten': [0] * len(stops),
-            'fussweg': distances
-        }
-
-        self.parent_tbx.insert_rows_in_table('Haltestellen',
-                                             column_values=column_values)
+            stop.transform(settings.EPSG)
+            self.haltestellen.add(
+                geom=stop.geom,
+                id_bahn=stop.id,
+                name=stop.name,
+                flaechenzugehoerig=is_project_stop,
+                fussweg=stop.distance,
+                abfahrten=0
+            )

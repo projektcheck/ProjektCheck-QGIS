@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>1022</height>
+    <width>392</width>
+    <height>993</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -64,8 +64,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>400</width>
-         <height>879</height>
+         <width>404</width>
+         <height>831</height>
         </rect>
        </property>
        <attribute name="label">
@@ -99,7 +99,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QPushButton" name="pushButton_3">
+            <widget class="QPushButton" name="haltestellen_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -138,7 +138,7 @@ padding: 2px;
             </spacer>
            </item>
            <item row="1" column="2">
-            <widget class="QPushButton" name="pushButton_4">
+            <widget class="QPushButton" name="show_haltestellen_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -198,7 +198,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="4" column="0">
-            <widget class="QComboBox" name="ovstop_combo">
+            <widget class="QComboBox" name="haltestellen_combo">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -243,7 +243,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="5" column="0">
-            <widget class="QPushButton" name="pushButton_5">
+            <widget class="QPushButton" name="timetable_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -266,7 +266,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="6" column="0">
-            <widget class="QPushButton" name="pushButton_9">
+            <widget class="QPushButton" name="fahrzeit_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -319,7 +319,7 @@ padding: 2px;
          <x>0</x>
          <y>0</y>
          <width>382</width>
-         <height>896</height>
+         <height>894</height>
         </rect>
        </property>
        <attribute name="label">

@@ -51,7 +51,7 @@ class BahnQuery(object):
         'productsFilter': 1111111111,
         'max': 10000,
         'maxJourneys': 10000,
-        'time': '24:00',
+        'time': '23:59',
         'date': '',
         'evaId': 0,
     }
@@ -187,7 +187,7 @@ class BahnQuery(object):
         return duration, departure, changes, mode
 
     def n_departures(self, stop_ids, max_journeys=10000):
-        '''stop_ids have to be hafas stuff'''
+        '''stop_ids have to be hafas ids'''
         # set url-parameters
         params = self.timetable_params.copy()
         params['date'] = self.date

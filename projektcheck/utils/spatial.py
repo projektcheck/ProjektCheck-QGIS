@@ -38,12 +38,11 @@ class Point(object):
     """A Point object
     taken from ProjektCheck ArcGIS to be able to use same interface
     """
-    __slots__ = ['x', 'y', 'id', 'geom', 'epsg', 'proj']
     def __init__(self, x, y, id=None, epsg=4326):
         self.id = id
         self.x = x
         self.y = y
-        self.geom = None
+        self._geom = None
         self.epsg = epsg
         self.proj = Proj(init='epsg:{}'.format(epsg))
 
@@ -53,10 +52,10 @@ class Point(object):
     def __hash__(self):
         return hash((self.x, self.y))
 
-    def create_geom(self):
+    @property
+    def geom(self):
         """Create geometry from coordinates"""
-        geom = QgsPointXY(self.x, self.y)
-        self.geom = geom
+        return QgsPointXY(self.x, self.y)
 
     def transform(self, target_srid):
         target_srs = Proj(init='epsg:{}'.format(target_srid))
