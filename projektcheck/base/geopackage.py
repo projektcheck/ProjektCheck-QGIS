@@ -373,7 +373,7 @@ class GeopackageTable(Table):
         for i, df_row in dataframe.iterrows():
             items = df_row.to_dict()
             geom = items.get('geom', None)
-            if not isnan(geom):
+            if isnan(geom):
                 items['geom'] = None
             id = items.pop(self.id_field, None)
             if not isnan(id):

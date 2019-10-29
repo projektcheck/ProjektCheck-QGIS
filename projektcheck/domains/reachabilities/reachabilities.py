@@ -85,9 +85,9 @@ class Reachabilities(Domain):
 
     def draw_haltestellen(self):
         output = ProjectLayer.from_table(
-            self.haltestellen, groupname='Projektdefinition')
+            self.haltestellen._table, groupname='Projektdefinition')
         output.draw(label='Haltestellen',
-                    style_file='definitions.qml')
+                    style_file='erreichbarkeit_haltestellen.qml')
 
     def write_centers_stops(self):
         '''get centers in radius around project centroid, write their closest
