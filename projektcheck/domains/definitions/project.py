@@ -66,7 +66,7 @@ class ProjectInitialization(Worker):
         centroids = [geom.centroid().asPoint() for geom in trans_geoms]
         xs = [centroid.x() for centroid in centroids]
         ys = [centroid.y() for centroid in centroids]
-        project_centroid = (np.mean(xs), np.mean(ys))
+        project_centroid = QgsPointXY(np.mean(xs), np.mean(ys))
 
         max_dist = getattr(settings, 'MAX_AREA_DISTANCE', None)
 
@@ -111,12 +111,14 @@ class ProjectInitialization(Worker):
         self.set_progress(66)
 
         # general project data
-        project_frame = Projektrahmendaten.features(project=self.project, create=True)
+        project_frame = Projektrahmendaten.features(project=self.project,
+                                                    create=True)
         project_frame.add(
             ags=ags[0],
             gemeinde_name=gem_names[0],
             gemeinde_typ=gem_types[0],
-            projekt_name=self.project.name
+            projekt_name=self.project.name,
+            geom=project_centroid
         )
         self.set_progress(80)
 
