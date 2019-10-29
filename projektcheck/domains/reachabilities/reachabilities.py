@@ -1,8 +1,14 @@
 from datetime import datetime, date, timedelta
 import numpy as np
+import pandas as pd
+import requests
 
 from projektcheck.base import Domain
 from projektcheck.domains.reachabilities.bahn_query import BahnQuery
+from projektcheck.domains.definitions.tables import Projektrahmendaten
+from projektcheck.domains.reachabilities.tables import (Haltestellen,
+                                                        ZentraleOrte)
+from projektcheck.utils.spatial import points_within, Point
 from settings import settings
 
 def next_monday():
@@ -40,9 +46,11 @@ def next_working_day(min_days_infront=2):
              "Anteil_Ferien_Bevoelkerung = 0")
     df_density = basedata.get_table(
         'Feriendichte', 'Basisdaten_deutschland'
-    )
-    df_density.sort('Datum', inplace=True)
+    ).to_pandas()
     # can't compare directly because datetime64 has no length
+    dates = pd.to_datetime(df_density['Datum'], format='%Y/%m/%d %H:%M:%S.%f')
+    df_density['Datum'] = dates.dt.tz_convert(None)
+    df_density.sort_values('Datum', inplace=True)
     infront = np.where(df_density['Datum'] >= day)[0]
     if len(infront) > 0:
         # get the first day matching all conditions
@@ -58,7 +66,7 @@ class Reachabilities(Domain):
     ui_icon = "images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png"
 
     def setupUi(self):
-        self.haltestellen_button.clicked.connect(self.query_stops)
+        self.ui.haltestellen_button.clicked.connect(self.query_stops)
 
     def query_stops(self):
         self.query = BahnQuery(date=next_working_day())
@@ -67,8 +75,7 @@ class Reachabilities(Domain):
         try:
             self.write_centers_stops()
         except requests.exceptions.ConnectionError:
-            print('Die Website der Bahn wurde nicht erreicht. '
-                  'Bitte überprüfen Sie Ihre Internetverbindung!')
+            print('Die Website der Bahn ist nicht erreichbar')
             return
         #arcpy.AddMessage('Ermittle die Anzahl der Abfahrten je Haltestelle...')
         self.update_departures(projectarea_only=True)
@@ -78,21 +85,18 @@ class Reachabilities(Domain):
         stops and the stops near the project to the db
         '''
         # truncate tables, will be filled in progress
-        self.parent_tbx.delete_rows_in_table('Zentrale_Orte')
-        self.parent_tbx.delete_rows_in_table('Haltestellen')
+        haltestellen = Haltestellen.features(create=True)
+        zentrale_orte = ZentraleOrte.features(create=True)
 
-        centroid = get_project_centroid(self.par.projectname.value)
-        df_central = self.parent_tbx.table_to_dataframe(
-            'Zentrale_Orte_Neu',
-            workspace='FGDB_Basisdaten_deutschland.gdb',
-            columns=['SHAPE', 'OBJECTID', 'GEN', 'OZ'],
-            is_base_table=True
-        )
+        project_frame = Projektrahmendaten.features()[0]
+        centroid = project_frame.geom.asPoint()
+        df_central = settings.BASEDATA.get_table(
+            'Zentrale_Orte', 'Basisdaten_deutschland').to_pandas()
         df_oz = df_central[df_central['OZ'] == 1]
         df_mz = df_central[df_central['OZ'] == 0]
 
-        oz_points = df_oz['SHAPE'].values
-        mz_points = df_mz['SHAPE'].values
+        oz_points = [p.asPoint() for p in df_oz['geom'].values]
+        mz_points = [p.asPoint() for p in df_mz['geom'].values]
         oz_points, oz_within = points_within(centroid, oz_points, radius=70000)
         mz_points, mz_within = points_within(centroid, mz_points, radius=30000)
         df_oz_within = df_oz[oz_within]
@@ -102,7 +106,7 @@ class Reachabilities(Domain):
             stops = []
             for point in points:
                 t_p = Point(point[0], point[1],
-                            epsg=self.parent_tbx.config.epsg)
+                            epsg=settings.EPSG)
                 t_p.transform(4326)
                 stops_near = self.query.stops_near(t_p, n=1)
                 if len(stops_near) > 0:
@@ -124,7 +128,7 @@ class Reachabilities(Domain):
 
         self.parent_tbx.insert_dataframe_in_table('Zentrale_Orte', df_within)
 
-        p_centroid = Point(centroid[0], centroid[1],
+        p_centroid = Point(centroid.x, centroid.y,
                            epsg=self.parent_tbx.config.epsg)
         p_centroid.transform(4326)
         tfl_stops = self.query.stops_near(p_centroid, n=10)
@@ -140,10 +144,10 @@ class Reachabilities(Domain):
         where = 'flaechenzugehoerig = 1' if projectarea_only else None
         df_stops = self.parent_tbx.table_to_dataframe('Haltestellen',
                                                       where=where)
-        ids = df_stops['id'].values
+        ids = df_stops['id_bahn'].values
         n_departures = self.query.n_departures(ids)
         df_stops['abfahrten'] = n_departures
-        self.parent_tbx.dataframe_to_table('Haltestellen', df_stops, ['id'])
+        self.parent_tbx.dataframe_to_table('Haltestellen', df_stops, ['id_bahn'])
 
     def _stops_to_db(self, stops, is_project_stop=0):
         '''(warning: changes projection of point!)'''
