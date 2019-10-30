@@ -1,10 +1,9 @@
 <RCC>
-  <qresource prefix="/plugins/ProjektCheck">
-    <file>181112_Icons_toggle_visibility_off.png</file>
-    <file>181112_Icons_toggle_visibility_on.png</file>
-    <file>ProjektCheck_Logo.png</file>
-    <file>edit.png</file>
-    <file>icon.png</file>
-    <file>banner.png</file>
+  <qresource prefix="images">
+    <file>../../images/banner_anamorphic_fading_2.png</file>
+    <file>../../images/banner_anamorphic_fading_3.png</file>
+    <file>../../images/icon.png</file>
+    <file>../../images/banner.png</file>
+    <file>../../images/banner_anamorphic.png</file>
   </qresource>
 </RCC>
