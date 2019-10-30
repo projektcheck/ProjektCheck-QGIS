@@ -273,7 +273,7 @@ padding: 2px;
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_5">
+            <widget class="QPushButton" name="show_table_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -296,7 +296,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_9">
+            <widget class="QPushButton" name="calculate_time_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -332,7 +332,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>543</width>
+         <width>403</width>
          <height>240</height>
         </rect>
        </property>

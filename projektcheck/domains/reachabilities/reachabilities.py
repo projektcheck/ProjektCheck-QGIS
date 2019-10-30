@@ -2,8 +2,10 @@ from datetime import datetime, date, timedelta
 import numpy as np
 import pandas as pd
 import requests
+import webbrowser
+from qgis.PyQt.QtWidgets import QMessageBox
 
-from projektcheck.base.domain import Domain 
+from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.reachabilities.bahn_query import BahnQuery
 from projektcheck.domains.definitions.tables import Projektrahmendaten
@@ -75,6 +77,13 @@ class Reachabilities(Domain):
         self.ui.haltestellen_combo.currentIndexChanged.connect(
             lambda index: self.zoom_to(
                 self.ui.haltestellen_combo.itemData(index)))
+
+        self.ui.show_table_button.clicked.connect(
+            lambda: self.show_time_table(
+                self.ui.haltestellen_combo.currentData()))
+        self.ui.calculate_time_button.clicked.connect(self.calculate_time)
+
+    def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
         self.zentrale_orte = ZentraleOrte.features(create=True)
         self.fill_haltestellen()
@@ -206,3 +215,21 @@ class Reachabilities(Domain):
                 fussweg=stop.distance,
                 abfahrten=0
             )
+
+    def show_time_table(self, stop):
+        if not stop:
+            return
+        query = BahnQuery(next_working_day())
+
+        message = QMessageBox()
+        message.setIcon(QMessageBox.Information)
+        message.setText('Die Abfahrtszeiten werden extern im '
+                        'Browser angezeigt!')
+        message.setWindowTitle('Fahrplan')
+        message.exec_()
+
+        url = query.get_timetable_url(stop.id_bahn)
+        webbrowser.open(url, new=1, autoraise=True)
+
+    def calculate_time(self):
+        pass

@@ -208,6 +208,6 @@ class BahnQuery(object):
         params = self.timetable_params.copy()
         params['date'] = self.date
         params['evaId'] = stop_id
-        args = ['{}={}'.format(v, k) for v, k in params.iteritems()]
-        url = self.timetable_url + u'?' + u'&'.join(args)
+        args = ['{}={}'.format(v, k) for v, k in params.items()]
+        url = f'{self.timetable_url}?{"&".join(args)}'
         return url
