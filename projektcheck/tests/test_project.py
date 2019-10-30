@@ -9,7 +9,7 @@ import os
 import time
 from qgis.core import QgsVectorLayer, QgsApplication
 
-from projektcheck.base import ProjectManager
+from projektcheck.base.project import ProjectManager
 from settings import settings
 from projektcheck.domains.definitions.project import ProjectInitialization
 

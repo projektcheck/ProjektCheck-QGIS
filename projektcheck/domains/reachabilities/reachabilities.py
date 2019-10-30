@@ -3,12 +3,14 @@ import numpy as np
 import pandas as pd
 import requests
 
-from projektcheck.base import Domain, ProjectLayer
+from projektcheck.base.domain import Domain 
+from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.reachabilities.bahn_query import BahnQuery
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.domains.reachabilities.tables import (Haltestellen,
                                                         ZentraleOrte)
 from projektcheck.utils.spatial import points_within, Point
+from projektcheck.utils.utils import add_selection_icons
 from settings import settings
 
 def next_monday():
@@ -66,6 +68,8 @@ class Reachabilities(Domain):
     ui_icon = "images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png"
 
     def setupUi(self):
+        add_selection_icons(self.ui.toolBox)
+
         self.ui.haltestellen_button.clicked.connect(self.query_stops)
         self.ui.show_haltestellen_button.clicked.connect(self.draw_haltestellen)
         self.ui.haltestellen_combo.currentIndexChanged.connect(

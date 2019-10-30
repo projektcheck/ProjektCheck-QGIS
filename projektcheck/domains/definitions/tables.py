@@ -1,4 +1,5 @@
-from projektcheck.base import ProjectTable, Field, settings
+from projektcheck.base.project import ProjectTable, settings
+from projektcheck.base.database import Field
 
 
 class Projektrahmendaten(ProjectTable):

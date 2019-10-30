@@ -1,4 +1,6 @@
-from projektcheck.base import ProjectTable, Field, settings
+from projektcheck.base.project import ProjectTable
+from projektcheck.base.database import Field
+from settings import settings
 
 
 class ZentraleOrte(ProjectTable):

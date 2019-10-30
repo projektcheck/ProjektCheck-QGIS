@@ -11,7 +11,9 @@ import os
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
-from projektcheck.base import InputType, Dialog, settings
+from projektcheck.base.inputs import InputType
+from projektcheck.base.dialogs import Dialog
+from projektcheck.base.project import settings
 
 
 class Param(QObject):

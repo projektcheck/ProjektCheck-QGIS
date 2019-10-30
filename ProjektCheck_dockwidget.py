@@ -7,10 +7,12 @@ from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsVectorLayer, QgsProject
 
-from projektcheck.base import (PCDockWidget, SettingsDialog,
-                               ProjectLayer, OSMBackgroundLayer,
-                               TerrestrisBackgroundLayer, NewProjectDialog,
-                               Workspace, ProgressDialog)
+from projektcheck.base.domain import PCDockWidget
+from projektcheck.base.dialogs import (SettingsDialog, NewProjectDialog,
+                                       ProgressDialog)
+from projektcheck.base.project import (ProjectLayer, OSMBackgroundLayer,
+                                       TerrestrisBackgroundLayer)
+from projektcheck.base.database import Workspace
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.definitions.project import ProjectInitialization
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,

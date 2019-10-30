@@ -1,14 +1,18 @@
 import pandas as pd
-from projektcheck.base import (Domain, Params, Param, SpinBox, ComboBox,
-                               Title, Seperator, LineEdit, Geopackage, Field,
-                               Slider, DoubleSpinBox, SumDependency, Checkbox)
+from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
+                                      Slider, DoubleSpinBox)
+from projektcheck.base.params import (Params, Param, Title,
+                                      Seperator, SumDependency)
+from projektcheck.base.domain import (Domain)
+from projektcheck.base.geopackage import (Geopackage, Field)
+
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
     Gewerbeanteile, Projektrahmendaten)
 from projektcheck.domains.jobs_inhabitants.tables import (
-    ApProJahr, Branchenanteile, WohnenProJahr, WohnenStruktur)
+    ApProJahr, WohnenProJahr, WohnenStruktur)
 
 
 class Wohnen:
@@ -538,6 +542,8 @@ class ProjectDefinitions(Domain):
 
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(self.change_area)
+
+    def load_content(self):
         self.areas = Teilflaechen.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()

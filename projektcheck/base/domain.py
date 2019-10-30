@@ -59,11 +59,18 @@ class PCDockWidget(QObject):
         #)
         self.ui.closeEvent = self.closeEvent
         self.isActive = False
+        self.setupUi()
 
     def setupUi(self):
         '''
-        setup ui, called when widget is shown
+        setup ui, called when widget is initially set uo
         override in sub classes to setup the ui elements of the widget
+        '''
+        pass
+
+    def load_content(self):
+        '''
+        loads ui content, called when widget is shown
         '''
         pass
 
@@ -78,7 +85,7 @@ class PCDockWidget(QObject):
         if self.isActive:
             self.ui.show()
             return
-        self.setupUi()
+        self.load_content()
         self.iface.addDockWidget(self.initial_position, self.ui)
         self.isActive = True
 

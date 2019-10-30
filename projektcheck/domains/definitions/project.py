@@ -4,7 +4,8 @@ from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
 from datetime import datetime
 import numpy as np
 
-from projektcheck.base import Worker, ProjectManager
+from projektcheck.base.project import ProjectManager
+from projektcheck.base.domain import Worker
 from projektcheck.domains.definitions.tables import Teilflaechen, Projektrahmendaten
 from projektcheck.domains.traffic.tables import TrafficConnector
 from projektcheck.domains.marketcompetition.tables import Centers

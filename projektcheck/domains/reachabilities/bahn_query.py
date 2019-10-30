@@ -51,7 +51,7 @@ class BahnQuery(object):
         'productsFilter': 1111111111,
         'max': 10000,
         'maxJourneys': 10000,
-        'time': '23:59',
+        'time': '24:00',
         'date': '',
         'evaId': 0,
     }

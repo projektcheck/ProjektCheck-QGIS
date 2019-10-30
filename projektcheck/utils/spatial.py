@@ -58,14 +58,13 @@ class Point(object):
         return QgsPointXY(self.x, self.y)
 
     def transform(self, target_srid):
-        target_srid = target_srid.lower()
-        if target_srid.startswith('epsg:'):
-            target_srid = target_srid.replace('epsg:', '')
+        target_srid = str(target_srid).lower()
+        target_srid = target_srid.replace('epsg:', '')
         # a little weird to replace it and add it again, but i wanted to keep
         # the api of the old ArcGIS Project
         target_srs = Proj(init='epsg:{}'.format(target_srid))
         x, y = transform(self.proj, target_srs, self.x, self.y)
-        self.epsg = target_srid
+        self.epsg = int(target_srid)
         self.proj = Proj(init='epsg:{}'.format(self.epsg))
         self.x = x
         self.y = y
