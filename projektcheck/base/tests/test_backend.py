@@ -24,15 +24,16 @@ class GeopackageTest(unittest.TestCase):
     def setUp(self):
         fields = {
             'name': str,
-            'value': float
+            'value': float,
+            'uid': int
         }
         self.table = self.workspace.create_table(
             'testtable', fields, geometry_type='Polygon', overwrite=True,
             defaults={'value': 0.0})
-        self.table.add(name='row1', value=5)
-        self.table.add(name='row2', value=5)
-        self.table.add(name='row3', value=6)
-        self.table.add(name='row4', value=0)
+        self.table.add(uid=1, name='row1', value=5)
+        self.table.add(uid=2, name='row2', value=5)
+        self.table.add(uid=3, name='row3', value=6)
+        self.table.add(uid=4, name='row4', value=0)
 
     def tearDown(self):
         pass
@@ -53,9 +54,12 @@ class GeopackageTest(unittest.TestCase):
         assert len(features.filter(value__lt=4)) == 1
         assert len(features.filter(value__gt=7)) == 0
 
-        features.get(value__lt=4).value < 4
+        assert features.get(value__lt=4).value < 4
 
-        # test filter chain
+        assert features.get(name="row3").name == "row3"
+        assert len(features.filter(name="row3", uid=3)) == 1
+        assert len(features.filter(name__in=["row2", "row3"])) == 2
+
         feat_f = features.filter(value__in=[5, 6])
         assert len(feat_f) == 3
         assert len(feat_f.filter(value=0)) == 0
@@ -121,6 +125,13 @@ class GeopackageTest(unittest.TestCase):
         self.table.update_pandas(df)
         df_new = self.table.to_pandas()
         assert(len(df_new), len(df) * 2)
+
+        # test pkeys
+        old_sum = df['value'].sum()
+        df['value'] *= 2
+        self.table.update_pandas(df, pkeys=['uid', 'name'])
+        df_new = self.table.to_pandas()
+        assert(df_new['value'].sum(), old_sum * 2)
 
     def test_fields(self):
         self.table.add_field(Field(int, default=0, name='1'))

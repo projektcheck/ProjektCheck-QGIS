@@ -89,12 +89,16 @@ class FeatureCollection:
 
     def get(self, **kwargs):
         table = self._table.copy()
+        prev_where = table.where
         table.filter(**kwargs)
-        if len(table) == 0:
-            return
         if len(table) > 1:
             raise ValueError('get returned more than one feature')
-        return self._row_to_feature(table[0])
+        if len(table) == 0:
+            row = None
+        else:
+            row = self._row_to_feature(table[0])
+        table.where = prev_where
+        return row
 
     def add(self, **kwargs):
         if 'id' in kwargs:

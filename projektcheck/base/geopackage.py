@@ -203,13 +203,26 @@ class GeopackageTable(Table):
         # append filters to old ones
         # (but seperate  previous and new filters with brackets)
         self._filters.update(kwargs)
+        field_dict = dict([(f.name, f) for f in self.fields()])
+
+        def check_quotation(value, field):
+            if field.datatype == str and not value.startswith('"'):
+                value = f'"{value}"'
+            return value
+
         for k, v in self._filters.items():
             split = k.split('__')
             field_name = split[0]
+            matching_field = field_dict.get(field_name)
             if field_name == 'id':
                 field_name = self.id_field
-            elif field_name not in self.field_names:
+            elif not matching_field:
                 raise ValueError(f'{field_name} not in fields')
+            else:
+                if isinstance(v, list):
+                    v = [check_quotation(i, matching_field) for i in v]
+                else:
+                    v = check_quotation(v, matching_field)
 
             if len(split) == 1:
                 terms.append(f'{field_name} = {v}')
@@ -360,11 +373,15 @@ class GeopackageTable(Table):
             rows, columns=[self.id_field, self.geom_field] + self.field_names)
         return df
 
-    def update_pandas(self, dataframe):
+    def update_pandas(self, dataframe, pkeys=None):
         '''
-        updates
-        rows with no id ('fid') will be added to table
-        rows with id will be updated (all fields overwritten with column values)
+        pkeys passed: looks for existing entry
+        defaults to id if no pkeys given (id field is 'fid' by default)
+
+        rows with no match will be added to table
+        rows with matching pkeys (or id) will be updated (all fields overwritten
+        with column values)
+
         '''
         def isnan(v):
             if type(v).__module__ == 'numpy':
@@ -376,7 +393,24 @@ class GeopackageTable(Table):
             geom = items.get('geom', None)
             if isnan(geom):
                 items['geom'] = None
+            # no pkeys: take id field directly
             id = items.pop(self.id_field, None)
+            # if pkeys are given, find id of matching feature
+            if pkeys:
+                id = None
+                filter_args = dict([(k, items[k]) for k in pkeys])
+                l_nan = [isnan(p) for p in filter_args.values()]
+                # no key should be nan or None
+                if sum(l_nan) == 0:
+                    prev_where = self.where
+                    self.filter(**filter_args)
+                    if len(self) == 1:
+                        id = self[0][self.id_field]
+                    if len(self) > 1:
+                        raise ValueError('more than feature is matching '
+                                         f'{filter_args}')
+                    self.where = prev_where
+
             if not isnan(id):
                 self.set(int(id), **items)
             else:
