@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
+    <width>382</width>
     <height>746</height>
    </rect>
   </property>
   <property name="styleSheet">
    <string notr="true">QFrame{
-	background: rgb(245, 245, 245);
+	/*background: rgb(245, 245, 245);*/
 }
 QToolBox:tab {
 	font: bold 10pt ;
@@ -72,8 +72,8 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-27</y>
-         <width>386</width>
+         <y>0</y>
+         <width>364</width>
          <height>234</height>
         </rect>
        </property>
@@ -215,10 +215,16 @@ padding: 2px;
              <item>
               <widget class="QComboBox" name="haltestellen_combo">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>170</width>
+                 <height>0</height>
+                </size>
                </property>
                <item>
                 <property name="text">
@@ -232,9 +238,12 @@ padding: 2px;
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>40</width>
+                 <width>10</width>
                  <height>20</height>
                 </size>
                </property>
@@ -249,7 +258,7 @@ padding: 2px;
                 <enum>Qt::RightToLeft</enum>
                </property>
                <property name="text">
-                <string>Interaktive Auswahl</string>
+                <string>Auswahl</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -332,7 +341,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>403</width>
+         <width>364</width>
          <height>240</height>
         </rect>
        </property>
@@ -489,6 +498,20 @@ padding: 2px;
               </widget>
              </item>
              <item>
+              <widget class="QRadioButton" name="radioButton_2">
+               <property name="text">
+                <string>Rad</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_3">
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_4">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -500,33 +523,6 @@ padding: 2px;
                 </size>
                </property>
               </spacer>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_2">
-               <property name="text">
-                <string>Rad</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_3">
-               <property name="text">
-                <string>Auto</string>
-               </property>
-              </widget>
              </item>
             </layout>
            </item>

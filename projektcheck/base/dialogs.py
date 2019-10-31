@@ -240,6 +240,7 @@ class Message:
     dialog showing a message
     '''
 
+
 class SettingsDialog(Dialog):
     ui_file = 'settings.ui'
 

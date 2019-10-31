@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>732</width>
-    <height>100</height>
+    <width>740</width>
+    <height>80</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>732</width>
-    <height>100</height>
+    <width>740</width>
+    <height>80</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -106,14 +106,14 @@
 }
 QFrame[objectName=&quot;mainframe&quot;]{
 	background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 rgba(240, 240, 240, 100), stop: 0.4 rgba(240, 240, 240, 100),
-                stop:1 rgba(240, 240, 240, 255))
+                stop:0 rgba(240, 240, 240, 80%), stop: 0.4 rgba(240, 240, 240, 80%),
+                stop:1 rgba(240, 240, 240, 100%))
 }
 QLabel{
 	image: none;
 }
 QFrame[objectName=&quot;buttonframe&quot;]{
-	background: rgba(245, 245, 245, 90%)
+/*	background: rgba(245, 245, 245, 90%)*/
 }</string>
   </property>
   <property name="features">
@@ -184,6 +184,18 @@ QFrame[objectName=&quot;buttonframe&quot;]{
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
@@ -205,14 +217,14 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="minimumSize">
                <size>
-                <width>132</width>
-                <height>24</height>
+                <width>150</width>
+                <height>26</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>132</width>
-                <height>24</height>
+                <width>150</width>
+                <height>26</height>
                </size>
               </property>
               <property name="sizeIncrement">
@@ -248,20 +260,8 @@ QFrame[objectName=&quot;buttonframe&quot;]{
             </item>
             <item>
              <widget class="QPushButton" name="settings_button">
-              <property name="maximumSize">
-               <size>
-                <width>500</width>
-                <height>500</height>
-               </size>
-              </property>
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="text">
-               <string>Einstellungen</string>
+               <string/>
               </property>
               <property name="icon">
                <iconset>
@@ -293,9 +293,16 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                 <verstretch>15</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>MS Shell Dlg 2</family>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="focusPolicy">
@@ -402,7 +409,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>18</width>
+                <width>20</width>
                 <height>12</height>
                </size>
               </property>
@@ -419,6 +426,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               <property name="font">
                <font>
                 <family>MS Shell Dlg 2</family>
+                <pointsize>9</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -437,6 +447,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               <property name="font">
                <font>
                 <family>MS Shell Dlg 2</family>
+                <pointsize>9</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
               <property name="contextMenuPolicy">
@@ -479,19 +492,6 @@ QFrame[objectName=&quot;buttonframe&quot;]{
           </spacer>
          </item>
         </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
