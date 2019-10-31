@@ -6,7 +6,8 @@ import numpy as np
 
 from projektcheck.base.project import ProjectManager
 from projektcheck.base.domain import Worker
-from projektcheck.domains.definitions.tables import Teilflaechen, Projektrahmendaten
+from projektcheck.domains.definitions.tables import (Teilflaechen,
+                                                     Projektrahmendaten)
 from projektcheck.domains.traffic.tables import TrafficConnector
 from projektcheck.domains.marketcompetition.tables import Centers
 from projektcheck.domains.constants import Nutzungsart
@@ -38,7 +39,8 @@ class ProjectInitialization(Worker):
         self.project_areas = None
         source_crs = self.area_layer.crs()
         target_crs = QgsCoordinateReferenceSystem(self.epsg)
-        self.project_areas = Teilflaechen.features(project=self.project, create=True)
+        self.project_areas = Teilflaechen.features(project=self.project,
+                                                   create=True)
         layer_features = list(self.area_layer.getFeatures())
 
         self.log(f'Neues Projekt angelegt im Ordner {self.project.path}')

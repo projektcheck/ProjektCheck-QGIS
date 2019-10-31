@@ -19,7 +19,8 @@ class Layer(ABC):
                     group = self.root.addGroup(groupname)
             self.root = group
 
-    def draw(self, style_path=None, label='', redraw=True, checked=True):
+    def draw(self, style_path=None, label='', redraw=True, checked=True,
+             filter=None):
         # ToDo: force redraw (delete and add)
         if not self.layer:
             for child in self.root.children():
@@ -36,6 +37,8 @@ class Layer(ABC):
             self.layer.loadNamedStyle(style_path)
             l = self.root.addLayer(self.layer)
             l.setItemVisibilityChecked(checked)
+        if filter is not None:
+            self.layer.setSubsetString(filter)
 
     def zoom_to(self):
         canvas = iface.mapCanvas()

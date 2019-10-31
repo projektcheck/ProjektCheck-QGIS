@@ -113,7 +113,7 @@ QLabel{
 	image: none;
 }
 QFrame[objectName=&quot;buttonframe&quot;]{
-	background: rgba(245, 245, 245, 75%)
+	background: rgba(245, 245, 245, 90%)
 }</string>
   </property>
   <property name="features">

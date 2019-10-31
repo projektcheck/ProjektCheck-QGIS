@@ -356,9 +356,10 @@ class ProjectLayer(Layer):
         self.root.setItemVisibilityChecked(True)
         self.root = projectgroup
 
-    def draw(self, style_file=None, label='', checked=True):
+    def draw(self, style_file=None, label='', checked=True, filter=None):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)
-        super().draw(style_path=style_path, label=label, checked=checked)
+        super().draw(style_path=style_path, label=label, checked=checked,
+                     filter=filter)
 
     @classmethod
     def from_table(cls, table, groupname='', prepend=True):
