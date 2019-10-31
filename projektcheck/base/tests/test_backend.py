@@ -112,6 +112,15 @@ class GeopackageTest(unittest.TestCase):
         assert len(self.table) == 3
 
     def test_pandas(self):
+        # test pkeys
+        df = self.table.to_pandas()
+        old_sum = df['value'].sum()
+        df['value'] *= 2
+        self.table.update_pandas(df, pkeys=['uid', 'name'])
+        df_new = self.table.to_pandas()
+        assert len(df_new) == len(df)
+        assert(df_new['value'].sum(), old_sum * 2)
+
         # update rows
         df = self.table.to_pandas()
         old_sum = df['value'].sum()
@@ -126,12 +135,6 @@ class GeopackageTest(unittest.TestCase):
         df_new = self.table.to_pandas()
         assert(len(df_new), len(df) * 2)
 
-        # test pkeys
-        old_sum = df['value'].sum()
-        df['value'] *= 2
-        self.table.update_pandas(df, pkeys=['uid', 'name'])
-        df_new = self.table.to_pandas()
-        assert(df_new['value'].sum(), old_sum * 2)
 
     def test_fields(self):
         self.table.add_field(Field(int, default=0, name='1'))

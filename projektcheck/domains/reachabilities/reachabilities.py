@@ -5,6 +5,7 @@ from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.reachabilities.bahn_query import (BahnQuery,
                                                             StopScraper,
+                                                            BahnRouter,
                                                             next_working_day)
 from projektcheck.domains.reachabilities.tables import Haltestellen
 from projektcheck.base.dialogs import ProgressDialog
@@ -31,7 +32,9 @@ class Reachabilities(Domain):
         self.ui.show_table_button.clicked.connect(
             lambda: self.show_time_table(
                 self.ui.haltestellen_combo.currentData()))
-        self.ui.calculate_time_button.clicked.connect(self.calculate_time)
+        self.ui.calculate_time_button.clicked.connect(
+            lambda: self.calculate_time(
+                self.ui.haltestellen_combo.currentData()))
 
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
@@ -70,7 +73,7 @@ class Reachabilities(Domain):
 
     def draw_haltestellen(self):
         output = ProjectLayer.from_table(
-            self.haltestellen._table, groupname='Projektdefinition')
+            self.haltestellen._table, groupname='Erreichbarkeiten')
         output.draw(label='Haltestellen',
                     style_file='erreichbarkeit_haltestellen.qml',
                     filter='flaechenzugehoerig=1')
@@ -91,5 +94,14 @@ class Reachabilities(Domain):
         url = query.get_timetable_url(stop.id_bahn)
         webbrowser.open(url, new=1, autoraise=True)
 
-    def calculate_time(self):
-        pass
+    def calculate_time(self, stop):
+        job = BahnRouter(stop, self.project, parent=self.ui)
+
+        def on_success(project):
+            pass
+            #self.draw_haltestellen()
+            #self.fill_haltestellen()
+
+        dialog = ProgressDialog(job, parent=self.ui,
+                                on_success=on_success)
+        dialog.show()

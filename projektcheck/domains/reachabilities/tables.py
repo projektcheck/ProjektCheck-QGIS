@@ -22,3 +22,18 @@ class Haltestellen(ProjectTable):
 
     class Meta:
         workspace = 'erreichbarkeiten'
+
+
+class ErreichbarkeitenOEPNV(ProjectTable):
+
+    id_origin = Field(int, 0)
+    id_destination = Field(int, 0)
+    verkehrsmittel = Field(str, '')
+    abfahrt = Field(str, '')
+    umstiege = Field(int, 0)
+    ziel = Field(str, '')
+    dauer = Field(str, '')
+
+    class Meta:
+        workspace = 'erreichbarkeiten'
+

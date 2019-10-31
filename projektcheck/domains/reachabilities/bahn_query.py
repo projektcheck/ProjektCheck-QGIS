@@ -15,7 +15,8 @@ from projektcheck.utils.spatial import Point
 from projektcheck.base.domain import Worker
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.domains.reachabilities.tables import (Haltestellen,
-                                                        ZentraleOrte)
+                                                        ZentraleOrte,
+                                                        ErreichbarkeitenOEPNV)
 from projektcheck.utils.spatial import points_within, Point
 from settings import settings
 
@@ -127,14 +128,14 @@ class BahnQuery(object):
 
         return stops
 
-    def routing(self, origin, destination, times, max_retries=1):
+    def routing(self, origin_name, destination_name, times, max_retries=1):
         '''
         times - int or str (e.g. 15 or 15:00)
         '''
         params = self.reiseauskunft_params.copy()
         params['date'] = self.date
-        params['S'] = origin
-        params['Z'] = destination
+        params['S'] = origin_name
+        params['Z'] = destination_name
 
         duration = sys.maxint
         departure = mode = ''
@@ -330,6 +331,73 @@ class StopScraper(Worker):
                 fussweg=stop.distance,
                 abfahrten=0
             )
+
+
+class BahnRouter(Worker):
+
+    def __init__(self, haltestelle, project, recalculate=False, parent=None):
+        super().__init__(parent=parent)
+        self.origin = haltestelle
+        self.recalculate = recalculate
+        self.haltestellen = Haltestellen.features(project=project)
+        self.zentrale_orte = ZentraleOrte.features(project=project)
+        self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(
+            project=project, create=True)
+        self.query = BahnQuery(date=next_working_day(), timeout=0.5)
+
+    def work(self):
+        self.log('Berechne Erreichbarkeit der Zentralen Orte <br> '
+                 f'  ausgehend von der Haltestelle {self.origin.name}')
+        self.routing()
+
+    def routing(self):
+        df_centers = self.zentrale_orte.to_pandas()
+        df_calculated = self.erreichbarkeiten.to_pandas()
+        df_centers['update'] = False
+        n_centers = len(df_centers)
+
+        for i, (index, center) in enumerate(df_centers.iterrows()):
+            id_destination = center['id_haltestelle']
+            destination = self.haltestellen.get(id_bahn=id_destination)
+            self.log(f'  - {destination.name} ({i+1}/{n_centers})')
+
+            if not self.recalculate:
+                already_calculated = (
+                    (df_calculated['id_origin'] == self.origin.id).values &
+                    (df_calculated['id_destination'] == id_destination).values
+                ).sum() > 0
+                if already_calculated:
+                    self.log('    bereits berechnet, wird übersprungen')
+                    continue
+
+            try:
+                (duration, departure,
+                 changes, modes) = self.query.routing(self.origin.name,
+                                                      destination.name,
+                                                      self.times)
+            except requests.exceptions.ConnectionError:
+                self.log('Die Website der Bahn wurde nicht erreicht. '
+                         'Bitte überprüfen Sie Ihre Internetverbindung!')
+                return
+            # just appending results to existing table to write them later
+            df_centers.loc[index, 'id_origin'] = self.origin.id
+            df_centers.loc[index, 'id_destination'] = id_destination
+            df_centers.loc[index, 'ziel'] = destination
+            df_centers.loc[index, 'abfahrt'] = departure
+            if duration != sys.maxint:
+                df_centers.loc[index, 'dauer'] = str(duration)
+            else:
+                df_centers.loc[index, 'dauer'] = "???"
+            df_centers.loc[index, 'umstiege'] = changes
+            df_centers.loc[index, 'verkehrsmittel'] = modes
+            df_centers.loc[index, 'update'] = True
+
+        self.log('Schreibe Ergebnisse in die Datenbank...')
+
+        df_update = df_centers[df_centers['update'] == True]
+        if len(df_update) > 0:
+            self.erreichbarkeiten.update_pandas(
+                df_update, pkeys=['id_origin', 'id_destination'])
 
 def next_monday():
     today = date.today()
