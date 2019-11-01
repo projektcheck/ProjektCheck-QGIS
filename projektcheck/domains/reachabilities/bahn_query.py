@@ -231,6 +231,7 @@ class StopScraper(Worker):
         super().__init__(parent=parent)
         self.haltestellen = Haltestellen.features(create=True, project=project)
         self.zentrale_orte = ZentraleOrte.features(create=True, project=project)
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
         self.query = BahnQuery(date=next_working_day())
 
     def work(self):
@@ -252,8 +253,7 @@ class StopScraper(Worker):
         self.haltestellen.delete()
         self.zentrale_orte.delete()
 
-        project_frame = Projektrahmendaten.features()[0]
-        centroid = project_frame.geom.asPoint()
+        centroid = self.project_frame.geom.asPoint()
         df_central = settings.BASEDATA.get_table(
             'Zentrale_Orte', 'Basisdaten_deutschland').to_pandas()
         df_oz = df_central[df_central['OZ'] == 1]

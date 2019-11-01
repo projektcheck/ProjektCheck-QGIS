@@ -37,3 +37,11 @@ class ErreichbarkeitenOEPNV(ProjectTable):
     class Meta:
         workspace = 'erreichbarkeiten'
 
+
+class Einrichtungen(ProjectTable):
+
+    projektcheck_category = Field(int, 0)
+    name = Field(str, '')
+
+    class Meta:
+        workspace = 'erreichbarkeiten'

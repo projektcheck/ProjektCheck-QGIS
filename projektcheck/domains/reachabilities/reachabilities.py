@@ -8,7 +8,9 @@ from projektcheck.domains.reachabilities.bahn_query import (BahnQuery,
                                                             BahnRouter,
                                                             next_working_day)
 from projektcheck.domains.reachabilities.tables import (Haltestellen,
-                                                        ErreichbarkeitenOEPNV)
+                                                        ErreichbarkeitenOEPNV,
+                                                        Einrichtungen)
+from projektcheck.domains.reachabilities.einrichtungen import EinrichtungenQuery
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.utils.utils import add_selection_icons
 from settings import settings
@@ -42,6 +44,7 @@ class Reachabilities(Domain):
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
+        self.einrichtungen = Einrichtungen.features(create=True)
         self.fill_haltestellen()
 
     def query_stops(self):
@@ -123,3 +126,23 @@ class Reachabilities(Domain):
                     style_file='erreichbarkeit_erreichbarkeiten_oepnv.qml',
                     filter=f'id_origin={stop.id}')
         output.zoom_to()
+
+    def get_einrichtungen(self):
+        # ToDo: radius
+        job = EinrichtungenQuery(self.project, parent=self.ui)
+
+        def on_success(project, stop):
+            self.draw_erreichbarkeiten(stop)
+
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=lambda project: on_success(project, stop))
+        dialog.show()
+
+    def draw_einrichtungen(self):
+        group_layer = ("erreichbarkeit")
+        fc = 'Einrichtungen'
+        layer = 'Einrichtungen'
+        self.output.add_layer(group_layer, layer, fc,
+                              template_folder='Erreichbarkeit',
+                              zoom=True)
