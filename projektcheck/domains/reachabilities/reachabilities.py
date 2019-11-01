@@ -7,7 +7,8 @@ from projektcheck.domains.reachabilities.bahn_query import (BahnQuery,
                                                             StopScraper,
                                                             BahnRouter,
                                                             next_working_day)
-from projektcheck.domains.reachabilities.tables import Haltestellen
+from projektcheck.domains.reachabilities.tables import (Haltestellen,
+                                                        ErreichbarkeitenOEPNV)
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.utils.utils import add_selection_icons
 from settings import settings
@@ -19,6 +20,8 @@ class Reachabilities(Domain):
     ui_label = 'Erreichbarkeiten'
     ui_file = 'ProjektCheck_dockwidget_analysis_02-Err.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png"
+
+    layer_group = "Wirkungsbereich 2 - Erreichbarkeit"
 
     def setupUi(self):
         add_selection_icons(self.ui.toolBox)
@@ -38,6 +41,7 @@ class Reachabilities(Domain):
 
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
+        self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
         self.fill_haltestellen()
 
     def query_stops(self):
@@ -73,7 +77,7 @@ class Reachabilities(Domain):
 
     def draw_haltestellen(self):
         output = ProjectLayer.from_table(
-            self.haltestellen._table, groupname='Erreichbarkeiten')
+            self.haltestellen._table, groupname=self.layer_group)
         output.draw(label='Haltestellen',
                     style_file='erreichbarkeit_haltestellen.qml',
                     filter='flaechenzugehoerig=1')
@@ -95,13 +99,27 @@ class Reachabilities(Domain):
         webbrowser.open(url, new=1, autoraise=True)
 
     def calculate_time(self, stop):
-        job = BahnRouter(stop, self.project, parent=self.ui)
+        recalculate = self.ui.recalculate_check.isChecked()
+        job = BahnRouter(stop, self.project, parent=self.ui,
+                         recalculate=recalculate)
 
-        def on_success(project):
-            pass
-            #self.draw_haltestellen()
-            #self.fill_haltestellen()
+        def on_success(project, stop):
+            self.draw_erreichbarkeiten(stop)
 
-        dialog = ProgressDialog(job, parent=self.ui,
-                                on_success=on_success)
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=lambda project: on_success(project, stop))
         dialog.show()
+
+    def draw_erreichbarkeiten(self, stop):
+        sub_group = u'Erreichbarkeiten ÖPNV'
+
+        label = f'ab {stop.name}'
+
+        output = ProjectLayer.from_table(
+            self.erreichbarkeiten._table,
+            groupname=f'{self.layer_group}/{sub_group}')
+        output.draw(label=label,
+                    style_file='erreichbarkeit_erreichbarkeiten_oepnv.qml',
+                    filter=f'id_origin={stop.id}')
+        output.zoom_to()

@@ -195,6 +195,7 @@ class ProgressDialog(Dialog):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
         self.progress_bar.setStyleSheet(
             'QProgressBar::chunk { background-color: red; }')
+        self.finished()
 
     def show_status(self, text):
         self.log_edit.appendHtml(text)

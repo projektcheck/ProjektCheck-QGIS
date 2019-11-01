@@ -137,7 +137,7 @@ class BahnQuery(object):
         params['S'] = origin_name
         params['Z'] = destination_name
 
-        duration = sys.maxint
+        duration = float("inf")
         departure = mode = ''
         changes = 0
 
@@ -335,19 +335,20 @@ class StopScraper(Worker):
 
 class BahnRouter(Worker):
 
+    times = range(9, 18)
+
     def __init__(self, haltestelle, project, recalculate=False, parent=None):
         super().__init__(parent=parent)
         self.origin = haltestelle
         self.recalculate = recalculate
         self.haltestellen = Haltestellen.features(project=project)
         self.zentrale_orte = ZentraleOrte.features(project=project)
-        self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(
-            project=project, create=True)
+        self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(project=project)
         self.query = BahnQuery(date=next_working_day(), timeout=0.5)
 
     def work(self):
         self.log('Berechne Erreichbarkeit der Zentralen Orte <br> '
-                 f'  ausgehend von der Haltestelle {self.origin.name}')
+                 f'ausgehend von der Haltestelle {self.origin.name}')
         self.routing()
 
     def routing(self):
@@ -356,18 +357,23 @@ class BahnRouter(Worker):
         df_centers['update'] = False
         n_centers = len(df_centers)
 
+        prog_share = 90 / n_centers
+        progress = 0
+
         for i, (index, center) in enumerate(df_centers.iterrows()):
             id_destination = center['id_haltestelle']
             destination = self.haltestellen.get(id_bahn=id_destination)
             self.log(f'  - {destination.name} ({i+1}/{n_centers})')
 
+            progress += prog_share
             if not self.recalculate:
                 already_calculated = (
                     (df_calculated['id_origin'] == self.origin.id).values &
                     (df_calculated['id_destination'] == id_destination).values
                 ).sum() > 0
                 if already_calculated:
-                    self.log('    bereits berechnet, wird übersprungen')
+                    self.log('bereits berechnet, wird übersprungen')
+                    self.set_progress(progress)
                     continue
 
             try:
@@ -382,15 +388,16 @@ class BahnRouter(Worker):
             # just appending results to existing table to write them later
             df_centers.loc[index, 'id_origin'] = self.origin.id
             df_centers.loc[index, 'id_destination'] = id_destination
-            df_centers.loc[index, 'ziel'] = destination
+            df_centers.loc[index, 'ziel'] = destination.name
             df_centers.loc[index, 'abfahrt'] = departure
-            if duration != sys.maxint:
+            if duration != float('inf'):
                 df_centers.loc[index, 'dauer'] = str(duration)
             else:
                 df_centers.loc[index, 'dauer'] = "???"
             df_centers.loc[index, 'umstiege'] = changes
             df_centers.loc[index, 'verkehrsmittel'] = modes
             df_centers.loc[index, 'update'] = True
+            self.set_progress(progress)
 
         self.log('Schreibe Ergebnisse in die Datenbank...')
 

@@ -177,7 +177,7 @@ padding: 2px;
                 </size>
                </property>
                <property name="checkable">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="flat">
                 <bool>true</bool>
@@ -325,7 +325,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox_7">
+            <widget class="QCheckBox" name="recalculate_check">
              <property name="text">
               <string>Neuberechnung erzwingen</string>
              </property>
@@ -341,8 +341,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>364</width>
-         <height>240</height>
+         <width>356</width>
+         <height>200</height>
         </rect>
        </property>
        <attribute name="label">

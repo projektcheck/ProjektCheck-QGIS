@@ -135,8 +135,8 @@ class FeatureCollection:
     def to_pandas(self):
         return self._table.to_pandas()
 
-    def update_pandas(self, dataframe):
-        self._table.update_pandas(dataframe)
+    def update_pandas(self, dataframe, **kwargs):
+        self._table.update_pandas(dataframe, **kwargs)
 
 
 class Database(ABC):

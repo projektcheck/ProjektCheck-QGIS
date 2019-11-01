@@ -238,6 +238,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             # ToDo: show last active widget
         # ToDo: specific exceptions
         except Exception as e:
+            raise e
             message = QMessageBox()
             message.setIcon(QMessageBox.Warning)
             message.setText(f'Das Projekt "{project.name}" ist beschädigt.')
