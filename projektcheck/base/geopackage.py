@@ -190,6 +190,11 @@ class GeopackageTable(Table):
                 self._layer.ResetReading()
                 return self._ogr_feat_to_row(feat)
 
+    def reset_filters(self):
+        self._filters = {}
+        self.where = ''
+        self.spatial_filter()
+
     def filter(self, **kwargs):
         '''
         filtering django style
@@ -403,13 +408,16 @@ class GeopackageTable(Table):
                 # no key should be nan or None
                 if sum(l_nan) == 0:
                     prev_where = self.where
+                    prev_filters = self._filters.copy()
                     self.filter(**filter_args)
                     if len(self) == 1:
                         id = self[0][self.id_field]
                     if len(self) > 1:
-                        raise ValueError('more than feature is matching '
+                        self.where = prev_where
+                        raise ValueError('more than one feature is matching '
                                          f'{filter_args}')
                     self.where = prev_where
+                    self._filters = prev_filters
 
             if not isnan(id):
                 self.set(int(id), **items)

@@ -3,6 +3,17 @@ from qgis.core import QgsProject, QgsVectorLayer, QgsRasterLayer
 from qgis.utils import iface
 
 
+def nest_groups(parent, groupnames, prepend=True):
+    '''recursively nests groups in order of groupnames'''
+    if len(groupnames) == 0:
+        return parent
+    next_parent = parent.findGroup(groupnames[0])
+    if not next_parent:
+        next_parent = (parent.insertGroup(0, groupnames[0])
+                       if prepend else parent.addGroup(groupnames[0]))
+    return nest_groups(next_parent, groupnames[1:], prepend=prepend)
+
+
 class Layer(ABC):
 
     def __init__(self, layername, data_path, groupname='', prepend=True):
@@ -11,12 +22,8 @@ class Layer(ABC):
         self.data_path = data_path
         self.layer = None
         if groupname:
-            group = self.root.findGroup(groupname)
-            if not group:
-                if prepend:
-                    group = self.root.insertGroup(0, groupname)
-                else:
-                    group = self.root.addGroup(groupname)
+            groupnames = groupname.split('/')
+            group = nest_groups(self.root, groupnames, prepend=prepend)
             self.root = group
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,

@@ -348,13 +348,10 @@ class ProjectLayer(Layer):
     def __init__(self, layername, data_path, groupname='', project=None,
                  prepend=True):
         self.project = project or ProjectManager().active_project
+        groupname = f'{self.project.groupname}/{groupname}'
         super().__init__(layername, data_path, prepend=prepend,
-                         groupname=self.project.groupname)
-        projectgroup = self.root.findGroup(groupname)
-        if not projectgroup:
-            projectgroup = self.root.addGroup(groupname)
+                         groupname=groupname)
         self.root.setItemVisibilityChecked(True)
-        self.root = projectgroup
 
     def draw(self, style_file=None, label='', checked=True, filter=None):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)
@@ -363,7 +360,8 @@ class ProjectLayer(Layer):
 
     @classmethod
     def from_table(cls, table, groupname='', prepend=True):
-        return ProjectLayer(table.name, data_path=table.workspace.path,
+        data_path = f'{table.workspace.path}|layername={table.name}'
+        return ProjectLayer(table.name, data_path=data_path,
                             groupname=groupname, prepend=prepend)
 
 

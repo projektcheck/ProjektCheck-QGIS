@@ -111,16 +111,26 @@ class GeopackageTest(unittest.TestCase):
         assert n == 5
         assert len(self.table) == 3
 
-    def test_pandas(self):
-        # test pkeys
-        df = self.table.to_pandas()
-        old_sum = df['value'].sum()
+    def test_pandas_pkeys(self):
+        df_origin = self.table.to_pandas()
+
+        # test update
+        df_origin = self.table.to_pandas()
+        df = df_origin.copy()
         df['value'] *= 2
         self.table.update_pandas(df, pkeys=['uid', 'name'])
         df_new = self.table.to_pandas()
         assert len(df_new) == len(df)
-        assert(df_new['value'].sum(), old_sum * 2)
+        # test row by row to make sure assignment was right
+        for i, row in df_origin.iterrows():
+            new_row = df_new[df_new['fid']==row['fid']]
+            assert row['value'] == new_row['value'].values[0] / 2
 
+        # test unique key (value is not)
+        self.table.update_pandas(df_new, pkeys=['value'])
+
+
+    def test_pandas_update(self):
         # update rows
         df = self.table.to_pandas()
         old_sum = df['value'].sum()
