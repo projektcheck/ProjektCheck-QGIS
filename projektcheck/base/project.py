@@ -354,7 +354,8 @@ class ProjectLayer(Layer):
         self.root.setItemVisibilityChecked(True)
 
     def draw(self, style_file=None, label='', checked=True, filter=None):
-        style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)
+        style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
+            if style_file else None
         super().draw(style_path=style_path, label=label, checked=checked,
                      filter=filter)
 

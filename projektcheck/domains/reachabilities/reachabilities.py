@@ -3,14 +3,14 @@ from qgis.PyQt.QtWidgets import QMessageBox
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
-from projektcheck.domains.reachabilities.bahn_query import (BahnQuery,
-                                                            StopScraper,
-                                                            BahnRouter,
-                                                            next_working_day)
-from projektcheck.domains.reachabilities.tables import (Haltestellen,
-                                                        ErreichbarkeitenOEPNV,
-                                                        Einrichtungen)
-from projektcheck.domains.reachabilities.einrichtungen import EinrichtungenQuery
+from projektcheck.domains.reachabilities.bahn_query import (
+    BahnQuery, StopScraper, BahnRouter, next_working_day)
+from projektcheck.domains.reachabilities.tables import (
+    Haltestellen, ErreichbarkeitenOEPNV, Einrichtungen, Isochronen)
+from projektcheck.domains.reachabilities.geoserver_query import (
+    EinrichtungenQuery)
+from projektcheck.domains.reachabilities.routing_query import (
+    Isochrones)
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.utils.utils import add_selection_icons
 from settings import settings
@@ -43,6 +43,7 @@ class Reachabilities(Domain):
         self.haltestellen = Haltestellen.features(create=True)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
         self.einrichtungen = Einrichtungen.features(create=True)
+        self.isochronen = Isochronen.features(create=True)
         self.fill_haltestellen()
 
     def query_stops(self):
@@ -129,7 +130,21 @@ class Reachabilities(Domain):
         output.zoom_to()
 
     def get_isochrones(self):
-        pass
+        modus = 'zu Fuß' if self.ui.walk_radio.isChecked() \
+            else 'Fahrrad' if self.ui.bike_radio.isChecked() \
+            else 'Auto'
+        steps = self.ui.timestep_input.value()
+        cutoff = self.ui.cutoff_input.value()
+        job = Isochrones(self.project, modus=modus, steps=steps, cutoff=cutoff,
+                         parent=self.ui)
+
+        def on_success(modus):
+            self.draw_isochrones(modus)
+
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=lambda x: on_success(modus))
+        dialog.show()
 
     def get_einrichtungen(self):
         radius = self.ui.radius_input.value()
@@ -147,3 +162,27 @@ class Reachabilities(Domain):
         output.draw(label='Einrichtungen',
                     style_file='erreichbarkeit_einrichtungen.qml')
         output.zoom_to()
+
+    def draw_isochrones(self, modus):
+        sub_group = f'Erreichbarkeiten'
+
+        output = ProjectLayer.from_table(
+            self.isochronen._table,
+            groupname=f'{self.layer_group}/{sub_group}')
+        output.draw(label=modus, filter=f'modus="{modus}"')
+        output.zoom_to()
+
+        #group_layer = ("erreichbarkeit")
+        #layers = ['Isochrone zu Fuß',
+                  #'Isochrone Fahrrad',
+                  #'Isochrone Auto']
+        #fc = u'Isochrone'
+        #for layer in layers:
+            #name = layer
+            ## ToDo: get cutoff time from db instead of from run()
+            #if self.cutoff:
+                #name += ' ({} Minuten)'.format(self.cutoff)
+            #self.output.add_layer(group_layer, layer, fc,
+                                  #name=name,
+                                  #template_folder='Erreichbarkeit',
+                                  #zoom=False)

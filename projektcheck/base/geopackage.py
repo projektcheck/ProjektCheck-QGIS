@@ -131,8 +131,8 @@ class GeopackageTable(Table):
         self._layer = self.workspace.conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
-        # reset spatial filter (ogr remembers it even on new connecion)
-        self.spatial_filter()
+        # reset filters (ogr remembers it even on new connecion)
+        self.reset()
         if field_names:
             self.field_names = list(field_names)
         else:
@@ -168,13 +168,8 @@ class GeopackageTable(Table):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
-            #self.reset()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
-
-    def reset(self):
-        self._layer.ResetReading()
-        self._cursor = None
 
     def __getitem__(self, idx):
         # there is no indexing of ogr layers, so just iterate
@@ -190,7 +185,9 @@ class GeopackageTable(Table):
                 self._layer.ResetReading()
                 return self._ogr_feat_to_row(feat)
 
-    def reset_filters(self):
+    def reset(self):
+        #self._layer.ResetReading()
+        #self._cursor = None
         self._filters = {}
         self.where = ''
         self.spatial_filter()
@@ -295,7 +292,10 @@ class GeopackageTable(Table):
                                  #f'table {self.name}')
             ret = feature.SetField(field, value)
         if geom:
-            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+            if not isinstance(geom, ogr.Geometry):
+                if not isinstance(geom, str):
+                    geom = geom.asWkt()
+                geom = ogr.CreateGeometryFromWkt(geom)
             feature.SetGeometry(geom)
         ret = self._layer.CreateFeature(feature)
         if ret != 0:

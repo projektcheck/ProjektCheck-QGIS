@@ -3,9 +3,17 @@ import requests
 import json
 from pyproj import Proj, transform
 import numpy as np
+import json
+import ogr
+
+from projektcheck.utils.spatial import Point
+from projektcheck.base.domain import Worker
+from projektcheck.domains.reachabilities.tables import Isochronen
+from projektcheck.domains.definitions.tables import Projektrahmendaten
+from settings import settings
 
 
-class RoutingQuery(object):
+class RoutingQuery:
     isochrone_url = ('https://projektcheck.ggr-planung.de'
                      '/otp/routers/deutschland/isochrone')
     isochrone_params = {
@@ -20,12 +28,11 @@ class RoutingQuery(object):
         'bikeSpeed': 5.0,
     }
 
-    def __init__(self):
-        self.epsg = 4326
+    epsg = 4326
 
     def get_isochrone(self, point, target_epsg, mode, time_sec, walk_speed):
         params = self.isochrone_params.copy()
-        params['cutoffSec'] = time_sec
+        params['cutoffSec'] = int(time_sec)
         params['mode'] = mode
         params['walkSpeed'] = walk_speed
         if point.epsg != self.epsg:
@@ -45,24 +52,49 @@ class RoutingQuery(object):
                 arr = np.asarray(b)
                 new_arr = transform(p1, p2, arr[:, 0], arr[:, 1])
                 new_list = np.array(zip(*new_arr)).tolist()
-                new_inner_list.append(new_list)
+                new_inner_list.append(list(new_list))
             new_coords.append(new_inner_list)
         geom_json['coordinates'] = new_coords
-        #iso_poly = arcpy.AsShape(geom_json)
-
-        #if iso_poly.partCount == 0:
-            #return None
-        #b = arcpy.DefineProjection_management(iso_poly, arcpy.SpatialReference(4326))
-        #epsg = self.epsg
-        #parts = []
-        #for part in iso_poly:
-            #points = []
-            #for point in part:
-                #p = arcpy.PointGeometry(point,
-                                        #arcpy.SpatialReference(self.epsg))
-                #points.append(
-                    #p.projectAs(arcpy.SpatialReference(31467)).firstPoint)
-            #parts.append(arcpy.Array(points))
-        #poly_points = arcpy.Array(parts)
-        #polygon = arcpy.Polygon(poly_points)
         return geom_json
+
+
+class Isochrones(Worker):
+
+    categories = [u'Kita', u'Autobahnanschlussstelle', u'Dienstleistungen',
+                  u'Ärzte', 'Freizeit', u'Läden',
+                  u'Supermarkt/Einkaufszentrum', 'Schule']
+
+    modes = {
+        'Auto': ('CAR', 5),
+        'Fahrrad': ('BICYCLE', 5),
+        'zu Fuß': (u'WALK', 1.33)
+    }
+
+    def __init__(self, project, modus='zu Fuß', steps=1, cutoff=10, parent=None):
+        super().__init__(parent=parent)
+        self.isochronen = Isochronen.features(project=project)
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
+        self.cutoff_sec = cutoff * 60
+        self.n_steps = steps
+        self.modus = modus
+
+    def work(self):
+        mode, walk_speed = self.modes[self.modus]
+        self.log(f'Ermittle die Isochronen für den Modus "{self.modus}"')
+        self.isochronen.filter(modus=self.modus)
+        self.isochronen.delete()
+        self.isochronen.reset()
+        table = 'Isochrone'
+        centroid = self.project_frame.geom.asPoint()
+        epsg = settings.EPSG
+        centroid = Point(centroid.x(), centroid.y(), epsg=epsg)
+        query = RoutingQuery()
+        cutoff_step = self.cutoff_sec / self.n_steps
+        for i in reversed(range(self.n_steps)):
+            sec = int(cutoff_step * (i + 1))
+            self.log(f'...maximale Reisezeit von {sec} Sekunden')
+            iso_poly = query.get_isochrone(centroid, epsg,
+                                           mode, sec, walk_speed)
+            geom = ogr.CreateGeometryFromJson(json.dumps(iso_poly))
+            self.isochronen.add(modus=self.modus, sekunden=sec, geom=geom)
+            self.set_progress(100 * (self.n_steps - i + 1) / self.n_steps)

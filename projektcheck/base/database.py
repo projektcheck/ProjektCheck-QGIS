@@ -114,6 +114,9 @@ class FeatureCollection:
     def add_field(self, field):
         self._table.add_field(field)
 
+    def reset(self):
+        self._table.reset()
+
     def filter(self, **kwargs):
         '''
         filtering django style

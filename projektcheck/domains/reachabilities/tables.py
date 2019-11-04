@@ -45,3 +45,12 @@ class Einrichtungen(ProjectTable):
 
     class Meta:
         workspace = 'erreichbarkeiten'
+
+
+class Isochronen(ProjectTable):
+
+    sekunden = Field(int, 0)
+    modus = Field(str, '')
+
+    class Meta:
+        workspace = 'erreichbarkeiten'
