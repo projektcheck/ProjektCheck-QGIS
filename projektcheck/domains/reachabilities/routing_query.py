@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
-import arcpy
 from pyproj import Proj, transform
 import numpy as np
 
@@ -49,7 +48,7 @@ class RoutingQuery(object):
                 new_inner_list.append(new_list)
             new_coords.append(new_inner_list)
         geom_json['coordinates'] = new_coords
-        iso_poly = arcpy.AsShape(geom_json)
+        #iso_poly = arcpy.AsShape(geom_json)
 
         #if iso_poly.partCount == 0:
             #return None
@@ -66,4 +65,4 @@ class RoutingQuery(object):
             #parts.append(arcpy.Array(points))
         #poly_points = arcpy.Array(parts)
         #polygon = arcpy.Polygon(poly_points)
-        return iso_poly
+        return geom_json

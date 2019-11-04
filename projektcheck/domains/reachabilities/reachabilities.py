@@ -34,12 +34,10 @@ class Reachabilities(Domain):
             lambda index: self.zoom_to(
                 self.ui.haltestellen_combo.itemData(index)))
 
-        self.ui.show_table_button.clicked.connect(
-            lambda: self.show_time_table(
-                self.ui.haltestellen_combo.currentData()))
-        self.ui.calculate_time_button.clicked.connect(
-            lambda: self.calculate_time(
-                self.ui.haltestellen_combo.currentData()))
+        self.ui.show_table_button.clicked.connect(self.show_time_table)
+        self.ui.calculate_time_button.clicked.connect(self.calculate_time)
+        self.ui.isochrones_button.clicked.connect(self.get_isochrones)
+        self.ui.facilities_button.clicked.connect(self.get_einrichtungen)
 
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
@@ -74,7 +72,8 @@ class Reachabilities(Domain):
         self.ui.haltestellen_combo.clear()
         self.haltestellen.filter(flaechenzugehoerig=True)
         for stop in self.haltestellen:
-            self.ui.haltestellen_combo.addItem(stop.name, stop)
+            if stop.abfahrten > 0:
+                self.ui.haltestellen_combo.addItem(stop.name, stop)
         self.haltestellen.filter()
         self.ui.haltestellen_combo.blockSignals(False)
 
@@ -86,7 +85,8 @@ class Reachabilities(Domain):
                     filter='flaechenzugehoerig=1')
         output.zoom_to()
 
-    def show_time_table(self, stop):
+    def show_time_table(self):
+        stop = self.ui.haltestellen_combo.currentData()
         if not stop:
             return
         query = BahnQuery(next_working_day())
@@ -101,7 +101,8 @@ class Reachabilities(Domain):
         url = query.get_timetable_url(stop.id_bahn)
         webbrowser.open(url, new=1, autoraise=True)
 
-    def calculate_time(self, stop):
+    def calculate_time(self):
+        stop = self.ui.haltestellen_combo.currentData()
         recalculate = self.ui.recalculate_check.isChecked()
         job = BahnRouter(stop, self.project, parent=self.ui,
                          recalculate=recalculate)
@@ -127,22 +128,22 @@ class Reachabilities(Domain):
                     filter=f'id_origin={stop.id}')
         output.zoom_to()
 
+    def get_isochrones(self):
+        pass
+
     def get_einrichtungen(self):
-        # ToDo: radius
-        job = EinrichtungenQuery(self.project, parent=self.ui)
-
-        def on_success(project, stop):
-            self.draw_erreichbarkeiten(stop)
-
+        radius = self.ui.radius_input.value()
+        job = EinrichtungenQuery(self.project, radius=radius, parent=self.ui)
         dialog = ProgressDialog(
-            job, parent=self.ui,
-            on_success=lambda project: on_success(project, stop))
+            job, parent=self.ui, on_success=lambda r: self.draw_einrichtungen())
         dialog.show()
 
     def draw_einrichtungen(self):
-        group_layer = ("erreichbarkeit")
-        fc = 'Einrichtungen'
-        layer = 'Einrichtungen'
-        self.output.add_layer(group_layer, layer, fc,
-                              template_folder='Erreichbarkeit',
-                              zoom=True)
+        sub_group = u'Erreichbarkeiten ÖPNV'
+
+        output = ProjectLayer.from_table(
+            self.einrichtungen._table,
+            groupname=f'{self.layer_group}/{sub_group}')
+        output.draw(label='Einrichtungen',
+                    style_file='erreichbarkeit_einrichtungen.qml')
+        output.zoom_to()

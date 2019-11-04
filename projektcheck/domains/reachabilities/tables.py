@@ -40,7 +40,7 @@ class ErreichbarkeitenOEPNV(ProjectTable):
 
 class Einrichtungen(ProjectTable):
 
-    projektcheck_category = Field(int, 0)
+    projektcheck_category = Field(str, '')
     name = Field(str, '')
 
     class Meta:
