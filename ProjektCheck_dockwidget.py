@@ -217,8 +217,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             table = Teilflaechen.get_table()
             layer_root = QgsProject.instance().layerTreeRoot()
             for child in layer_root.children():
-                if child.name().startswith('Projekt'):
-                    child.setItemVisibilityChecked(False)
+                name = child.name()
+                if name.startswith('Projekt'):
+                    child.setItemVisibilityChecked(name==project.groupname)
 
             output = ProjectLayer.from_table(
                 table, groupname='Projektdefinition')

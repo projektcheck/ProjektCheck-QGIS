@@ -9,5 +9,8 @@ class SupermarketsCompetition(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_08-SKSM.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_supermarkets_1.png"
 
+    def load_content(self):
+        pass
+
     def setupUi(self):
         add_selection_icons(self.ui.toolBox)

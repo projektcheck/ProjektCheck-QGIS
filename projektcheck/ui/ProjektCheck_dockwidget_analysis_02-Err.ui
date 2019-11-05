@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
+    <width>382</width>
     <height>746</height>
    </rect>
   </property>
   <property name="styleSheet">
    <string notr="true">QFrame{
-	background: rgb(245, 245, 245);
+	/*background: rgb(245, 245, 245);*/
 }
 QToolBox:tab {
 	font: bold 10pt ;
@@ -73,8 +73,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>470</width>
-         <height>207</height>
+         <width>364</width>
+         <height>234</height>
         </rect>
        </property>
        <attribute name="label">
@@ -89,66 +89,200 @@ padding: 2px;
           <property name="frameShadow">
            <enum>QFrame::Sunken</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="9" column="2">
-            <widget class="QPushButton" name="pushButton">
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+              </font>
              </property>
              <property name="text">
-              <string>Interaktive Auswahl</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
+              <string>Haltestellen im Umfeld</string>
              </property>
             </widget>
            </item>
-           <item row="11" column="0">
-            <widget class="QPushButton" name="pushButton_9">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>Fahrzeit zu zentralen Orten ermitteln</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QPushButton" name="haltestellen_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Haltestellen ermitteln</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>18</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="show_haltestellen_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string>Haltestellen anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+                 <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="11" column="1" colspan="2">
-            <widget class="QCheckBox" name="checkBox_7">
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+              </font>
+             </property>
              <property name="text">
-              <string>Neuberechnung erzwingen</string>
+              <string>Erreichbarkeit ab einer ausgewählten Haltestelle</string>
              </property>
             </widget>
            </item>
-           <item row="10" column="0">
-            <widget class="QPushButton" name="pushButton_5">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QComboBox" name="haltestellen_combo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>170</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <item>
+                <property name="text">
+                 <string>[Haltestellenauswahl]</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string>Auswahl</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
+                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="show_table_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -170,134 +304,30 @@ padding: 2px;
              </property>
             </widget>
            </item>
-           <item row="6" column="0" colspan="3">
-            <widget class="Line" name="line">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-              </font>
-             </property>
-             <property name="text">
-              <string>Erreichbarkeit ab einer ausgewählten Haltestelle</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <pointsize>8</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-              </font>
-             </property>
-             <property name="text">
-              <string>Haltestellen im Umfeld</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="3" column="0">
-            <widget class="QPushButton" name="pushButton_3">
+           <item>
+            <widget class="QPushButton" name="calculate_time_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Haltestellen ermitteln</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>18</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="flat">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
-            <widget class="QComboBox" name="ovstop_combo">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <item>
-              <property name="text">
-               <string>[Haltestellenauswahl]</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QPushButton" name="pushButton_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
+              <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
-              <string>Haltestellen anzeigen</string>
+              <string>Fahrzeit zu zentralen Orten ermitteln</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
              </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="recalculate_check">
+             <property name="text">
+              <string>Neuberechnung erzwingen</string>
              </property>
             </widget>
            </item>
@@ -311,7 +341,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>394</width>
+         <width>364</width>
          <height>240</height>
         </rect>
        </property>
@@ -350,7 +380,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="8" column="1">
-            <widget class="QSpinBox" name="spinBox">
+            <widget class="QSpinBox" name="cutoff_input">
              <property name="minimum">
               <number>1</number>
              </property>
@@ -360,7 +390,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="12" column="5">
-            <widget class="QPushButton" name="pushButton_12">
+            <widget class="QPushButton" name="facilities_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -383,7 +413,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="12" column="1">
-            <widget class="QSpinBox" name="spinBox_4">
+            <widget class="QSpinBox" name="radius_input">
              <property name="minimum">
               <number>1</number>
              </property>
@@ -407,7 +437,7 @@ padding: 2px;
             </widget>
            </item>
            <item row="9" column="1">
-            <widget class="QSpinBox" name="spinBox_3">
+            <widget class="QSpinBox" name="timestep_input">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -425,12 +455,12 @@ padding: 2px;
            <item row="9" column="0">
             <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>Anzahl Zwischenschritte</string>
+              <string>Anzahl Teilschritte</string>
              </property>
             </widget>
            </item>
            <item row="9" column="5">
-            <widget class="QPushButton" name="pushButton_10">
+            <widget class="QPushButton" name="isochrones_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -458,12 +488,26 @@ padding: 2px;
               <number>4</number>
              </property>
              <item>
-              <widget class="QRadioButton" name="radioButton">
+              <widget class="QRadioButton" name="walk_radio">
                <property name="text">
                 <string>Fuß</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="bike_radio">
+               <property name="text">
+                <string>Rad</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="car_radio">
+               <property name="text">
+                <string>Auto</string>
                </property>
               </widget>
              </item>
@@ -479,33 +523,6 @@ padding: 2px;
                 </size>
                </property>
               </spacer>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_2">
-               <property name="text">
-                <string>Rad</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_3">
-               <property name="text">
-                <string>Auto</string>
-               </property>
-              </widget>
              </item>
             </layout>
            </item>

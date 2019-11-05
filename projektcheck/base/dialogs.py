@@ -173,11 +173,6 @@ class ProgressDialog(Dialog):
         if self.auto_run:
             self.run()
 
-    def running(self):
-        self.close_button.setVisible(True)
-        self.cancelButton.setText('Stoppen')
-        self.cancelButton.clicked.disconnect(self.close)
-
     def success(self, result):
         self.finished()
         self.progress(100)
@@ -191,6 +186,7 @@ class ProgressDialog(Dialog):
         #self.thread.deleteLater()
         self.timer.stop()
         self.close_button.setVisible(True)
+        self.close_button.setEnabled(True)
         self.stop_button.setVisible(False)
         if self.auto_close:
             self.close()
@@ -199,6 +195,7 @@ class ProgressDialog(Dialog):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
         self.progress_bar.setStyleSheet(
             'QProgressBar::chunk { background-color: red; }')
+        self.finished()
 
     def show_status(self, text):
         self.log_edit.appendHtml(text)
@@ -220,12 +217,13 @@ class ProgressDialog(Dialog):
         self.start_timer()
         self.stop_button.setVisible(True)
         self.start_button.setVisible(False)
+        self.close_button.setVisible(True)
+        self.close_button.setEnabled(False)
         self.thread.start()
-        self.finished()
 
     def stop(self):
         self.timer.stop()
-        self.thread.kill()
+        self.thread.terminate()
         self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
         self.log_edit.moveCursor(QTextCursor.End)
         self.finished()
@@ -242,6 +240,7 @@ class Message:
     '''
     dialog showing a message
     '''
+
 
 class SettingsDialog(Dialog):
     ui_file = 'settings.ui'

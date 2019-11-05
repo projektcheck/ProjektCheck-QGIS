@@ -89,12 +89,16 @@ class FeatureCollection:
 
     def get(self, **kwargs):
         table = self._table.copy()
+        prev_where = table.where
         table.filter(**kwargs)
-        if len(table) == 0:
-            return
         if len(table) > 1:
             raise ValueError('get returned more than one feature')
-        return self._row_to_feature(table[0])
+        if len(table) == 0:
+            row = None
+        else:
+            row = self._row_to_feature(table[0])
+        table.where = prev_where
+        return row
 
     def add(self, **kwargs):
         if 'id' in kwargs:
@@ -109,6 +113,9 @@ class FeatureCollection:
 
     def add_field(self, field):
         self._table.add_field(field)
+
+    def reset(self):
+        self._table.reset()
 
     def filter(self, **kwargs):
         '''
@@ -131,8 +138,8 @@ class FeatureCollection:
     def to_pandas(self):
         return self._table.to_pandas()
 
-    def update_pandas(self, dataframe):
-        self._table.update_pandas(dataframe)
+    def update_pandas(self, dataframe, **kwargs):
+        self._table.update_pandas(dataframe, **kwargs)
 
 
 class Database(ABC):

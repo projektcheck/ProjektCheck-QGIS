@@ -1,4 +1,4 @@
-from projektcheck.base.project import ProjectTable, settings
+from projektcheck.base.project import ProjectTable
 from projektcheck.base.database import Field
 from settings import settings
 

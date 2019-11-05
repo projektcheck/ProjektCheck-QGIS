@@ -2,7 +2,6 @@ import os
 from osgeo import ogr, osr
 from qgis.core import QgsGeometry
 import pandas as pd
-import numpy as np
 from typing import Union
 from collections import OrderedDict
 import shutil
@@ -131,8 +130,8 @@ class GeopackageTable(Table):
         self._layer = self.workspace.conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
-        # reset spatial filter (ogr remembers it even on new connecion)
-        self.spatial_filter()
+        # reset filters (ogr remembers it even on new connecion)
+        self.reset()
         if field_names:
             self.field_names = list(field_names)
         else:
@@ -149,7 +148,8 @@ class GeopackageTable(Table):
 
     def _ogr_feat_to_row(self, feat):
         if self.field_names is not None:
-            items = OrderedDict([(f, feat[f]) for f in self.field_names])
+            items = OrderedDict([(f, feat[f]) for f in self.field_names
+                                 if hasattr(feat, f)])
         else:
             items = OrderedDict(self._cursor.items())
         items[self.id_field] = feat.GetFID()
@@ -167,13 +167,8 @@ class GeopackageTable(Table):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
-            #self.reset()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
-
-    def reset(self):
-        self._layer.ResetReading()
-        self._cursor = None
 
     def __getitem__(self, idx):
         # there is no indexing of ogr layers, so just iterate
@@ -189,6 +184,13 @@ class GeopackageTable(Table):
                 self._layer.ResetReading()
                 return self._ogr_feat_to_row(feat)
 
+    def reset(self):
+        #self._layer.ResetReading()
+        #self._cursor = None
+        self._filters = {}
+        self.where = ''
+        self.spatial_filter()
+
     def filter(self, **kwargs):
         '''
         filtering django style
@@ -202,13 +204,26 @@ class GeopackageTable(Table):
         # append filters to old ones
         # (but seperate  previous and new filters with brackets)
         self._filters.update(kwargs)
+        field_dict = dict([(f.name, f) for f in self.fields()])
+
+        def check_quotation(value, field):
+            if field.datatype == str and not value.startswith('"'):
+                value = f'"{value}"'
+            return value
+
         for k, v in self._filters.items():
             split = k.split('__')
             field_name = split[0]
+            matching_field = field_dict.get(field_name)
             if field_name == 'id':
                 field_name = self.id_field
-            elif field_name not in self.field_names:
+            elif not matching_field:
                 raise ValueError(f'{field_name} not in fields')
+            else:
+                if isinstance(v, list):
+                    v = [check_quotation(i, matching_field) for i in v]
+                else:
+                    v = check_quotation(v, matching_field)
 
             if len(split) == 1:
                 terms.append(f'{field_name} = {v}')
@@ -276,7 +291,10 @@ class GeopackageTable(Table):
                                  #f'table {self.name}')
             ret = feature.SetField(field, value)
         if geom:
-            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+            if not isinstance(geom, ogr.Geometry):
+                if not isinstance(geom, str):
+                    geom = geom.asWkt()
+                geom = ogr.CreateGeometryFromWkt(geom)
             feature.SetGeometry(geom)
         ret = self._layer.CreateFeature(feature)
         if ret != 0:
@@ -359,20 +377,49 @@ class GeopackageTable(Table):
             rows, columns=[self.id_field, self.geom_field] + self.field_names)
         return df
 
-    def update_pandas(self, dataframe):
+    def update_pandas(self, dataframe, pkeys=None):
         '''
-        updates
-        rows with no id ('fid') will be added to table
-        rows with id will be updated (all fields overwritten with column values)
+        pkeys passed: looks for existing entry
+        defaults to id if no pkeys given (id field is 'fid' by default)
+
+        rows with no match will be added to table
+        rows with matching pkeys (or id) will be updated (all fields overwritten
+        with column values)
+
         '''
+        def isnan(v):
+            if isinstance(id, (np.integer, np.floating, float)):
+                return np.isnan(v)
+            return v is None
+
         for i, df_row in dataframe.iterrows():
             items = df_row.to_dict()
             geom = items.get('geom', None)
-            if geom is not None and np.isnan(geom):
+            if isnan(geom):
                 items['geom'] = None
-            id = items.pop(self.id_field, None)
-            if not (id is None or np.isnan(id)):
-                self.set(int(id), **items)
+            # no pkeys: take id field directly
+            pk = items.pop(self.id_field, None)
+            # if pkeys are given, find id of matching feature
+            if pkeys:
+                pk = None
+                filter_args = dict([(k, items[k]) for k in pkeys])
+                l_nan = [isnan(p) for p in filter_args.values()]
+                # no key should be nan or None
+                if sum(l_nan) == 0:
+                    prev_where = self.where
+                    prev_filters = self._filters.copy()
+                    self.filter(**filter_args)
+                    if len(self) == 1:
+                        pk = self[0][self.id_field]
+                    if len(self) > 1:
+                        self.where = prev_where
+                        raise ValueError('more than one feature is matching '
+                                         f'{filter_args}')
+                    self.where = prev_where
+                    self._filters = prev_filters
+
+            if not isnan(pk):
+                self.set(int(pk), **items)
             else:
                 self.add(**items)
 
