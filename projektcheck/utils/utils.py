@@ -12,7 +12,7 @@ from settings import settings
 def interpolate(start, end, step, n_steps):
     return (end - start) * step / n_steps + start
 
-def category_renderer(layer, column, start_color, end_color,
+def set_category_renderer(layer, column, start_color, end_color,
                       unit=''):
     '''
     colors - rgb tuple
@@ -47,7 +47,7 @@ def category_renderer(layer, column, start_color, end_color,
 
     # create renderer object
     renderer = QgsCategorizedSymbolRenderer(column, categories)
-    return renderer
+    layer.setRenderer(renderer)
 
 def add_selection_icons(toolbox):
 

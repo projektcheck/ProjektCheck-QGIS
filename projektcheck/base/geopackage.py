@@ -2,7 +2,6 @@ import os
 from osgeo import ogr, osr
 from qgis.core import QgsGeometry
 import pandas as pd
-import numpy as np
 from typing import Union
 from collections import OrderedDict
 import shutil
@@ -389,7 +388,7 @@ class GeopackageTable(Table):
 
         '''
         def isnan(v):
-            if type(v).__module__ == 'numpy':
+            if isinstance(id, (np.integer, np.floating, float)):
                 return np.isnan(v)
             return v is None
 
@@ -399,10 +398,10 @@ class GeopackageTable(Table):
             if isnan(geom):
                 items['geom'] = None
             # no pkeys: take id field directly
-            id = items.pop(self.id_field, None)
+            pk = items.pop(self.id_field, None)
             # if pkeys are given, find id of matching feature
             if pkeys:
-                id = None
+                pk = None
                 filter_args = dict([(k, items[k]) for k in pkeys])
                 l_nan = [isnan(p) for p in filter_args.values()]
                 # no key should be nan or None
@@ -411,7 +410,7 @@ class GeopackageTable(Table):
                     prev_filters = self._filters.copy()
                     self.filter(**filter_args)
                     if len(self) == 1:
-                        id = self[0][self.id_field]
+                        pk = self[0][self.id_field]
                     if len(self) > 1:
                         self.where = prev_where
                         raise ValueError('more than one feature is matching '
@@ -419,8 +418,8 @@ class GeopackageTable(Table):
                     self.where = prev_where
                     self._filters = prev_filters
 
-            if not isnan(id):
-                self.set(int(id), **items)
+            if not isnan(pk):
+                self.set(int(pk), **items)
             else:
                 self.add(**items)
 

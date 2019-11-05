@@ -12,7 +12,7 @@ from projektcheck.domains.reachabilities.geoserver_query import (
 from projektcheck.domains.reachabilities.routing_query import (
     Isochrones)
 from projektcheck.base.dialogs import ProgressDialog
-from projektcheck.utils.utils import add_selection_icons, category_renderer
+from projektcheck.utils.utils import add_selection_icons, set_category_renderer
 from settings import settings
 
 
@@ -170,14 +170,14 @@ class Reachabilities(Domain):
             self.isochronen._table,
             groupname=f'{self.layer_group}/{sub_group}')
         end_color = (2, 120, 8) if modus == 'zu Fuß' \
-            else (52, 73, 235) if modus == 'Fahrrad' \
+            else (44, 96, 156) if modus == 'Fahrrad' \
             else (64, 56, 56)
         layer = output.draw(label=modus, filter=f'modus="{modus}"')
         output.zoom_to()
         df = self.isochronen.to_pandas()
         values = df['sekunden'].unique()
-        renderer = category_renderer(layer, 'sekunden',
-                                     (255, 255, 255), end_color,
-                                     unit='Sekunden')
-        layer.setRenderer(renderer)
+        set_category_renderer(layer, 'sekunden',
+                              (255, 255, 255), end_color,
+                              unit='Sekunden')
+        layer.setOpacity(0.8)
         layer.triggerRepaint()
