@@ -55,14 +55,22 @@ class Reachabilities(Domain):
         self.fill_haltestellen()
         self.stops_layer = None
 
+    def disconnect_picker(self, **kwargs):
+        self.canvas.mapToolSet.disconnect(self.disconnect_picker)
+        self.toggle_picker(False)
+
     def toggle_picker(self, active):
         if active:
             self.draw_haltestellen()
             self.canvas.setMapTool(self.feature_picker)
+            self.canvas.mapToolSet.connect(self.disconnect_picker)
             cursor = QCursor(Qt.CrossCursor)
             self.canvas.setCursor(cursor)
         else:
             self.canvas.unsetMapTool(self.feature_picker)
+            self.ui.pick_stop_button.blockSignals(True)
+            self.ui.pick_stop_button.setChecked(False)
+            self.ui.pick_stop_button.blockSignals(False)
 
     def feature_picked(self, layer, feature):
         if layer.name() == 'Haltestellen':
