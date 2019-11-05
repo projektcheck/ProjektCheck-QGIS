@@ -110,7 +110,7 @@ padding: 2px;
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QPushButton" name="haltestellen_button">
+              <widget class="QPushButton" name="stops_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -149,7 +149,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="show_haltestellen_button">
+              <widget class="QPushButton" name="show_stops_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -213,7 +213,7 @@ padding: 2px;
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QComboBox" name="haltestellen_combo">
+              <widget class="QComboBox" name="stops_combo">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -250,7 +250,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="pick_stop_button">
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
