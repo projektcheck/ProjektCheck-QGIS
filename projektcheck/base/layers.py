@@ -21,6 +21,7 @@ class Layer(ABC):
         self.layername = layername
         self.data_path = data_path
         self.layer = None
+        self._l = None
         if groupname:
             groupnames = groupname.split('/')
             group = nest_groups(self.root, groupnames, prepend=prepend)
@@ -42,10 +43,11 @@ class Layer(ABC):
                 self.layer.setName(label)
             QgsProject.instance().addMapLayer(self.layer, False)
             self.layer.loadNamedStyle(style_path)
-            l = self.root.addLayer(self.layer)
-            l.setItemVisibilityChecked(checked)
+            self._l = self.root.addLayer(self.layer)
+        self._l.setItemVisibilityChecked(checked)
         if filter is not None:
             self.layer.setSubsetString(filter)
+        return self.layer
 
     def zoom_to(self):
         canvas = iface.mapCanvas()

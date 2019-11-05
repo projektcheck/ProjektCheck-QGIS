@@ -356,8 +356,8 @@ class ProjectLayer(Layer):
     def draw(self, style_file=None, label='', checked=True, filter=None):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
-        super().draw(style_path=style_path, label=label, checked=checked,
-                     filter=filter)
+        return super().draw(style_path=style_path, label=label, checked=checked,
+                            filter=filter)
 
     @classmethod
     def from_table(cls, table, groupname='', prepend=True):

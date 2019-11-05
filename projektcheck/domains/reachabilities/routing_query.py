@@ -70,7 +70,8 @@ class Isochrones(Worker):
         'zu Fuß': (u'WALK', 1.33)
     }
 
-    def __init__(self, project, modus='zu Fuß', steps=1, cutoff=10, parent=None):
+    def __init__(self, project, modus='zu Fuß', steps=1,
+                 cutoff=10, parent=None):
         super().__init__(parent=parent)
         self.isochronen = Isochronen.features(project=project)
         self.project_frame = Projektrahmendaten.features(project=project)[0]

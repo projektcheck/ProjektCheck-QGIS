@@ -12,7 +12,7 @@ from projektcheck.domains.reachabilities.geoserver_query import (
 from projektcheck.domains.reachabilities.routing_query import (
     Isochrones)
 from projektcheck.base.dialogs import ProgressDialog
-from projektcheck.utils.utils import add_selection_icons
+from projektcheck.utils.utils import add_selection_icons, category_renderer
 from settings import settings
 
 
@@ -169,20 +169,15 @@ class Reachabilities(Domain):
         output = ProjectLayer.from_table(
             self.isochronen._table,
             groupname=f'{self.layer_group}/{sub_group}')
-        output.draw(label=modus, filter=f'modus="{modus}"')
+        end_color = (2, 120, 8) if modus == 'zu Fuß' \
+            else (52, 73, 235) if modus == 'Fahrrad' \
+            else (64, 56, 56)
+        layer = output.draw(label=modus, filter=f'modus="{modus}"')
         output.zoom_to()
-
-        #group_layer = ("erreichbarkeit")
-        #layers = ['Isochrone zu Fuß',
-                  #'Isochrone Fahrrad',
-                  #'Isochrone Auto']
-        #fc = u'Isochrone'
-        #for layer in layers:
-            #name = layer
-            ## ToDo: get cutoff time from db instead of from run()
-            #if self.cutoff:
-                #name += ' ({} Minuten)'.format(self.cutoff)
-            #self.output.add_layer(group_layer, layer, fc,
-                                  #name=name,
-                                  #template_folder='Erreichbarkeit',
-                                  #zoom=False)
+        df = self.isochronen.to_pandas()
+        values = df['sekunden'].unique()
+        renderer = category_renderer(layer, 'sekunden',
+                                     (255, 255, 255), end_color,
+                                     unit='Sekunden')
+        layer.setRenderer(renderer)
+        layer.triggerRepaint()
