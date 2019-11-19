@@ -122,7 +122,7 @@ class Reachabilities(Domain):
             self.haltestellen._table, groupname=self.layer_group)
         self.stops_layer = output.draw(
             label='Haltestellen',
-            style_file='erreichbarkeit_haltestellen.qml',
+            style_file='erreichbarkeit_haltestellen_alt.qml',
             filter='flaechenzugehoerig=1')
         output.zoom_to()
         self.toggle_stop(self.ui.stops_combo.currentData())
