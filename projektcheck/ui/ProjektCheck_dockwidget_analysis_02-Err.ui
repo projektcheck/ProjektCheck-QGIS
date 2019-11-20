@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>382</width>
-    <height>746</height>
+    <width>636</width>
+    <height>920</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -62,6 +62,18 @@ padding: 2px;
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QToolBox" name="toolBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>253</height>
+       </size>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -73,9 +85,21 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>364</width>
-         <height>234</height>
+         <width>618</width>
+         <height>211</height>
         </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>211</height>
+        </size>
        </property>
        <attribute name="label">
         <string>ÖPNV-Anbindung</string>
@@ -83,6 +107,18 @@ padding: 2px;
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QFrame" name="frame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>193</height>
+           </size>
+          </property>
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
@@ -118,7 +154,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Haltestellen ermitteln</string>
+                <string>Haltestellen anzeigen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -149,38 +185,9 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="show_stops_button">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="cursor">
-                <cursorShape>PointingHandCursor</cursorShape>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
+              <widget class="QCheckBox" name="recalculatestops_check">
                <property name="text">
-                <string>Haltestellen anzeigen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>24</width>
-                 <height>24</height>
-                </size>
-               </property>
-               <property name="checkable">
-                <bool>false</bool>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
+                <string>Neuberechnung erzwingen</string>
                </property>
               </widget>
              </item>
@@ -305,31 +312,51 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="calculate_time_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>Fahrzeit zu zentralen Orten ermitteln</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="recalculate_check">
-             <property name="text">
-              <string>Neuberechnung erzwingen</string>
-             </property>
-            </widget>
+             <item>
+              <widget class="QPushButton" name="calculate_time_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Fahrzeit zu zentralen Orten ermitteln</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="recalculate_time_check">
+               <property name="text">
+                <string>Neuberechnung erzwingen</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -341,89 +368,49 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>364</width>
-         <height>240</height>
+         <width>618</width>
+         <height>205</height>
         </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>205</height>
+        </size>
        </property>
        <attribute name="label">
         <string>Fuß-, Rad- und Autoerreichbarkeit</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
          <widget class="QFrame" name="frame_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>187</height>
+           </size>
+          </property>
           <property name="frameShape">
            <enum>QFrame::Panel</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Sunken</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="8" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Erreichbarkeit in Minuten</string>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="0" colspan="6">
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Radius in Kilometern</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <widget class="QSpinBox" name="cutoff_input">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>15</number>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="5">
-            <widget class="QPushButton" name="facilities_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>Einrichtungen einlesen</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="1">
-            <widget class="QSpinBox" name="radius_input">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="0" colspan="6">
-            <widget class="QLabel" name="label_7">
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QLabel" name="label">
              <property name="font">
               <font>
                <pointsize>8</pointsize>
@@ -432,54 +419,11 @@ padding: 2px;
               </font>
              </property>
              <property name="text">
-              <string>Geschäfte und Einrichtungen anzeigen</string>
+              <string>Weg- und Fahrzeit-Isochronen erzeugen</string>
              </property>
             </widget>
            </item>
-           <item row="9" column="1">
-            <widget class="QSpinBox" name="timestep_input">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>3</number>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Anzahl Teilschritte</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="5">
-            <widget class="QPushButton" name="isochrones_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>Isochronen erzeugen</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0" colspan="6">
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <property name="leftMargin">
               <number>4</number>
@@ -526,8 +470,115 @@ padding: 2px;
              </item>
             </layout>
            </item>
-           <item row="0" column="0" colspan="6">
-            <widget class="QLabel" name="label">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="isochrones_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string>Isochronen erzeugen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_7">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Erreichbarkeit in Minuten</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="cutoff_input">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>15</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Anzahl Teilschritte</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="timestep_input">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>3</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_7">
              <property name="font">
               <font>
                <pointsize>8</pointsize>
@@ -536,58 +587,76 @@ padding: 2px;
               </font>
              </property>
              <property name="text">
-              <string>Weg- und Fahrzeit-Isochronen erzeugen</string>
+              <string>Geschäfte und Einrichtungen anzeigen</string>
              </property>
             </widget>
            </item>
-           <item row="9" column="2">
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="topMargin">
+              <number>4</number>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
+             <item>
+              <widget class="QPushButton" name="facilities_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string>Einrichtungen einlesen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_8">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Radius in Kilometern</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="radius_input">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="9" column="0">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </widget>
      </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <spacer name="verticalSpacer">

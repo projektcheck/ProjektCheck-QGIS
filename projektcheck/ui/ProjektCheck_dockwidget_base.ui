@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
-    <height>73</height>
+    <width>848</width>
+    <height>113</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>729</width>
-    <height>73</height>
+    <width>742</width>
+    <height>113</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -205,12 +205,12 @@ QFrame[objectName=&quot;buttonframe&quot;]{
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>0</height>
+           <height>6</height>
           </size>
          </property>
         </spacer>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>1003</height>
+    <width>508</width>
+    <height>937</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -53,21 +53,8 @@ padding: 2px;
    <string>Projekt-Check Analyse-Tools // Verkehr im Umfeld</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="11" column="0">
-     <spacer name="verticalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="QLabel" name="label">
       <property name="font">
        <font>
@@ -81,56 +68,7 @@ padding: 2px;
       </property>
      </widget>
     </item>
-    <item row="12" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Kurzanleitung</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
+    <item>
      <widget class="QFrame" name="frame">
       <property name="frameShape">
        <enum>QFrame::Panel</enum>
@@ -138,8 +76,8 @@ padding: 2px;
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0" colspan="2">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QComboBox" name="comboBox">
@@ -198,14 +136,14 @@ padding: 2px;
          </item>
         </layout>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item>
         <widget class="Line" name="line_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item>
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
@@ -219,39 +157,46 @@ padding: 2px;
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="font">
-          <font>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="topMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Entfernung der Herkunfts-/Zielpunkte vom Mittelpunkt des Plangebietes (in Metern Straßenentfernung)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Entfernung der Herkunfts-/Zielpunkte vom Mittelpunkt des Plangebietes (in Metern Straßenentfernung)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimum">
+            <number>1000</number>
+           </property>
+           <property name="maximum">
+            <number>5000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
-       <item row="3" column="1">
-        <widget class="QSpinBox" name="spinBox_5">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimum">
-          <number>1000</number>
-         </property>
-         <property name="maximum">
-          <number>5000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
+       <item>
         <widget class="QPushButton" name="pushButton_14">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -271,27 +216,14 @@ padding: 2px;
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item>
         <widget class="Line" name="line_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="7" column="0">
+       <item>
         <widget class="QPushButton" name="pushButton_15">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -317,7 +249,7 @@ padding: 2px;
          </property>
         </widget>
        </item>
-       <item row="8" column="0" colspan="2">
+       <item>
         <widget class="QScrollArea" name="scrollArea">
          <property name="minimumSize">
           <size>
@@ -346,170 +278,212 @@ padding: 2px;
              <property name="title">
               <string>Verkehrsaufkommen und Verkehrsmittelwahl</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_7">
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_10">
-                <property name="text">
-                 <string>Verkehrsaufkommen Gewerbe</string>
-                </property>
-               </widget>
-              </item>
-              <item row="17" column="4">
-               <widget class="QSpinBox" name="spinBox_15">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximum">
-                 <number>5000</number>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="4">
-               <widget class="QSpinBox" name="spinBox_8">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
                <widget class="QLabel" name="label_7">
                 <property name="text">
                  <string>Verkehrsaufkommen Wohnen</string>
                 </property>
                </widget>
               </item>
-              <item row="13" column="0">
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>Anteil der von Pkw-Fahrenden gefahrenen Wegen (in Prozent)</string>
-                </property>
-               </widget>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QLabel" name="label_8">
+                  <property name="text">
+                   <string>Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox_6">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="1" column="4">
-               <widget class="QSpinBox" name="spinBox_6">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximum">
-                 <number>5000</number>
-                </property>
-               </widget>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>Anteil der von Pkw-Fahrenden gefahrenen Wegen (in Prozent)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox_7">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="3" column="0" colspan="5">
+              <item>
                <widget class="Line" name="line_6">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
-              <item row="15" column="0">
-               <widget class="QLabel" name="label_19">
+              <item>
+               <widget class="QLabel" name="label_10">
                 <property name="text">
-                 <string>Verkehrsaufkommen Einzelhandel</string>
+                 <string>Verkehrsaufkommen Gewerbe</string>
                 </property>
                </widget>
               </item>
-              <item row="14" column="0" colspan="5">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QLabel" name="label_12">
+                  <property name="text">
+                   <string>Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox_9">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QLabel" name="label_11">
+                  <property name="text">
+                   <string>Anteil der von Pkw-Fahrenden gefahrenen Wegen (in Prozent)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox_8">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
                <widget class="Line" name="line_4">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
-              <item row="18" column="4">
-               <widget class="QSpinBox" name="spinBox_14">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="4">
-               <widget class="QSpinBox" name="spinBox_7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0">
-               <widget class="QLabel" name="label_12">
+              <item>
+               <widget class="QLabel" name="label_19">
                 <property name="text">
-                 <string>Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)</string>
+                 <string>Verkehrsaufkommen Einzelhandel</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Anteil der von Pkw-Fahrenden gefahrenen Wegen (in Prozent)</string>
-                </property>
-               </widget>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QLabel" name="label_20">
+                  <property name="text">
+                   <string>Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox_15">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximum">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="10" column="4">
-               <widget class="QSpinBox" name="spinBox_9">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximum">
-                 <number>5000</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_8">
-                <property name="text">
-                 <string>Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)</string>
-                </property>
-               </widget>
-              </item>
-              <item row="18" column="0">
-               <widget class="QLabel" name="label_21">
-                <property name="text">
-                 <string>Anteil der von Pkw-Fahrenden gefahrenen Wegen (in Prozent)</string>
-                </property>
-               </widget>
-              </item>
-              <item row="17" column="0">
-               <widget class="QLabel" name="label_20">
-                <property name="text">
-                 <string>Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)</string>
-                </property>
-               </widget>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QLabel" name="label_21">
+                  <property name="text">
+                   <string>Anteil der von Pkw-Fahrenden gefahrenen Wegen (in Prozent)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox_14">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </widget>
@@ -519,15 +493,8 @@ padding: 2px;
              <property name="title">
               <string>Gewichtung der Herkunfts-/Zielpunkte</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_9">
-              <item row="5" column="2">
-               <widget class="QSlider" name="horizontalSlider_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="3">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
                <widget class="QLabel" name="label_22">
                 <property name="toolTip">
                  <string>dynamisch erstellt</string>
@@ -537,90 +504,35 @@ padding: 2px;
                 </property>
                </widget>
               </item>
-              <item row="1" column="2">
-               <widget class="QSlider" name="horizontalSlider">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="QSpinBox" name="spinBox_16">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="horizontalSlider">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="toolButton_2">
+                  <property name="text">
+                   <string>lo</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="3" column="2">
-               <widget class="QSlider" name="horizontalSlider_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="2">
-               <widget class="QSlider" name="horizontalSlider_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="2">
-               <widget class="QSlider" name="horizontalSlider_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QSpinBox" name="spinBox_18">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QSpinBox" name="spinBox_16">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QSpinBox" name="spinBox_17">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0" colspan="3">
-               <widget class="QLabel" name="label_26">
-                <property name="toolTip">
-                 <string>dynamisch erstellt</string>
-                </property>
-                <property name="text">
-                 <string>Herkunfts-/Zielpunkt 5</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QSpinBox" name="spinBox_20">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="QSpinBox" name="spinBox_19">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0" colspan="3">
-               <widget class="QLabel" name="label_24">
-                <property name="toolTip">
-                 <string>dynamisch erstellt</string>
-                </property>
-                <property name="text">
-                 <string>Herkunfts-/Zielpunkt 3</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" colspan="3">
+              <item>
                <widget class="QLabel" name="label_23">
                 <property name="toolTip">
                  <string>dynamisch erstellt</string>
@@ -630,7 +542,73 @@ padding: 2px;
                 </property>
                </widget>
               </item>
-              <item row="6" column="0" colspan="3">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <widget class="QSpinBox" name="spinBox_17">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="horizontalSlider_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="toolButton">
+                  <property name="text">
+                   <string>lo</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_24">
+                <property name="toolTip">
+                 <string>dynamisch erstellt</string>
+                </property>
+                <property name="text">
+                 <string>Herkunfts-/Zielpunkt 3</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <item>
+                 <widget class="QSpinBox" name="spinBox_18">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="horizontalSlider_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="toolButton_3">
+                  <property name="text">
+                   <string>lo</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
                <widget class="QLabel" name="label_25">
                 <property name="toolTip">
                  <string>dynamisch erstellt</string>
@@ -640,55 +618,71 @@ padding: 2px;
                 </property>
                </widget>
               </item>
-              <item row="3" column="3">
-               <widget class="QToolButton" name="toolButton">
-                <property name="text">
-                 <string>lo</string>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_13">
+                <item>
+                 <widget class="QSpinBox" name="spinBox_19">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="horizontalSlider_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="toolButton_4">
+                  <property name="text">
+                   <string>lo</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_26">
+                <property name="toolTip">
+                 <string>dynamisch erstellt</string>
                 </property>
-                <property name="checkable">
-                 <bool>true</bool>
+                <property name="text">
+                 <string>Herkunfts-/Zielpunkt 5</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="3">
-               <widget class="QToolButton" name="toolButton_2">
-                <property name="text">
-                 <string>lo</string>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="3">
-               <widget class="QToolButton" name="toolButton_3">
-                <property name="text">
-                 <string>lo</string>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="3">
-               <widget class="QToolButton" name="toolButton_4">
-                <property name="text">
-                 <string>lo</string>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="3">
-               <widget class="QToolButton" name="toolButton_5">
-                <property name="text">
-                 <string>lo</string>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-               </widget>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <item>
+                 <widget class="QSpinBox" name="spinBox_20">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="horizontalSlider_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="toolButton_5">
+                  <property name="text">
+                   <string>lo</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </widget>
@@ -706,6 +700,68 @@ padding: 2px;
        </item>
       </layout>
      </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Kurzanleitung</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
