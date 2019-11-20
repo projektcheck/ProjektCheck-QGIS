@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>924</width>
-    <height>898</height>
+    <width>690</width>
+    <height>897</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -70,7 +70,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>906</width>
+         <width>699</width>
          <height>100</height>
         </rect>
        </property>
@@ -205,7 +205,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>906</width>
+         <width>672</width>
          <height>500</height>
         </rect>
        </property>
@@ -523,6 +523,19 @@ padding: 2px;
           </layout>
          </widget>
         </item>
+        <item>
+         <spacer name="verticalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="page_3">
@@ -530,7 +543,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>906</width>
+         <width>640</width>
          <height>505</height>
         </rect>
        </property>
@@ -714,7 +727,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>906</width>
+         <width>640</width>
          <height>505</height>
         </rect>
        </property>
@@ -849,7 +862,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>906</width>
+         <width>640</width>
          <height>505</height>
         </rect>
        </property>
@@ -1028,8 +1041,8 @@ padding: 2px;
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>322</x>
-     <y>390</y>
+     <x>331</x>
+     <y>362</y>
     </hint>
     <hint type="destinationlabel">
      <x>322</x>
@@ -1044,12 +1057,12 @@ padding: 2px;
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>423</y>
+     <x>381</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
-     <x>332</x>
-     <y>422</y>
+     <x>341</x>
+     <y>414</y>
     </hint>
    </hints>
   </connection>
@@ -1060,12 +1073,12 @@ padding: 2px;
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>320</x>
-     <y>422</y>
+     <x>329</x>
+     <y>414</y>
     </hint>
     <hint type="destinationlabel">
-     <x>376</x>
-     <y>420</y>
+     <x>385</x>
+     <y>390</y>
     </hint>
    </hints>
   </connection>
@@ -1076,12 +1089,12 @@ padding: 2px;
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>386</x>
-     <y>394</y>
+     <x>395</x>
+     <y>362</y>
     </hint>
     <hint type="destinationlabel">
-     <x>405</x>
-     <y>406</y>
+     <x>414</x>
+     <y>390</y>
     </hint>
    </hints>
   </connection>
@@ -1092,12 +1105,12 @@ padding: 2px;
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>225</y>
+     <x>117</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel">
-     <x>181</x>
-     <y>223</y>
+     <x>117</x>
+     <y>69</y>
     </hint>
    </hints>
   </connection>
@@ -1108,12 +1121,12 @@ padding: 2px;
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>166</x>
-     <y>223</y>
+     <x>117</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel">
-     <x>226</x>
-     <y>225</y>
+     <x>117</x>
+     <y>69</y>
     </hint>
    </hints>
   </connection>
