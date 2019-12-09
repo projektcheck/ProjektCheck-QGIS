@@ -359,7 +359,8 @@ class ProjectLayer(Layer):
             if style_file else None
         layer = super().draw(style_path=style_path, label=label, checked=checked,
                              filter=filter)
-        self.stops_layer.setReadOnly(read_only)
+        layer.setReadOnly(read_only)
+        return layer
 
     @classmethod
     def from_table(cls, table, groupname='', prepend=True):
