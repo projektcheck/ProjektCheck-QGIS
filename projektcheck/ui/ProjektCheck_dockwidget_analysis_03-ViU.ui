@@ -142,22 +142,24 @@ padding: 2px;
        <item row="0" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QComboBox" name="comboBox">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Anbindungspunkt</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="area_combo">
            <property name="minimumSize">
             <size>
              <width>200</width>
              <height>0</height>
             </size>
            </property>
-           <item>
-            <property name="text">
-             <string>Anbindungspunkt Teilfläche XY</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="connector_button">
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
@@ -339,7 +341,7 @@ padding: 2px;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>468</width>
+            <width>482</width>
             <height>638</height>
            </rect>
           </property>
