@@ -2,23 +2,24 @@
 import datetime
 from bs4 import BeautifulSoup
 from time import sleep
-import requests
 import re
 import sys
 from html.parser import HTMLParser
 import numpy as np
 import pandas as pd
 from datetime import datetime, date, timedelta
-import requests
 
 from projektcheck.utils.spatial import Point
 from projektcheck.base.domain import Worker
+from projektcheck.base.connection import Request, ConnectionError
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.domains.reachabilities.tables import (Haltestellen,
                                                         ZentraleOrte,
                                                         ErreichbarkeitenOEPNV)
 from projektcheck.utils.spatial import points_within, Point
 from settings import settings
+
+requests = Request()
 
 
 class Stop(Point):
@@ -97,7 +98,7 @@ class BahnQuery(object):
 
         r = requests.get(self.mobile_url, params=params, verify=False)
 
-        soup = BeautifulSoup(r.text, "html.parser")
+        soup = BeautifulSoup(r, "html.parser")
         rows = soup.findAll('a', {'class': 'uLine'})
 
         def parse_href_number(tag, href):
@@ -145,7 +146,7 @@ class BahnQuery(object):
             params['time'] = time
             r = requests.get(self.reiseauskunft_url, params=params,
                              verify=False)
-            soup = BeautifulSoup(r.text, "html.parser")
+            soup = BeautifulSoup(r, "html.parser")
             table = soup.find('table', id='resultsOverview')
             return table
 
@@ -209,7 +210,7 @@ class BahnQuery(object):
         for id in stop_ids:
             params['evaId'] = id
             r = requests.get(self.timetable_url, params=params, verify=False)
-            soup = BeautifulSoup(r.text, "html.parser")
+            soup = BeautifulSoup(r, "html.parser")
             rows = soup.findAll('tr', id=lambda x: x and 'journeyRow_' in x)
             n_departures.append(len(rows))
             sleep(self.timeout)
@@ -239,7 +240,7 @@ class StopScraper(Worker):
                  'in der Umgebung...')
         try:
             self.write_centers_stops()
-        except requests.exceptions.ConnectionError as e:
+        except ConnectionError as e:
             self.log('Die Website der Bahn ist nicht erreichbar')
         self.set_progress(50)
         self.log('Ermittle die Anzahl der Abfahrten je Haltestelle...')
@@ -381,7 +382,7 @@ class BahnRouter(Worker):
                  changes, modes) = self.query.routing(self.origin.name,
                                                       destination.name,
                                                       self.times)
-            except requests.exceptions.ConnectionError:
+            except ConnectionError:
                 self.log('Die Website der Bahn wurde nicht erreicht. '
                          'Bitte überprüfen Sie Ihre Internetverbindung!')
                 return

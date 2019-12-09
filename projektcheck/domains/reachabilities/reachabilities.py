@@ -80,7 +80,7 @@ class Reachabilities(Domain):
             self.ui.stops_combo.setCurrentText(name)
 
     def toggle_stop(self, stop):
-        if not self.stops_layer:
+        if not self.stops_layer or not stop:
             return
         self.stops_layer.removeSelection()
         self.stops_layer.select(stop.id)
