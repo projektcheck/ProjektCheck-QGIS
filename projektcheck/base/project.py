@@ -353,11 +353,14 @@ class ProjectLayer(Layer):
                          groupname=groupname)
         self.root.setItemVisibilityChecked(True)
 
-    def draw(self, style_file=None, label='', checked=True, filter=None):
+    def draw(self, style_file=None, label='', checked=True, filter=None,
+             read_only=True):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
-        return super().draw(style_path=style_path, label=label, checked=checked,
-                            filter=filter)
+        layer = super().draw(style_path=style_path, label=label, checked=checked,
+                             filter=filter)
+        layer.setReadOnly(read_only)
+        return layer
 
     @classmethod
     def from_table(cls, table, groupname='', prepend=True):

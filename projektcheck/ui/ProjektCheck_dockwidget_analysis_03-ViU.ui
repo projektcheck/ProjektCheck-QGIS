@@ -319,6 +319,9 @@ padding: 2px;
        </item>
        <item row="8" column="0" colspan="2">
         <widget class="QScrollArea" name="scrollArea">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
