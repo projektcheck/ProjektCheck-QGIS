@@ -4,6 +4,7 @@ from qgis.PyQt.QtGui import QCursor
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
+from projektcheck.base.tools import MapClickedTool
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.traffic.tables import TrafficConnector
 
@@ -35,9 +36,9 @@ class Traffic(Domain):
         self.show_connectors()
         self.toggle_connector()
 
-        self.connector_tool = QgsMapToolEmitPoint(self.canvas)
+        self.connector_tool = MapClickedTool(self.ui.connector_button,
+                                             self.canvas)
         self.connector_tool.canvasClicked.connect(self.map_clicked)
-        self.ui.connector_button.clicked.connect(self.toggle_setter)
 
     def show_connectors(self):
         output = ProjectLayer.from_table(
@@ -54,22 +55,6 @@ class Traffic(Domain):
         if area:
             self.connector = self.connectors.get(id_teilflaeche=area.id)
             self.connector_layer.select(self.connector.id)
-
-    def toggle_setter(self, active):
-        if active:
-            self.canvas.setMapTool(self.connector_tool)
-            self.canvas.mapToolSet.connect(self.disconnect_setter)
-            cursor = QCursor(Qt.CrossCursor)
-            self.canvas.setCursor(cursor)
-        else:
-            self.canvas.unsetMapTool(self.connector_tool)
-            self.ui.connector_button.blockSignals(True)
-            self.ui.connector_button.setChecked(False)
-            self.ui.connector_button.blockSignals(False)
-
-    def disconnect_setter(self, **kwargs):
-        self.canvas.mapToolSet.disconnect(self.disconnect_setter)
-        self.toggle_setter(False)
 
     def map_clicked(self, point, e):
         self.connector.geom = point

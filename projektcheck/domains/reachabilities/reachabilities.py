@@ -2,10 +2,9 @@ import webbrowser
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtGui import QCursor
-from qgis.core import QgsVectorLayer, QgsFeature
-from qgis.gui import QgsMapToolIdentify
 
 from projektcheck.base.domain import Domain
+from projektcheck.base.tools import FeaturePicker
 from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.reachabilities.bahn_query import (
     BahnQuery, StopScraper, BahnRouter, next_working_day)
@@ -43,34 +42,18 @@ class Reachabilities(Domain):
         self.ui.isochrones_button.clicked.connect(self.get_isochrones)
         self.ui.facilities_button.clicked.connect(self.get_einrichtungen)
 
-        self.feature_picker = FeaturePicker(self.canvas)
+        self.feature_picker = FeaturePicker(self.ui.pick_stop_button,
+                                            self.canvas)
         self.feature_picker.feature_picked.connect(self.feature_picked)
-        self.ui.pick_stop_button.clicked.connect(self.toggle_picker)
 
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
         self.einrichtungen = Einrichtungen.features(create=True)
         self.isochronen = Isochronen.features(create=True)
+        self.draw_haltestellen(zoom_to=False)
         self.fill_haltestellen()
         self.stops_layer = None
-
-    def disconnect_picker(self, **kwargs):
-        self.canvas.mapToolSet.disconnect(self.disconnect_picker)
-        self.toggle_picker(False)
-
-    def toggle_picker(self, active):
-        if active:
-            self.draw_haltestellen()
-            self.canvas.setMapTool(self.feature_picker)
-            self.canvas.mapToolSet.connect(self.disconnect_picker)
-            cursor = QCursor(Qt.CrossCursor)
-            self.canvas.setCursor(cursor)
-        else:
-            self.canvas.unsetMapTool(self.feature_picker)
-            self.ui.pick_stop_button.blockSignals(True)
-            self.ui.pick_stop_button.setChecked(False)
-            self.ui.pick_stop_button.blockSignals(False)
 
     def feature_picked(self, layer, feature):
         if layer.name() == 'Haltestellen':
@@ -117,14 +100,15 @@ class Reachabilities(Domain):
         self.haltestellen.filter()
         self.ui.stops_combo.blockSignals(False)
 
-    def draw_haltestellen(self):
+    def draw_haltestellen(self, zoom_to=True):
         output = ProjectLayer.from_table(
             self.haltestellen._table, groupname=self.layer_group)
         self.stops_layer = output.draw(
             label='Haltestellen',
             style_file='erreichbarkeit_haltestellen_alt.qml',
             filter='flaechenzugehoerig=1')
-        output.zoom_to()
+        if zoom_to:
+            output.zoom_to()
         self.toggle_stop(self.ui.stops_combo.currentData())
 
     def show_time_table(self):
@@ -223,13 +207,3 @@ class Reachabilities(Domain):
         layer.setOpacity(0.8)
         layer.triggerRepaint()
 
-
-class FeaturePicker(QgsMapToolIdentify):
-    feature_picked = pyqtSignal(QgsVectorLayer, QgsFeature)
-
-    def canvasReleaseEvent(self, mouseEvent):
-        results = self.identify(mouseEvent.x(), mouseEvent.y(),
-                                self.LayerSelection, self.VectorLayer)
-        if len(results) > 0:
-            self.feature_picked.emit(results[0].mLayer,
-                                    QgsFeature(results[0].mFeature))
