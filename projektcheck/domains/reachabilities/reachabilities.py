@@ -43,15 +43,17 @@ class Reachabilities(Domain):
         self.ui.facilities_button.clicked.connect(self.get_einrichtungen)
 
         self.feature_picker = FeaturePicker(self.ui.pick_stop_button,
-                                            self.canvas)
+                                            canvas=self.canvas)
         self.feature_picker.feature_picked.connect(self.feature_picked)
+
+        self.ui.pick_stop_button.clicked.connect(
+            lambda: self.draw_haltestellen(zoom_to=False))
 
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
         self.einrichtungen = Einrichtungen.features(create=True)
         self.isochronen = Isochronen.features(create=True)
-        self.draw_haltestellen(zoom_to=False)
         self.fill_haltestellen()
         self.stops_layer = None
 

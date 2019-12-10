@@ -37,7 +37,7 @@ class Traffic(Domain):
         self.toggle_connector()
 
         self.connector_tool = MapClickedTool(self.ui.connector_button,
-                                             self.canvas)
+                                             canvas=self.canvas)
         self.connector_tool.canvasClicked.connect(self.map_clicked)
 
     def show_connectors(self):
