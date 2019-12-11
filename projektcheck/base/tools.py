@@ -3,7 +3,8 @@ from qgis.PyQt.QtCore import pyqtSignal, Qt, QTimer
 from qgis.PyQt.QtGui import QCursor
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify
 from qgis.PyQt.QtWidgets import QToolTip
-from qgis.core import QgsVectorLayer, QgsFeature
+from qgis.core import (QgsVectorLayer, QgsFeature, QgsCoordinateTransform,
+                       QgsProject, QgsCoordinateReferenceSystem, QgsGeometry)
 
 
 class MapTool:
@@ -49,10 +50,23 @@ class MapTool:
 
 
 class MapClickedTool(MapTool, QgsMapToolEmitPoint):
+    map_clicked = pyqtSignal(QgsGeometry)
 
-    def __init__(self, ui_element, canvas=None):
+    def __init__(self, ui_element, target_crs=None, canvas=None):
         MapTool.__init__(self, ui_element, canvas=canvas)
         QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
+        self.target_crs = target_crs
+        self.canvasClicked.connect(self._map_clicked)
+
+    def _map_clicked(self, point, e):
+        geom = QgsGeometry.fromPointXY(point)
+        if self.target_crs:
+            source_crs = self.canvas.mapSettings().destinationCrs()
+            target_crs = QgsCoordinateReferenceSystem(self.target_crs)
+            tr = QgsCoordinateTransform(
+                source_crs, target_crs, QgsProject.instance())
+            geom.transform(tr)
+        self.map_clicked.emit(geom)
 
 
 class FeaturePicker(MapTool, QgsMapToolIdentify):

@@ -8,6 +8,8 @@ from projektcheck.base.tools import MapClickedTool
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.traffic.tables import TrafficConnector
 
+import settings
+
 
 class Traffic(Domain):
     """"""
@@ -37,8 +39,9 @@ class Traffic(Domain):
         self.toggle_connector()
 
         self.connector_tool = MapClickedTool(self.ui.connector_button,
-                                             canvas=self.canvas)
-        self.connector_tool.canvasClicked.connect(self.map_clicked)
+                                             canvas=self.canvas,
+                                             target_crs=self.settings.EPSG)
+        self.connector_tool.map_clicked.connect(self.map_clicked)
 
     def show_connectors(self):
         output = ProjectLayer.from_table(
@@ -56,9 +59,10 @@ class Traffic(Domain):
             self.connector = self.connectors.get(id_teilflaeche=area.id)
             self.connector_layer.select(self.connector.id)
 
-    def map_clicked(self, point, e):
-        self.connector.geom = point
-        # ToDo: transform projection
+    def map_clicked(self, geom):
+        if not self.connector:
+            return
+        self.connector.geom = geom
         self.canvas.refreshAllLayers()
         self.connector.save()
 
