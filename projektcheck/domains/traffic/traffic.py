@@ -7,7 +7,8 @@ from projektcheck.base.project import ProjectLayer
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.base.tools import MapClickedTool
 from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.domains.traffic.tables import Connectors
+from projektcheck.domains.traffic.tables import (Connectors, Links, Nodes,
+                                                 TransferNodes)
 from projektcheck.domains.traffic.routing import Routing
 
 import settings
@@ -28,6 +29,9 @@ class Traffic(Domain):
 
     def load_content(self):
         self.connectors = Connectors.features(create=False)
+        self.links = Links.features(project=self.project, create=True)
+        self.transfer_nodes = TransferNodes.features(project=self.project,
+                                                     create=True)
 
         self.areas = Teilflaechen.features()
         self.ui.area_combo.blockSignals(True)
@@ -76,19 +80,19 @@ class Traffic(Domain):
 
         dialog = ProgressDialog(
             job, parent=self.ui,
-            on_success=lambda project: self.draw_traffic)
+            on_success=lambda result: self.draw_traffic())
         dialog.show()
 
     def draw_traffic(self):
 
-        sub_group = u'Erreichbarkeiten ÖPNV'
+        output = ProjectLayer.from_table(self.transfer_nodes._table,
+                                         groupname=self.layer_group)
+        output.draw(label='Zielpunkte',
+                    style_file='verkehr_zielpunkte.qml')
+        output.zoom_to()
 
-        label = f'ab {stop.name}'
-
-        output = ProjectLayer.from_table(
-            self.erreichbarkeiten._table,
-            groupname=f'{self.layer_group}/{sub_group}')
-        output.draw(label=label,
-                    style_file='erreichbarkeit_erreichbarkeiten_oepnv.qml',
-                    filter=f'id_origin={stop.id}')
+        output = ProjectLayer.from_table(self.links._table,
+                                         groupname=self.layer_group)
+        output.draw(label='Zusätzliche PKW-Fahrten',
+                    style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml')
         output.zoom_to()
