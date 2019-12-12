@@ -8,7 +8,7 @@ from projektcheck.base.geopackage import (Geopackage, Field)
 
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
-from projektcheck.domains.traffic.tables import TrafficConnector
+from projektcheck.domains.traffic.tables import Connectors
 from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
     Gewerbeanteile, Projektrahmendaten)
@@ -546,7 +546,7 @@ class ProjectDefinitions(Domain):
 
     def load_content(self):
         self.areas = Teilflaechen.features()
-        self.connectors = TrafficConnector.features()
+        self.connectors = Connectors.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:

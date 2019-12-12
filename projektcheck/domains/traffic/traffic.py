@@ -4,9 +4,11 @@ from qgis.PyQt.QtGui import QCursor
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
+from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.base.tools import MapClickedTool
 from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.domains.traffic.tables import TrafficConnector
+from projektcheck.domains.traffic.tables import Connectors
+from projektcheck.domains.traffic.routing import Routing
 
 import settings
 
@@ -25,7 +27,7 @@ class Traffic(Domain):
             lambda idx: self.toggle_connector(self.ui.area_combo.currentData()))
 
     def load_content(self):
-        self.connectors = TrafficConnector.features(create=False)
+        self.connectors = Connectors.features(create=False)
 
         self.areas = Teilflaechen.features()
         self.ui.area_combo.blockSignals(True)
@@ -42,6 +44,8 @@ class Traffic(Domain):
                                              canvas=self.canvas,
                                              target_crs=self.settings.EPSG)
         self.connector_tool.map_clicked.connect(self.map_clicked)
+        self.ui.calculate_traffic_button.clicked.connect(
+            self.calculate_traffic)
 
     def show_connectors(self):
         output = ProjectLayer.from_table(
@@ -66,9 +70,25 @@ class Traffic(Domain):
         self.canvas.refreshAllLayers()
         self.connector.save()
 
+    def calculate_traffic(self):
+        distance = self.ui.distance_input.value()
+        job = Routing(self.project, distance=distance, parent=self.ui)
 
-#class ConnectorSetter(QgsMapToolEmitPoint):
-    #map_clicked = pyqtSignal(int, int)
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=lambda project: self.draw_traffic)
+        dialog.show()
 
-    #def canvasReleaseEvent(self, mouseEvent):
-        #self.map_clicked.emit(mouseEvent.x(), mouseEvent.y())
+    def draw_traffic(self):
+
+        sub_group = u'Erreichbarkeiten ÖPNV'
+
+        label = f'ab {stop.name}'
+
+        output = ProjectLayer.from_table(
+            self.erreichbarkeiten._table,
+            groupname=f'{self.layer_group}/{sub_group}')
+        output.draw(label=label,
+                    style_file='erreichbarkeit_erreichbarkeiten_oepnv.qml',
+                    filter=f'id_origin={stop.id}')
+        output.zoom_to()

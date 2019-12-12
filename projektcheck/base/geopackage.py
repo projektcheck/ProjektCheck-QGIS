@@ -388,7 +388,7 @@ class GeopackageTable(Table):
 
         '''
         def isnan(v):
-            if isinstance(id, (np.integer, np.floating, float)):
+            if isinstance(v, (np.integer, np.floating, float)):
                 return np.isnan(v)
             return v is None
 
