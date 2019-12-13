@@ -5,7 +5,7 @@ from projektcheck.domains.traffic.otp_router import OTPRouter
 from projektcheck.base.domain import Worker
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.traffic.tables import (Connectors, Links, Nodes,
-                                                 TransferNodes)
+                                                 TransferNodes, Ways)
 import pandas as pd
 
 from settings import settings
@@ -22,8 +22,10 @@ class Routing(Worker):
         self.areas = Teilflaechen.features(project=project)
         self.connectors = Connectors.features(project=project)
         self.links = Links.features(project=project, create=True)
+        self.ways = Ways.features(project=project, create=True)
         self.nodes = Nodes.features(project=project, create=True)
-        self.transfer_nodes = TransferNodes.features(project=project, create=True)
+        self.transfer_nodes = TransferNodes.features(project=project,
+                                                     create=True)
 
     #def add_outputs(self):
         ## Add Layers
@@ -53,12 +55,30 @@ class Routing(Worker):
         project_epsg = settings.EPSG
         o = OTPRouter(distance=inner_circle, epsg=project_epsg)
         r_id = 0
+
+        # get ways per type of use
+        ways_tou = {}
+        self.ways.delete()
+        for area in self.areas:
+            if area.nutzungsart == 0:
+                continue
+            entry = ways_tou.get('area.nutzungsart')
+            if not entry:
+                entry = ways_tou[area.nutzungsart] = [0, 0]
+            entry[0] += area.wege_gesamt
+            entry[1] += area.wege_miv
+        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
+            miv_anteil = round(100 * wege_miv / wege_gesamt) \
+                if wege_gesamt > 0 else 0
+            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
+                          miv_anteil=miv_anteil)
+
         for area in self.areas:
             self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
-            if area.wege_miv == 0:
-                self.log('...wird übersprungen, da keine Wege im '
-                         'MIV zurückgelegt werden')
-                continue
+            #if area.wege_miv == 0:
+                #self.log('...wird übersprungen, da keine Wege im '
+                         #'MIV zurückgelegt werden')
+                #continue
             connector = self.connectors.get(id_teilflaeche=area.id)
             qpoint = connector.geom.asPoint()
             o.areas.add_area(area.id, trips=area.wege_miv)

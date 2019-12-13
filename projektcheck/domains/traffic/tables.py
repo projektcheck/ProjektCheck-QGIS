@@ -11,6 +11,15 @@ class Connectors(ProjectTable):
         workspace = 'traffic'
 
 
+class Ways(ProjectTable):
+    nutzungsart = Field(int, 0)
+    miv_anteil = Field(float, 0)
+    wege_gesamt = Field(int, 0)
+
+    class Meta:
+        workspace = 'traffic'
+
+
 class Links(ProjectTable):
     link_id = Field(int, 0)
     weight = Field(float, 0)

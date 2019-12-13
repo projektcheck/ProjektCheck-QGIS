@@ -3,6 +3,7 @@ from qgis.PyQt.QtCore import QThread
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
@@ -140,6 +141,7 @@ class ProgressDialog(Dialog):
     Dialog showing progress in textfield and bar after starting a certain task with run()
     """
     ui_file = 'progress.ui'
+    closed = pyqtSignal()
 
     def __init__(self, thread, on_success=None,
                  parent=None, auto_close=False, auto_run=True):
@@ -235,6 +237,9 @@ class ProgressDialog(Dialog):
         timer_text = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
         self.elapsed_time_label.setText(timer_text)
 
+    def close(self):
+        super().close()
+        self.closed.emit()
 
 class Message:
     '''
