@@ -118,6 +118,16 @@ class Traffic(Domain):
             node.weight = self.params[node.name].value * sum_weights / 100
             node.save()
 
+        job = Routing(self.project, parent=self.ui, recalculate=True)
+        def on_success(res):
+            self.draw_traffic()
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=on_success
+        )
+        #dialog.closed.connect(self.setup_settings)
+        dialog.show()
+
     def show_connectors(self):
         output = ProjectLayer.from_table(
             self.connectors._table, groupname=self.layer_group)

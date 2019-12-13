@@ -15,8 +15,9 @@ class Routing(Worker):
     outer_circle = 2000
     n_segments = 24
 
-    def __init__(self, project, distance=1000, parent=None):
+    def __init__(self, project, distance=1000, recalculate=False, parent=None):
         super().__init__(parent=parent)
+        self.otp_pickle_file = os.path.join(project.path, 'otpgraph.pickle')
         self.project = project
         self.distance = distance
         self.areas = Teilflaechen.features(project=project)
@@ -26,6 +27,7 @@ class Routing(Worker):
         self.nodes = Nodes.features(project=project, create=True)
         self.transfer_nodes = TransferNodes.features(project=project,
                                                      create=True)
+        self._recalculate = recalculate
 
     #def add_outputs(self):
         ## Add Layers
@@ -44,7 +46,10 @@ class Routing(Worker):
                               #zoom=True, zoom_extent=self._extent)
 
     def work(self):
-        self.initial_calculation()
+        if not self._recalculate:
+            self.initial_calculation()
+        else:
+            self.recalculate()
 
     def initial_calculation(self):
         # tbx settings
@@ -53,7 +58,7 @@ class Routing(Worker):
 
         # calculate routes
         project_epsg = settings.EPSG
-        o = OTPRouter(distance=inner_circle, epsg=project_epsg)
+        otp_router = OTPRouter(distance=inner_circle, epsg=project_epsg)
         r_id = 0
 
         # get ways per type of use
@@ -73,7 +78,7 @@ class Routing(Worker):
             self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
                           miv_anteil=miv_anteil)
 
-        for area in self.areas:
+        for i, area in enumerate(self.areas):
             self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
             #if area.wege_miv == 0:
                 #self.log('...wird übersprungen, da keine Wege im '
@@ -81,36 +86,58 @@ class Routing(Worker):
                 #continue
             connector = self.connectors.get(id_teilflaeche=area.id)
             qpoint = connector.geom.asPoint()
-            o.areas.add_area(area.id, trips=area.wege_miv)
+            otp_router.areas.add_area(area.id, trips=area.wege_miv)
             source = Point(x=qpoint.x(), y=qpoint.y(), epsg=project_epsg)
 
             # calculate segments around centroid
-            destinations = o.create_circle(source, dist=outer_circle,
+            destinations = otp_router.create_circle(source, dist=outer_circle,
                                            n_segments=self.n_segments)
-            source.transform(o.router_epsg)
+            source.transform(otp_router.router_epsg)
             # calculate the routes to the segments
             for (x, y) in destinations:
                 destination = Point(x, y, epsg=project_epsg)
-                destination.transform(o.router_epsg)
-                json = o.get_routing_request(source, destination)
-                o.decode_coords(json, route_id=r_id, source_id=area.id)
+                destination.transform(otp_router.router_epsg)
+                json = otp_router.get_routing_request(source, destination)
+                otp_router.decode_coords(json, route_id=r_id, source_id=area.id)
                 r_id += 1
+            self.set_progress(60 * (i + 1) / len(self.areas))
 
-        o.nodes.transform()
-        o.nodes_to_graph(meters=inner_circle)
+        otp_router.nodes.transform()
         self.log("berechne Zielknoten...")
-        o.transfer_nodes.calc_initial_weight()
+        self.set_progress(60)
+        otp_router.nodes_to_graph(meters=inner_circle)
+        otp_router.transfer_nodes.calc_initial_weight()
         self.log("berechne Gewichte...")
-        o.calc_vertex_weights()
+        self.set_progress(70)
+        otp_router.calc_vertex_weights()
         self.log("schreibe Ergebnisse...")
-        links_df = o.get_polyline_features()
+        links_df = otp_router.get_polyline_features()
         self.links.delete()
         self.links.update_pandas(links_df)
-        nodes_df = o.get_node_features()
+        nodes_df = otp_router.get_node_features()
         self.nodes.delete()
         self.nodes.update_pandas(nodes_df)
-        transfer_nodes_df = o.get_transfer_node_features()
+        transfer_nodes_df = otp_router.get_transfer_node_features()
         self.transfer_nodes.delete()
         self.transfer_nodes.update_pandas(transfer_nodes_df)
-        #o.dump(self.folders.get_otp_pickle_filename(check=False))
+        otp_router.dump(self.otp_pickle_file)
+
+    def recalculate(self):
+        otp_router = OTPRouter.from_dump(self.otp_pickle_file)
+
+        o_trans_nodes = otp_router.transfer_nodes
+        for transfer_node in self.transfer_nodes:
+            o_trans_nodes[transfer_node.node_id] = transfer_node.weight
+
+        self.log("berechne Neugewichtung...")
+        self.set_progress(70)
+        o_trans_nodes.assign_weights_to_routes()
+        otp_router.calc_vertex_weights()
+        self.log("schreibe Ergebnisse...")
+        links_df = otp_router.get_polyline_features()
+        self.links.delete()
+        self.links.update_pandas(links_df)
+        otp_router.nodes_have_been_weighted = True
+        self._extent = otp_router.extent
+        otp_router.dump(self.otp_pickle_file)
 
