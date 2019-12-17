@@ -260,8 +260,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
