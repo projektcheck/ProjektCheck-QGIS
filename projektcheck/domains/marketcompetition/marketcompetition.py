@@ -12,5 +12,3 @@ class SupermarketsCompetition(Domain):
     def load_content(self):
         pass
 
-    def setupUi(self):
-        add_selection_icons(self.ui.toolBox)
