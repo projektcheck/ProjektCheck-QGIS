@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>507</width>
-    <height>703</height>
+    <width>487</width>
+    <height>692</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>481</width>
-         <height>629</height>
+         <width>461</width>
+         <height>618</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -115,8 +115,8 @@ padding: 2px;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>../../../../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</normaloff>
-              <normalon>../../../../../images/iconset_mob/20190619_iconset_mob_replace_point_1.png</normalon>../../../../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</normaloff>
+              <normalon>../../images/iconset_mob/20190619_iconset_mob_replace_point_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -186,7 +186,7 @@ padding: 2px;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>../../../../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../../../../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
+              <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
             </property>
            </widget>
           </item>
