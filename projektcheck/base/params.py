@@ -347,7 +347,7 @@ class Params(QObject):
         close rendered parameters
         '''
         if self.dialog:
-            del self.dialog
+            del(self.dialog)
 
     def show_dialog(self):
         '''

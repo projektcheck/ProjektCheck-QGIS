@@ -29,22 +29,6 @@ class Routing(Worker):
                                                      create=True)
         self._recalculate = recalculate
 
-    #def add_outputs(self):
-        ## Add Layers
-        #self.output.add_layer('verkehr', 'Anbindungspunkte',
-                              #featureclass='Anbindungspunkte',
-                              #template_folder='Verkehr', zoom=False)
-        #self.output.add_layer('verkehr', 'links',
-                              #featureclass='links',
-                              #template_folder='Verkehr',
-                              #name='Zusätzliche PKW-Fahrten', zoom=False,
-                              #symbology_classes=(15, 'weight'))
-        #self.output.add_layer('verkehr', 'Zielpunkte',
-                              #featureclass='Zielpunkte',
-                              #template_folder='Verkehr',
-                              #name='Herkunfts-/Zielpunkte',
-                              #zoom=True, zoom_extent=self._extent)
-
     def work(self):
         if not self._recalculate:
             self.initial_calculation()

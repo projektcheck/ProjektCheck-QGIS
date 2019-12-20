@@ -141,7 +141,6 @@ class ProgressDialog(Dialog):
     Dialog showing progress in textfield and bar after starting a certain task with run()
     """
     ui_file = 'progress.ui'
-    closed = pyqtSignal()
 
     def __init__(self, thread, on_success=None,
                  parent=None, auto_close=False, auto_run=True):
@@ -176,16 +175,17 @@ class ProgressDialog(Dialog):
             self.run()
 
     def success(self, result):
-        self.finished()
+        self._finished()
         self.progress(100)
         self.show_status('<br>fertig')
         if self.on_success:
             self.on_success(result)
 
-    def finished(self):
+    def _finished(self):
         #self.thread.quit()
         #self.thread.wait()
         #self.thread.deleteLater()
+        self.thread.deleteLater()
         self.timer.stop()
         self.close_button.setVisible(True)
         self.close_button.setEnabled(True)
@@ -197,7 +197,7 @@ class ProgressDialog(Dialog):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
         self.progress_bar.setStyleSheet(
             'QProgressBar::chunk { background-color: red; }')
-        self.finished()
+        self._finished()
 
     def show_status(self, text):
         self.log_edit.appendHtml(text)
@@ -228,7 +228,7 @@ class ProgressDialog(Dialog):
         self.thread.terminate()
         self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
         self.log_edit.moveCursor(QTextCursor.End)
-        self.finished()
+        self._finished()
 
     def update_timer(self):
         delta = datetime.datetime.now() - self.start_time
@@ -237,9 +237,6 @@ class ProgressDialog(Dialog):
         timer_text = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
         self.elapsed_time_label.setText(timer_text)
 
-    def close(self):
-        super().close()
-        self.closed.emit()
 
 class Message:
     '''

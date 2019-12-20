@@ -2,6 +2,7 @@ from qgis.gui import QgsMapToolEmitPoint
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
+from qgis.PyQt.QtWidgets import QVBoxLayout
 
 from projektcheck.base.domain import Domain
 from projektcheck.utils.utils import clearLayout
@@ -9,12 +10,12 @@ from projektcheck.base.project import ProjectLayer
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.base.tools import MapClickedTool
 from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.domains.traffic.tables import (Connectors, Links, Nodes,
+from projektcheck.domains.traffic.tables import (Connectors, Links,
                                                  TransferNodes, Ways)
 from projektcheck.domains.traffic.routing import Routing
 from projektcheck.base.params import (Params, Param, Title,
                                       Seperator, SumDependency)
-from projektcheck.base.inputs import (SpinBox, Slider, DoubleSpinBox)
+from projektcheck.base.inputs import (SpinBox, Slider)
 from projektcheck.domains.constants import Nutzungsart
 
 
@@ -58,11 +59,18 @@ class Traffic(Domain):
         self.ui.distance_frame.setVisible(False)
         if len(self.transfer_nodes) == 0:
             self.ui.recalculate_check.setChecked(True)
+        self.params = None
         self.setup_settings()
 
     def setup_settings(self):
         layout = self.ui.settings_group.layout()
-        clearLayout(layout)
+        if not layout:
+            layout = QVBoxLayout()
+            self.ui.settings_group.setLayout(layout)
+        else:
+            clearLayout(layout)
+        if self.params:
+            self.params.close()
         self.params = Params(parent=layout, button_label='Annahmen verändern')
         if len(self.transfer_nodes) == 0:
             self.params.add(Title('Bitte führen Sie zunächst eine '
@@ -125,7 +133,7 @@ class Traffic(Domain):
             job, parent=self.ui,
             on_success=on_success
         )
-        #dialog.closed.connect(self.setup_settings)
+        dialog.closed.connect(self.setup_settings)
         dialog.show()
 
     def show_connectors(self):
@@ -155,21 +163,21 @@ class Traffic(Domain):
         distance = self.ui.distance_input.value()
         recalculate = self.ui.recalculate_check.isChecked()
         if recalculate:
-            job = Routing(self.project, distance=distance, parent=self.ui)
+            job = Routing(self.project, # parent=self.ui,
+                          distance=distance)
             def on_success(res):
                 self.ui.recalculate_check.setChecked(False)
                 self.draw_traffic()
+                self.setup_settings()
             dialog = ProgressDialog(
                 job, parent=self.ui,
                 on_success=on_success
             )
-            dialog.closed.connect(self.setup_settings)
             dialog.show()
         else:
             self.draw_traffic()
 
     def draw_traffic(self):
-
         output = ProjectLayer.from_table(self.links._table,
                                          groupname=self.layer_group)
         output.draw(label='Zusätzliche PKW-Fahrten',
