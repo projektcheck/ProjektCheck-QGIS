@@ -29,10 +29,9 @@ class Reachabilities(Domain):
     layer_group = "Wirkungsbereich 2 - Erreichbarkeit"
 
     def setupUi(self):
-        add_selection_icons(self.ui.toolBox)
 
         self.ui.stops_button.clicked.connect(self.query_stops)
-        self.ui.show_stops_button.clicked.connect(self.draw_haltestellen)
+        #self.ui.show_stops_button.clicked.connect(self.draw_haltestellen)
 
         self.ui.stops_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_stop(self.ui.stops_combo.currentData()))

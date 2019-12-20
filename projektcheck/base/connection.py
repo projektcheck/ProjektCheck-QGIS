@@ -15,4 +15,4 @@ class Request:
                              verify=False)
         except requests.exceptions.ConnectionError as e:
             raise ConnectionError(str(e))
-        return r.text
+        return r

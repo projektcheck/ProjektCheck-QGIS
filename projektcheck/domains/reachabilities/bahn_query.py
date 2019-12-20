@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
-from bs4 import BeautifulSoup
 from time import sleep
 import re
 import sys
-from html.parser import HTMLParser
+from lxml import html
 import numpy as np
 import pandas as pd
 from datetime import datetime, date, timedelta
@@ -72,7 +71,6 @@ class BahnQuery(object):
     date_pattern = '%d.%m.%Y'
 
     def __init__(self, date=None, timeout=0):
-        self.html = HTMLParser()
         date = date or datetime.date.today()
         self.date = date.strftime(self.date_pattern)
         self.timeout = timeout
@@ -98,8 +96,8 @@ class BahnQuery(object):
 
         r = requests.get(self.mobile_url, params=params, verify=False)
 
-        soup = BeautifulSoup(r, "html.parser")
-        rows = soup.findAll('a', {'class': 'uLine'})
+        root = html.fromstring(r.content)
+        rows = root.xpath('//a[@class="uLine"]')
 
         def parse_href_number(tag, href):
             regex = '{tag}=(\d+)!'.format(tag=tag)
@@ -108,16 +106,16 @@ class BahnQuery(object):
         stops = []
 
         for row in rows:
-            name = row.contents[0]
+            name = row.text
             if not name:
                 continue
-            href = row.attrs['href']
+            href = row.attrib['href']
             x = int(parse_href_number('X', href))
             y = int(parse_href_number('Y', href))
             id = int(parse_href_number('id', href))
             dist = int(parse_href_number('dist', href))
             stop = Stop(self._from_db_coord(x), self._from_db_coord(y),
-                        self.html.unescape(name), distance=dist,
+                        name, distance=dist,
                         id=id, epsg=4326)
             stops.append(stop)
 
@@ -146,9 +144,13 @@ class BahnQuery(object):
             params['time'] = time
             r = requests.get(self.reiseauskunft_url, params=params,
                              verify=False)
-            soup = BeautifulSoup(r, "html.parser")
-            table = soup.find('table', id='resultsOverview')
-            return table
+            root = html.fromstring(r.content)
+            try:
+                table = root.get_element_by_id('resultsOverview')
+                return table
+            except KeyError:
+                pass
+            return None
 
         for time in times:
             retries = 0
@@ -169,12 +171,12 @@ class BahnQuery(object):
                 print('skip')
                 continue
 
-            rows = table.findAll('tr', {'class': 'firstrow'})
+            rows = table.xpath('//tr[@class="firstrow"]')
 
             for row in rows:
                 # duration
-                content = row.find('td', {'class': 'duration'}).contents
-                h, m = content[0].replace('\n', '').split(':')
+                content = row.find_class('duration')
+                h, m = content[0].text.replace('\n', '').split(':')
                 d = int(h) * 60 + int(m)
                 # if already found shorter duration -> skip
                 if d >= duration:
@@ -182,18 +184,18 @@ class BahnQuery(object):
                 duration = d
 
                 # departure
-                content = row.find('td', {'class': 'time'}).contents
+                content = [t.text for t in row.find_class('time')]
 
                 matches = re.findall( r'\d{1,2}:\d{1,2}', ' - '.join(content))
                 departure = matches[0] if len(matches) > 0 else ''
 
                 # modes
-                content = row.find('td', {'class': 'products'}).contents
-                mode = content[0].replace('\n', '')
+                content = row.find_class('products')
+                mode = content[0].text.replace('\n', '')
 
                 # changes
-                content = row.find('td', {'class': 'changes'}).contents
-                changes = int(content[0].replace('\n', ''))
+                content = row.find_class('changes')
+                changes = int(content[0].text.replace('\n', ''))
 
             sleep(self.timeout)
 
@@ -210,9 +212,11 @@ class BahnQuery(object):
         for id in stop_ids:
             params['evaId'] = id
             r = requests.get(self.timetable_url, params=params, verify=False)
-            soup = BeautifulSoup(r, "html.parser")
-            rows = soup.findAll('tr', id=lambda x: x and 'journeyRow_' in x)
-            n_departures.append(len(rows))
+            root = html.fromstring(r.content)
+            rows = root.xpath('//tr')
+            journeys = [row for row in rows
+                        if row.get('id') and 'journeyRow_' in row.get('id')]
+            n_departures.append(len(journeys))
             sleep(self.timeout)
 
         return n_departures
@@ -440,9 +444,9 @@ def next_working_day(min_days_infront=2):
     where = ("Wochentag <> 'Samstag' and "
              "Wochentag <> 'Sonntag' and "
              "Anteil_Ferien_Bevoelkerung = 0")
-    df_density = basedata.get_table(
-        'Feriendichte', 'Basisdaten_deutschland'
-    ).to_pandas()
+    table = basedata.get_table('Feriendichte', 'Basisdaten_deutschland')
+    table.where = where
+    df_density = table.to_pandas()
     # can't compare directly because datetime64 has no length
     dates = pd.to_datetime(df_density['Datum'], format='%Y/%m/%d %H:%M:%S.%f')
     df_density['Datum'] = dates.dt.tz_convert(None)
