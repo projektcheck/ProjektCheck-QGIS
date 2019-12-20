@@ -114,6 +114,8 @@ def get_ags(features, source_crs=None):
 def clearLayout(layout):
     while layout.count():
         child = layout.takeAt(0)
+        if not child:
+            continue
         if child.widget():
             child.widget().deleteLater()
         elif child.layout() is not None:

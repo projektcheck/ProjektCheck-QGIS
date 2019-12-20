@@ -53,7 +53,7 @@ class Wohnen:
                                              id_teilflaeche=self.area.id)
             value = feature.we if feature else 0
             self.params.add(Param(
-                value, Slider(maximum=500),
+                value, Slider(maximum=999),
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )
