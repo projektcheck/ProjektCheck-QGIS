@@ -31,6 +31,12 @@ class Traffic(Domain):
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_connector(self.ui.area_combo.currentData()))
+        self.connector_tool = MapClickedTool(self.ui.connector_button,
+                                             canvas=self.canvas,
+                                             target_crs=self.settings.EPSG)
+        self.connector_tool.map_clicked.connect(self.map_clicked)
+        self.ui.calculate_traffic_button.clicked.connect(
+            self.calculate_traffic)
 
     def load_content(self):
         self.connectors = Connectors.features(create=False)
@@ -50,12 +56,6 @@ class Traffic(Domain):
         self.show_connectors()
         self.toggle_connector()
 
-        self.connector_tool = MapClickedTool(self.ui.connector_button,
-                                             canvas=self.canvas,
-                                             target_crs=self.settings.EPSG)
-        self.connector_tool.map_clicked.connect(self.map_clicked)
-        self.ui.calculate_traffic_button.clicked.connect(
-            self.calculate_traffic)
         self.ui.distance_frame.setVisible(False)
         if len(self.transfer_nodes) == 0:
             self.ui.recalculate_check.setChecked(True)
@@ -129,11 +129,12 @@ class Traffic(Domain):
         job = Routing(self.project, parent=self.ui, recalculate=True)
         def on_success(res):
             self.draw_traffic()
+            self.setup_settings()
         dialog = ProgressDialog(
             job, parent=self.ui,
             on_success=on_success
         )
-        dialog.closed.connect(self.setup_settings)
+        dialog.setAttribute(Qt.WA_DeleteOnClose)
         dialog.show()
 
     def show_connectors(self):
@@ -173,6 +174,7 @@ class Traffic(Domain):
                 job, parent=self.ui,
                 on_success=on_success
             )
+            dialog.setAttribute(Qt.WA_DeleteOnClose)
             dialog.show()
         else:
             self.draw_traffic()
