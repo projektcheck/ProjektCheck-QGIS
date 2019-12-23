@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.ticker as mticker
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,7 +16,6 @@ from settings import settings
 class BewohnerEntwicklung(MatplotDiagram):
     def create(self, **kwargs):
         area = kwargs['area']
-        flaechen_name = area.name
 
         features = WohnenProJahr.features().filter(id_teilflaeche=area.id)
         df = features.to_pandas()

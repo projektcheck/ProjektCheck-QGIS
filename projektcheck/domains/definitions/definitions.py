@@ -121,12 +121,6 @@ class Wohnen:
             id_teilflaeche=area.id)
         wohnen_pro_jahr_tfl.delete()
 
-        # workaround: filter again, after deletion filter is reset
-        wohnen_struktur_tfl = self.wohnen_struktur.filter(
-            id_teilflaeche=area.id)
-        wohnen_pro_jahr_tfl = self.wohnen_pro_jahr.filter(
-            id_teilflaeche=area.id)
-
         df_wohnen_struktur = wohnen_struktur_tfl.to_pandas()
 
         flaechen_template = pd.DataFrame()

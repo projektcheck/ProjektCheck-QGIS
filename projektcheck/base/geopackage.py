@@ -185,11 +185,13 @@ class GeopackageTable(Table):
                 return self._ogr_feat_to_row(feat)
 
     def reset(self):
-        #self._layer.ResetReading()
-        #self._cursor = None
         self._filters = {}
         self.where = ''
         self.spatial_filter()
+
+    def reset_cursor(self):
+        self._layer.ResetReading()
+        self._cursor = None
 
     def filter(self, **kwargs):
         '''

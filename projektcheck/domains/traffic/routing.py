@@ -124,7 +124,7 @@ class Routing(Worker):
             o_trans_nodes[transfer_node.node_id].weight = transfer_node.weight
 
         self.log("verteile Verkehrsaufkommen...")
-        self.set_progress(30)
+        self.set_progress(50)
         for way in self.ways:
             nutzungsart = way.nutzungsart
             miv_gesamt_new = way.miv_anteil * way.wege_gesamt / 100
@@ -137,7 +137,7 @@ class Routing(Worker):
                 otp_router.areas[area.id].trips = miv_new
 
         self.log("berechne Neugewichtung...")
-        self.set_progress(50)
+        self.set_progress(60)
         o_trans_nodes.assign_weights_to_routes()
         otp_router.calc_vertex_weights()
         self.log("schreibe Ergebnisse...")
