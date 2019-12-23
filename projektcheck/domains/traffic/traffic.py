@@ -126,6 +126,11 @@ class Traffic(Domain):
             node.weight = self.params[node.name].value * sum_weights / 100
             node.save()
 
+        for way in self.ways:
+            way.miv_anteil = self.params[f'{way.nutzungsart}_miv'].value
+            way.wege_gesamt = self.params[f'{way.nutzungsart}_gesamt'].value
+            way.save()
+
         job = Routing(self.project, parent=self.ui, recalculate=True)
         def on_success(res):
             self.draw_traffic()

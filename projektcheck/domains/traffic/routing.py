@@ -48,19 +48,28 @@ class Routing(Worker):
         # get ways per type of use
         ways_tou = {}
         self.ways.delete()
+        self.log('Prüfe Wege ')
         for area in self.areas:
             if area.nutzungsart == 0:
                 continue
-            entry = ways_tou.get('area.nutzungsart')
+            entry = ways_tou.get(area.nutzungsart)
             if not entry:
                 entry = ways_tou[area.nutzungsart] = [0, 0]
             entry[0] += area.wege_gesamt
             entry[1] += area.wege_miv
         for tou, (wege_gesamt, wege_miv) in ways_tou.items():
-            miv_anteil = round(100 * wege_miv / wege_gesamt) \
-                if wege_gesamt > 0 else 0
+            if wege_gesamt == 0:
+                continue
+            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
+                # if wege_gesamt > 0 else 0
             self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
                           miv_anteil=miv_anteil)
+        if len(ways_tou) == 0:
+            self.error.emit(
+                'Die Zahl der MIV-Wege ausgehend von den Flächen beträgt 0, '
+                'bitte prüfen Sie die Definition der Nutzungen '
+                'auf den Teilflächen.')
+            return
 
         for i, area in enumerate(self.areas):
             self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
@@ -75,7 +84,7 @@ class Routing(Worker):
 
             # calculate segments around centroid
             destinations = otp_router.create_circle(source, dist=outer_circle,
-                                           n_segments=self.n_segments)
+                                                    n_segments=self.n_segments)
             source.transform(otp_router.router_epsg)
             # calculate the routes to the segments
             for (x, y) in destinations:
@@ -107,21 +116,35 @@ class Routing(Worker):
         otp_router.dump(self.otp_pickle_file)
 
     def recalculate(self):
+        self.log('lade gespeicherte Routen...')
         otp_router = OTPRouter.from_dump(self.otp_pickle_file)
 
         o_trans_nodes = otp_router.transfer_nodes
         for transfer_node in self.transfer_nodes:
-            o_trans_nodes[transfer_node.node_id] = transfer_node.weight
+            o_trans_nodes[transfer_node.node_id].weight = transfer_node.weight
+
+        self.log("verteile Verkehrsaufkommen...")
+        self.set_progress(30)
+        for way in self.ways:
+            nutzungsart = way.nutzungsart
+            miv_gesamt_new = way.miv_anteil * way.wege_gesamt / 100
+            areas_tou = self.areas.filter(nutzungsart=nutzungsart)
+            miv_gesamt_old = sum(area.wege_miv for area in areas_tou)
+            if miv_gesamt_old == 0:
+                continue
+            for area in areas_tou:
+                miv_new = miv_gesamt_new * area.wege_miv / miv_gesamt_old
+                otp_router.areas[area.id].trips = miv_new
 
         self.log("berechne Neugewichtung...")
-        self.set_progress(70)
+        self.set_progress(50)
         o_trans_nodes.assign_weights_to_routes()
         otp_router.calc_vertex_weights()
         self.log("schreibe Ergebnisse...")
+        self.set_progress(70)
         links_df = otp_router.get_polyline_features()
         self.links.delete()
         self.links.update_pandas(links_df)
         otp_router.nodes_have_been_weighted = True
         self._extent = otp_router.extent
         otp_router.dump(self.otp_pickle_file)
-
