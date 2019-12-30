@@ -45,12 +45,19 @@ class GeopackageTest(unittest.TestCase):
         self.table.where = 'value=5'
         assert len(self.table) == 2
 
+    def test_table_filter(self):
+        row = self.table.get(1)
+        assert len(self.table) == 4
+        assert row['uid'] == 1
+
     def test_feature_filter(self):
         features = self.table.features()
         assert len(features) == 4
         assert len(features.filter(value=0)) == 1
         assert len(features.filter(value=6)) == 1
+
         assert len(features.filter(value=5)) == 2
+
         assert len(features.filter(value__lt=4)) == 1
         assert len(features.filter(value__gt=7)) == 0
 
@@ -70,6 +77,7 @@ class GeopackageTest(unittest.TestCase):
         assert len(feat_f.filter(id=20)) == 0
         assert len(feat_f.filter(id__in=[1, 2])) == 2
 
+
     def test_feature_iterator(self):
         features = self.table.features()
         count = len(features)
@@ -84,6 +92,12 @@ class GeopackageTest(unittest.TestCase):
             for j, feat in enumerate(self.table.features()):
                 pass
             assert j == count - 1
+
+        filtered = features.filter(value=5)
+        assert len(filtered) == 2
+        # test that iteration doesn't break filter
+        [f for f in filtered]
+        assert len(filtered) == 2
 
     def test_cursor(self):
         for i, row in enumerate(self.table):
@@ -126,9 +140,11 @@ class GeopackageTest(unittest.TestCase):
             new_row = df_new[df_new['fid']==row['fid']]
             assert row['value'] == new_row['value'].values[0] / 2
 
-        # test unique key (value is not)
-        self.table.update_pandas(df_new, pkeys=['value'])
-
+        # test unique key (value is not unique)
+        self.assertRaises(
+            ValueError,
+            lambda: self.table.update_pandas(df_new, pkeys=['value']))
+        self.table.update_pandas(df_new, pkeys=['name'])
 
     def test_pandas_update(self):
         # update rows

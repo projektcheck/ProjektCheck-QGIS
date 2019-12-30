@@ -8,6 +8,7 @@ from projektcheck.base.geopackage import (Geopackage, Field)
 
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
+from projektcheck.domains.traffic.tables import Connectors
 from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
     Gewerbeanteile, Projektrahmendaten)
@@ -52,7 +53,7 @@ class Wohnen:
                                              id_teilflaeche=self.area.id)
             value = feature.we if feature else 0
             self.params.add(Param(
-                value, Slider(maximum=500),
+                value, Slider(maximum=999),
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )
@@ -545,6 +546,7 @@ class ProjectDefinitions(Domain):
 
     def load_content(self):
         self.areas = Teilflaechen.features()
+        self.connectors = Connectors.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:
@@ -598,6 +600,10 @@ class ProjectDefinitions(Domain):
                 self.ui.area_combo.currentIndex(), name)
             self.area.name = name
             self.area.save()
+            # update connector names
+            connector = self.connectors.get(id_teilflaeche=self.area.id)
+            connector.name_teilflaeche = self.area.name
+            connector.save()
             if self.typ:
                 self.typ.clear(self.area)
             self.setup_type_params()

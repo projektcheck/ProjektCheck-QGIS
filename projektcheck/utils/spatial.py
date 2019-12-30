@@ -36,7 +36,7 @@ def _get_distances(point, points):
 
 class Point(object):
     """A Point object
-    taken from ProjektCheck ArcGIS to be able to use same interface
+    taken from ProjektCheck Profi for ArcGIS to be able to use same interface
     """
     def __init__(self, x, y, id=None, epsg=4326):
         self.id = id

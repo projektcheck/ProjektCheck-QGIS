@@ -68,7 +68,7 @@ class FeatureCollection:
     def __next__(self):
         if self._it >= len(self._table):
             self._it = 0
-            self._table.reset()
+            self._table.reset_cursor()
             raise StopIteration
         else:
             row = next(self._table)

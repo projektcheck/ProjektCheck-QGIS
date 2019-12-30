@@ -51,6 +51,7 @@ class Layer(ABC):
 
     def zoom_to(self):
         canvas = iface.mapCanvas()
+        self.layer.updateExtents()
         canvas.setExtent(self.layer.extent())
 
     def remove(self):

@@ -8,7 +8,7 @@ from projektcheck.base.project import ProjectManager
 from projektcheck.base.domain import Worker
 from projektcheck.domains.definitions.tables import (Teilflaechen,
                                                      Projektrahmendaten)
-from projektcheck.domains.traffic.tables import TrafficConnector
+from projektcheck.domains.traffic.tables import Connectors
 from projektcheck.domains.marketcompetition.tables import Centers
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.utils.utils import get_ags
@@ -89,7 +89,7 @@ class ProjectInitialization(Worker):
                                 "als {} m sein!".format(max_dist))
         self.set_progress(50)
 
-        traffic_connectors = TrafficConnector.features(project=self.project,
+        traffic_connectors = Connectors.features(project=self.project,
                                                        create=True)
 
         self.log(f'Berechne Projektrahmendaten...')

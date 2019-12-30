@@ -3,6 +3,7 @@ from qgis.PyQt.QtCore import QThread
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
@@ -174,16 +175,17 @@ class ProgressDialog(Dialog):
             self.run()
 
     def success(self, result):
-        self.finished()
+        self._finished()
         self.progress(100)
         self.show_status('<br>fertig')
         if self.on_success:
             self.on_success(result)
 
-    def finished(self):
+    def _finished(self):
         #self.thread.quit()
         #self.thread.wait()
         #self.thread.deleteLater()
+        self.thread.deleteLater()
         self.timer.stop()
         self.close_button.setVisible(True)
         self.close_button.setEnabled(True)
@@ -195,7 +197,7 @@ class ProgressDialog(Dialog):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
         self.progress_bar.setStyleSheet(
             'QProgressBar::chunk { background-color: red; }')
-        self.finished()
+        self._finished()
 
     def show_status(self, text):
         self.log_edit.appendHtml(text)
@@ -226,7 +228,7 @@ class ProgressDialog(Dialog):
         self.thread.terminate()
         self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
         self.log_edit.moveCursor(QTextCursor.End)
-        self.finished()
+        self._finished()
 
     def update_timer(self):
         delta = datetime.datetime.now() - self.start_time

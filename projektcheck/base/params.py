@@ -3,7 +3,8 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
                           QLabel)
 from qgis.PyQt.QtGui import QFont, QIcon
-from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy, QPushButton
+from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
+                                 QPushButton, QLayoutItem)
 from typing import Union
 from collections import OrderedDict
 import math
@@ -241,7 +242,8 @@ class Params(QObject):
     '''
     changed = pyqtSignal()
 
-    def __init__(self, parent: QObject = None):
+    def __init__(self, parent: QObject = None,
+                 button_label: str = 'Editieren', editable: bool = True):
         '''
         Parameters
         ----------
@@ -252,16 +254,19 @@ class Params(QObject):
         super().__init__()
         self._params = OrderedDict()
         self._elements = []
+        self.button_label = button_label
         #self._dependencies = []
         self.parent = parent
         self.dialog = None
+        self.editable = editable
 
     #def add_dependency(self, dependency: Dependency):
         #self._dependencies.append(dependency)
         #for param in self._params.values():
             #dependency.add_param(param)
 
-    def add(self, element: Union[Param, Seperator, Title], name=''):
+    def add(self, element: Union[Param, Seperator, Title, QLayoutItem],
+            name=''):
         '''
         add an element (parameter or style element)
         elements will be rendered in order of addition
@@ -305,6 +310,10 @@ class Params(QObject):
             return row
 
         for element in self._elements:
+            if isinstance(element, QLayoutItem):
+                layout.addItem(element)
+                self.dialog.param_layout.addItem(element)
+                continue
             # overview
             if not getattr(element, 'hide_in_overview', None):
                 element.draw(layout)
@@ -314,8 +323,13 @@ class Params(QObject):
             else:
                 element.draw(self.dialog.param_layout)
 
+        self.parent.addLayout(layout, *args)
+
+        if not self.editable:
+            return
+
         row = QHBoxLayout()
-        button = QPushButton('Editieren')
+        button = QPushButton(self.button_label)
         icon = QIcon(os.path.join(settings.IMAGE_PATH, 'iconset_mob',
                                   '20190619_iconset_mob_edit_1.png'))
         button.setIcon(icon)
@@ -325,7 +339,6 @@ class Params(QObject):
         layout.addItem(
             QSpacerItem(10, 10, QSizePolicy.Fixed, QSizePolicy.Minimum))
         layout.addLayout(row)
-        self.parent.addLayout(layout, *args)
 
         button.clicked.connect(self.show_dialog)
 
@@ -334,7 +347,7 @@ class Params(QObject):
         close rendered parameters
         '''
         if self.dialog:
-            del self.dialog
+            del(self.dialog)
 
     def show_dialog(self):
         '''
@@ -367,6 +380,12 @@ class Params(QObject):
             self.add(value, name)
         else:
             self.__dict__[name] = value
+
+    def __getitem__(self, key):
+        return self._params.get(key, None)
+
+    def __setitem__(self, key, value):
+        self.add(value, key)
 
 
 class ParamCluster(Params):
