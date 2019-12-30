@@ -319,7 +319,7 @@ class Gewerbe:
             feature = self.gewerbeanteile.get(id_branche=branche.id,
                                               id_teilflaeche=self.area.id)
             value = feature.anteil_definition if feature else 0
-            slider = Slider(maximum=100, width=200)
+            slider = Slider(maximum=100, width=200, lockable=True)
             param = Param(
                 value,  slider, label=f'{branche.Name_Branche_ProjektCheck}',
                 unit='%'

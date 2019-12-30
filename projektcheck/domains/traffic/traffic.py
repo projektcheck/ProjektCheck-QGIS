@@ -108,7 +108,7 @@ class Traffic(Domain):
             node.save()
             param = Param(
                 perc,
-                Slider(maximum=100),
+                Slider(maximum=100, lockable=True),
                 label=node.name, unit='%'
             )
             self.params.add(param, name=node.name)

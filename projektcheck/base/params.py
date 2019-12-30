@@ -53,6 +53,10 @@ class Param(QObject):
         self._value_label = QLabel(self._v_repr(value))
 
     @property
+    def locked(self):
+        return self.input.locked
+
+    @property
     def value(self):
         return self._value
 
@@ -140,7 +144,7 @@ class SumDependency(Dependency):
                     max(abs(share), 1/math.pow(10, self.decimals)), share)
             distributed = 0
             for p in self._params:
-                if param == p:
+                if param == p or p.locked:
                     continue
                 # no equal share -> try to add complete missing amount
                 if not equally:
@@ -158,23 +162,20 @@ class SumDependency(Dependency):
                 if abs(distributed) >= abs(dif):
                     break
 
+        locked_value = sum(p.input.value for p in self._params if p.locked)
         current_total = sum(p.input.value for p in self._params)
-        dif = self.total - current_total
+        dif = self.total - current_total - locked_value
         # equal distribution of difference to target total
         distribute(dif)
 
-        # might happen that it still doesn't match -> force unequal distribution
-        # of remaining difference
-        current_total = sum(p.input.value for p in self._params)
-        dif = self.total - current_total
-        if dif != 0:
-            distribute(dif, equally=False)
+        # set value of currently changed param to exact difference
+        other_values = sum(p.input.value for p in self._params if p != param)
+        param.input.value = self.total - other_values
 
         # change order for next time, so that another input is raised first
         # ToDo: can hit param currently changed, then same input is changed
         # again next round
         self._params.append(self._params.pop(0))
-        print(sum(p.input.value for p in self._params))
 
 
 class Seperator:

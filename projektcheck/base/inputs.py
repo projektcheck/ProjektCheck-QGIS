@@ -1,8 +1,12 @@
 from abc import ABC
+import os
 from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
                           QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout,
-                          QCheckBox)
+                          QCheckBox, QPushButton)
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import pyqtSignal
+
+from settings import settings
 
 
 class InputType(QObject):
@@ -32,6 +36,11 @@ class InputType(QObject):
     def get_value(self):
         raise NotImplementedError
 
+    @property
+    def locked(self):
+        '''override function to implement a locked state'''
+        return False
+
 
 class Checkbox(InputType):
     '''
@@ -59,6 +68,7 @@ class Slider(InputType):
         super().__init__()
         self.minimum = minimum
         self.maximum = maximum
+        self.lockable = lockable
         self.step = step
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setMinimum(minimum)
@@ -70,6 +80,23 @@ class Slider(InputType):
         self.spinbox.setMaximum(maximum)
         self.spinbox.setSingleStep(step)
         self.spinbox.setFixedWidth(50)
+
+        if lockable:
+            self.lock_button = QPushButton()
+            self.lock_button.setCheckable(True)
+
+            def toggle_icon():
+                is_locked = self.lock_button.isChecked()
+                fn = '20190619_iconset_mob_lock_locked_02.png' if is_locked \
+                    else '20190619_iconset_mob_lock_unlocked_02.png'
+                self.slider.setEnabled(not is_locked)
+                self.spinbox.setEnabled(not is_locked)
+                icon_path = os.path.join(settings.IMAGE_PATH, 'iconset_mob', fn)
+                icon = QIcon(icon_path)
+                self.lock_button.setIcon(icon)
+            toggle_icon()
+            self.lock_button.clicked.connect(toggle_icon)
+
         self.slider.valueChanged.connect(
             lambda: self.set_value(self.slider.value()))
         self.spinbox.valueChanged.connect(
@@ -80,6 +107,7 @@ class Slider(InputType):
             lambda: self.changed.emit(self.get_value())
         )
 
+
     def set_value(self, value):
         for element in [self.slider, self.spinbox]:
             # avoid infinite recursion
@@ -87,10 +115,18 @@ class Slider(InputType):
             element.setValue(value or 0)
             element.blockSignals(False)
 
+    @property
+    def locked(self):
+        if not self.lockable:
+            return False
+        return self.lock_button.isChecked()
+
     def draw(self, layout):
         l = QHBoxLayout()
         l.addWidget(self.slider)
         l.addWidget(self.spinbox)
+        if self.lockable:
+            l.addWidget(self.lock_button)
         layout.addLayout(l)
 
     def get_value(self):

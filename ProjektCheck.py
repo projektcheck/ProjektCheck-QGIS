@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import (QSettings, QTranslator, qVersion,
                               QCoreApplication, Qt)
-from qgis.PyQt.QtGui import QIcon, QPixmap, QPalette, QBrush
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis import utils
 
