@@ -137,6 +137,8 @@ class SumDependency(Dependency):
     def on_change(self, param):
 
         def distribute(value, equally=True):
+            '''distribute given value to other (excl. the one currently changed)
+            parameters which are not locked'''
             share = round(dif / (len(self._params) - 1), self.decimals)
             if equally:
                 # equal share has to be different from zero (at least +-x.xxx1)
@@ -162,14 +164,14 @@ class SumDependency(Dependency):
                 if abs(distributed) >= abs(dif):
                     break
 
-        locked_value = sum(p.input.value for p in self._params if p.locked)
         current_total = sum(p.input.value for p in self._params)
-        dif = self.total - current_total - locked_value
+        dif = self.total - current_total
         # equal distribution of difference to target total
         distribute(dif)
 
         # set value of currently changed param to exact difference
         other_values = sum(p.input.value for p in self._params if p != param)
+        print(other_values)
         param.input.value = self.total - other_values
 
         # change order for next time, so that another input is raised first
