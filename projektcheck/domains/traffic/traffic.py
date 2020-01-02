@@ -28,6 +28,13 @@ class Traffic(Domain):
 
     layer_group = "Wirkungsbereich 3 - Verkehr im Umfeld"
 
+    @classmethod
+    def reset(cls, project=None):
+        if not project:
+            project = cls.project_manager.active_project
+        nodes = TransferNodes.features(project=project, create=True)
+        nodes.delete()
+
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_connector(self.ui.area_combo.currentData()))

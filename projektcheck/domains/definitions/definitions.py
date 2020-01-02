@@ -4,10 +4,9 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
 from projektcheck.base.params import (Params, Param, Title,
                                       Seperator, SumDependency)
 from projektcheck.base.domain import (Domain)
-from projektcheck.base.geopackage import (Geopackage, Field)
-
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
+from projektcheck.domains.traffic.traffic import Traffic
 from projektcheck.domains.traffic.tables import Connectors
 from projektcheck.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
@@ -99,6 +98,8 @@ class Wohnen:
         self.area.beginn_nutzung = self.params.beginn_nutzung.value
         self.area.aufsiedlungsdauer = self.params.aufsiedlungsdauer.value
         self.area.we_gesamt = we_sum
+
+        Traffic.reset()
 
         self.area.save()
 
@@ -392,6 +393,8 @@ class Gewerbe:
         self.set_percentages(self.area)
         self.set_ways(self.area)
 
+        Traffic.reset()
+
     def clear(self, area):
         self.gewerbeanteile.filter(id_teilflaeche=area.id).delete()
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
@@ -496,6 +499,8 @@ class Einzelhandel:
         # ToDo: create market if verkaufsflaeche lebensmittel
         #self.create_market()
         self.set_ways(self.area)
+
+        Traffic.reset()
 
     def clear(self, area):
         self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
@@ -612,6 +617,7 @@ class ProjectDefinitions(Domain):
                 self.typ.clear(self.area)
             self.setup_type_params()
             self.canvas.refreshAllLayers()
+            Traffic.reset()
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):

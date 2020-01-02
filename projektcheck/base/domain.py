@@ -33,6 +33,7 @@ class PCDockWidget(QObject):
     '''
     ui_file = None
     closingWidget = pyqtSignal()
+    project_manager = ProjectManager()
 
     def __init__(self, iface=None, canvas=None, position=Qt.RightDockWidgetArea):
         '''
@@ -44,7 +45,6 @@ class PCDockWidget(QObject):
             dock widget area to add widget to, by default Qt.RightDockWidgetArea
         '''
         super().__init__()
-        self.project_manager = ProjectManager()
         self.iface = iface or utils.iface
         self.canvas = canvas or self.iface.mapCanvas()
         self.initial_position = position
