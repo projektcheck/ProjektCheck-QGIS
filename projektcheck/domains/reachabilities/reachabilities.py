@@ -66,8 +66,11 @@ class Reachabilities(Domain):
         if layer.name() == 'Haltestellen':
             layer.removeSelection()
             layer.select(feature.id())
-            name = feature.attribute('name')
-            self.ui.stops_combo.setCurrentText(name)
+            fid = feature.id()
+            for idx in range(len(self.ui.stops_combo)):
+                if fid == self.ui.stops_combo.itemData(idx).id:
+                    break
+            self.ui.stops_combo.setCurrentIndex(idx)
 
     def toggle_stop(self, stop):
         if not stop:
