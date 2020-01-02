@@ -232,12 +232,12 @@ class BahnQuery(object):
 
 class StopScraper(Worker):
 
-    def __init__(self, project, parent=None):
+    def __init__(self, project, date=None, parent=None):
         super().__init__(parent=parent)
         self.haltestellen = Haltestellen.features(create=True, project=project)
         self.zentrale_orte = ZentraleOrte.features(create=True, project=project)
         self.project_frame = Projektrahmendaten.features(project=project)[0]
-        self.query = BahnQuery(date=next_working_day())
+        self.query = BahnQuery(date=date or next_working_day())
 
     def work(self):
         self.log('Berechne die zentralen Orte und Haltestellen '
@@ -342,14 +342,15 @@ class BahnRouter(Worker):
 
     times = range(9, 18)
 
-    def __init__(self, haltestelle, project, recalculate=False, parent=None):
+    def __init__(self, haltestelle, project, date=None, parent=None):
         super().__init__(parent=parent)
         self.origin = haltestelle
-        self.recalculate = recalculate
         self.haltestellen = Haltestellen.features(project=project)
         self.zentrale_orte = ZentraleOrte.features(project=project)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(project=project)
-        self.query = BahnQuery(date=next_working_day(), timeout=0.5)
+        if not date:
+            date = next_working_day()
+        self.query = BahnQuery(date=date, timeout=0.5)
 
     def work(self):
         self.log('Berechne Erreichbarkeit der Zentralen Orte <br> '
@@ -358,7 +359,6 @@ class BahnRouter(Worker):
 
     def routing(self):
         df_centers = self.zentrale_orte.to_pandas()
-        df_calculated = self.erreichbarkeiten.to_pandas()
         df_centers['update'] = False
         n_centers = len(df_centers)
 
@@ -371,15 +371,6 @@ class BahnRouter(Worker):
             self.log(f'  - {destination.name} ({i+1}/{n_centers})')
 
             progress += prog_share
-            if not self.recalculate:
-                already_calculated = (
-                    (df_calculated['id_origin'] == self.origin.id).values &
-                    (df_calculated['id_destination'] == id_destination).values
-                ).sum() > 0
-                if already_calculated:
-                    self.log('bereits berechnet, wird übersprungen')
-                    self.set_progress(progress)
-                    continue
 
             try:
                 (duration, departure,

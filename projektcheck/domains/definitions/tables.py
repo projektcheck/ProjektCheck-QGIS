@@ -7,6 +7,7 @@ class Projektrahmendaten(ProjectTable):
     gemeinde_name = Field(str, '')
     gemeinde_typ = Field(int, 0)
     projekt_name = Field(str, '')
+    haltestellen_berechnet = Field(str, '')
 
     class Meta:
         workspace = 'definitions'

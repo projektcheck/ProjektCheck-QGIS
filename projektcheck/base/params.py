@@ -97,7 +97,7 @@ class Param(QObject):
         label = QLabel(self.label)
         row.addWidget(label)
         row.addItem(
-            QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+            QSpacerItem(0, 0, QSizePolicy.Expanding))
         if edit:
             self.input.draw(row)
         else:

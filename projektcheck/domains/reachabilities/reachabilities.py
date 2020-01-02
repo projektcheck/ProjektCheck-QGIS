@@ -6,6 +6,7 @@ from qgis.PyQt.QtGui import QCursor
 from projektcheck.base.domain import Domain
 from projektcheck.base.tools import FeaturePicker
 from projektcheck.base.project import ProjectLayer
+from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.domains.reachabilities.bahn_query import (
     BahnQuery, StopScraper, BahnRouter, next_working_day)
 from projektcheck.domains.reachabilities.tables import (
@@ -15,8 +16,9 @@ from projektcheck.domains.reachabilities.geoserver_query import (
 from projektcheck.domains.reachabilities.routing_query import (
     Isochrones)
 from projektcheck.base.dialogs import ProgressDialog
-from projektcheck.utils.utils import add_selection_icons, set_category_renderer
-from settings import settings
+from projektcheck.utils.utils import set_category_renderer
+
+#from settings import settings
 
 
 class Reachabilities(Domain):
@@ -27,6 +29,7 @@ class Reachabilities(Domain):
     ui_icon = "images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png"
 
     layer_group = "Wirkungsbereich 2 - Erreichbarkeit"
+    date_format = "%d.%m.%Y"
 
     def setupUi(self):
 
@@ -54,13 +57,10 @@ class Reachabilities(Domain):
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
         self.einrichtungen = Einrichtungen.features(create=True)
         self.isochronen = Isochronen.features(create=True)
+        self.project_frame = Projektrahmendaten.features()[0]
         self.stops_layer = None
 
-        if len(self.haltestellen) == 0:
-            self.ui.stops_group.setVisible(False)
-            self.ui.recalculatestops_check.setChecked(True)
-        else:
-            self.fill_haltestellen()
+        self.fill_haltestellen()
 
     def feature_picked(self, layer, feature):
         if layer.name() == 'Haltestellen':
@@ -70,26 +70,37 @@ class Reachabilities(Domain):
             self.ui.stops_combo.setCurrentText(name)
 
     def toggle_stop(self, stop):
-        if not self.stops_layer or not stop:
+        if not stop:
             return
-        self.stops_layer.removeSelection()
-        self.stops_layer.select(stop.id)
+        already_calculated = stop.berechnet != '' and stop.berechnet is not None
+        label = f'Stand {stop.berechnet}' if already_calculated \
+            else 'noch nicht berechnet'
+        self.ui.stop_reach_status_label.setText(label)
+        self.ui.recalculate_time_check.setChecked(not already_calculated)
+        if self.stops_layer:
+            self.stops_layer.removeSelection()
+            self.stops_layer.select(stop.id)
 
     def query_stops(self):
         if not self.ui.recalculatestops_check.isChecked():
             self.draw_haltestellen()
             return
 
-        job = StopScraper(self.project, parent=self.ui)
+        date = next_working_day()
+        job = StopScraper(self.project, date=date, parent=self.ui)
+        self.project_frame.haltestellen_berechnet = ''
+        self.project_frame.save()
 
-        def on_success(project):
+        def on_success(project, date):
             self.draw_haltestellen()
-            self.ui.stops_group.setVisible(True)
-            self.ui.recalculatestops_check.setChecked(False)
+            self.project_frame.haltestellen_berechnet = \
+                date.strftime(self.date_format)
+            self.project_frame.save()
             self.fill_haltestellen()
 
-        dialog = ProgressDialog(job, parent=self.ui,
-                                on_success=on_success)
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=lambda project: on_success(project, date))
         dialog.show()
 
     def zoom_to(self, feature):
@@ -104,6 +115,13 @@ class Reachabilities(Domain):
         #self.canvas.zoomToSelected(layer)
 
     def fill_haltestellen(self):
+        last_calc = self.project_frame.haltestellen_berechnet
+        already_calculated = (last_calc != '' and last_calc is not None)
+        label = f'Stand {last_calc}' if already_calculated\
+            else 'noch nicht berechnet'
+        self.ui.stops_group.setVisible(already_calculated)
+        self.ui.recalculatestops_check.setChecked(not already_calculated)
+        self.ui.stops_status_label.setText(label)
         self.ui.stops_combo.blockSignals(True)
         self.ui.stops_combo.clear()
         stops = [stop for stop in self.haltestellen]
@@ -112,8 +130,9 @@ class Reachabilities(Domain):
             #if stop.abfahrten > 0:
             self.ui.stops_combo.addItem(
                 f'{stop.name} ({stop.abfahrten} Abfahrten)', stop)
-        self.haltestellen.filter()
+            #self.ui.stops_status_label
         self.ui.stops_combo.blockSignals(False)
+        self.toggle_stop(self.ui.stops_combo.currentData())
 
     def draw_haltestellen(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -144,16 +163,27 @@ class Reachabilities(Domain):
 
     def calculate_time(self):
         stop = self.ui.stops_combo.currentData()
-        recalculate = self.ui.recalculate_check.isChecked()
-        job = BahnRouter(stop, self.project, parent=self.ui,
-                         recalculate=recalculate)
-
-        def on_success(project, stop):
+        if not stop:
+            return
+        recalculate = self.ui.recalculate_time_check.isChecked()
+        if not recalculate:
             self.draw_erreichbarkeiten(stop)
+            return
+        date = next_working_day()
+        stop.berechnet = ''
+        stop.save()
+        job = BahnRouter(stop, self.project, date=date, parent=self.ui)
+
+        def on_success(project, stop, date):
+            self.draw_erreichbarkeiten(stop)
+            self.ui.recalculate_time_check.setChecked(False)
+            stop.berechnet = date.strftime(self.date_format)
+            stop.save()
+            #stop_reach_status_label
 
         dialog = ProgressDialog(
             job, parent=self.ui,
-            on_success=lambda project: on_success(project, stop))
+            on_success=lambda project: on_success(project, stop, date))
         dialog.show()
 
     def draw_erreichbarkeiten(self, stop):

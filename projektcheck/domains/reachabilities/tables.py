@@ -1,6 +1,7 @@
 from projektcheck.base.project import ProjectTable
 from projektcheck.base.database import Field
 from settings import settings
+import datetime
 
 
 class ZentraleOrte(ProjectTable):
@@ -19,6 +20,7 @@ class Haltestellen(ProjectTable):
     id_bahn = Field(int, 0)
     flaechenzugehoerig = Field(bool, False)
     name = Field(str, '')
+    berechnet = Field(str, '')
 
     class Meta:
         workspace = 'erreichbarkeiten'

@@ -6,6 +6,7 @@ from typing import Union
 from collections import OrderedDict
 import shutil
 import numpy as np
+import datetime
 
 from projektcheck.base.database import (Database, Table, Workspace, Feature,
                                         Field, FeatureCollection)
@@ -16,7 +17,8 @@ DATATYPES = {
     int: ogr.OFTInteger64,
     bool: ogr.OFTInteger,
     float: ogr.OFTReal,
-    str: ogr.OFTString
+    str: ogr.OFTString,
+    datetime.date: ogr.OFTDateTime
 }
 
 class GeopackageWorkspace(Workspace):
@@ -273,6 +275,8 @@ class GeopackageTable(Table):
             t = defn.GetType()
             datatype = rev_types[t] if t in rev_types else None
             default = defn.GetDefault()
+            if default == 'None':
+                default = None
             # GetDefault returns strings -> need to cast
             if datatype and default is not None:
                 if datatype == bool:
@@ -317,6 +321,9 @@ class GeopackageTable(Table):
         if name not in [f.name for f in self.fields()]:
             f = ogr.FieldDefn(name, dt)
             default = field.default
+            # string default needs enclosing ""
+            if field.datatype == str and not default.startswith('"'):
+                default = f'"{default}"'
             f.SetDefault(str(default))
             self._layer.CreateField(f)
             # set all existing rows to default value
