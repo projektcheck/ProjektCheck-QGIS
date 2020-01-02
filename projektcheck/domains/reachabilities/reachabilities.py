@@ -49,12 +49,18 @@ class Reachabilities(Domain):
             lambda: self.draw_haltestellen(zoom_to=False))
 
     def load_content(self):
-        self.haltestellen = Haltestellen.features(create=True)
+        self.haltestellen = Haltestellen.features(create=True)\
+            .filter(flaechenzugehoerig=True, abfahrten__gt=0)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
         self.einrichtungen = Einrichtungen.features(create=True)
         self.isochronen = Isochronen.features(create=True)
-        self.fill_haltestellen()
         self.stops_layer = None
+
+        if len(self.haltestellen) == 0:
+            self.ui.stops_group.setVisible(False)
+            self.ui.recalculatestops_check.setChecked(True)
+        else:
+            self.fill_haltestellen()
 
     def feature_picked(self, layer, feature):
         if layer.name() == 'Haltestellen':
@@ -70,10 +76,16 @@ class Reachabilities(Domain):
         self.stops_layer.select(stop.id)
 
     def query_stops(self):
+        if not self.ui.recalculatestops_check.isChecked():
+            self.draw_haltestellen()
+            return
+
         job = StopScraper(self.project, parent=self.ui)
 
         def on_success(project):
             self.draw_haltestellen()
+            self.ui.stops_group.setVisible(True)
+            self.ui.recalculatestops_check.setChecked(False)
             self.fill_haltestellen()
 
         dialog = ProgressDialog(job, parent=self.ui,
@@ -94,10 +106,12 @@ class Reachabilities(Domain):
     def fill_haltestellen(self):
         self.ui.stops_combo.blockSignals(True)
         self.ui.stops_combo.clear()
-        self.haltestellen.filter(flaechenzugehoerig=True)
-        for stop in self.haltestellen:
-            if stop.abfahrten > 0:
-                self.ui.stops_combo.addItem(stop.name, stop)
+        stops = [stop for stop in self.haltestellen]
+        stops.sort(key=lambda x: x.name)
+        for stop in stops:
+            #if stop.abfahrten > 0:
+            self.ui.stops_combo.addItem(
+                f'{stop.name} ({stop.abfahrten} Abfahrten)', stop)
         self.haltestellen.filter()
         self.ui.stops_combo.blockSignals(False)
 
