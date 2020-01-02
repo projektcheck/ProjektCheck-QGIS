@@ -550,7 +550,10 @@ class ProjectDefinitions(Domain):
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:
-            self.ui.area_combo.addItem(area.name, area.id)
+            self.ui.area_combo.addItem(
+                f'{area.name} '
+                f'({Nutzungsart(area.nutzungsart).name.capitalize()})',
+                area.id)
         self.ui.area_combo.blockSignals(False)
 
         type_layout = self.ui.type_parameter_group.layout()
@@ -594,10 +597,11 @@ class ProjectDefinitions(Domain):
 
         def type_changed():
             name = self.params.name.value
-            self.area.nutzungsart = Nutzungsart[
-                self.params.typ.value.upper()].value
+            nutzungsart = self.params.typ.value
+            self.area.nutzungsart = Nutzungsart[nutzungsart.upper()].value
             self.ui.area_combo.setItemText(
-                self.ui.area_combo.currentIndex(), name)
+                self.ui.area_combo.currentIndex(),
+                f'{name} ({nutzungsart.capitalize()})')
             self.area.name = name
             self.area.save()
             # update connector names
