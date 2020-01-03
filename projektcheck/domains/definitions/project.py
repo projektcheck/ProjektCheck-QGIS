@@ -3,6 +3,7 @@ from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
                        QgsGeometry)
 from datetime import datetime
 import numpy as np
+import shutil
 
 from projektcheck.base.project import ProjectManager
 from projektcheck.base.domain import Worker
@@ -151,3 +152,26 @@ class ProjectInitialization(Worker):
         return self.project
 
 
+class CloneProject(Worker):
+    def __init__(self, project_name, project, parent=None):
+        super().__init__(parent=parent)
+        self.project_name = project_name
+        self.origin_project = project
+        self.project_manager = ProjectManager()
+
+    def work(self):
+
+        cloned_project = self.project_manager.create_project(
+            self.project_name, create_folder=False)
+        self.log('Kopiere Projektordner...')
+
+        # copy template folder
+        try:
+            shutil.copytree(self.origin_project.path, cloned_project.path)
+        except Exception as e:
+            self.error.emit(str(e))
+            self.project_manager.remove_project(self.project_name)
+            return
+        self.log('Neues Projekt erfolgreich angelegt '
+                 f'unter {cloned_project.path}')
+        return cloned_project

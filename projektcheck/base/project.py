@@ -208,7 +208,7 @@ class ProjectManager:
             project = Project(name)
             self._projects[project.name] = project
 
-    def create_project(self, name):
+    def create_project(self, name, create_folder=True):
         '''
         create a new project
 
@@ -224,7 +224,7 @@ class ProjectManager:
         self._projects[project.name] = project
         #shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
                         #target_folder)
-        if not os.path.exists(target_folder):
+        if create_folder and not os.path.exists(target_folder):
             os.mkdir(target_folder)
         return project
 

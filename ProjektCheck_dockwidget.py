@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import subprocess
-from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtWidgets import QAction, QMenu, QInputDialog, QMessageBox
+from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsVectorLayer, QgsProject
+from qgis.core import  QgsProject
 
 from projektcheck.base.domain import PCDockWidget
 from projektcheck.base.dialogs import (SettingsDialog, NewProjectDialog,
@@ -14,7 +12,8 @@ from projektcheck.base.project import (ProjectLayer, OSMBackgroundLayer,
                                        TerrestrisBackgroundLayer)
 from projektcheck.base.database import Workspace
 from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.domains.definitions.project import ProjectInitialization
+from projektcheck.domains.definitions.project import (ProjectInitialization,
+                                                      CloneProject)
 from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
                                   Traffic, Reachabilities, Ecology,
                                   LandUse, InfrastructuralCosts,
@@ -95,6 +94,39 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 self.project_manager.remove_project(project)
                 self.canvas.refreshAllLayers()
         self.ui.remove_project_button.clicked.connect(remove_project)
+
+        def clone_project():
+            project = self.project_manager.active_project
+            if not project:
+                return
+            name = f'{project.name}_kopie'
+            existing_names = [p.name for p in self.project_manager.projects]
+            while True:
+                name, ok = QInputDialog.getText(
+                    self.ui, f'{project.name} kopieren',
+                    'Name des neuen Projekts', text=name)
+                if ok:
+                    if name in existing_names:
+                        QMessageBox.warning(
+                            self.ui, 'Hinweis',
+                            'Ein Projekt mit diesem Namen ist '
+                            'bereits vorhanden')
+                        continue
+
+                    job = CloneProject(name, project, parent=self.ui)
+                    def on_success(project):
+                        self.ui.project_combo.addItem(project.name, project)
+                        self.ui.project_combo.setCurrentIndex(
+                            self.ui.project_combo.count() - 1)
+                        self.project_manager.active_project = project
+
+                    dialog = ProgressDialog(job, parent=self.ui,
+                                            on_success=on_success)
+                    dialog.show()
+                break
+
+        self.ui.clone_project_button.clicked.connect(clone_project)
+
 
         self.setup_projects()
 

@@ -178,7 +178,7 @@ class ProgressDialog(Dialog):
         self._finished()
         self.progress(100)
         self.show_status('<br>fertig')
-        if self.on_success:
+        if self.on_success and not self.error:
             self.on_success(result)
 
     def _finished(self):
@@ -197,6 +197,7 @@ class ProgressDialog(Dialog):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
         self.progress_bar.setStyleSheet(
             'QProgressBar::chunk { background-color: red; }')
+        self.error = True
         self._finished()
 
     def show_status(self, text):
@@ -216,6 +217,7 @@ class ProgressDialog(Dialog):
 
     # task needs to be overridden
     def run(self):
+        self.error = False
         self.start_timer()
         self.stop_button.setVisible(True)
         self.start_button.setVisible(False)
