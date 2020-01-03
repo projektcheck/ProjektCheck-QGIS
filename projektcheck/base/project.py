@@ -348,10 +348,18 @@ class ProjectLayer(Layer):
     def __init__(self, layername, data_path, groupname='', project=None,
                  prepend=True):
         self.project = project or ProjectManager().active_project
-        groupname = f'{self.project.groupname}/{groupname}'
+        groupname = f'{self.project.groupname}/{groupname}' if groupname \
+            else self.project.groupname
         super().__init__(layername, data_path, prepend=prepend,
                          groupname=groupname)
         self.root.setItemVisibilityChecked(True)
+
+    @classmethod
+    def find(cls, label, groupname='', project=None):
+        project = project or ProjectManager().active_project
+        groupname = f'{project.groupname}/{groupname}' if groupname \
+            else project.groupname
+        return Layer.find(label, groupname=groupname)
 
     def draw(self, style_file=None, label='', checked=True, filter=None,
              read_only=True):

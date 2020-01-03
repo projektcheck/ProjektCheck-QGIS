@@ -27,6 +27,26 @@ class Layer(ABC):
             group = nest_groups(self.root, groupnames, prepend=prepend)
             self.root = group
 
+    @classmethod
+    def find(self, label, groupname=''):
+        root = QgsProject.instance().layerTreeRoot()
+        if groupname:
+            groupnames = groupname.split('/')
+            while groupnames:
+                g = groupnames.pop()
+                root = root.findGroup(g)
+
+        def deep_find(node, label):
+            found = []
+            for child in node.children():
+                if child.name() == label:
+                    found.append(child)
+                found.extend(deep_find(child, label))
+            return found
+
+        found = deep_find(root, label)
+        return found
+
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None):
         # ToDo: force redraw (delete and add)
