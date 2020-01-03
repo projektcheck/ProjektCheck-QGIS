@@ -75,7 +75,8 @@ class Reachabilities(Domain):
     def toggle_stop(self, stop):
         if not stop:
             return
-        already_calculated = stop.berechnet != '' and stop.berechnet is not None
+        already_calculated = (stop.berechnet not in ['', '""']
+                              and stop.berechnet is not None)
         label = f'Stand {stop.berechnet}' if already_calculated \
             else 'noch nicht berechnet'
         self.ui.stop_reach_status_label.setText(label)
@@ -119,7 +120,8 @@ class Reachabilities(Domain):
 
     def fill_haltestellen(self):
         last_calc = self.project_frame.haltestellen_berechnet
-        already_calculated = (last_calc != '' and last_calc is not None)
+        already_calculated = (last_calc not in ['', '""']
+                              and last_calc is not None)
         label = f'Stand {last_calc}' if already_calculated\
             else 'noch nicht berechnet'
         self.ui.stops_group.setVisible(already_calculated)

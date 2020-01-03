@@ -3,7 +3,8 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
                                       Slider, DoubleSpinBox)
 from projektcheck.base.params import (Params, Param, Title,
                                       Seperator, SumDependency)
-from projektcheck.base.domain import (Domain)
+from projektcheck.base.domain import Domain
+from projektcheck.base.project import ProjectLayer
 from projektcheck.utils.utils import clearLayout
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.domains.traffic.traffic import Traffic
@@ -547,7 +548,8 @@ class ProjectDefinitions(Domain):
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
 
     def setupUi(self):
-        self.ui.area_combo.currentIndexChanged.connect(self.change_area)
+        self.ui.area_combo.currentIndexChanged.connect(
+            lambda: self.change_area())
 
     def load_content(self):
         self.areas = Teilflaechen.features()
@@ -558,7 +560,7 @@ class ProjectDefinitions(Domain):
             self.ui.area_combo.addItem(
                 f'{area.name} '
                 f'({Nutzungsart(area.nutzungsart).name.capitalize()})',
-                area.id)
+                area)
         self.ui.area_combo.blockSignals(False)
 
         type_layout = self.ui.type_parameter_group.layout()
@@ -569,17 +571,24 @@ class ProjectDefinitions(Domain):
             'Einzelhandel': Einzelhandel(self.basedata, type_layout)
         }
         self.typ = None
-        self.setup_type()
-        self.setup_type_params()
 
-    def change_area(self, index):
+        self.change_area()
+
+    def change_area(self):
+
+        self.area = self.ui.area_combo.itemData(
+            self.ui.area_combo.currentIndex())
+
+        output = ProjectLayer.find('Nutzungen des Plangebiets')
+        if output:
+            layer = output[0].layer()
+            layer.removeSelection()
+            layer.select(self.area.id)
+
         self.setup_type()
         self.setup_type_params()
 
     def setup_type(self):
-
-        area_id = self.ui.area_combo.itemData(self.ui.area_combo.currentIndex())
-        self.area = self.areas.get(id=area_id)
         layout = self.ui.parameter_group.layout()
         clearLayout(layout)
         self.params = Params(layout)
@@ -631,6 +640,10 @@ class ProjectDefinitions(Domain):
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
+        output = ProjectLayer.find('Nutzungen des Plangebiets')
+        if output:
+            layer = output[0].layer()
+            layer.removeSelection()
         if hasattr(self, 'areas'):
             self.areas._table.workspace.close()
         super().close()

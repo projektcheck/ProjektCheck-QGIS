@@ -35,7 +35,6 @@ class ProjectInitialization(Worker):
             raise e
 
     def create_project(self):
-
         self.project = self.project_manager.create_project(self.project_name)
         self.project_areas = None
         source_crs = self.area_layer.crs()
