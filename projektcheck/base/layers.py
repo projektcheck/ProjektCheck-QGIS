@@ -38,10 +38,11 @@ class Layer(ABC):
 
         def deep_find(node, label):
             found = []
-            for child in node.children():
-                if child.name() == label:
-                    found.append(child)
-                found.extend(deep_find(child, label))
+            if node:
+                for child in node.children():
+                    if child.name() == label:
+                        found.append(child)
+                    found.extend(deep_find(child, label))
             return found
 
         found = deep_find(root, label)

@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>553</width>
-         <height>889</height>
+         <width>559</width>
+         <height>907</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -78,11 +78,11 @@ padding: 2px;
            <string>Schutzgebiete / unzerschnittene Räume anzeigen</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <widget class="QPushButton" name="pushButton_35">
+            <widget class="QPushButton" name="nature_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>

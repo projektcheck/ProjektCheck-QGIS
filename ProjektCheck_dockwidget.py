@@ -217,8 +217,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
+        if not project:
+            return
         try:
-            active_project = self.project_manager.active_project
+            #active_project = self.project_manager.active_project
             #if active_project:
                 #active_project.close()
             if getattr(self, 'project_definitions', None):

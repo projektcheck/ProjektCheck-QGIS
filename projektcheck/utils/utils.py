@@ -13,7 +13,7 @@ def interpolate(start, end, step, n_steps):
     return (end - start) * step / n_steps + start
 
 def set_category_renderer(layer, column, start_color, end_color,
-                      unit=''):
+                          unit=''):
     '''
     colors - rgb tuple
     '''
