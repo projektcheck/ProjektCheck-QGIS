@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>559</width>
-         <height>907</height>
+         <width>546</width>
+         <height>929</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -115,7 +115,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_34">
+            <widget class="QPushButton" name="landscape_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -155,7 +155,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_44">
+            <widget class="QPushButton" name="spaces_100_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -188,7 +188,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_40">
+            <widget class="QPushButton" name="spaces_50_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -221,7 +221,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_43">
+            <widget class="QPushButton" name="spaces_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -261,7 +261,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_36">
+            <widget class="QPushButton" name="woods_50_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -294,7 +294,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_33">
+            <widget class="QPushButton" name="woods_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -335,7 +335,7 @@ padding: 2px;
            <string>Leistungsfähigkeit des Bodens</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -435,7 +435,7 @@ padding: 2px;
             </layout>
            </item>
            <item>
-            <widget class="QFrame" name="frame">
+            <widget class="QFrame" name="paint_tool_frame">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -444,59 +444,7 @@ padding: 2px;
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QPushButton" name="pushButton_12">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
-                  <property name="text">
-                   <string>überbaute Flächen</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</normaloff>
-                    <normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="autoExclusive">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
                 <item>
                  <widget class="QRadioButton" name="radioButton">
                   <property name="sizePolicy">
@@ -511,6 +459,12 @@ padding: 2px;
                     <height>0</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="toolTip">
                    <string>dieses besser als Slider / Switch (???) Kann Christoph machen!</string>
                   </property>
@@ -522,66 +476,10 @@ padding: 2px;
                   </property>
                  </widget>
                 </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QPushButton" name="pushButton_14">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
-                  <property name="text">
-                   <string>natürliche Wasserfläche</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
-                    <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="autoExclusive">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                 <item>
                  <widget class="QRadioButton" name="radioButton_2">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -594,9 +492,15 @@ padding: 2px;
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>60</width>
+                    <width>16777215</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="toolTip">
                    <string>dieses besser als Slider / Switch (???) Kann Christoph machen!</string>
@@ -606,7 +510,108 @@ padding: 2px;
                   </property>
                  </widget>
                 </item>
+                <item>
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
                </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>10</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_12">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="text">
+                 <string>überbaute Flächen</string>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</normaloff>
+                  <normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>true</bool>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_14">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="text">
+                 <string>natürliche Wasserfläche</string>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
+                  <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>true</bool>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="pushButton_15">
@@ -969,10 +974,52 @@ padding: 2px;
                </widget>
               </item>
               <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <property name="topMargin">
                  <number>0</number>
                 </property>
+                <item>
+                 <widget class="QPushButton" name="pushButton_26">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="text">
+                   <string>Zeichnung auswerten</string>
+                  </property>
+                  <property name="icon">
+                   <iconset>
+                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <spacer name="horizontalSpacer_4">
                   <property name="orientation">
@@ -1003,29 +1050,6 @@ padding: 2px;
                   <property name="icon">
                    <iconset>
                     <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_26">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="text">
-                   <string>Zeichnung auswerten</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -1061,6 +1085,12 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -1108,6 +1138,12 @@ padding: 2px;
                 <iconset>
                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
                </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item>
@@ -1137,6 +1173,12 @@ padding: 2px;
                <property name="icon">
                 <iconset>
                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -1210,6 +1252,12 @@ padding: 2px;
          <iconset>
           <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
        </widget>
       </item>
      </layout>
@@ -1230,12 +1278,12 @@ padding: 2px;
   <connection>
    <sender>pushButton_13</sender>
    <signal>toggled(bool)</signal>
-   <receiver>frame</receiver>
+   <receiver>paint_tool_frame</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>404</y>
+     <x>140</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
      <x>225</x>
