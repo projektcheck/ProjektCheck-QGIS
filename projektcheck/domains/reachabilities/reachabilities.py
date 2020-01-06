@@ -77,7 +77,7 @@ class Reachabilities(Domain):
             return
         already_calculated = (stop.berechnet not in ['', '""']
                               and stop.berechnet is not None)
-        label = f'Stand {stop.berechnet}' if already_calculated \
+        label = f'Auswertungstag {stop.berechnet}' if already_calculated \
             else 'noch nicht berechnet'
         self.ui.stop_reach_status_label.setText(label)
         self.ui.recalculate_time_check.setChecked(not already_calculated)
@@ -122,7 +122,7 @@ class Reachabilities(Domain):
         last_calc = self.project_frame.haltestellen_berechnet
         already_calculated = (last_calc not in ['', '""']
                               and last_calc is not None)
-        label = f'Stand {last_calc}' if already_calculated\
+        label = f'Auswertungstag {last_calc}' if already_calculated\
             else 'noch nicht berechnet'
         self.ui.stops_group.setVisible(already_calculated)
         self.ui.recalculatestops_check.setChecked(not already_calculated)

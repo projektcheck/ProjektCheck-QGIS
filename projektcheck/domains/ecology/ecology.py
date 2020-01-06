@@ -30,9 +30,9 @@ class Ecology(Domain):
     ]
     spaces_layers = [
         ('Unzerschnittene Freiräume > 100m²',
-        f'url={ioer}MAP=U04RG_wms&layers=U03RG_2014_100m'),
+        f'url={ioer}MAP=U04RG_wms&layers=U04RG_2014_100m'),
         ('Unzerschnittene Freiräume > 50m²',
-        f'url={ioer}MAP=U03RG_wms&layers=U04RG_2014_100m'),
+        f'url={ioer}MAP=U03RG_wms&layers=U03RG_2014_100m'),
         ('Anteil Freiraumfläche an Gebietsfläche',
         f'url={ioer}MAP=F01RG_wms&layers=F01RG_2018_100m')
     ]
@@ -49,30 +49,37 @@ class Ecology(Domain):
             for name, url in layers:
                 self.add_wms_layer( name, url, parent_group=parent_group)
 
+        self.ui.nature_button.setCheckable(False)
         self.ui.nature_button.clicked.connect(
             lambda: add_layer_from_dict(
                 self.nature_layers, parent_group='Natur- und Artenschutz')
         )
+        self.ui.landscape_button.setCheckable(False)
         self.ui.landscape_button.clicked.connect(
             lambda: add_layer_from_dict(
                 self.landscape_layers, parent_group='Landschaftsschutz')
         )
+        self.ui.spaces_100_button.setCheckable(False)
         name_s100, url_s100 = self.spaces_layers[0]
         self.ui.spaces_100_button.clicked.connect(
             lambda: self.add_wms_layer(name_s100, url_s100)
         )
+        self.ui.spaces_50_button.setCheckable(False)
         name_s50, url_s50 = self.spaces_layers[1]
         self.ui.spaces_50_button.clicked.connect(
             lambda: self.add_wms_layer(name_s50, url_s50)
         )
+        self.ui.spaces_button.setCheckable(False)
         name_s, url_s = self.spaces_layers[2]
         self.ui.spaces_button.clicked.connect(
             lambda: self.add_wms_layer(name_s, url_s)
         )
+        self.ui.woods_50_button.setCheckable(False)
         name_w50, url_w50 = self.wood_layers[0]
         self.ui.woods_50_button.clicked.connect(
             lambda: self.add_wms_layer(name_w50, url_w50)
         )
+        self.ui.woods_button.setCheckable(False)
         name_w, url_w = self.wood_layers[1]
         self.ui.woods_button.clicked.connect(
             lambda: self.add_wms_layer(name_w, url_w)
