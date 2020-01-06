@@ -97,5 +97,8 @@ class Isochrones(Worker):
             iso_poly = query.get_isochrone(centroid, epsg,
                                            mode, sec, walk_speed)
             geom = ogr.CreateGeometryFromJson(json.dumps(iso_poly))
-            self.isochronen.add(modus=self.modus, sekunden=sec, geom=geom)
+            self.isochronen.add(modus=self.modus,
+                                sekunden=sec,
+                                minuten=round(sec/60, 1),
+                                geom=geom)
             self.set_progress(100 * (self.n_steps - i + 1) / self.n_steps)

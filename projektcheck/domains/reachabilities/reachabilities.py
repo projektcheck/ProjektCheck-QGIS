@@ -26,9 +26,9 @@ class Reachabilities(Domain):
 
     ui_label = 'Erreichbarkeiten'
     ui_file = 'ProjektCheck_dockwidget_analysis_02-Err.ui'
-    ui_icon = "images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png"
+    ui_icon = 'images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png'
 
-    layer_group = "Wirkungsbereich 2 - Erreichbarkeit"
+    layer_group = 'Wirkungsbereich 2 - Erreichbarkeit'
     date_format = "%d.%m.%Y"
 
     def setupUi(self):
@@ -250,10 +250,9 @@ class Reachabilities(Domain):
         layer = output.draw(label=modus, filter=f'modus="{modus}"')
         output.zoom_to()
         df = self.isochronen.to_pandas()
-        values = df['sekunden'].unique()
-        set_category_renderer(layer, 'sekunden',
+        set_category_renderer(layer, 'minuten',
                               (255, 255, 255), end_color,
-                              unit='Sekunden')
+                              unit='Minuten')
         layer.setOpacity(0.8)
         layer.triggerRepaint()
 

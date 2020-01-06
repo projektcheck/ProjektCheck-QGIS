@@ -52,6 +52,7 @@ class Einrichtungen(ProjectTable):
 class Isochronen(ProjectTable):
 
     sekunden = Field(int, 0)
+    minuten = Field(float, 0)
     modus = Field(str, '')
 
     class Meta:
