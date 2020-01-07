@@ -73,8 +73,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>447</width>
-         <height>734</height>
+         <width>441</width>
+         <height>716</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -106,6 +106,94 @@ padding: 2px;
             <number>9</number>
            </property>
            <item>
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+              </font>
+             </property>
+             <property name="text">
+              <string>ÖPNVKarte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="oepnvkarte_button_checkable">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>ÖPNVKarte anzeigen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_02.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_01.png</normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_02.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="oepnvkarte_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>ÖPNVKarte anzeigen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_03.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_03.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLabel" name="label_2">
              <property name="font">
               <font>
@@ -118,7 +206,7 @@ padding: 2px;
               </font>
              </property>
              <property name="text">
-              <string>Haltestellen im Umfeld</string>
+              <string>Haltestellen mit Anzahl der Abfahrten im Umfeld</string>
              </property>
             </widget>
            </item>
@@ -141,8 +229,8 @@ padding: 2px;
                </property>
                <property name="iconSize">
                 <size>
-                 <width>18</width>
-                 <height>18</height>
+                 <width>16</width>
+                 <height>16</height>
                 </size>
                </property>
                <property name="flat">
@@ -170,11 +258,39 @@ padding: 2px;
             </layout>
            </item>
            <item>
-            <widget class="QGroupBox" name="stops_group">
-             <property name="title">
-              <string>Erreichbarkeit ab einer ausgewählten Haltestelle</string>
+            <widget class="QFrame" name="stops_group">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_9">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Erreichbarkeit ab einer ausgewählten Haltestelle</string>
+                </property>
+               </widget>
+              </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
