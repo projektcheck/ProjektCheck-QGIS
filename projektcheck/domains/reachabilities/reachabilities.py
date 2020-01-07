@@ -6,6 +6,7 @@ from qgis.PyQt.QtGui import QCursor
 from projektcheck.base.domain import Domain
 from projektcheck.base.tools import FeaturePicker
 from projektcheck.base.project import ProjectLayer
+from projektcheck.base.layers import TileLayer
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.domains.reachabilities.bahn_query import (
     BahnQuery, StopScraper, BahnRouter, next_working_day)
@@ -51,6 +52,9 @@ class Reachabilities(Domain):
         self.ui.pick_stop_button.clicked.connect(
             lambda: self.draw_haltestellen(zoom_to=False))
 
+        self.ui.oepnvkarte_button.setCheckable(False)
+        self.ui.oepnvkarte_button.clicked.connect(self.oepnv_map)
+
     def load_content(self):
         self.haltestellen = Haltestellen.features(create=True)\
             .filter(flaechenzugehoerig=True, abfahrten__gt=0)
@@ -79,7 +83,7 @@ class Reachabilities(Domain):
             return
         already_calculated = (stop.berechnet not in ['', '""']
                               and stop.berechnet is not None)
-        label = f'Stand {stop.berechnet}' if already_calculated \
+        label = f'Auswertung {stop.berechnet}' if already_calculated \
             else 'noch nicht berechnet'
         self.ui.stop_reach_status_label.setText(label)
         self.ui.recalculate_time_check.setChecked(not already_calculated)
@@ -114,7 +118,7 @@ class Reachabilities(Domain):
         last_calc = self.project_frame.haltestellen_berechnet
         already_calculated = (last_calc not in ['', '""']
                               and last_calc is not None)
-        label = f'Stand {last_calc}' if already_calculated\
+        label = f'Auswertung {last_calc}' if already_calculated\
             else 'noch nicht berechnet'
         self.ui.stops_group.setVisible(already_calculated)
         self.ui.recalculatestops_check.setChecked(not already_calculated)
@@ -250,3 +254,11 @@ class Reachabilities(Domain):
         layer.setOpacity(0.8)
         layer.triggerRepaint()
 
+    def oepnv_map(self):
+        group = ('Hintergrundkarten')
+        url = ('type=xyz&url=http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png'
+               '&zmax=18&zmin=0&crs=EPSG:{settings.EPSG}')
+        layer = TileLayer(url, groupname=group)
+        layer.draw('ÖPNVKarte (memomaps.de)')
+        layer.layer.setTitle(
+            'Karte memomaps.de CC-BY-SA, Kartendaten Openstreetmap ODbL')

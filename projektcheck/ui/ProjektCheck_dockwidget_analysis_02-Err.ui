@@ -73,8 +73,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>441</width>
-         <height>716</height>
+         <width>447</width>
+         <height>734</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -87,7 +87,7 @@ padding: 2px;
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -123,42 +123,6 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="oepnvkarte_button_checkable">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>ÖPNVKarte anzeigen</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_02.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_01.png</normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_02.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="oepnvkarte_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -177,19 +141,20 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_03.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_03.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_04.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_01.png</normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_04.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>16</width>
-               <height>16</height>
+               <width>24</width>
+               <height>24</height>
               </size>
              </property>
              <property name="checkable">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="flat">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -260,10 +225,13 @@ padding: 2px;
            <item>
             <widget class="QFrame" name="stops_group">
              <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+              <enum>QFrame::NoFrame</enum>
              </property>
              <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <property name="leftMargin">
@@ -458,7 +426,7 @@ padding: 2px;
            <bool>true</bool>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <property name="spacing">

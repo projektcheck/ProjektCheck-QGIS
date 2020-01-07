@@ -87,6 +87,7 @@ class TileLayer(Layer):
     def __init__(self, url, groupname='', prepend=True):
         super().__init__(None, None, groupname=groupname, prepend=prepend)
         self.url = url
+        self.prepend = prepend
 
     def draw(self, label, checked=True):
         self.layer = None
@@ -97,6 +98,7 @@ class TileLayer(Layer):
         if not self.layer:
             self.layer = QgsRasterLayer(self.url, label, 'wms')
             QgsProject.instance().addMapLayer(self.layer, False)
-            l = self.root.addLayer(self.layer)
+            l = self.root.insertLayer(0, self.layer) if self.prepend \
+                else self.root.addLayer(self.layer)
             l.setItemVisibilityChecked(checked)
             l.setExpanded(False)
