@@ -1,7 +1,7 @@
 from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
-                          QLabel)
+                          QLabel, QGridLayout)
 from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
                                  QPushButton, QLayoutItem)
@@ -95,9 +95,16 @@ class Param(QObject):
             return
         row = QHBoxLayout()
         label = QLabel(self.label)
-        row.addWidget(label)
-        row.addItem(
-            QSpacerItem(0, 0, QSizePolicy.Expanding))
+        spacer = QSpacerItem(0, 0, QSizePolicy.Expanding)
+        if isinstance(layout, QGridLayout):
+            n_rows = layout.rowCount()
+            layout.addWidget(label, n_rows, 0)
+            layout.addItem(spacer, n_rows, 1)
+            layout.addLayout(row, n_rows, 2)
+        else:
+            row.addWidget(label)
+            row.addItem(spacer)
+            layout.addLayout(row)
         if edit:
             self.input.draw(row)
         else:
@@ -105,7 +112,6 @@ class Param(QObject):
         if self.unit:
             unit_label = QLabel(self.unit)
             row.addWidget(unit_label)
-        layout.addLayout(row)
 
 
 class Dependency(ABC):
@@ -300,31 +306,17 @@ class Params(QObject):
         '''
         if self.parent is None:
             raise Exception("can't render Params object with no parent set")
-        self.dialog = Dialog('parameter_dialog.ui', modal=True)
+        self.dialog = ParamsDialog()
         layout = QVBoxLayout()
         layout.setSpacing(5)
-
-        def init_param_row(param):
-            row = QHBoxLayout()
-            label = QLabel(element.label)
-            row.addWidget(label)
-            row.addItem(
-                QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
-            return row
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
                 layout.addItem(element)
-                self.dialog.param_layout.addItem(element)
-                continue
             # overview
             if not getattr(element, 'hide_in_overview', None):
                 element.draw(layout)
-            # dialog
-            if isinstance(element, Param):
-                element.draw(self.dialog.param_layout, edit=True)
-            else:
-                element.draw(self.dialog.param_layout)
+            self.dialog.draw(element)
 
         self.parent.addLayout(layout, *args)
 
@@ -389,6 +381,26 @@ class Params(QObject):
 
     def __setitem__(self, key, value):
         self.add(value, key)
+
+
+class ParamsDialog(Dialog):
+    def __init__(self, parent=None, title=None):
+        super().__init__(modal=True, parent=parent,
+                         title='Parameter einstellen')
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self._grid = None
+
+    def draw(self, element):
+        # put param objects into grid, else added to the base layout
+        if isinstance(element, Param):
+            if not self._grid:
+                self._grid = QGridLayout()
+                self.layout.addLayout(self._grid)
+            element.draw(self._grid, edit=True)
+        else:
+            self._grid = None
+            element.draw(self.layout)
 
 
 class ParamCluster(Params):

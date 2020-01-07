@@ -2,7 +2,7 @@ from abc import ABC
 import os
 from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
                           QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout,
-                          QCheckBox, QPushButton)
+                          QCheckBox, QPushButton, QSizePolicy)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import pyqtSignal
 
@@ -84,6 +84,8 @@ class Slider(InputType):
         if lockable:
             self.lock_button = QPushButton()
             self.lock_button.setCheckable(True)
+            self.lock_button.setSizePolicy(
+                QSizePolicy.Fixed, QSizePolicy.Fixed)
 
             def toggle_icon():
                 is_locked = self.lock_button.isChecked()

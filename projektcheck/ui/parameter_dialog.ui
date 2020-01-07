@@ -28,7 +28,7 @@
     </spacer>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="param_layout"/>
+    <layout class="QGridLayout" name="param_layout"/>
    </item>
    <item>
     <spacer name="verticalSpacer_2">

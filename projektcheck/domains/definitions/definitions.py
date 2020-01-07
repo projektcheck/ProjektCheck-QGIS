@@ -317,7 +317,6 @@ class Gewerbe:
 
         dependency = SumDependency(100)
         for branche in self.branchen:
-            param_name = branche.param_gewerbenutzung
             feature = self.gewerbeanteile.get(id_branche=branche.id,
                                               id_teilflaeche=self.area.id)
             value = feature.anteil_definition if feature else 0
