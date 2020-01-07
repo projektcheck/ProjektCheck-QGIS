@@ -72,7 +72,9 @@ class Reachabilities(Domain):
                     break
             self.ui.stops_combo.setCurrentIndex(idx)
 
-    def toggle_stop(self, stop):
+    def toggle_stop(self, stop=None):
+        if not stop:
+            stop = self.ui.stops_combo.currentData()
         if not stop:
             return
         already_calculated = (stop.berechnet not in ['', '""']
@@ -81,6 +83,7 @@ class Reachabilities(Domain):
             else 'noch nicht berechnet'
         self.ui.stop_reach_status_label.setText(label)
         self.ui.recalculate_time_check.setChecked(not already_calculated)
+        self.ui.recalculate_time_check.setVisible(already_calculated)
         if self.stops_layer:
             self.stops_layer.removeSelection()
             self.stops_layer.select(stop.id)
@@ -107,17 +110,6 @@ class Reachabilities(Domain):
             on_success=lambda project: on_success(project, date))
         dialog.show()
 
-    def zoom_to(self, feature):
-        if not feature:
-            return
-        #target_srid = self.canvas.mapSettings().destinationCrs().authid()
-        #point = feature.geom.asPoint()
-        #point = Point(point.x(), point.y(), epsg=settings.EPSG)
-        #point.transform(target_srid)
-        #self.canvas.zoomWithCenter(point.x, point.y, False)
-        # ToDo: get layer and zoom to
-        #self.canvas.zoomToSelected(layer)
-
     def fill_haltestellen(self):
         last_calc = self.project_frame.haltestellen_berechnet
         already_calculated = (last_calc not in ['', '""']
@@ -126,6 +118,7 @@ class Reachabilities(Domain):
             else 'noch nicht berechnet'
         self.ui.stops_group.setVisible(already_calculated)
         self.ui.recalculatestops_check.setChecked(not already_calculated)
+        self.ui.recalculatestops_check.setVisible(already_calculated)
         self.ui.stops_status_label.setText(label)
         self.ui.stops_combo.blockSignals(True)
         self.ui.stops_combo.clear()
@@ -137,7 +130,7 @@ class Reachabilities(Domain):
                 f'{stop.name} ({stop.abfahrten} Abfahrten)', stop)
             #self.ui.stops_status_label
         self.ui.stops_combo.blockSignals(False)
-        self.toggle_stop(self.ui.stops_combo.currentData())
+        self.toggle_stop()
 
     def draw_haltestellen(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -148,7 +141,7 @@ class Reachabilities(Domain):
             filter='flaechenzugehoerig=1')
         if zoom_to:
             output.zoom_to()
-        self.toggle_stop(self.ui.stops_combo.currentData())
+        self.toggle_stop()
 
     def show_time_table(self):
         stop = self.ui.stops_combo.currentData()
@@ -184,6 +177,7 @@ class Reachabilities(Domain):
             self.ui.recalculate_time_check.setChecked(False)
             stop.berechnet = date.strftime(self.date_format)
             stop.save()
+            self.toggle_stop()
             #stop_reach_status_label
 
         dialog = ProgressDialog(

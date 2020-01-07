@@ -66,6 +66,10 @@ class Traffic(Domain):
         self.ui.distance_frame.setVisible(False)
         if len(self.transfer_nodes) == 0:
             self.ui.recalculate_check.setChecked(True)
+            self.ui.recalculate_check.setVisible(False)
+            # there is a signal for that in the ui file, but it isn't working
+            # if checkbox is already invisible
+            self.ui.distance_frame.setVisible(True)
         self.params = None
         self.setup_settings()
 
@@ -80,9 +84,7 @@ class Traffic(Domain):
             self.params.close()
         self.params = Params(parent=layout, button_label='Annahmen verändern')
         if len(self.transfer_nodes) == 0:
-            self.params.add(Title('Bitte führen Sie zunächst eine '
-                                  '(Neu)berechnung durch'))
-            self.params.editable = False
+            # workaround: otherwise the params don't show later (don't know why)
             self.params.show()
             return
 
@@ -179,6 +181,7 @@ class Traffic(Domain):
             job = Routing(self.project, # parent=self.ui,
                           distance=distance)
             def on_success(res):
+                self.ui.recalculate_check.setVisible(True)
                 self.ui.recalculate_check.setChecked(False)
                 self.draw_traffic()
                 self.setup_settings()
