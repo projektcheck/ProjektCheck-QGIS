@@ -79,7 +79,7 @@ class Slider(InputType):
         self.spinbox.setMinimum(minimum)
         self.spinbox.setMaximum(maximum)
         self.spinbox.setSingleStep(step)
-        self.spinbox.setFixedWidth(50)
+        #self.spinbox.setFixedWidth(50)
 
         if lockable:
             self.lock_button = QPushButton()
@@ -108,7 +108,6 @@ class Slider(InputType):
         self.spinbox.valueChanged.connect(
             lambda: self.changed.emit(self.get_value())
         )
-
 
     def set_value(self, value):
         for element in [self.slider, self.spinbox]:
