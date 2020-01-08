@@ -1,7 +1,7 @@
 from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
-                          QLabel, QGridLayout)
+                          QLabel, QGridLayout, QDialogButtonBox)
 from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
                                  QPushButton, QLayoutItem)
@@ -314,7 +314,7 @@ class Params(QObject):
             if isinstance(element, QLayoutItem):
                 layout.addItem(element)
             # overview
-            if not getattr(element, 'hide_in_overview', None):
+            elif not getattr(element, 'hide_in_overview', None):
                 element.draw(layout)
             self.dialog.draw(element)
 
@@ -387,8 +387,15 @@ class ParamsDialog(Dialog):
     def __init__(self, parent=None, title=None):
         super().__init__(modal=True, parent=parent,
                          title='Parameter einstellen')
+        base_layout = QVBoxLayout()
+        self.setLayout(base_layout)
         self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
+        base_layout.addLayout(self.layout)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok
+                                   | QDialogButtonBox.Cancel)
+        base_layout.addWidget(buttons)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
         self._grid = None
 
     def draw(self, element):
@@ -400,7 +407,10 @@ class ParamsDialog(Dialog):
             element.draw(self._grid, edit=True)
         else:
             self._grid = None
-            element.draw(self.layout)
+            if isinstance(element, QLayoutItem):
+                self.layout.addItem(element)
+            else:
+                element.draw(self.layout)
 
 
 class ParamCluster(Params):
