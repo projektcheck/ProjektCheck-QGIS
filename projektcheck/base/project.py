@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import shutil
+import sys
 from collections import OrderedDict
 from datetime import datetime
 
@@ -10,7 +11,12 @@ from projektcheck.base.database import Field, Feature
 from projektcheck.base.geopackage import Geopackage
 from projektcheck.base.layers import Layer, TileLayer
 
-APPDATA_PATH = os.path.join(os.getenv('LOCALAPPDATA'), 'Projekt-Check-QGIS')
+if sys.platform in ['win32', 'win64']:
+    p = os.getenv('LOCALAPPDATA')
+# Mac OS and Linux
+else:
+    p = os.path.expanduser('~')# , 'Library/Application Support/')
+APPDATA_PATH = os.path.join(p, 'Projekt-Check-QGIS')
 
 DEFAULT_SETTINGS = {
     'active_project': u'',
