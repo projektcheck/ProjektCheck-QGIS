@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>546</width>
-         <height>929</height>
+         <width>536</width>
+         <height>1044</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -538,7 +538,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_12">
+               <widget class="QPushButton" name="draw_builtup_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -574,7 +574,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_14">
+               <widget class="QPushButton" name="draw_water_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -610,7 +610,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_15">
+               <widget class="QPushButton" name="draw_plates_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -646,7 +646,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_19">
+               <widget class="QPushButton" name="draw_trees_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -682,7 +682,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_20">
+               <widget class="QPushButton" name="draw_perennial_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -718,7 +718,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_21">
+               <widget class="QPushButton" name="draw_lawn_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -754,7 +754,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_27">
+               <widget class="QPushButton" name="draw_meadow_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -790,7 +790,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_23">
+               <widget class="QPushButton" name="draw_cover_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -826,7 +826,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_22">
+               <widget class="QPushButton" name="draw_concrete_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -862,7 +862,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_24">
+               <widget class="QPushButton" name="draw_field_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -898,7 +898,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_25">
+               <widget class="QPushButton" name="draw_paving_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -934,7 +934,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_28">
+               <widget class="QPushButton" name="remove_element_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
