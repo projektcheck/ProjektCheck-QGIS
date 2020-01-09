@@ -1,4 +1,6 @@
 import pandas as pd
+from qgis.PyQt.QtCore import Qt
+
 from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
                                       Slider, DoubleSpinBox)
 from projektcheck.base.params import (Params, Param, Title,
@@ -347,9 +349,10 @@ class Gewerbe:
         )
 
         def toggle_auto_check():
-            enabled = not self.auto_check.value
+            read_only = self.auto_check.value
             for _input in [self.ap_slider.slider, self.ap_slider.spinbox]:
-                _input.setEnabled(enabled)
+                _input.setAttribute(Qt.WA_TransparentForMouseEvents, read_only)
+                _input.setFocusPolicy(Qt.NoFocus if read_only else Qt.StrongFocus)
                 _input.update()
             values_changed()
 
