@@ -1,7 +1,7 @@
 from qgis import utils
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QTimer
 from qgis.PyQt.QtGui import QCursor
-from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify
+from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand
 from qgis.PyQt.QtWidgets import QToolTip
 from qgis.core import (QgsVectorLayer, QgsFeature, QgsCoordinateTransform,
                        QgsProject, QgsCoordinateReferenceSystem, QgsGeometry)
@@ -97,5 +97,29 @@ class DrawingTool(MapTool):
 
     def run(self):
         pass
+
+
+class PolygonMapTool(MapTool):
+    def __init__(self, canvas):
+        self.canvas = canvas
+        QgsMapToolEmitPoint.__init__(self, self.canvas)
+        self.rubberBand = QgsRubberBand(self.canvas, True)
+        self.rubberBand.setColor(Qt.blue)
+        self.rubberBand.setWidth(1)
+        self.reset()
+
+    def reset(self):
+        self.rubberBand.reset(True)
+
+    def canvasDoubleClickEvent(self, e):
+        self.reset()
+
+    def canvasPressEvent(self, e):
+        if(e.button() == Qt.RightButton):
+            self.reset()
+            return
+        point = self.toMapCoordinates(e.pos())
+        point = QgsPointXY(point.x(), point.y())
+        self.rubberBand.addPoint(point, True)
 
 

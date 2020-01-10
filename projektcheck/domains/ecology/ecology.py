@@ -1,5 +1,8 @@
 from projektcheck.base.domain import Domain
 from projektcheck.base.layers import TileLayer
+from projektcheck.base.tools import PolygonMapTool
+from projektcheck.domains.ecology.tables import (BodenbedeckungNullfall,
+                                                 BodenbedeckungPlanfall)
 
 from settings import settings
 
@@ -44,6 +47,14 @@ class Ecology(Domain):
     ]
 
     def setupUi(self):
+        self.setup_layers()
+        self.setup_drawing_tools()
+
+    def load_content(self):
+        self.boden_nullfall = BodenbedeckungNullfall.features(create=True)
+        self.boden_planfall = BodenbedeckungPlanfall.features(create=True)
+
+    def setup_layers(self):
 
         def add_layer_from_dict(layers, parent_group):
             for name, url in layers:
@@ -87,7 +98,7 @@ class Ecology(Domain):
 
         self.ui.paint_tool_frame.setVisible(False)
 
-    def load_content(self):
+    def setup_drawing_tools(self):
         pass
 
     def add_wms_layer(self, name, url, parent_group=None):

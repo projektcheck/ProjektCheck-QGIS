@@ -1,7 +1,5 @@
 from projektcheck.base.project import ProjectTable
 from projektcheck.base.database import Field
-from settings import settings
-import datetime
 
 
 class ZentraleOrte(ProjectTable):
