@@ -99,7 +99,11 @@ class Ecology(Domain):
         self.ui.paint_tool_frame.setVisible(False)
 
     def setup_drawing_tools(self):
-        pass
+        return
+        self.drawing_tools = {}
+        self.drawing_tools[self.draw_builtup_button] = 'a'
+        self.builtup_tool = PolygonMapTool(self.canvas)
+        self.draw_builtup_button.clicked.connect()
 
     def add_wms_layer(self, name, url, parent_group=None):
         group = (f'{self.project.groupname}/{self.layer_group}')
