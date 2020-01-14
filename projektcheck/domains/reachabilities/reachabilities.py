@@ -59,18 +59,16 @@ class Reachabilities(Domain):
         self.isochronen = Isochronen.features(create=True)
         self.project_frame = Projektrahmendaten.features()[0]
         self.stops_layer = None
-
         self.fill_haltestellen()
 
-    def feature_picked(self, layer, feature):
-        if layer.name() == 'Haltestellen':
-            layer.removeSelection()
-            layer.select(feature.id())
-            fid = feature.id()
-            for idx in range(len(self.ui.stops_combo)):
-                if fid == self.ui.stops_combo.itemData(idx).id:
-                    break
-            self.ui.stops_combo.setCurrentIndex(idx)
+    def feature_picked(self, feature):
+        self.stops_layer.removeSelection()
+        self.stops_layer.select(feature.id())
+        fid = feature.id()
+        for idx in range(len(self.ui.stops_combo)):
+            if fid == self.ui.stops_combo.itemData(idx).id:
+                break
+        self.ui.stops_combo.setCurrentIndex(idx)
 
     def toggle_stop(self, stop):
         if not stop:
@@ -146,6 +144,7 @@ class Reachabilities(Domain):
             label='Haltestellen',
             style_file='erreichbarkeit_haltestellen_alt.qml',
             filter='flaechenzugehoerig=1')
+        self.feature_picker.set_layer(self.stops_layer)
         if zoom_to:
             output.zoom_to()
         self.toggle_stop(self.ui.stops_combo.currentData())

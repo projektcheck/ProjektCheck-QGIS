@@ -73,19 +73,28 @@ class MapClickedTool(MapTool, QgsMapToolEmitPoint):
         self.map_clicked.emit(geom)
 
 
-class FeaturePicker(MapTool, QgsMapToolIdentify):
-    feature_picked = pyqtSignal(QgsVectorLayer, QgsFeature)
+class FeaturePicker(MapTool, QgsMapToolEmitPoint):
+    feature_picked = pyqtSignal(QgsFeature)
 
-    def __init__(self, ui_element, canvas=None):
+    def __init__(self, ui_element, layers=[], canvas=None):
         MapTool.__init__(self, ui_element, canvas=canvas)
-        QgsMapToolIdentify.__init__(self, canvas=self.canvas)
+        QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
+        self._layers = layers
+
+    def add_layer(self, layer):
+        self._layers.append(layer)
+
+    def set_layer(self, layer):
+        self._layers = [layer]
 
     def canvasReleaseEvent(self, mouseEvent):
-        results = self.identify(mouseEvent.x(), mouseEvent.y(),
-                                self.LayerSelection, self.VectorLayer)
-        if len(results) > 0:
-            self.feature_picked.emit(results[0].mLayer,
-                                    QgsFeature(results[0].mFeature))
+        if not self._layers:
+            return
+        features = QgsMapToolIdentify(self.canvas).identify(
+            mouseEvent.x(), mouseEvent.y(), self._layers,
+            QgsMapToolIdentify.TopDownStopAtFirst)
+        if len(features) > 0:
+            self.feature_picked.emit(features[0].mFeature)
 
 
 class DrawingTool(MapTool):
