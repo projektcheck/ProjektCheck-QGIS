@@ -1,6 +1,8 @@
 from projektcheck.base.domain import Domain
 from projektcheck.base.layers import TileLayer
+from projektcheck.base.project import ProjectLayer
 from projektcheck.base.tools import PolygonMapTool
+from projektcheck.base.tools import FeaturePicker
 from projektcheck.domains.ecology.tables import (BodenbedeckungNullfall,
                                                  BodenbedeckungPlanfall)
 
@@ -50,9 +52,18 @@ class Ecology(Domain):
         self.setup_layers()
         self.setup_drawing_tools()
 
+        #self.ui.paint_tool_frame.setVisible(False)
+
     def load_content(self):
         self.boden_nullfall = BodenbedeckungNullfall.features(create=True)
         self.boden_planfall = BodenbedeckungPlanfall.features(create=True)
+
+        self.output_nullfall = ProjectLayer.from_table(
+            self.boden_nullfall._table, groupname=self.layer_group,
+            prepend=True)
+        self.output_planfall = ProjectLayer.from_table(
+            self.boden_planfall._table, groupname=self.layer_group,
+            prepend=True)
 
     def setup_layers(self):
 
@@ -96,14 +107,42 @@ class Ecology(Domain):
             lambda: self.add_wms_layer(name_w, url_w)
         )
 
-        self.ui.paint_tool_frame.setVisible(False)
-
     def setup_drawing_tools(self):
-        return
-        self.drawing_tools = {}
-        self.drawing_tools[self.draw_builtup_button] = 'a'
-        self.builtup_tool = PolygonMapTool(self.canvas)
-        self.draw_builtup_button.clicked.connect()
+        self.drawing_tools = {
+            self.ui.draw_builtup_button: 1,
+            self.ui.draw_water_button: 2,
+            self.ui.draw_plates_button: 3,
+            self.ui.draw_trees_button: 4,
+            self.ui.draw_trees_button: 4,
+            self.ui.draw_perennial_button: 5,
+            self.ui.draw_meadow_button: 6,
+            self.ui.draw_lawn_button: 7,
+            self.ui.draw_cover_button: 8,
+            self.ui.draw_concrete_button: 9,
+            self.ui.draw_field_button: 10,
+            self.ui.draw_paving_button: 11
+        }
+
+        def add_geom(geom, floor_id):
+            planfall = self.ui.planfall_radio.isChecked()
+            coll = self.boden_planfall if planfall else self.boden_nullfall
+            coll.add(geom=geom, IDBodenbedeckung=floor_id)
+            self.canvas.refreshAllLayers()
+
+        for button, floor_id in self.drawing_tools.items():
+            button.clicked.connect(self.add_output)
+            tool = PolygonMapTool(button, canvas=self.canvas)
+            tool.drawn.connect(
+                lambda geom, i=floor_id: add_geom(geom, i))
+
+    def add_output(self):
+        planfall = self.ui.planfall_radio.isChecked()
+        label = 'Bodenbedeckung '
+        label += 'Planfall' if planfall else 'Nullfall'
+        output = self.output_planfall if planfall else self.output_nullfall
+        style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
+            else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
+        output.draw(label=label, style_file=style)
 
     def add_wms_layer(self, name, url, parent_group=None):
         group = (f'{self.project.groupname}/{self.layer_group}')

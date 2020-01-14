@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>536</width>
-         <height>1044</height>
+         <width>546</width>
+         <height>931</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -455,7 +455,7 @@ padding: 2px;
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_7">
                    <item>
-                    <widget class="QRadioButton" name="radioButton">
+                    <widget class="QRadioButton" name="nullfall_radio">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
                        <horstretch>0</horstretch>
@@ -486,7 +486,7 @@ padding: 2px;
                     </widget>
                    </item>
                    <item>
-                    <widget class="QRadioButton" name="radioButton_2">
+                    <widget class="QRadioButton" name="planfall_radio">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
                        <horstretch>0</horstretch>
@@ -657,7 +657,7 @@ padding: 2px;
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>Bäume oder Sträucher</string>
+                 <string>Bäume / Sträucher</string>
                 </property>
                 <property name="icon">
                  <iconset>
@@ -801,7 +801,7 @@ padding: 2px;
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>wassergebundene Decke oder Rasengittersteine</string>
+                 <string>wassergebundene Decke / Rasengittersteine</string>
                 </property>
                 <property name="icon">
                  <iconset>
@@ -837,7 +837,7 @@ padding: 2px;
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>Asphalt oder Beton</string>
+                 <string>Asphalt / Beton</string>
                 </property>
                 <property name="icon">
                  <iconset>

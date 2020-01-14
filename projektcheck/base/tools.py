@@ -1,10 +1,12 @@
 from qgis import utils
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QTimer
-from qgis.PyQt.QtGui import QCursor
-from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand
+from qgis.PyQt.QtGui import QCursor, QColor
+from qgis.gui import (QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand,
+                      QgsVertexMarker)
 from qgis.PyQt.QtWidgets import QToolTip
 from qgis.core import (QgsVectorLayer, QgsFeature, QgsCoordinateTransform,
-                       QgsProject, QgsCoordinateReferenceSystem, QgsGeometry)
+                       QgsProject, QgsCoordinateReferenceSystem, QgsGeometry,
+                       QgsPointXY, QgsWkbTypes, QgsPolygon)
 
 
 class MapTool:
@@ -13,10 +15,12 @@ class MapTool:
     '''
     cursor = QCursor(Qt.CrossCursor)
 
-    def __init__(self, ui_element, tip='', canvas=None):
+    def __init__(self, ui_element, canvas=None, tip=''):
         self.ui_element = ui_element
         self.canvas = canvas or utils.iface.mapCanvas()
-        self.ui_element.clicked.connect(self.toggle)
+        # workaround: .clicked.connect(self.toggle) works only occasionally
+        # reason unknown
+        self.ui_element.clicked.connect(lambda x: self.toggle(x))
         self.tip = tip
         if tip:
             self.map_timer = QTimer(self.canvas)
@@ -99,27 +103,67 @@ class DrawingTool(MapTool):
         pass
 
 
-class PolygonMapTool(MapTool):
-    def __init__(self, canvas):
+class PolygonMapTool(MapTool, QgsMapToolEmitPoint):
+    drawn = pyqtSignal(QgsGeometry)
+
+    def __init__(self, ui_element, canvas=None):
         self.canvas = canvas
-        QgsMapToolEmitPoint.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, True)
-        self.rubberBand.setColor(Qt.blue)
-        self.rubberBand.setWidth(1)
+        MapTool.__init__(self, ui_element, self.canvas)
+        QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
+        self.drawing_lines = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.drawing_lines.setColor(QColor(0, 0, 255))
+        self.drawing_lines.setFillColor(QColor(0, 0, 255, 100))
+        self.drawing_lines.setLineStyle(Qt.DotLine)
+        # should but doesn't work, making markers by hand instead
+        #self.drawing_lines.setIcon(QgsRubberBand.ICON_CIRCLE)
+        #self.drawing_lines.setIconSize(8)
+        self.drawing_lines.setWidth(2)
+        self.markers = []
+        self._drawing = False
+        self._moving =  False
         self.reset()
 
     def reset(self):
-        self.rubberBand.reset(True)
+        scene = self.canvas.scene()
+        for m in self.markers:
+            scene.removeItem(m)
+        self.markers = []
+        self._moving = False
+        self._drawing = False
+        self.drawing_lines.reset(QgsWkbTypes.PolygonGeometry)
 
     def canvasDoubleClickEvent(self, e):
+        if self._moving:
+            self.drawing_lines.removeLastPoint()
+        self.drawn.emit(self.drawing_lines.asGeometry())
         self.reset()
 
     def canvasPressEvent(self, e):
         if(e.button() == Qt.RightButton):
+            if self._moving:
+                self.drawing_lines.removeLastPoint()
+            self.drawn.emit(self.drawing_lines.asGeometry())
             self.reset()
             return
+        self._moving = False
+        self._drawing = True
         point = self.toMapCoordinates(e.pos())
         point = QgsPointXY(point.x(), point.y())
-        self.rubberBand.addPoint(point, True)
+        self.drawing_lines.addPoint(point, True)
+        marker = QgsVertexMarker(self.canvas)
+        marker.setCenter(point)
+        marker.setColor(Qt.blue)
+        marker.setIconSize(8)
+        marker.setIconType(QgsVertexMarker.ICON_CIRCLE)
+        marker.setPenWidth(4)
+        self.markers.append(marker)
 
-
+    def canvasMoveEvent(self, e):
+        if self._drawing:
+            #self.rubberBand.removeLastPoint()
+            if self._moving:
+                self.drawing_lines.removeLastPoint()
+            point = self.toMapCoordinates(e.pos())
+            point = QgsPointXY(point.x(), point.y())
+            self.drawing_lines.addPoint(point, True)
+            self._moving = True
