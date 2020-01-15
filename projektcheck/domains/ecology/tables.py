@@ -5,6 +5,7 @@ from projektcheck.base.database import Field
 class BodenbedeckungNullfall(ProjectTable):
 
     IDBodenbedeckung = Field(int, 0)
+    area = Field(float, 0)
 
     class Meta:
         workspace = 'oekologie'
@@ -13,6 +14,7 @@ class BodenbedeckungNullfall(ProjectTable):
 class BodenbedeckungPlanfall(ProjectTable):
 
     IDBodenbedeckung = Field(int, 0)
+    area = Field(float, 0)
 
     class Meta:
         workspace = 'oekologie'

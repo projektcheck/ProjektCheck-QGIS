@@ -301,8 +301,8 @@ class Params(QObject):
         if self.parent is None:
             raise Exception("can't render Params object with no parent set")
         self.dialog = Dialog('parameter_dialog.ui', modal=True)
-        layout = QVBoxLayout()
-        layout.setSpacing(5)
+        self.layout = QVBoxLayout()
+        self.layout.setSpacing(5)
 
         def init_param_row(param):
             row = QHBoxLayout()
@@ -314,19 +314,19 @@ class Params(QObject):
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
-                layout.addItem(element)
+                self.layout.addItem(element)
                 self.dialog.param_layout.addItem(element)
                 continue
             # overview
             if not getattr(element, 'hide_in_overview', None):
-                element.draw(layout)
+                element.draw(self.layout)
             # dialog
             if isinstance(element, Param):
                 element.draw(self.dialog.param_layout, edit=True)
             else:
                 element.draw(self.dialog.param_layout)
 
-        self.parent.addLayout(layout, *args)
+        self.parent.addLayout(self.layout, *args)
 
         if not self.editable:
             return
@@ -339,9 +339,9 @@ class Params(QObject):
         row.addItem(
             QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
         row.addWidget(button)
-        layout.addItem(
+        self.layout.addItem(
             QSpacerItem(10, 10, QSizePolicy.Fixed, QSizePolicy.Minimum))
-        layout.addLayout(row)
+        self.layout.addLayout(row)
 
         button.clicked.connect(self.show_dialog)
 

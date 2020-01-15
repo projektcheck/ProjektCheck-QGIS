@@ -1,4 +1,5 @@
 from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtWidgets import QMessageBox
 
 from projektcheck.base.domain import Domain
@@ -101,13 +102,19 @@ class Ecology(Domain):
         clearLayout(self.ui.param_nullfall_tab.layout())
         clearLayout(self.ui.param_planfall_tab.layout())
 
+        def apply_nf():
+            self.apply_drawing(False)
+        def apply_pf():
+            self.apply_drawing(True)
+
         for params, prefix in [(self.params_nullfall, 'nullfall'),
                                (self.params_planfall, 'planfall')]:
+            planfall = prefix == 'planfall'
             dependency = SumDependency(100)
             for bb_typ in self.bb_types.features():
                 bb_id = bb_typ.IDBodenbedeckung
                 feature = self.anteile.get(IDBodenbedeckung=bb_id,
-                                           planfall=prefix=='planfall')
+                                           planfall=planfall)
                 value = feature.anteil if feature else 0
                 slider = Slider(maximum=100, width=200, lockable=True)
                 param = Param(
@@ -118,20 +125,14 @@ class Ecology(Domain):
                 params.add(param, name=f'{prefix}_{bb_id}')
             params.changed.connect(lambda p=prefix: self.save(p))
             params.show()
-
-    def save(self, prefix):
-        planfall = prefix == 'planfall'
-        params = self.params_planfall if planfall else self.params_nullfall
-        for bb_typ in self.bb_types.features():
-            bb_id = bb_typ.IDBodenbedeckung
-            feature = self.anteile.get(IDBodenbedeckung=bb_id,
-                                       planfall=planfall)
-
-            if not feature:
-                feature = self.anteile.add(IDBodenbedeckung=bb_id)
-                feature.planfall = planfall
-            feature.anteil = params.get(f'{prefix}_{bb_id}').value
-            feature.save()
+            last_row = params.layout.children()[-1]
+            button = QPushButton()
+            button.setText('aus Zeichnung übernehmen')
+            last_row.insertWidget(0, button)
+            # workaround: lambda with argument didn't seem to work here (weird)
+            #button.clicked.connect(lambda p=planfall: self.apply_drawing(p))
+            func = apply_pf if planfall else apply_nf
+            button.clicked.connect(func)
 
     def setup_layers(self):
 
@@ -194,7 +195,7 @@ class Ecology(Domain):
         def add_geom(geom, floor_id):
             planfall = self.ui.planfall_radio.isChecked()
             coll = self.boden_planfall if planfall else self.boden_nullfall
-            coll.add(geom=geom, IDBodenbedeckung=floor_id)
+            coll.add(geom=geom, IDBodenbedeckung=floor_id, area=geom.area())
             self.canvas.refreshAllLayers()
             # workaround: layer style is not applied correctly
             # with empty features -> redraw on first geometry
@@ -224,6 +225,7 @@ class Ecology(Domain):
                 # ToDo: handle invalid and null geometries instead of ignoring
                 if not difference.isNull():
                     feat.geom = difference
+                    feat.area = difference.area()
                     feat.save()
             self.canvas.refreshAllLayers()
 
@@ -248,6 +250,35 @@ class Ecology(Domain):
         cutter.drawn.connect(cut_geom)
         self.ui.remove_element_button.clicked.connect(remove_selected)
 
+    def save(self, prefix):
+        planfall = prefix == 'planfall'
+        params = self.params_planfall if planfall else self.params_nullfall
+        for bb_typ in self.bb_types.features():
+            bb_id = bb_typ.IDBodenbedeckung
+            feature = self.anteile.get(IDBodenbedeckung=bb_id,
+                                       planfall=planfall)
+
+            if not feature:
+                feature = self.anteile.add(IDBodenbedeckung=bb_id)
+                feature.planfall = planfall
+            feature.anteil = params.get(f'{prefix}_{bb_id}').value
+            feature.save()
+
+    def apply_drawing(self, planfall):
+        features = self.boden_planfall if planfall else self.boden_nullfall
+        df = features.to_pandas()
+        grouped = df.groupby('IDBodenbedeckung')
+        grouped_sums = grouped['area'].sum()
+        sum_area = df['area'].sum()
+        shares = (grouped_sums * 100 / sum_area).round() if sum_area > 0 \
+            else grouped_sums
+        params = self.params_planfall if planfall else self.params_nullfall
+        prefix = 'planfall' if planfall else 'nullfall'
+        for bb_typ in self.bb_types.features():
+            bb_id = bb_typ.IDBodenbedeckung
+            params.get(f'{prefix}_{bb_id}').value = shares.get(bb_id) or 0
+        self.save(prefix)
+
     def clear_drawing(self):
         planfall = self.ui.planfall_radio.isChecked()
         l = 'Planfall' if planfall else 'Nullfall'
@@ -256,14 +287,15 @@ class Ecology(Domain):
             f'Sollen alle gezeichneten Flächen für den {l} entfernt werden?',
             QMessageBox.Yes, QMessageBox.No
         )
-        if reply == QMessageBox.Yes:
-            features = self.boden_planfall if planfall else self.boden_nullfall
-            layer = self.layer_planfall if self.planfall \
-                else self.layer_nullfall
-            # remove selection, so that qgis is free to remove them from canvas
-            layer.removeSelection()
-            features.delete()
-            self.canvas.refreshAllLayers()
+        if reply == QMessageBox.No:
+            return
+        features = self.boden_planfall if planfall else self.boden_nullfall
+        layer = self.layer_planfall if self.planfall \
+            else self.layer_nullfall
+        # remove selection, so that qgis is free to remove them from canvas
+        layer.removeSelection()
+        features.delete()
+        self.canvas.refreshAllLayers()
 
     def add_output(self):
         planfall = self.ui.planfall_radio.isChecked()
