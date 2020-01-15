@@ -4,9 +4,9 @@ from qgis.PyQt.QtGui import QCursor, QColor
 from qgis.gui import (QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand,
                       QgsVertexMarker)
 from qgis.PyQt.QtWidgets import QToolTip
-from qgis.core import (QgsVectorLayer, QgsFeature, QgsCoordinateTransform,
+from qgis.core import (QgsFeature, QgsCoordinateTransform,
                        QgsProject, QgsCoordinateReferenceSystem, QgsGeometry,
-                       QgsPointXY, QgsWkbTypes, QgsPolygon)
+                       QgsPointXY, QgsWkbTypes)
 
 
 class MapTool:
@@ -82,10 +82,14 @@ class FeaturePicker(MapTool, QgsMapToolEmitPoint):
         self._layers = layers
 
     def add_layer(self, layer):
-        self._layers.append(layer)
+        if layer:
+            self._layers.append(layer)
 
     def set_layer(self, layer):
-        self._layers = [layer]
+        if not layer:
+            self._layers = []
+        else:
+            self._layers = [layer]
 
     def canvasReleaseEvent(self, mouseEvent):
         if not self._layers:
@@ -115,13 +119,15 @@ class DrawingTool(MapTool):
 class PolygonMapTool(MapTool, QgsMapToolEmitPoint):
     drawn = pyqtSignal(QgsGeometry)
 
-    def __init__(self, ui_element, canvas=None):
+    def __init__(self, ui_element, canvas=None, color=None):
         self.canvas = canvas
         MapTool.__init__(self, ui_element, self.canvas)
         QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
         self.drawing_lines = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
-        self.drawing_lines.setColor(QColor(0, 0, 255))
-        self.drawing_lines.setFillColor(QColor(0, 0, 255, 100))
+        color = color or QColor(0, 0, 255)
+        self.drawing_lines.setColor(color)
+        color.setAlpha(100)
+        self.drawing_lines.setFillColor(color)
         self.drawing_lines.setLineStyle(Qt.DotLine)
         # should but doesn't work, making markers by hand instead
         #self.drawing_lines.setIcon(QgsRubberBand.ICON_CIRCLE)

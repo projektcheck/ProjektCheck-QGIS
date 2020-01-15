@@ -1,3 +1,5 @@
+from qgis.PyQt.QtGui import QColor
+
 from projektcheck.base.domain import Domain
 from projektcheck.base.layers import TileLayer
 from projektcheck.base.project import ProjectLayer
@@ -51,8 +53,22 @@ class Ecology(Domain):
     def setupUi(self):
         self.setup_layers()
         self.setup_drawing_tools()
+        self.ui.paint_tool_frame.setVisible(False)
+        self.feature_picker = FeaturePicker(self.ui.select_element_button,
+                                            canvas=self.canvas)
+        self.feature_picker.feature_picked.connect(self.feature_picked)
+        self.ui.toggle_drawing_button.clicked.connect(self.add_output)
+        self.layer_planfall = None
+        self.layer_nullfall = None
 
-        #self.ui.paint_tool_frame.setVisible(False)
+        self.ui.planfall_radio.toggled.connect(self.toggle_planfall_nullfall)
+        self.ui.planfall_radio.toggled.connect(self.add_output)
+        self.toggle_planfall_nullfall()
+
+    def toggle_planfall_nullfall(self):
+        self.planfall = self.ui.planfall_radio.isChecked()
+        l = self.layer_planfall if self.planfall else self.layer_nullfall
+        self.feature_picker.set_layer(l)
 
     def load_content(self):
         self.boden_nullfall = BodenbedeckungNullfall.features(create=True)
@@ -130,10 +146,47 @@ class Ecology(Domain):
             self.canvas.refreshAllLayers()
 
         for button, floor_id in self.drawing_tools.items():
-            button.clicked.connect(self.add_output)
             tool = PolygonMapTool(button, canvas=self.canvas)
             tool.drawn.connect(
                 lambda geom, i=floor_id: add_geom(geom, i))
+
+        def cut_geom(clip_geom):
+            planfall = self.ui.planfall_radio.isChecked()
+            coll = self.boden_planfall if planfall else self.boden_nullfall
+            layer = self.layer_planfall if self.planfall \
+                else self.layer_nullfall
+            features = layer.selectedFeatures()
+            for qf in features:
+                feat = coll.get(id=qf.id())
+                #difference = clip_geom.makeDifference(feat.geom)
+                # workaround: makeDifference seems to have a bug and returns the
+                # intersection
+                intersection = feat.geom.intersection(clip_geom)
+                if intersection.isEmpty():
+                    continue
+                difference = feat.geom.symDifference(intersection)
+                # ToDo: handle invalid and null geometries instead of ignoring
+                if not difference.isNull():
+                    feat.geom = difference
+                    feat.save()
+            self.canvas.refreshAllLayers()
+
+        def remove_selected():
+            planfall = self.ui.planfall_radio.isChecked()
+            coll = self.boden_planfall if planfall else self.boden_nullfall
+            layer = self.layer_planfall if self.planfall \
+                else self.layer_nullfall
+            for qf in layer.selectedFeatures():
+                feat = coll.get(id=qf.id())
+                feat.delete()
+            self.canvas.refreshAllLayers()
+
+        cutter = PolygonMapTool(
+            self.ui.cut_element_button, canvas=self.canvas,
+            color=QColor(255, 0, 0)
+        )
+        cutter.drawn.connect(cut_geom)
+        self.ui.remove_element_button.clicked.connect(remove_selected)
 
     def add_output(self):
         planfall = self.ui.planfall_radio.isChecked()
@@ -142,7 +195,10 @@ class Ecology(Domain):
         output = self.output_planfall if planfall else self.output_nullfall
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
-        output.draw(label=label, style_file=style)
+        layer = output.draw(label=label, style_file=style)
+        setattr(self, 'layer_planfall' if self.planfall else 'layer_nullfall',
+                layer)
+        self.toggle_planfall_nullfall()
 
     def add_wms_layer(self, name, url, parent_group=None):
         group = (f'{self.project.groupname}/{self.layer_group}')
@@ -152,3 +208,12 @@ class Ecology(Domain):
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw(name)
+
+    def feature_picked(self, feature):
+        layer = self.layer_planfall if self.planfall else self.layer_nullfall
+        selected = [f.id() for f in layer.selectedFeatures()]
+        if feature.id() not in selected:
+            layer.select(feature.id())
+        else:
+            layer.removeSelection()
+            layer.selectByIds([fid for fid in selected if fid != feature.id()])
