@@ -1,4 +1,5 @@
 from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QMessageBox
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.layers import TileLayer
@@ -69,6 +70,8 @@ class Ecology(Domain):
         self.ui.planfall_radio.toggled.connect(self.toggle_planfall_nullfall)
         self.ui.planfall_radio.toggled.connect(self.add_output)
         self.toggle_planfall_nullfall()
+
+        self.ui.remove_drawing_button.clicked.connect(self.clear_drawing)
 
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
@@ -193,6 +196,10 @@ class Ecology(Domain):
             coll = self.boden_planfall if planfall else self.boden_nullfall
             coll.add(geom=geom, IDBodenbedeckung=floor_id)
             self.canvas.refreshAllLayers()
+            # workaround: layer style is not applied correctly
+            # with empty features -> redraw on first geometry
+            if len(coll) == 1:
+                self.add_output()
 
         for button, floor_id in self.drawing_tools.items():
             tool = PolygonMapTool(button, canvas=self.canvas)
@@ -240,6 +247,23 @@ class Ecology(Domain):
         )
         cutter.drawn.connect(cut_geom)
         self.ui.remove_element_button.clicked.connect(remove_selected)
+
+    def clear_drawing(self):
+        planfall = self.ui.planfall_radio.isChecked()
+        l = 'Planfall' if planfall else 'Nullfall'
+        reply = QMessageBox.question(
+            self.ui, 'Zeichnung löschen',
+            f'Sollen alle gezeichneten Flächen für den {l} entfernt werden?',
+            QMessageBox.Yes, QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            features = self.boden_planfall if planfall else self.boden_nullfall
+            layer = self.layer_planfall if self.planfall \
+                else self.layer_nullfall
+            # remove selection, so that qgis is free to remove them from canvas
+            layer.removeSelection()
+            features.delete()
+            self.canvas.refreshAllLayers()
 
     def add_output(self):
         planfall = self.ui.planfall_radio.isChecked()
