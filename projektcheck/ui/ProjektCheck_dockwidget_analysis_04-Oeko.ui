@@ -66,9 +66,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-45</y>
          <width>546</width>
-         <height>925</height>
+         <height>950</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -682,7 +682,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="draw_lawn_button">
+               <widget class="QPushButton" name="draw_meadow_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -693,12 +693,12 @@ padding: 2px;
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>Rasen    </string>
+                 <string>Wiese    </string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</iconset>
+                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</normaloff>
+                  <normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -718,7 +718,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="draw_meadow_button">
+               <widget class="QPushButton" name="draw_lawn_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -729,12 +729,12 @@ padding: 2px;
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
-                 <string>Wiese    </string>
+                 <string>Rasen    </string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</iconset>
+                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</normaloff>
+                  <normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -1122,33 +1122,42 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>alternativ:</string>
+            <widget class="Line" name="line_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_6">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
              </property>
              <property name="text">
-              <string>Anteile Bodenbedeckung eingeben</string>
+              <string>Anteile Bodenbedeckung festlegen</string>
              </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTabWidget" name="tabWidget">
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
+             <widget class="QWidget" name="param_nullfall_tab">
+              <attribute name="title">
+               <string>Nullfall</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_3"/>
+             </widget>
+             <widget class="QWidget" name="param_planfall_tab">
+              <attribute name="title">
+               <string>Planfall</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_6"/>
+             </widget>
             </widget>
            </item>
            <item>

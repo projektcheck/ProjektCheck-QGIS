@@ -1,9 +1,6 @@
 from abc import ABC
 from typing import Union
-from collections import defaultdict
 import weakref
-
-from projektcheck.utils.singleton import SingletonABCMeta
 
 
 class Field:

@@ -6,7 +6,12 @@ from projektcheck.base.project import ProjectLayer
 from projektcheck.base.tools import PolygonMapTool
 from projektcheck.base.tools import FeaturePicker
 from projektcheck.domains.ecology.tables import (BodenbedeckungNullfall,
-                                                 BodenbedeckungPlanfall)
+                                                 BodenbedeckungPlanfall,
+                                                 BodenbedeckungAnteile)
+from projektcheck.base.params import (Params, Param, Title,
+                                      Seperator, SumDependency)
+from projektcheck.base.inputs import Slider
+from projektcheck.utils.utils import clearLayout
 
 from settings import settings
 
@@ -73,6 +78,10 @@ class Ecology(Domain):
     def load_content(self):
         self.boden_nullfall = BodenbedeckungNullfall.features(create=True)
         self.boden_planfall = BodenbedeckungPlanfall.features(create=True)
+        self.anteile = BodenbedeckungAnteile.features(create=True)
+        self.bb_types = self.basedata.get_table(
+            'Bodenbedeckung', 'Flaeche_und_Oekologie'
+        )
 
         self.output_nullfall = ProjectLayer.from_table(
             self.boden_nullfall._table, groupname=self.layer_group,
@@ -80,6 +89,46 @@ class Ecology(Domain):
         self.output_planfall = ProjectLayer.from_table(
             self.boden_planfall._table, groupname=self.layer_group,
             prepend=True)
+        self.setup_params()
+
+    def setup_params(self):
+
+        self.params_nullfall = Params(self.ui.param_nullfall_tab.layout())
+        self.params_planfall = Params(self.ui.param_planfall_tab.layout())
+        clearLayout(self.ui.param_nullfall_tab.layout())
+        clearLayout(self.ui.param_planfall_tab.layout())
+
+        for params, prefix in [(self.params_nullfall, 'nullfall'),
+                               (self.params_planfall, 'planfall')]:
+            dependency = SumDependency(100)
+            for bb_typ in self.bb_types.features():
+                bb_id = bb_typ.IDBodenbedeckung
+                feature = self.anteile.get(IDBodenbedeckung=bb_id,
+                                           planfall=prefix=='planfall')
+                value = feature.anteil if feature else 0
+                slider = Slider(maximum=100, width=200, lockable=True)
+                param = Param(
+                    value, slider, label=bb_typ.name,
+                    unit='%'
+                )
+                dependency.add(param)
+                params.add(param, name=f'{prefix}_{bb_id}')
+            params.changed.connect(lambda p=prefix: self.save(p))
+            params.show()
+
+    def save(self, prefix):
+        planfall = prefix == 'planfall'
+        params = self.params_planfall if planfall else self.params_nullfall
+        for bb_typ in self.bb_types.features():
+            bb_id = bb_typ.IDBodenbedeckung
+            feature = self.anteile.get(IDBodenbedeckung=bb_id,
+                                       planfall=planfall)
+
+            if not feature:
+                feature = self.anteile.add(IDBodenbedeckung=bb_id)
+                feature.planfall = planfall
+            feature.anteil = params.get(f'{prefix}_{bb_id}').value
+            feature.save()
 
     def setup_layers(self):
 
@@ -176,9 +225,13 @@ class Ecology(Domain):
             coll = self.boden_planfall if planfall else self.boden_nullfall
             layer = self.layer_planfall if self.planfall \
                 else self.layer_nullfall
-            for qf in layer.selectedFeatures():
-                feat = coll.get(id=qf.id())
-                feat.delete()
+            ids = [f.id() for f in layer.selectedFeatures()]
+            # remove selection, so that qgis is free to remove them from canvas
+            layer.removeSelection()
+            for fid in ids:
+                feat = coll.get(id=fid)
+                if feat:
+                    feat.delete()
             self.canvas.refreshAllLayers()
 
         cutter = PolygonMapTool(

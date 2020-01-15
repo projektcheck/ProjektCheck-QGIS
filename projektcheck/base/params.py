@@ -384,6 +384,9 @@ class Params(QObject):
         else:
             self.__dict__[name] = value
 
+    def get(self, name):
+        return self._params.get(name, None)
+
     def __getitem__(self, key):
         return self._params.get(key, None)
 
