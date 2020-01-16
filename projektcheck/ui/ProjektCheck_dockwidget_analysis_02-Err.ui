@@ -73,8 +73,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>447</width>
-         <height>734</height>
+         <width>441</width>
+         <height>716</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -86,8 +86,11 @@ padding: 2px;
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
-          <property name="collapsed">
+          <property name="checkable">
            <bool>false</bool>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -426,7 +429,7 @@ padding: 2px;
            <bool>true</bool>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <property name="spacing">
@@ -519,7 +522,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string>Isochronen erzeugen</string>
@@ -640,7 +643,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string>Einrichtungen einlesen</string>
