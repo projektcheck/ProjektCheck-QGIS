@@ -1,6 +1,7 @@
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtWidgets import QMessageBox
+import numpy as np
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.layers import TileLayer
@@ -10,6 +11,8 @@ from projektcheck.base.tools import FeaturePicker
 from projektcheck.domains.ecology.tables import (BodenbedeckungNullfall,
                                                  BodenbedeckungPlanfall,
                                                  BodenbedeckungAnteile)
+from projektcheck.domains.ecology.diagrams import (
+    Leistungskennwerte, LeistungskennwerteDelta)
 from projektcheck.base.params import (Params, Param, Title,
                                       Seperator, SumDependency)
 from projektcheck.base.inputs import Slider
@@ -73,6 +76,7 @@ class Ecology(Domain):
         self.toggle_planfall_nullfall()
 
         self.ui.remove_drawing_button.clicked.connect(self.clear_drawing)
+        self.ui.calculate_rating_button.clicked.connect(self.calculate_rating)
 
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
@@ -85,6 +89,9 @@ class Ecology(Domain):
         self.anteile = BodenbedeckungAnteile.features(create=True)
         self.bb_types = self.basedata.get_table(
             'Bodenbedeckung', 'Flaeche_und_Oekologie'
+        )
+        self.faktoren = self.basedata.get_table(
+            'Faktoren', 'Flaeche_und_Oekologie'
         )
 
         self.output_nullfall = ProjectLayer.from_table(
@@ -326,3 +333,32 @@ class Ecology(Domain):
         else:
             layer.removeSelection()
             layer.selectByIds([fid for fid in selected if fid != feature.id()])
+
+    def calculate_rating(self):
+        df_factors = self.faktoren.to_pandas()
+        df_shares = self.anteile.to_pandas()
+        df_merged = df_shares.merge(df_factors, on='IDBodenbedeckung')
+
+        def rating(df, columns):
+            df_rating = df.multiply(df['anteil']/100, axis='index')
+            df_rating = df_rating[columns]
+            df_rating = df_rating.sum(axis=0)
+            bins = np.linspace(0, 1, 11) # 11 bins from 0 to 1 in 0.1 steps
+            rating = np.digitize(df_rating, bins)
+            return rating
+
+        columns = df_factors.columns[3:]
+        df_merged_nf = df_merged[df_merged['planfall']==False]
+        df_merged_pf = df_merged[df_merged['planfall']==True]
+        rating_nf = rating(df_merged_nf, columns)
+        rating_pf = rating(df_merged_pf, columns)
+        rating_delta = rating_pf - rating_nf
+
+        diagram = Leistungskennwerte(nullfall=rating_nf, planfall=rating_pf,
+                                     columns=columns, title='')
+        diagram.draw()
+        diagram = LeistungskennwerteDelta(delta=rating_delta,
+                                          columns=columns, title='')
+        diagram.draw()
+
+
