@@ -343,7 +343,7 @@ class Ecology(Domain):
             df_rating = df.multiply(df['anteil']/100, axis='index')
             df_rating = df_rating[columns]
             df_rating = df_rating.sum(axis=0)
-            bins = np.linspace(0, 1, 11) # 11 bins from 0 to 1 in 0.1 steps
+            bins = np.linspace(0, 1, 21) # 21 bins from 0 to 1 in 0.05 steps
             rating = np.digitize(df_rating, bins)
             return rating
 
@@ -353,12 +353,16 @@ class Ecology(Domain):
         rating_nf = rating(df_merged_nf, columns)
         rating_pf = rating(df_merged_pf, columns)
         rating_delta = rating_pf - rating_nf
+        columns = [c.replace('ae', 'ä').replace('ue', 'ü').replace('oe', 'ö')
+                   .capitalize() for c in columns]
 
-        diagram = Leistungskennwerte(nullfall=rating_nf, planfall=rating_pf,
-                                     columns=columns, title='')
+        diagram = Leistungskennwerte(
+            nullfall=rating_nf, planfall=rating_pf,
+            columns=columns, title='Leistungskennwerte Nullfall/Planfall')
         diagram.draw()
-        diagram = LeistungskennwerteDelta(delta=rating_delta,
-                                          columns=columns, title='')
+        diagram = LeistungskennwerteDelta(
+            delta=rating_delta, columns=columns,
+            title='Leistungskennwerte Änderungen Planfall')
         diagram.draw()
 
 
