@@ -393,6 +393,7 @@ class ParamsDialog(Dialog):
                          ui_file='parameter_dialog.ui',
                          title='Parameter einstellen')
         self.layout = self.base_layout
+        self.help_frame.setVisible(False)
         self._grid = None
 
     def draw(self, element):
