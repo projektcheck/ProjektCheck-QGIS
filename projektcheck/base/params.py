@@ -294,6 +294,7 @@ class Params(QObject):
     def load(self):
         pass
 
+
     def show(self, *args):
         '''
         render parameters and elements in parent
@@ -306,31 +307,17 @@ class Params(QObject):
         '''
         if self.parent is None:
             raise Exception("can't render Params object with no parent set")
-        self.dialog = Dialog('parameter_dialog.ui', modal=True)
+        self.dialog = ParamsDialog()
         self.layout = QVBoxLayout()
         self.layout.setSpacing(5)
-
-        def init_param_row(param):
-            row = QHBoxLayout()
-            label = QLabel(element.label)
-            row.addWidget(label)
-            row.addItem(
-                QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
-            return row
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
                 self.layout.addItem(element)
-                self.dialog.param_layout.addItem(element)
-                continue
             # overview
-            if not getattr(element, 'hide_in_overview', None):
+            elif not getattr(element, 'hide_in_overview', None):
                 element.draw(self.layout)
-            # dialog
-            if isinstance(element, Param):
-                element.draw(self.dialog.param_layout, edit=True)
-            else:
-                element.draw(self.dialog.param_layout)
+            self.dialog.draw(element)
 
         self.parent.addLayout(self.layout, *args)
 
@@ -350,6 +337,9 @@ class Params(QObject):
         self.layout.addLayout(row)
 
         button.clicked.connect(self.show_dialog)
+
+    def get(self, name):
+        return self._params.get(name, None)
 
     def close(self):
         '''
@@ -390,9 +380,6 @@ class Params(QObject):
         else:
             self.__dict__[name] = value
 
-    def get(self, name):
-        return self._params.get(name, None)
-
     def __getitem__(self, key):
         return self._params.get(key, None)
 
@@ -403,16 +390,9 @@ class Params(QObject):
 class ParamsDialog(Dialog):
     def __init__(self, parent=None, title=None):
         super().__init__(modal=True, parent=parent,
+                         ui_file='parameter_dialog.ui',
                          title='Parameter einstellen')
-        base_layout = QVBoxLayout()
-        self.setLayout(base_layout)
-        self.layout = QVBoxLayout()
-        base_layout.addLayout(self.layout)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok
-                                   | QDialogButtonBox.Cancel)
-        base_layout.addWidget(buttons)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
+        self.layout = self.base_layout
         self._grid = None
 
     def draw(self, element):
