@@ -189,7 +189,6 @@ class Ecology(Domain):
             self.ui.draw_water_button: 2,
             self.ui.draw_plates_button: 3,
             self.ui.draw_trees_button: 4,
-            self.ui.draw_trees_button: 4,
             self.ui.draw_perennial_button: 5,
             self.ui.draw_meadow_button: 6,
             self.ui.draw_lawn_button: 7,

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
-    <height>399</height>
+    <width>535</width>
+    <height>877</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>546</width>
-         <height>950</height>
+         <width>521</width>
+         <height>819</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -335,7 +335,7 @@ padding: 2px;
            <string>Leistungsfähigkeit des Bodens</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -413,7 +413,7 @@ padding: 2px;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QRadioButton" name="radioButton">
+                 <widget class="QRadioButton" name="null_fall_radio">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -450,7 +450,7 @@ padding: 2px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_2">
+                 <widget class="QRadioButton" name="planfall_radio">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -465,7 +465,7 @@ padding: 2px;
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>60</width>
+                    <width>16777215</width>
                     <height>16777215</height>
                    </size>
                   </property>
@@ -499,27 +499,23 @@ padding: 2px;
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
-                <property name="topMargin">
-                 <number>0</number>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>5</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_12">
+               <widget class="QPushButton" name="draw_builtup_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -555,7 +551,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_14">
+               <widget class="QPushButton" name="draw_water_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
