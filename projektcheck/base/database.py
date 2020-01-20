@@ -1,9 +1,6 @@
 from abc import ABC
 from typing import Union
-from collections import defaultdict
 import weakref
-
-from projektcheck.utils.singleton import SingletonABCMeta
 
 
 class Field:
@@ -26,7 +23,9 @@ class Feature:
         self._fields = []
         for f in table.fields():
             self._fields.append(f.name)
-            v = kwargs.get(f.name, None) or f.default
+            v = kwargs.get(f.name, None)
+            if v is None:
+                v = f.default
             self.__dict__[f.name] = v
 
     #def __getattr__(self, k):

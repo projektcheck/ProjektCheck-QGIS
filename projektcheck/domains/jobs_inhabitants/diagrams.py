@@ -47,7 +47,6 @@ class ArbeitsplatzEntwicklung(MatplotDiagram):
     def create(self, **kwargs):
 
         area = kwargs['area']
-        flaechen_name = area.name
 
         features = ApProJahr.features().filter(id_teilflaeche=area.id)
         df = features.to_pandas()
@@ -67,7 +66,6 @@ class BranchenAnteile(MatplotDiagram):
     def create(self, **kwargs):
 
         area = kwargs['area']
-        flaechen_name = area.name
 
         features = Gewerbeanteile.features().filter(id_teilflaeche=area.id)
         df = features.to_pandas()

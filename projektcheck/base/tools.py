@@ -1,10 +1,12 @@
 from qgis import utils
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QTimer
-from qgis.PyQt.QtGui import QCursor
-from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentify
+from qgis.PyQt.QtGui import QCursor, QColor
+from qgis.gui import (QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand,
+                      QgsVertexMarker)
 from qgis.PyQt.QtWidgets import QToolTip
-from qgis.core import (QgsVectorLayer, QgsFeature, QgsCoordinateTransform,
-                       QgsProject, QgsCoordinateReferenceSystem, QgsGeometry)
+from qgis.core import (QgsFeature, QgsCoordinateTransform,
+                       QgsProject, QgsCoordinateReferenceSystem, QgsGeometry,
+                       QgsPointXY, QgsWkbTypes)
 
 
 class MapTool:
@@ -13,10 +15,12 @@ class MapTool:
     '''
     cursor = QCursor(Qt.CrossCursor)
 
-    def __init__(self, ui_element, tip='', canvas=None):
+    def __init__(self, ui_element, canvas=None, tip=''):
         self.ui_element = ui_element
         self.canvas = canvas or utils.iface.mapCanvas()
-        self.ui_element.clicked.connect(self.toggle)
+        # workaround: .clicked.connect(self.toggle) works only occasionally
+        # reason unknown
+        self.ui_element.clicked.connect(lambda x: self.toggle(x))
         self.tip = tip
         if tip:
             self.map_timer = QTimer(self.canvas)
@@ -69,19 +73,32 @@ class MapClickedTool(MapTool, QgsMapToolEmitPoint):
         self.map_clicked.emit(geom)
 
 
-class FeaturePicker(MapTool, QgsMapToolIdentify):
-    feature_picked = pyqtSignal(QgsVectorLayer, QgsFeature)
+class FeaturePicker(MapTool, QgsMapToolEmitPoint):
+    feature_picked = pyqtSignal(QgsFeature)
 
-    def __init__(self, ui_element, canvas=None):
+    def __init__(self, ui_element, layers=[], canvas=None):
         MapTool.__init__(self, ui_element, canvas=canvas)
-        QgsMapToolIdentify.__init__(self, canvas=self.canvas)
+        QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
+        self._layers = layers
+
+    def add_layer(self, layer):
+        if layer:
+            self._layers.append(layer)
+
+    def set_layer(self, layer):
+        if not layer:
+            self._layers = []
+        else:
+            self._layers = [layer]
 
     def canvasReleaseEvent(self, mouseEvent):
-        results = self.identify(mouseEvent.x(), mouseEvent.y(),
-                                self.LayerSelection, self.VectorLayer)
-        if len(results) > 0:
-            self.feature_picked.emit(results[0].mLayer,
-                                    QgsFeature(results[0].mFeature))
+        if not self._layers:
+            return
+        features = QgsMapToolIdentify(self.canvas).identify(
+            mouseEvent.x(), mouseEvent.y(), self._layers,
+            QgsMapToolIdentify.TopDownStopAtFirst)
+        if len(features) > 0:
+            self.feature_picked.emit(features[0].mFeature)
 
 
 class DrawingTool(MapTool):
@@ -99,3 +116,69 @@ class DrawingTool(MapTool):
         pass
 
 
+class PolygonMapTool(MapTool, QgsMapToolEmitPoint):
+    drawn = pyqtSignal(QgsGeometry)
+
+    def __init__(self, ui_element, canvas=None, color=None):
+        self.canvas = canvas
+        MapTool.__init__(self, ui_element, self.canvas)
+        QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
+        self.drawing_lines = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        color = color or QColor(0, 0, 255)
+        self.drawing_lines.setColor(color)
+        color.setAlpha(100)
+        self.drawing_lines.setFillColor(color)
+        self.drawing_lines.setLineStyle(Qt.DotLine)
+        # should but doesn't work, making markers by hand instead
+        #self.drawing_lines.setIcon(QgsRubberBand.ICON_CIRCLE)
+        #self.drawing_lines.setIconSize(8)
+        self.drawing_lines.setWidth(2)
+        self.markers = []
+        self._drawing = False
+        self._moving =  False
+        self.reset()
+
+    def reset(self):
+        scene = self.canvas.scene()
+        for m in self.markers:
+            scene.removeItem(m)
+        self.markers = []
+        self._moving = False
+        self._drawing = False
+        self.drawing_lines.reset(QgsWkbTypes.PolygonGeometry)
+
+    def canvasDoubleClickEvent(self, e):
+        if self._moving:
+            self.drawing_lines.removeLastPoint()
+        self.drawn.emit(self.drawing_lines.asGeometry())
+        self.reset()
+
+    def canvasPressEvent(self, e):
+        if(e.button() == Qt.RightButton):
+            if self._moving:
+                self.drawing_lines.removeLastPoint()
+            self.drawn.emit(self.drawing_lines.asGeometry())
+            self.reset()
+            return
+        self._moving = False
+        self._drawing = True
+        point = self.toMapCoordinates(e.pos())
+        point = QgsPointXY(point.x(), point.y())
+        self.drawing_lines.addPoint(point, True)
+        marker = QgsVertexMarker(self.canvas)
+        marker.setCenter(point)
+        marker.setColor(Qt.blue)
+        marker.setIconSize(8)
+        marker.setIconType(QgsVertexMarker.ICON_CIRCLE)
+        marker.setPenWidth(4)
+        self.markers.append(marker)
+
+    def canvasMoveEvent(self, e):
+        if self._drawing:
+            #self.rubberBand.removeLastPoint()
+            if self._moving:
+                self.drawing_lines.removeLastPoint()
+            point = self.toMapCoordinates(e.pos())
+            point = QgsPointXY(point.x(), point.y())
+            self.drawing_lines.addPoint(point, True)
+            self._moving = True
