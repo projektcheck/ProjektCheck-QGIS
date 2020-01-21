@@ -420,7 +420,9 @@ class Ecology(Domain):
 
         diagram = Leistungskennwerte(
             nullfall=rating_nf, planfall=rating_pf,
-            columns=columns, title='Leistungskennwerte Nullfall/Planfall')
+            columns=columns, title='Leistungskennwerte Nullfall/Planfall',
+            max_rating=self.MAX_RATING
+        )
         diagram.draw()
         diagram = LeistungskennwerteDelta(
             delta=rating_delta, columns=columns,

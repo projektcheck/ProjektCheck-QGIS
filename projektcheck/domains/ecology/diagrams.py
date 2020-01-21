@@ -38,6 +38,8 @@ class Leistungskennwerte(MatplotDiagram):
         ax.set_title(kwargs['title'])
         ax.set_yticks(y)
         ax.set_yticklabels(labels)
+        if 'max_rating' in kwargs:
+            ax.axes.set_xlim([0, kwargs['max_rating']])
         ax.legend()
 
         horizontal_label_values(bars1, ax)
