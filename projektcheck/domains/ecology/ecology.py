@@ -77,6 +77,14 @@ class Ecology(Domain):
         self.ui.remove_drawing_button.clicked.connect(self.clear_drawing)
         self.ui.calculate_rating_button.clicked.connect(self.calculate_rating)
         self.ui.import_nullfall_button.clicked.connect(self.import_nullfall)
+        self.ui.apply_type_button.clicked.connect(
+            lambda: self.add_geom(
+                self.area, self.get_selected_type(),
+                planfall=self.ui.planfall_radio.isChecked()))
+        self.ui.remove_type_button.clicked.connect(
+            lambda: self.remove_type(
+                self.get_selected_type(),
+                planfall=self.ui.planfall_radio.isChecked()))
 
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
@@ -219,7 +227,7 @@ class Ecology(Domain):
 
     def add_geom(self, geom, typ, unite=True, in_area_only=True,
                  difference=True, planfall=True):
-        if geom.isEmpty() or geom.isNull():
+        if geom.isEmpty() or geom.isNull() or typ is None:
             return
         if in_area_only:
             geom = geom.intersection(self.area)
@@ -256,21 +264,15 @@ class Ecology(Domain):
         if len(features) == 1:
             self.add_output()
 
-    def remove_type(self, typ):
-        pass
-        #planfall = self.ui.planfall_radio.isChecked()
-        #coll = self.boden_planfall if planfall else self.boden_nullfall
-        #output = self.output_planfall if self.planfall \
-            #else self.output_nullfall
-        #layer = output.layer
-        #ids = [f.id() for f in layer.selectedFeatures()]
-        ## remove selection, so that qgis is free to remove them from canvas
-        #layer.removeSelection()
-        #for fid in ids:
-            #feat = coll.get(id=fid)
-            #if feat:
-                #feat.delete()
-        #self.canvas.refreshAllLayers()
+    def remove_type(self, typ, planfall=True):
+        if not typ:
+            return
+        features = self.boden_planfall if planfall else self.boden_nullfall
+        # ToDo: filter would be better but messes up original filter atm
+        for feature in features:
+            if feature.IDBodenbedeckung == typ:
+                feature.delete()
+        self.canvas.refreshAllLayers()
 
     def save(self, prefix):
         planfall = prefix == 'planfall'
@@ -302,6 +304,12 @@ class Ecology(Domain):
                                     IDBodenbedeckung=feature.IDBodenbedeckung,
                                     area=feature.geom.area())
         self.canvas.refreshAllLayers()
+
+    def get_selected_type(self):
+        for button, typ in self.drawing_tools.items():
+            if button.isChecked():
+                return typ
+        return None
 
     def apply_drawing(self, planfall):
         features = self.boden_planfall if planfall else self.boden_nullfall
