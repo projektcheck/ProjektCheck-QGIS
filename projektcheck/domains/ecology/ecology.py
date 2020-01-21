@@ -66,9 +66,6 @@ class Ecology(Domain):
         self.setup_layers()
         self.setup_drawing_tools()
         self.ui.paint_tool_frame.setVisible(False)
-        #self.feature_picker = FeaturePicker(self.ui.select_element_button,
-                                            #canvas=self.canvas)
-        #self.feature_picker.feature_picked.connect(self.feature_picked)
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
         self.output_nullfall = None
         self.output_planfall = None
@@ -79,15 +76,13 @@ class Ecology(Domain):
 
         self.ui.remove_drawing_button.clicked.connect(self.clear_drawing)
         self.ui.calculate_rating_button.clicked.connect(self.calculate_rating)
+        self.ui.import_nullfall_button.clicked.connect(self.import_nullfall)
 
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
-        enabled_out = self.output_planfall if self.planfall \
-            else self.output_nullfall
+        self.ui.import_nullfall_button.setVisible(self.planfall)
         disabled_out = self.output_nullfall if self.planfall \
             else self.output_planfall
-        #if enabled_out:
-            #self.feature_picker.set_layer(enabled_out.layer)
         if disabled_out:
             disabled_out.set_visibility(False)
 
@@ -222,29 +217,7 @@ class Ecology(Domain):
                     planfall=self.ui.planfall_radio.isChecked()
                 ))
 
-        def remove_selected():
-            planfall = self.ui.planfall_radio.isChecked()
-            coll = self.boden_planfall if planfall else self.boden_nullfall
-            output = self.output_planfall if self.planfall \
-                else self.output_nullfall
-            layer = output.layer
-            ids = [f.id() for f in layer.selectedFeatures()]
-            # remove selection, so that qgis is free to remove them from canvas
-            layer.removeSelection()
-            for fid in ids:
-                feat = coll.get(id=fid)
-                if feat:
-                    feat.delete()
-            self.canvas.refreshAllLayers()
-
-        #cutter = PolygonMapTool(
-            #self.ui.cut_element_button, canvas=self.canvas,
-            #color=QColor(255, 0, 0)
-        #)
-        #cutter.drawn.connect(cut_geom)
-        #self.ui.remove_type_button.clicked.connect(remove_selected)
-
-    def add_geom(self, geom, floor_id, unite=True, in_area_only=True,
+    def add_geom(self, geom, typ, unite=True, in_area_only=True,
                  difference=True, planfall=True):
         if geom.isEmpty() or geom.isNull():
             return
@@ -252,11 +225,11 @@ class Ecology(Domain):
             geom = geom.intersection(self.area)
         features = self.boden_planfall if planfall else self.boden_nullfall
         if not unite:
-            features.add(geom=geom, IDBodenbedeckung=floor_id, area=geom.area())
+            features.add(geom=geom, IDBodenbedeckung=typ, area=geom.area())
         else:
-            ex_feat = features.get(IDBodenbedeckung=floor_id)
+            ex_feat = features.get(IDBodenbedeckung=typ)
             if not ex_feat:
-                features.add(geom=geom, IDBodenbedeckung=floor_id,
+                features.add(geom=geom, IDBodenbedeckung=typ,
                              area=geom.area())
             else:
                 ex_feat.geom = ex_feat.geom.combine(geom)
@@ -266,7 +239,7 @@ class Ecology(Domain):
             # ToDo: fix filtering, works but messes up previous filtering
             #others = features.filter(IDBodenbedeckung__ne=floor_id)
             for feature in features:
-                if feature.IDBodenbedeckung == floor_id:
+                if feature.IDBodenbedeckung == typ:
                     continue
                 intersection = feature.geom.intersection(geom)
                 if intersection.isEmpty():
@@ -283,6 +256,22 @@ class Ecology(Domain):
         if len(features) == 1:
             self.add_output()
 
+    def remove_type(self, typ):
+        pass
+        #planfall = self.ui.planfall_radio.isChecked()
+        #coll = self.boden_planfall if planfall else self.boden_nullfall
+        #output = self.output_planfall if self.planfall \
+            #else self.output_nullfall
+        #layer = output.layer
+        #ids = [f.id() for f in layer.selectedFeatures()]
+        ## remove selection, so that qgis is free to remove them from canvas
+        #layer.removeSelection()
+        #for fid in ids:
+            #feat = coll.get(id=fid)
+            #if feat:
+                #feat.delete()
+        #self.canvas.refreshAllLayers()
+
     def save(self, prefix):
         planfall = prefix == 'planfall'
         params = self.params_planfall if planfall else self.params_nullfall
@@ -296,6 +285,23 @@ class Ecology(Domain):
                 feature.planfall = planfall
             feature.anteil = params.get(f'{prefix}_{bb_id}').value
             feature.save()
+
+    def import_nullfall(self):
+        if len(self.boden_planfall) > 0:
+            reply = QMessageBox.question(
+                self.ui, 'Nullfall in Planfall importieren',
+                'Achtung: die existierende Zeichnung für den Planfall '
+                'wird beim Import des Nullfalls gelöscht.',
+                QMessageBox.Yes, QMessageBox.Cancel
+            )
+            if reply == QMessageBox.Cancel:
+                return
+        self.boden_planfall.delete()
+        for feature in self.boden_nullfall:
+            self.boden_planfall.add(geom=feature.geom,
+                                    IDBodenbedeckung=feature.IDBodenbedeckung,
+                                    area=feature.geom.area())
+        self.canvas.refreshAllLayers()
 
     def apply_drawing(self, planfall):
         features = self.boden_planfall if planfall else self.boden_nullfall
@@ -351,16 +357,6 @@ class Ecology(Domain):
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw(name)
-
-    #def feature_picked(self, feature):
-        #output = self.output_planfall if self.planfall else self.output_nullfall
-        #layer = output.layer
-        #selected = [f.id() for f in layer.selectedFeatures()]
-        #if feature.id() not in selected:
-            #layer.select(feature.id())
-        #else:
-            #layer.removeSelection()
-            #layer.selectByIds([fid for fid in selected if fid != feature.id()])
 
     def calculate_rating(self):
         df_factors = self.faktoren.to_pandas()
