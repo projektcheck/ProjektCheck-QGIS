@@ -70,6 +70,10 @@ class Layer(ABC):
             self.layer.setSubsetString(filter)
         return self.layer
 
+    def set_visibility(self, state):
+        if self._l:
+            self._l.setItemVisibilityChecked(state)
+
     def zoom_to(self):
         canvas = iface.mapCanvas()
         self.layer.updateExtents()

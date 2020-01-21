@@ -198,7 +198,7 @@ class GeopackageTable(Table):
     def filter(self, **kwargs):
         '''
         filtering django style
-        supported: __in, __gt, __lt
+        supported: __in, __gt, __lt, __ne
         '''
         # ToDo: filter ids (geom maybe not)
         #       more filters
@@ -238,6 +238,8 @@ class GeopackageTable(Table):
                 terms.append(f'"{field_name}" > {v}')
             elif split[1] == 'lt':
                 terms.append(f'"{field_name}" < {v}')
+            elif split[1] == 'ne':
+                terms.append(f'"{field_name}" <> {v}')
         where = ' and '.join(terms)
         #if self.where:
             #where = f'({self.where}) and ({where})'

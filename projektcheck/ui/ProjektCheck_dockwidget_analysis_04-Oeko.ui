@@ -75,7 +75,7 @@ padding: 2px;
         <item>
          <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
           <property name="title">
-           <string>Schutzgebiete / unzerschnittene Räume anzeigen</string>
+           <string>Schutzgebiete</string>
           </property>
           <property name="collapsed">
            <bool>true</bool>
@@ -97,8 +97,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_4.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_5.png</normalon>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_4.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_6.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_nature_conservation_6.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -107,7 +106,7 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -130,8 +129,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_4_checkable.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_3_checkable.png</normalon>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_4_checkable.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_5_checkable.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_landscapepreservation_5_checkable.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -140,20 +138,25 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="Line" name="line_4">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_3">
+          <property name="title">
+           <string>Unzerschnittene Räume (100x100-Meter-Raster)</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QPushButton" name="spaces_100_button">
              <property name="sizePolicy">
@@ -170,8 +173,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_100_2.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_100_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_100_2.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_100_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_100_3.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -180,7 +182,7 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -203,8 +205,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_50_2.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_50_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_50_2.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_50_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_50_3.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -213,7 +214,7 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -236,8 +237,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_2.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_open_space_2.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_open_space_3.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -246,7 +246,7 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -276,8 +276,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_50_2.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_50_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_50_3.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -286,7 +285,7 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -309,8 +308,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_forest_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_forest_2.png</iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_forest_3.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -319,7 +317,7 @@ padding: 2px;
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -410,6 +408,9 @@ padding: 2px;
               <item>
                <widget class="QWidget" name="widget" native="true">
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QRadioButton" name="null_fall_radio">
                    <property name="sizePolicy">
@@ -498,20 +499,17 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+               <widget class="QLabel" name="label_4">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
+                <property name="text">
+                 <string>Bodenbedeckungstypen</string>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>5</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="draw_builtup_button">
@@ -910,39 +908,29 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout">
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>5</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
                 <item>
-                 <widget class="QPushButton" name="select_element_button">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
+                 <widget class="QCheckBox" name="in_area_only_check">
                   <property name="text">
-                   <string>Element auswählen</string>
+                   <string> nur im Plangebiet zeichnen</string>
                   </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                    <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="autoExclusive">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
+                  <property name="checked">
                    <bool>true</bool>
                   </property>
                  </widget>
@@ -952,50 +940,29 @@ padding: 2px;
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Fixed</enum>
-                  </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>10</width>
+                    <width>40</width>
                     <height>20</height>
                    </size>
                   </property>
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="cut_element_button">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
+                 <widget class="QPushButton" name="import_nullfall_button">
                   <property name="text">
-                   <string>Elemente beschneiden</string>
+                   <string>Zeichnung aus Nullfall übernehmen</string>
                   </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_edit_delete_1.png</normaloff>
-                    <normalon>../../images/iconset_mob/20190619_iconset_mob_edit_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_edit_delete_1.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="autoExclusive">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QPushButton" name="apply_type_button">
+                  <property name="text">
+                   <string>Plangebiet auf gewählten Typ setzen</string>
                   </property>
                  </widget>
                 </item>
@@ -1016,18 +983,6 @@ padding: 2px;
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="remove_element_button">
-                  <property name="text">
-                   <string>Elemente löschen</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
-                   </iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <spacer name="horizontalSpacer">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1040,17 +995,32 @@ padding: 2px;
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="remove_type_button">
+                  <property name="text">
+                   <string>Elemente des gewählten Typs löschen</string>
+                  </property>
+                  <property name="icon">
+                   <iconset>
+                    <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
+                   </iconset>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
-               <spacer name="horizontalSpacer_7">
+               <spacer name="verticalSpacer_2">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>40</width>
-                  <height>20</height>
+                  <width>20</width>
+                  <height>5</height>
                  </size>
                 </property>
                </spacer>
@@ -1061,7 +1031,7 @@ padding: 2px;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QPushButton" name="pushButton_26">
+                 <widget class="QPushButton" name="analyse_drawing_button">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
