@@ -12,6 +12,7 @@ import os
 import locale
 locale.setlocale(locale.LC_ALL, '')
 import json
+import yaml
 
 from projektcheck.base.inputs import InputType
 from projektcheck.base.dialogs import Dialog
@@ -284,7 +285,7 @@ class Params(QObject):
                 os.path.join(settings.HELP_PATH, help_file)
             if os.path.exists(self.help_file):
                 with open(self.help_file) as json_file:
-                    self.help_dict = json.load(json_file)
+                    self.help_dict = yaml.load(json_file)
         # passed help text overrides the one from file
         if help_text or 'allgemein' not in self.help_dict:
             self.help_dict['allgemein'] = help_text
