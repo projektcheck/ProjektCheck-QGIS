@@ -1,0 +1,8 @@
+{
+    "allgemein": "",
+    "lebensmittel": "",
+    "periodischer_bedarf": "",
+    "aperiodischer_bedarf": "",
+    "baumarkt": "",
+    "moebel": ""
+}

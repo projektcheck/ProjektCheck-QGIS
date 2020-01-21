@@ -1,7 +1,5 @@
 import webbrowser
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtGui import QCursor
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.tools import FeaturePicker

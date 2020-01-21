@@ -1,0 +1,13 @@
+{
+    "allgemein": "Mit dieser Funktion können Sie für Ihr Plangebiet festlegen, ob die zukünftige Nutzung Wohnen, Gewerbe oder Einzelhandel ist. Sofern Ihr Plangebiet mehrere Teilflächen umfasst, können Sie jeder Teilfläche eine eigene Nutzungsart (Wohnen, Gewerbe oder Einzelhandel) zuordnen. Zudem können Sie - bei Bedarf - jede Teilfläche umbenennen. Jeder Teilfläche kann nur eine Nutzung zugeordnet werden. Sollten Sie eine Mischnutzung auf einer Teilfläche haben, so legen Sie bitte ein neues Projekt an und kopieren Sie vorher in der dabei eingelesenen Feature-Class (Shape-File o.ä.) die Teilfläche mit der Mischnutzung, so dass Sie doppelt und räumlich überlagert enthalten ist. Mit der gerade geöffneten Funktion können Sie anschließend den beiden Teilflächen unterschiedliche Nutzungen zuweisen.",
+    "beginn_nutzung": "Legen Sie hier fest, in welchem Jahr der Bezug der ersten fertiggestellten Wohnungen beginnt. Die Festlegung hat Einfluss auf die Skalierung der Zeitachse der Auswertungen der Funktion “Bewohnerzahl schätzen” (Analysieren; Bewohner und Arbeitsplätze; Bewohnerzahl schätzen). Der Bezugsbeginn ist nicht der Baubeginn, sondern liegt i.d.R. danach.",
+    "aufsiedlungsdauer": "Legen Sie hier fest, wie viele Jahre es dauert, bis die letzte Wohnung auf der Teilfläche gebaut und bezogen ist, gerechnet ab dem Zeitpunkt des Bezugs der ersten fertig gestellten Wohnung (Jahreszahl aus der vorigen Eingabe). Beispiele: Die erste Wohnung wird 2019, die letzte 2021 bezogen. Eingabe = 3 (für die drei Jahre 2019, 2020 und 2021) Alle Wohnungen werden im gleichen Jahr bezogen: Eingabe = 1 Hinweis: In den weiteren Berechnungen wird vereinfachend von einem linearen Zuwachs des Bezugs ausgegangen. Wenn Sie z.B. eine Bezugsdauer von 4 Jahren eingetragen haben, wird in den nachfolgenden Berechnungen für jedes Jahr von einem Erstbezug von 25% (= 1/4) der Wohnungen ausgegangen.",
+    "we_efh": "we_efh",
+    "we_zfh": "we_zfh",
+    "we_rh": "we_rh",
+    "we_mfh": "we_mfh",
+    "ew_je_we_efh": "ew_je_we_efh",
+    "ew_je_we_zfh": "ew_je_we_zfh",
+    "ew_je_we_rh": "ew_je_we_rh",
+    "ew_je_we_mfh": "ew_je_we_mfh"
+}

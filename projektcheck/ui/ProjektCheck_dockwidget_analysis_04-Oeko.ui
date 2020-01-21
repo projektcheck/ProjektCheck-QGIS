@@ -335,7 +335,7 @@ padding: 2px;
            <string>Leistungsfähigkeit des Bodens</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>

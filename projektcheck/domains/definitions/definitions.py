@@ -36,7 +36,7 @@ class Wohnen:
     def setup_params(self, area):
         self.area = area
         clearLayout(self.layout)
-        self.params = Params(self.layout)
+        self.params = Params(self.layout, help_file='wohnen_params.txt')
         self.params.add(Title('Bezugszeitraum'))
         self.params.beginn_nutzung = Param(
             area.beginn_nutzung, SpinBox(minimum=2000, maximum=2100),
@@ -276,7 +276,7 @@ class Gewerbe:
     def setup_params(self, area):
         self.area = area
         clearLayout(self.layout)
-        self.params = Params(self.layout)
+        self.params = Params(self.layout, help_file='gewerbe_params.txt')
 
         self.params.add(Title('Bezugszeitraum'))
         self.params.beginn_nutzung = Param(
@@ -467,7 +467,7 @@ class Einzelhandel:
     def setup_params(self, area):
         self.area = area
         clearLayout(self.layout)
-        self.params = Params(self.layout)
+        self.params = Params(self.layout, help_file='einzelhandel_params.txt')
 
         for sortiment in self.sortimente_base.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
@@ -531,8 +531,6 @@ class Einzelhandel:
                   joined['Wege_je_Besucher'])
         n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
 
-        # ToDo: wege arbeitsplaetze?
-        n_jobs = joined['AP_je_qm_Vfl'] * joined['verkaufsflaeche_qm']
         n_job_ways = (joined['verkaufsflaeche_qm'] *
                       joined['AP_je_qm_Vfl'] *
                       default_branche.Wege_je_Beschäftigten)
@@ -593,7 +591,7 @@ class ProjectDefinitions(Domain):
     def setup_type(self):
         layout = self.ui.parameter_group.layout()
         clearLayout(layout)
-        self.params = Params(layout)
+        self.params = Params(layout, help_file='flaechen_params.txt')
         self.params.name = Param(self.area.name, LineEdit(width=300),
                                  label='Name')
 

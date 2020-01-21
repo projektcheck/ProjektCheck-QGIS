@@ -1,8 +1,8 @@
 from abc import ABC
-from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
-                          QLabel, QGridLayout, QDialogButtonBox)
-from qgis.PyQt.QtGui import QFont, QIcon
+                          QLabel, QGridLayout, QDialogButtonBox, QWidget)
+from qgis.PyQt.QtGui import QFont, QIcon, QCursor
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
                                  QPushButton, QLayoutItem)
 from typing import Union
@@ -11,10 +11,18 @@ import math
 import os
 import locale
 locale.setlocale(locale.LC_ALL, '')
+import json
 
 from projektcheck.base.inputs import InputType
 from projektcheck.base.dialogs import Dialog
-from projektcheck.base.project import settings
+
+from settings import settings
+
+
+class ClickableWidget(QWidget):
+    clicked = pyqtSignal(object)
+    def mousePressEvent(self, evt):
+        self.clicked.emit(evt)
 
 
 class Param(QObject):
@@ -31,7 +39,7 @@ class Param(QObject):
     changed = pyqtSignal(object)
 
     def __init__(self, value, input: InputType = None, label: str = '',
-                 unit=''):
+                 unit='', help_text=''):
         '''
         Parameters
         ----------
@@ -51,6 +59,7 @@ class Param(QObject):
             self.input.value = value
         self.unit = unit
         self._value_label = QLabel(self._v_repr(value))
+        self.help_text = help_text
 
     @property
     def locked(self):
@@ -93,25 +102,25 @@ class Param(QObject):
         '''
         if edit and not self.input:
             return
-        row = QHBoxLayout()
+        self.row = QHBoxLayout()
         label = QLabel(self.label)
         spacer = QSpacerItem(0, 0, QSizePolicy.Expanding)
         if isinstance(layout, QGridLayout):
             n_rows = layout.rowCount()
             layout.addWidget(label, n_rows, 0)
             layout.addItem(spacer, n_rows, 1)
-            layout.addLayout(row, n_rows, 2)
+            layout.addLayout(self.row, n_rows, 2)
         else:
-            row.addWidget(label)
-            row.addItem(spacer)
-            layout.addLayout(row)
+            self.row.addWidget(label)
+            self.row.addItem(spacer)
+            layout.addLayout(self.row)
         if edit:
-            self.input.draw(row)
+            self.input.draw(self.row)
         else:
-            row.addWidget(self._value_label)
+            self.row.addWidget(self._value_label)
         if self.unit:
             unit_label = QLabel(self.unit)
-            row.addWidget(unit_label)
+            self.row.addWidget(unit_label)
 
 
 class Dependency(ABC):
@@ -252,7 +261,8 @@ class Params(QObject):
     changed = pyqtSignal()
 
     def __init__(self, parent: QObject = None,
-                 button_label: str = 'Editieren', editable: bool = True):
+                 button_label: str = 'Editieren', editable: bool = True,
+                 help_text='', help_file=None):
         '''
         Parameters
         ----------
@@ -268,11 +278,16 @@ class Params(QObject):
         self.parent = parent
         self.dialog = None
         self.editable = editable
-
-    #def add_dependency(self, dependency: Dependency):
-        #self._dependencies.append(dependency)
-        #for param in self._params.values():
-            #dependency.add_param(param)
+        self.help_dict = {}
+        if help_file:
+            self.help_file = help_file if os.path.exists(help_file) else \
+                os.path.join(settings.HELP_PATH, help_file)
+            if os.path.exists(self.help_file):
+                with open(self.help_file) as json_file:
+                    self.help_dict = json.load(json_file)
+        # passed help text overrides the one from file
+        if help_text or 'allgemein' not in self.help_dict:
+            self.help_dict['allgemein'] = help_text
 
     def add(self, element: Union[Param, Seperator, Title, QLayoutItem],
             name=''):
@@ -284,8 +299,10 @@ class Params(QObject):
         self._elements.append(element)
         if name and isinstance(element, Param):
             self._params[name] = element
-            #for dependency in self._dependencies:
-                #dependency.add(element)
+            if element.help_text or name not in self.help_dict:
+                self.help_dict[name] = element.help_text
+            else:
+                element.help_text = self.help_dict[name]
 
     @property
     def params(self):
@@ -293,7 +310,6 @@ class Params(QObject):
 
     def load(self):
         pass
-
 
     def show(self, *args):
         '''
@@ -307,7 +323,16 @@ class Params(QObject):
         '''
         if self.parent is None:
             raise Exception("can't render Params object with no parent set")
-        self.dialog = ParamsDialog()
+
+        # Debug: function to automatically write a help file with all params
+        # with empty texts, should be removed in production
+        if (settings.DEBUG and getattr(self, 'help_file', None) and
+            not os.path.exists(self.help_file)):
+            with open(self.help_file, 'w') as json_file:
+                json.dump(self.help_dict, json_file, indent=4)
+
+        self.dialog = ParamsDialog(help_text=self.help_dict['allgemein'])
+
         self.layout = QVBoxLayout()
         self.layout.setSpacing(5)
 
@@ -388,12 +413,24 @@ class Params(QObject):
 
 
 class ParamsDialog(Dialog):
-    def __init__(self, parent=None, title=None):
+    def __init__(self, parent=None, title=None, help_text=''):
         super().__init__(modal=True, parent=parent,
                          ui_file='parameter_dialog.ui',
                          title='Parameter einstellen')
         self.layout = self.base_layout
         self.help_widget.setVisible(False)
+        self.help_text = help_text
+        if not help_text:
+            self.details_button.setVisible(False)
+        else:
+            self.back_button.clicked.connect(
+                lambda: self.show_help(help_text, True))
+            self.show_help(help_text, True)
+        def adjust(checked):
+            if not checked:
+                self.adjustSize()
+        self.details_button.toggled.connect(adjust)
+        self.back_button.setCursor(QCursor(Qt.PointingHandCursor))
         self._grid = None
 
     def draw(self, element):
@@ -403,12 +440,32 @@ class ParamsDialog(Dialog):
                 self._grid = QGridLayout()
                 self.layout.addLayout(self._grid)
             element.draw(self._grid, edit=True)
+            if element.help_text:
+                help_button = QPushButton('?')
+                help_button.setMaximumWidth(20)
+                help_button.setToolTip('Hilfe')
+                help_button.setCursor(QCursor(Qt.PointingHandCursor))
+                #help_button.setSizePolicy(QSizePolicy.Fixed,
+                                          #QSizePolicy.Minimum)
+                help_button.setFlat(True)
+                font = help_button.font()
+                font.setUnderline(True)
+                font.setBold(True)
+                help_button.setFont(font)
+                help_button.clicked.connect(
+                    lambda: self.show_help(element.help_text, False))
+                element.row.addWidget(help_button)
         else:
             self._grid = None
             if isinstance(element, QLayoutItem):
                 self.layout.addItem(element)
             else:
                 element.draw(self.layout)
+
+    def show_help(self, text, hide_back=False):
+        self.help_text_edit.setText(text)
+        self.details_button.setChecked(True)
+        self.back_button.setVisible(not hide_back)
 
 
 class ParamCluster(Params):
