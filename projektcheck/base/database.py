@@ -19,6 +19,8 @@ class Feature:
         self.__dict__['_fields'] = {f.name: f for f in table.fields()}
         self.id = kwargs.pop('id', None)
         self.geom = kwargs.pop('geom', None)
+        if self.geom and not self.geom.isGeosValid():
+            self.geom = self.geom.makeValid()
         self._table = table
         self._fields = []
         for f in table.fields():
