@@ -68,8 +68,8 @@ class Ecology(Domain):
                                             canvas=self.canvas)
         self.feature_picker.feature_picked.connect(self.feature_picked)
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
-        self.layer_planfall = None
-        self.layer_nullfall = None
+        self.output_nullfall = None
+        self.output_planfall = None
 
         self.ui.planfall_radio.toggled.connect(self.toggle_planfall_nullfall)
         self.ui.planfall_radio.toggled.connect(self.add_output)
@@ -80,8 +80,14 @@ class Ecology(Domain):
 
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
-        l = self.layer_planfall if self.planfall else self.layer_nullfall
-        self.feature_picker.set_layer(l)
+        enabled_o = self.output_planfall if self.planfall \
+            else self.output_nullfall
+        disabled_o = self.output_nullfall if self.planfall \
+            else self.output_planfall
+        if enabled_o:
+            self.feature_picker.set_layer(enabled_o.layer)
+        if disabled_o:
+            disabled_o.set_visibility(False)
 
     def load_content(self):
         self.boden_nullfall = BodenbedeckungNullfall.features(create=True)
@@ -216,8 +222,9 @@ class Ecology(Domain):
         def cut_geom(clip_geom):
             planfall = self.ui.planfall_radio.isChecked()
             coll = self.boden_planfall if planfall else self.boden_nullfall
-            layer = self.layer_planfall if self.planfall \
-                else self.layer_nullfall
+            output = self.output_planfall if self.planfall \
+                else self.output_nullfall
+            layer = output.layer
             features = layer.selectedFeatures()
             for qf in features:
                 feat = coll.get(id=qf.id())
@@ -238,8 +245,9 @@ class Ecology(Domain):
         def remove_selected():
             planfall = self.ui.planfall_radio.isChecked()
             coll = self.boden_planfall if planfall else self.boden_nullfall
-            layer = self.layer_planfall if self.planfall \
-                else self.layer_nullfall
+            output = self.output_planfall if self.planfall \
+                else self.output_nullfall
+            layer = output.layer
             ids = [f.id() for f in layer.selectedFeatures()]
             # remove selection, so that qgis is free to remove them from canvas
             layer.removeSelection()
@@ -296,8 +304,9 @@ class Ecology(Domain):
         if reply == QMessageBox.No:
             return
         features = self.boden_planfall if planfall else self.boden_nullfall
-        layer = self.layer_planfall if self.planfall \
-            else self.layer_nullfall
+        output = self.output_planfall if self.planfall \
+            else self.output_nullfall
+        layer = output.layer
         # remove selection, so that qgis is free to remove them from canvas
         layer.removeSelection()
         features.delete()
@@ -311,8 +320,8 @@ class Ecology(Domain):
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
         layer = output.draw(label=label, style_file=style)
-        setattr(self, 'layer_planfall' if self.planfall else 'layer_nullfall',
-                layer)
+        setattr(self, 'output_planfall' if self.planfall else 'output_nullfall',
+                output)
         self.toggle_planfall_nullfall()
 
     def add_wms_layer(self, name, url, parent_group=None):
@@ -325,7 +334,8 @@ class Ecology(Domain):
         layer.draw(name)
 
     def feature_picked(self, feature):
-        layer = self.layer_planfall if self.planfall else self.layer_nullfall
+        output = self.output_planfall if self.planfall else self.output_nullfall
+        layer = output.layer
         selected = [f.id() for f in layer.selectedFeatures()]
         if feature.id() not in selected:
             layer.select(feature.id())
