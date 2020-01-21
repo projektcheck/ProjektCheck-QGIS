@@ -240,12 +240,6 @@ class ProgressDialog(Dialog):
         self.elapsed_time_label.setText(timer_text)
 
 
-class Message:
-    '''
-    dialog showing a message
-    '''
-
-
 class SettingsDialog(Dialog):
     ui_file = 'settings.ui'
 

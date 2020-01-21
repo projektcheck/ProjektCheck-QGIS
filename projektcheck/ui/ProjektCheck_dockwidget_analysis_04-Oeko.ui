@@ -333,7 +333,7 @@ padding: 2px;
            <string>Leistungsfähigkeit des Bodens</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -1031,7 +1031,7 @@ padding: 2px;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QPushButton" name="pushButton_26">
+                 <widget class="QPushButton" name="analyse_drawing_button">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>

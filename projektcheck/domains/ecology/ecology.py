@@ -1,21 +1,20 @@
-from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.Qt import QPushButton
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
+                                 QTableWidget, QTableWidgetItem)
 import numpy as np
 
 from projektcheck.base.domain import Domain
 from projektcheck.base.layers import TileLayer
 from projektcheck.base.project import ProjectLayer
 from projektcheck.base.tools import PolygonMapTool
-from projektcheck.base.tools import FeaturePicker
 from projektcheck.domains.ecology.tables import (BodenbedeckungNullfall,
                                                  BodenbedeckungPlanfall,
                                                  BodenbedeckungAnteile)
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.ecology.diagrams import (
     Leistungskennwerte, LeistungskennwerteDelta)
-from projektcheck.base.params import (Params, Param, Title,
-                                      Seperator, SumDependency)
+from projektcheck.base.params import (Params, Param, SumDependency)
+from projektcheck.base.dialogs import Dialog
 from projektcheck.base.inputs import Slider
 from projektcheck.utils.utils import clearLayout
 
@@ -74,7 +73,9 @@ class Ecology(Domain):
         self.ui.planfall_radio.toggled.connect(self.add_output)
         self.toggle_planfall_nullfall()
 
-        self.ui.remove_drawing_button.clicked.connect(self.clear_drawing)
+        self.ui.remove_drawing_button.clicked.connect(
+            lambda: self.clear_drawing(
+                planfall=self.ui.planfall_radio.isChecked()))
         self.ui.calculate_rating_button.clicked.connect(self.calculate_rating)
         self.ui.import_nullfall_button.clicked.connect(self.import_nullfall)
         self.ui.apply_type_button.clicked.connect(
@@ -84,6 +85,9 @@ class Ecology(Domain):
         self.ui.remove_type_button.clicked.connect(
             lambda: self.remove_type(
                 self.get_selected_type(),
+                planfall=self.ui.planfall_radio.isChecked()))
+        self.ui.analyse_drawing_button.clicked.connect(
+            lambda: self.show_drawing_analysis(
                 planfall=self.ui.planfall_radio.isChecked()))
 
     def toggle_planfall_nullfall(self):
@@ -311,7 +315,7 @@ class Ecology(Domain):
                 return typ
         return None
 
-    def apply_drawing(self, planfall):
+    def analyse_shares(self, planfall=True):
         features = self.boden_planfall if planfall else self.boden_nullfall
         df = features.to_pandas()
         grouped = df.groupby('IDBodenbedeckung')
@@ -319,6 +323,10 @@ class Ecology(Domain):
         sum_area = df['area'].sum()
         shares = (grouped_sums * 100 / sum_area).round() if sum_area > 0 \
             else grouped_sums
+        return shares
+
+    def apply_drawing(self, planfall=True):
+        shares = self.analyse_shares(planfall)
         params = self.params_planfall if planfall else self.params_nullfall
         prefix = 'planfall' if planfall else 'nullfall'
         for bb_typ in self.bb_types.features():
@@ -326,8 +334,27 @@ class Ecology(Domain):
             params.get(f'{prefix}_{bb_id}').value = shares.get(bb_id) or 0
         self.save(prefix)
 
-    def clear_drawing(self):
-        planfall = self.ui.planfall_radio.isChecked()
+    def show_drawing_analysis(self, planfall=True):
+        shares = self.analyse_shares(planfall)
+        dialog = Dialog(title='Anteile Bodenbedeckung')
+        layout = QVBoxLayout()
+        dialog.setLayout(layout)
+        tableWidget = QTableWidget()
+        layout.addWidget(tableWidget)
+        tableWidget.setColumnCount(2)
+        tableWidget.setHorizontalHeaderItem(
+            0, QTableWidgetItem('Bodenbedeckungstyp'))
+        tableWidget.setHorizontalHeaderItem(
+            1, QTableWidgetItem('Anteil'))
+        types = self.bb_types.features()
+        tableWidget.setRowCount(len(types))
+        for i, bb_typ in enumerate(types):
+            share = shares.get(bb_typ.IDBodenbedeckung) or 0
+            tableWidget.setItem(i, 0, QTableWidgetItem(bb_typ.name))
+            tableWidget.setItem(i, 1, QTableWidgetItem(f'{share}%'))
+        dialog.show()
+
+    def clear_drawing(self, planfall=True):
         l = 'Planfall' if planfall else 'Nullfall'
         reply = QMessageBox.question(
             self.ui, 'Zeichnung löschen',
@@ -352,7 +379,7 @@ class Ecology(Domain):
         output = self.output_planfall if planfall else self.output_nullfall
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
-        layer = output.draw(label=label, style_file=style)
+        output.draw(label=label, style_file=style)
         setattr(self, 'output_planfall' if self.planfall else 'output_nullfall',
                 output)
         self.toggle_planfall_nullfall()
