@@ -424,8 +424,8 @@ class ParamsDialog(Dialog):
             self.details_button.setVisible(False)
         else:
             self.back_button.clicked.connect(
-                lambda: self.show_help(help_text, True))
-            self.show_help(help_text, True)
+                lambda: self.show_help(help_text, hide_back=True, expand=True))
+            self.show_help(help_text, hide_back=True)
         def adjust(checked):
             if not checked:
                 self.adjustSize()
@@ -453,7 +453,9 @@ class ParamsDialog(Dialog):
                 font.setBold(True)
                 help_button.setFont(font)
                 help_button.clicked.connect(
-                    lambda: self.show_help(element.help_text, False))
+                    lambda: self.show_help(element.help_text, expand=True))
+                element.input.focus.connect(
+                    lambda: self.show_help(element.help_text))
                 element.row.addWidget(help_button)
         else:
             self._grid = None
@@ -462,9 +464,10 @@ class ParamsDialog(Dialog):
             else:
                 element.draw(self.layout)
 
-    def show_help(self, text, hide_back=False):
+    def show_help(self, text, hide_back=False, expand=False):
         self.help_text_edit.setText(text)
-        self.details_button.setChecked(True)
+        if expand:
+            self.details_button.setChecked(True)
         self.back_button.setVisible(not hide_back)
 
 

@@ -14,6 +14,7 @@ class InputType(QObject):
     abstract class for an input ui element
     '''
     changed = pyqtSignal(object)
+    focus = pyqtSignal()
 
     def __init__(self, hide_in_overview=True):
         self.hide_in_overview = hide_in_overview
@@ -41,6 +42,11 @@ class InputType(QObject):
         '''override function to implement a locked state'''
         return False
 
+    def registerFocusEvent(self, input):
+        def focusInEvent(evt):
+            self.focus.emit()
+        input.focusInEvent = focusInEvent
+
 
 class Checkbox(InputType):
     '''
@@ -50,6 +56,7 @@ class Checkbox(InputType):
         super().__init__()
         self.input = QCheckBox()
         self.input.stateChanged.connect(self.changed.emit)
+        self.registerFocusEvent(self.input)
 
     def set_value(self, checked):
         self.input.setChecked(checked or False)
@@ -79,7 +86,8 @@ class Slider(InputType):
         self.spinbox.setMinimum(minimum)
         self.spinbox.setMaximum(maximum)
         self.spinbox.setSingleStep(step)
-        #self.spinbox.setFixedWidth(50)
+        self.registerFocusEvent(self.spinbox)
+        self.registerFocusEvent(self.slider)
 
         if lockable:
             self.lock_button = QPushButton()
@@ -165,6 +173,7 @@ class LineEdit(InputType):
         if width is not None:
             self.input.setFixedWidth(width)
         self.input.textChanged.connect(self.changed.emit)
+        self.registerFocusEvent(self.input)
 
     def set_value(self, value):
         self.input.setText(str(value or ''))
@@ -184,6 +193,7 @@ class SpinBox(InputType):
         self.input.setMaximum(maximum)
         self.input.setSingleStep(step)
         self.input.valueChanged.connect(self.changed.emit)
+        self.registerFocusEvent(self.input)
 
     def set_value(self, value):
         self.input.setValue(value or 0)
