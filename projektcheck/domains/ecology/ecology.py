@@ -222,29 +222,6 @@ class Ecology(Domain):
                     planfall=self.ui.planfall_radio.isChecked()
                 ))
 
-        def cut_geom(clip_geom):
-            planfall = self.ui.planfall_radio.isChecked()
-            coll = self.boden_planfall if planfall else self.boden_nullfall
-            output = self.output_planfall if self.planfall \
-                else self.output_nullfall
-            layer = output.layer
-            features = layer.selectedFeatures()
-            for qf in features:
-                feat = coll.get(id=qf.id())
-                #difference = clip_geom.makeDifference(feat.geom)
-                # workaround: makeDifference seems to have a bug and returns the
-                # intersection
-                intersection = feat.geom.intersection(clip_geom)
-                if intersection.isEmpty():
-                    continue
-                difference = feat.geom.symDifference(intersection)
-                # ToDo: handle invalid and null geometries instead of ignoring
-                if not difference.isNull():
-                    feat.geom = difference
-                    feat.area = difference.area()
-                    feat.save()
-            self.canvas.refreshAllLayers()
-
         def remove_selected():
             planfall = self.ui.planfall_radio.isChecked()
             coll = self.boden_planfall if planfall else self.boden_nullfall
@@ -283,7 +260,23 @@ class Ecology(Domain):
                              area=geom.area())
             else:
                 ex_feat.geom = ex_feat.geom.combine(geom)
+                ex_feat.area = ex_feat.geom.area()
                 ex_feat.save()
+        if difference:
+            # ToDo: fix filtering, works but messes up previous filtering
+            #others = features.filter(IDBodenbedeckung__ne=floor_id)
+            for feature in features:
+                if feature.IDBodenbedeckung == floor_id:
+                    continue
+                intersection = feature.geom.intersection(geom)
+                if intersection.isEmpty():
+                    continue
+                difference = feature.geom.symDifference(intersection)
+                # ToDo: handle invalid and null geometries instead of ignoring
+                if not difference.isNull():
+                    feature.geom = difference
+                    feature.area = difference.area()
+                    feature.save()
         self.canvas.refreshAllLayers()
         # workaround: layer style is not applied correctly
         # with empty features -> redraw on first geometry
