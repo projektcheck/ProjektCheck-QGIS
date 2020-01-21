@@ -11,6 +11,7 @@ from projektcheck.base.tools import FeaturePicker
 from projektcheck.domains.ecology.tables import (BodenbedeckungNullfall,
                                                  BodenbedeckungPlanfall,
                                                  BodenbedeckungAnteile)
+from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.ecology.diagrams import (
     Leistungskennwerte, LeistungskennwerteDelta)
 from projektcheck.base.params import (Params, Param, Title,
@@ -23,6 +24,7 @@ from settings import settings
 
 class Ecology(Domain):
     """"""
+    MAX_RATING = 20
 
     ui_label = 'Ökologie'
     ui_file = 'ProjektCheck_dockwidget_analysis_04-Oeko.ui'
@@ -64,9 +66,9 @@ class Ecology(Domain):
         self.setup_layers()
         self.setup_drawing_tools()
         self.ui.paint_tool_frame.setVisible(False)
-        self.feature_picker = FeaturePicker(self.ui.select_element_button,
-                                            canvas=self.canvas)
-        self.feature_picker.feature_picked.connect(self.feature_picked)
+        #self.feature_picker = FeaturePicker(self.ui.select_element_button,
+                                            #canvas=self.canvas)
+        #self.feature_picker.feature_picked.connect(self.feature_picked)
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
         self.output_nullfall = None
         self.output_planfall = None
@@ -80,16 +82,23 @@ class Ecology(Domain):
 
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
-        enabled_o = self.output_planfall if self.planfall \
+        enabled_out = self.output_planfall if self.planfall \
             else self.output_nullfall
-        disabled_o = self.output_nullfall if self.planfall \
+        disabled_out = self.output_nullfall if self.planfall \
             else self.output_planfall
-        if enabled_o:
-            self.feature_picker.set_layer(enabled_o.layer)
-        if disabled_o:
-            disabled_o.set_visibility(False)
+        #if enabled_out:
+            #self.feature_picker.set_layer(enabled_out.layer)
+        if disabled_out:
+            disabled_out.set_visibility(False)
 
     def load_content(self):
+        areas = Teilflaechen.features()
+        self.area = None
+        for area in areas:
+            if not self.area:
+                self.area = area.geom
+            else:
+                self.area = self.area.combine(area.geom)
         self.boden_nullfall = BodenbedeckungNullfall.features(create=True)
         self.boden_planfall = BodenbedeckungPlanfall.features(create=True)
         self.anteile = BodenbedeckungAnteile.features(create=True)
@@ -204,20 +213,14 @@ class Ecology(Domain):
             self.ui.draw_paving_button: 11
         }
 
-        def add_geom(geom, floor_id):
-            planfall = self.ui.planfall_radio.isChecked()
-            coll = self.boden_planfall if planfall else self.boden_nullfall
-            coll.add(geom=geom, IDBodenbedeckung=floor_id, area=geom.area())
-            self.canvas.refreshAllLayers()
-            # workaround: layer style is not applied correctly
-            # with empty features -> redraw on first geometry
-            if len(coll) == 1:
-                self.add_output()
-
         for button, floor_id in self.drawing_tools.items():
             tool = PolygonMapTool(button, canvas=self.canvas)
             tool.drawn.connect(
-                lambda geom, i=floor_id: add_geom(geom, i))
+                lambda geom, i=floor_id: self.add_geom(
+                    geom, i,
+                    in_area_only=self.ui.in_area_only_check.isChecked(),
+                    planfall=self.ui.planfall_radio.isChecked()
+                ))
 
         def cut_geom(clip_geom):
             planfall = self.ui.planfall_radio.isChecked()
@@ -257,12 +260,35 @@ class Ecology(Domain):
                     feat.delete()
             self.canvas.refreshAllLayers()
 
-        cutter = PolygonMapTool(
-            self.ui.cut_element_button, canvas=self.canvas,
-            color=QColor(255, 0, 0)
-        )
-        cutter.drawn.connect(cut_geom)
-        self.ui.remove_element_button.clicked.connect(remove_selected)
+        #cutter = PolygonMapTool(
+            #self.ui.cut_element_button, canvas=self.canvas,
+            #color=QColor(255, 0, 0)
+        #)
+        #cutter.drawn.connect(cut_geom)
+        #self.ui.remove_type_button.clicked.connect(remove_selected)
+
+    def add_geom(self, geom, floor_id, unite=True, in_area_only=True,
+                 difference=True, planfall=True):
+        if geom.isEmpty() or geom.isNull():
+            return
+        if in_area_only:
+            geom = geom.intersection(self.area)
+        features = self.boden_planfall if planfall else self.boden_nullfall
+        if not unite:
+            features.add(geom=geom, IDBodenbedeckung=floor_id, area=geom.area())
+        else:
+            ex_feat = features.get(IDBodenbedeckung=floor_id)
+            if not ex_feat:
+                features.add(geom=geom, IDBodenbedeckung=floor_id,
+                             area=geom.area())
+            else:
+                ex_feat.geom = ex_feat.geom.combine(geom)
+                ex_feat.save()
+        self.canvas.refreshAllLayers()
+        # workaround: layer style is not applied correctly
+        # with empty features -> redraw on first geometry
+        if len(features) == 1:
+            self.add_output()
 
     def save(self, prefix):
         planfall = prefix == 'planfall'
@@ -333,15 +359,15 @@ class Ecology(Domain):
         layer = TileLayer(url, groupname=group)
         layer.draw(name)
 
-    def feature_picked(self, feature):
-        output = self.output_planfall if self.planfall else self.output_nullfall
-        layer = output.layer
-        selected = [f.id() for f in layer.selectedFeatures()]
-        if feature.id() not in selected:
-            layer.select(feature.id())
-        else:
-            layer.removeSelection()
-            layer.selectByIds([fid for fid in selected if fid != feature.id()])
+    #def feature_picked(self, feature):
+        #output = self.output_planfall if self.planfall else self.output_nullfall
+        #layer = output.layer
+        #selected = [f.id() for f in layer.selectedFeatures()]
+        #if feature.id() not in selected:
+            #layer.select(feature.id())
+        #else:
+            #layer.removeSelection()
+            #layer.selectByIds([fid for fid in selected if fid != feature.id()])
 
     def calculate_rating(self):
         df_factors = self.faktoren.to_pandas()
@@ -352,7 +378,10 @@ class Ecology(Domain):
             df_rating = df.multiply(df['anteil']/100, axis='index')
             df_rating = df_rating[columns]
             df_rating = df_rating.sum(axis=0)
-            bins = np.linspace(0, 1, 21) # 21 bins from 0 to 1 in 0.05 steps
+            n = self.MAX_RATING
+            # divide the domain (0..1) into n + 1 bins
+            # -> n is the max. rating value
+            bins = np.linspace(0, 1, n+1)
             rating = np.digitize(df_rating, bins)
             return rating
 
