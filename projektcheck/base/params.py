@@ -420,7 +420,6 @@ class ParamsDialog(Dialog):
                          title='Parameter einstellen')
         self.layout = self.base_layout
         self.help_widget.setVisible(False)
-        self.help_text = help_text
         if not help_text:
             self.details_button.setVisible(False)
         else:
@@ -466,6 +465,7 @@ class ParamsDialog(Dialog):
                 element.draw(self.layout)
 
     def show_help(self, text, hide_back=False, expand=False):
+        print(hide_back)
         self.help_text_edit.setText(text)
         if expand:
             self.details_button.setChecked(True)
