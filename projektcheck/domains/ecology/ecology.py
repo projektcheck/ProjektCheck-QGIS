@@ -253,12 +253,9 @@ class Ecology(Domain):
             for feature in features:
                 if feature.IDBodenbedeckung == typ:
                     continue
-                intersection = feature.geom.intersection(geom)
-                if intersection.isEmpty():
-                    continue
-                difference = feature.geom.symDifference(intersection)
+                difference = feature.geom.difference(geom)
                 # ToDo: handle invalid and null geometries instead of ignoring
-                if not difference.isNull() or difference.isEmpty():
+                if not (difference.isNull() or difference.isEmpty()):
                     feature.geom = difference
                     feature.area = difference.area()
                     feature.save()
