@@ -258,7 +258,7 @@ class Ecology(Domain):
                     continue
                 difference = feature.geom.symDifference(intersection)
                 # ToDo: handle invalid and null geometries instead of ignoring
-                if not difference.isNull():
+                if not difference.isNull() or difference.isEmpty():
                     feature.geom = difference
                     feature.area = difference.area()
                     feature.save()

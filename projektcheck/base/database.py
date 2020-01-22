@@ -19,8 +19,6 @@ class Feature:
         self.__dict__['_fields'] = {f.name: f for f in table.fields()}
         self.id = kwargs.pop('id', None)
         self.geom = kwargs.pop('geom', None)
-        if self.geom and not self.geom.isGeosValid():
-            self.geom = self.geom.makeValid()
         self._table = table
         self._fields = []
         for f in table.fields():
@@ -44,6 +42,8 @@ class Feature:
 
     def save(self):
         kwargs = {f: getattr(self, f) for f in self._fields}
+        if self.geom and not self.geom.isGeosValid():
+            self.geom = self.geom.makeValid()
         kwargs[self._table.geom_field] = self.geom
         if self.id is not None:
             self._table.set(self.id, **kwargs)
