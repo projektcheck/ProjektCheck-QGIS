@@ -364,7 +364,7 @@ class ProjectLayer(Layer):
     def find(cls, label, groupname='', project=None):
         project = project or ProjectManager().active_project
         groupname = f'{project.groupname}/{groupname}' if groupname \
-            else project.groupname
+            else project.groupname if project else None
         return Layer.find(label, groupname=groupname)
 
     def draw(self, style_file=None, label='', checked=True, filter=None,

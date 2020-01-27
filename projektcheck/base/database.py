@@ -42,7 +42,8 @@ class Feature:
 
     def save(self):
         kwargs = {f: getattr(self, f) for f in self._fields}
-        if self.geom and not self.geom.isGeosValid():
+        if self.geom and hasattr(self.geom, 'isGeosValid') \
+           and not self.geom.isGeosValid():
             self.geom = self.geom.makeValid()
         kwargs[self._table.geom_field] = self.geom
         if self.id is not None:
