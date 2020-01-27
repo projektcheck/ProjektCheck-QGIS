@@ -3,7 +3,7 @@ from projektcheck.base.database import Field
 
 
 class Projektrahmendaten(ProjectTable):
-    ags = Field(int, 0)
+    ags = Field(str, '')
     gemeinde_name = Field(str, '')
     gemeinde_typ = Field(int, 0)
     projekt_name = Field(str, '')

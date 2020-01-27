@@ -271,8 +271,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
             output.zoom_to()
             # ToDo: show last active widget
-        # ToDo: specific exceptions
-        except Exception as e:
+        except FileNotFoundError as e:
             message = QMessageBox()
             message.setIcon(QMessageBox.Warning)
             message.setText(f'Das Projekt "{project.name}" ist beschädigt.')

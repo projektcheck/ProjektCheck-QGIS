@@ -5,7 +5,7 @@ from projektcheck.base.database import Field
 class WohnbaulandAnteile(ProjectTable):
 
     id_teilflaeche = Field(int, 0)
-    anteil = Field(float, 0)
+    nettoflaeche = Field(float, 0)
 
     class Meta:
         workspace = 'definitions'
