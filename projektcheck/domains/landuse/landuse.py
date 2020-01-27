@@ -61,7 +61,9 @@ class LandUse(Domain):
             param_name = bt.param_we
             feature = self.wohnflaeche.get(id_gebaeudetyp=bt.id,
                                            id_teilflaeche=self.area.id)
-            value = feature.mean_wohnflaeche if feature else 0
+            # default value on first time
+            value = bt.Wohnfl_m2_pro_WE if not feature \
+                else feature.mean_wohnflaeche
             self.params.add(Param(
                 value, Slider(maximum=200),
                 label=f'... in {bt.display_name}'),
