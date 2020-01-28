@@ -463,6 +463,7 @@ class ParamsDialog(Dialog):
                 self.layout.addItem(element)
             else:
                 element.draw(self.layout)
+        self.adjustSize()
 
     def show_help(self, text, hide_back=False, expand=False):
         print(hide_back)
