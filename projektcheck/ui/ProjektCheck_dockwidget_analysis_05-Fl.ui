@@ -204,6 +204,26 @@ padding: 2px;
               <number>0</number>
              </property>
              <item>
+              <widget class="QPushButton" name="pushButton_29">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Integrationsgrad berechnen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -242,26 +262,6 @@ padding: 2px;
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_29">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Integrationsgrad berechnen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
            <item>
@@ -272,7 +272,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_30">
+            <widget class="QPushButton" name="power_lines_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>

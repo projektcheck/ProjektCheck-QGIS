@@ -8,8 +8,11 @@ from projektcheck.domains.definitions.tables import (Wohneinheiten,
                                                      Projektrahmendaten)
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.base.params import Params, Param, Title, Seperator
+from projektcheck.base.layers import TileLayer
 from projektcheck.base.inputs import Slider
 from projektcheck.utils.utils import clearLayout
+
+from settings import settings
 
 
 class LandUse(Domain):
@@ -18,6 +21,7 @@ class LandUse(Domain):
     ui_label = 'Flächeninanspruchnahme'
     ui_file = 'ProjektCheck_dockwidget_analysis_05-Fl.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_landuse_1.png"
+    layer_group = 'Wirkungsbereich 5 - Flächeninanspruchnahme'
 
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(
@@ -27,6 +31,8 @@ class LandUse(Domain):
             self.calculate_wohndichte)
         self.ui.calculate_areadensity_button.clicked.connect(
             self.calculate_wohnflaechendichte)
+        self.ui.power_lines_button.clicked.connect(self.add_power_lines)
+        self.ui.power_lines_button.setCheckable(False)
 
     def load_content(self):
         self.gebaeudetypen_base = self.basedata.get_table(
@@ -190,6 +196,16 @@ class LandUse(Domain):
         kreisname = kreis.Kreis_kreisfreie_Stadt.split(',')[0]
         typname = self.raumtypen.features().get(ID=kreistyp_id).Name
         return kreis, kreisname, kreistyp, typname
+
+    def add_power_lines(self):
+        group = (f'{self.project.groupname}/{self.layer_group}')
+        geoserver = ('https://geoserver.ggr-planung.de/geoserver/'
+                     'projektcheck/wms?')
+        layername = '51005_ax_leitung'
+        url = (f'url={geoserver}&layers={layername}&crs=EPSG:{settings.EPSG}'
+               '&format=image/png&dpiMode=7&styles')
+        layer = TileLayer(url, groupname=group)
+        layer.draw('Hochspannungsleitungen')
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
