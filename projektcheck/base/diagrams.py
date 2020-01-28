@@ -89,16 +89,20 @@ class PieChart(MatplotDiagram):
         self.values = values
         self.labels = labels or [''] * len(values)
         self.title = title
-        self.colors = colors
+        self.colors = colors or plt.cm.Accent(
+            np.linspace(0, 1, len(self.values)))
 
     def create(self):
         figure, ax = plt.subplots()
         ax.pie(self.values, labels=self.labels, autopct='%1.1f%%',
-                shadow=True, startangle=90)
+               startangle=90, colors=self.colors)
         ax.axis('equal')
 
-        if self.title:
-            plt.figtext(.5, .92, self.title,
-                             horizontalalignment='center',
-                             fontsize=12)
+        plt.figtext(.5, .92, self.title,
+                    horizontalalignment='center',
+                    fontsize=12)
+
+        ax.legend(self.labels, loc='upper left',
+                  bbox_to_anchor=(0.7, 0.1))
+
         return figure

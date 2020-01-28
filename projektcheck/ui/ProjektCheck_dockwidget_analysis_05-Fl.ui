@@ -78,7 +78,7 @@ padding: 2px;
            <string>effiziente Flächennutzung</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
@@ -159,7 +159,7 @@ padding: 2px;
            <string>integrierte Lage</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
