@@ -1,7 +1,7 @@
 from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.base.diagrams import BarChart
+from projektcheck.base.diagrams import BarChart, PieChart
 from projektcheck.domains.landuse.tables import (WohnbaulandAnteile,
                                                  WohnflaecheGebaeudetyp,
                                                  GrenzeSiedlungskoerper)
@@ -35,6 +35,8 @@ class LandUse(Domain):
             self.calculate_wohnflaechendichte)
         self.ui.power_lines_button.clicked.connect(self.add_power_lines)
         self.ui.power_lines_button.setCheckable(False)
+        self.ui.calculate_integration_button.clicked.connect(
+            self.calculate_integration)
         tool = LineMapTool(self.ui.draw_border_button, canvas=self.canvas,
                            line_width=3, color='#33ccff')
         tool.drawn.connect(self.add_border)
@@ -45,7 +47,8 @@ class LandUse(Domain):
         self.gebaeudetypen_base = self.basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         )
-        self.areas = Teilflaechen.features().filter(
+        self.areas = Teilflaechen.features()
+        self.living_areas = Teilflaechen.features().filter(
             nutzungsart=Nutzungsart.WOHNEN.value)
         self.wohnbauland_anteile = WohnbaulandAnteile.features(create=True)
         self.wohnflaeche = WohnflaecheGebaeudetyp.features(create=True)
@@ -62,7 +65,7 @@ class LandUse(Domain):
 
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
-        for area in self.areas:
+        for area in self.living_areas:
             self.ui.area_combo.addItem(area.name, area)
         self.ui.area_combo.blockSignals(False)
 
@@ -144,6 +147,8 @@ class LandUse(Domain):
         self.setup_params()
 
     def calculate_wohndichte(self):
+        if not self.area:
+            return
         # calculation for area
         anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         netto_wb = (self.area.geom.area() / 10000 *
@@ -166,6 +171,8 @@ class LandUse(Domain):
         chart.draw()
 
     def calculate_wohnflaechendichte(self):
+        if not self.area:
+            return
         # calculation for area
         anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         wohneinheiten = self.wohneinheiten.filter(id_teilflaeche=self.area.id)
@@ -192,7 +199,7 @@ class LandUse(Domain):
         labels = [f'Teilfläche {self.area.name}', f'Kreis {kreisname}', typname]
         colors = ['r', 'b', 'b']
         chart = BarChart(values, labels=labels,
-                         title=f'Teilfläche {self.area.name}: '
+                         title=f'{self.project.name} - {self.area.name}: '
                          'Wohnfläche(m²) pro Hektar Nettowohnbauland',
                          colors=colors, y_label='Quadratmeter pro Hektar')
         chart.draw()
@@ -238,6 +245,23 @@ class LandUse(Domain):
             style_file='flaeche_oekologie_grenze_siedlungskoerper.qml'
         )
 
+    def calculate_integration(self):
+        union = None
+        for area in self.areas:
+            union = area.geom if not union else union.combine(area.geom)
+        area_outer_border = union.length()
+        drawn_borders = sum([line.geom.length() for line in self.borders])
+        shared_border = round(drawn_borders / area_outer_border, 3) * 100
+        shared_border = min(shared_border, 100)
+        values = [shared_border, 100 - shared_border]
+        labels = ['an bestehende Siedlungen angrenzend',
+                  'nicht an bestehende Siedlungen angrenzend']
+        chart = PieChart(values, labels=labels, colors=None,
+                         title=f'{self.project.name}: Anteil der '
+                         'Plangebietsgrenze',)
+        chart.draw()
+
+
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
         output = ProjectLayer.find('Nutzungen des Plangebiets')
@@ -245,5 +269,5 @@ class LandUse(Domain):
             layer = output[0].layer()
             layer.removeSelection()
         if hasattr(self, 'areas'):
-            self.areas._table.workspace.close()
+            self.living_areas._table.workspace.close()
         super().close()

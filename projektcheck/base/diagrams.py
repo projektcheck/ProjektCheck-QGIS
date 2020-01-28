@@ -81,3 +81,24 @@ class BarChart(MatplotDiagram):
 
         #figure.tight_layout()
         return figure
+
+
+class PieChart(MatplotDiagram):
+    def __init__(self, values, labels=None, colors=None, title=''):
+        super().__init__()
+        self.values = values
+        self.labels = labels or [''] * len(values)
+        self.title = title
+        self.colors = colors
+
+    def create(self):
+        figure, ax = plt.subplots()
+        ax.pie(self.values, labels=self.labels, autopct='%1.1f%%',
+                shadow=True, startangle=90)
+        ax.axis('equal')
+
+        if self.title:
+            plt.figtext(.5, .92, self.title,
+                             horizontalalignment='center',
+                             fontsize=12)
+        return figure
