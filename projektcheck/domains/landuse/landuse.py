@@ -23,7 +23,10 @@ class LandUse(Domain):
         self.ui.area_combo.currentIndexChanged.connect(
             lambda: self.change_area())
         self.layout = self.ui.parameter_group.layout()
-        self.ui.calculate_density_button.clicked.connect(self.calculate_density)
+        self.ui.calculate_density_button.clicked.connect(
+            self.calculate_wohndichte)
+        self.ui.calculate_areadensity_button.clicked.connect(
+            self.calculate_wohnflaechendichte)
 
     def load_content(self):
         self.gebaeudetypen_base = self.basedata.get_table(
@@ -124,27 +127,69 @@ class LandUse(Domain):
 
         self.setup_params()
 
-    def calculate_density(self):
+    def calculate_wohndichte(self):
+        # calculation for area
         anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         netto_wb = (self.area.geom.area() / 10000 *
                     (1 - anteile.nettoflaeche / 100))
         wohndichte = round(self.area.we_gesamt / netto_wb, 1)
-        ags5 = str(self.rahmendaten.ags)[0:5]
-        kreis = self.wohndichte_kreis.features().get(AGS5=ags5)
+
+        # get data to compare to
+        kreis, kreisname, kreistyp, typname = self.get_kreis_data()
         wohndichte_kreis = kreis.Wohndichte_WE_pro_ha_Nettowohnbauland
-        kreistyp_id = kreis.Siedlungsstruktureller_Kreistyp
-        kreistyp = self.wohndichte_raumtyp.features().get(
-            Siedlungsstruktureller_Kreistyp=kreistyp_id)
         wohndichte_kreistyp = kreistyp.Wohndichte_WE_pro_ha_Nettowohnbauland
-        kreisname = kreis.Kreis_kreisfreie_Stadt.split(',')[0]
-        typname = self.raumtypen.features().get(ID=kreistyp_id).Name
+
+        # chart
         values = [wohndichte, wohndichte_kreis, wohndichte_kreistyp]
         labels = [f'Teilfläche {self.area.name}', f'Kreis {kreisname}', typname]
         colors = ['r', 'b', 'b']
         chart = BarChart(values, labels=labels,
-                         title='Wohneinheiten pro Hektar Nettowohnbauland',
-                         colors=colors)
+                         title=f'Teilfläche {self.area.name}: '
+                         'Wohneinheiten pro Hektar Nettowohnbauland',
+                         colors=colors, y_label='Wohneinheiten pro Hektar')
         chart.draw()
+
+    def calculate_wohnflaechendichte(self):
+        # calculation for area
+        anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
+        wohneinheiten = self.wohneinheiten.filter(id_teilflaeche=self.area.id)
+        wohnflaeche = self.wohnflaeche.filter(id_teilflaeche=self.area.id)
+
+        df_wohneinheiten = wohneinheiten.to_pandas()
+        df_wohnflaeche = wohnflaeche.to_pandas()
+        df_merged = df_wohneinheiten.merge(df_wohnflaeche, on='id_gebaeudetyp')
+        wohnflaeche_gesamt = (df_merged['mean_wohnflaeche'] *
+                              df_merged['we']).sum()
+        netto_wb = (self.area.geom.area() / 10000 *
+                    (1 - anteile.nettoflaeche / 100))
+        wohnflaechendichte = round(wohnflaeche_gesamt / netto_wb, 1)
+
+        # get data to compare to
+        kreis, kreisname, kreistyp, typname = self.get_kreis_data()
+        wohndichte_kreis = \
+            kreis.Wohnflaechendichte_qm_Wohnfl_pro_ha_Nettowohnbauland
+        wohndichte_kreistyp = \
+            kreistyp.Wohnflaechendichte_qm_Wohnfl_pro_ha_Nettowohnbauland
+
+        # chart
+        values = [wohnflaechendichte, wohndichte_kreis, wohndichte_kreistyp]
+        labels = [f'Teilfläche {self.area.name}', f'Kreis {kreisname}', typname]
+        colors = ['r', 'b', 'b']
+        chart = BarChart(values, labels=labels,
+                         title=f'Teilfläche {self.area.name}: '
+                         'Wohnfläche(m²) pro Hektar Nettowohnbauland',
+                         colors=colors, y_label='Quadratmeter pro Hektar')
+        chart.draw()
+
+    def get_kreis_data(self):
+        ags5 = str(self.rahmendaten.ags)[0:5]
+        kreis = self.wohndichte_kreis.features().get(AGS5=ags5)
+        kreistyp_id = kreis.Siedlungsstruktureller_Kreistyp
+        kreistyp = self.wohndichte_raumtyp.features().get(
+            Siedlungsstruktureller_Kreistyp=kreistyp_id)
+        kreisname = kreis.Kreis_kreisfreie_Stadt.split(',')[0]
+        typname = self.raumtypen.features().get(ID=kreistyp_id).Name
+        return kreis, kreisname, kreistyp, typname
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)

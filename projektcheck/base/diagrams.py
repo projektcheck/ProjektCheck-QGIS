@@ -51,12 +51,14 @@ class MatplotDiagram(ABC):
 
 
 class BarChart(MatplotDiagram):
-    def __init__(self, values, labels=None, colors=None, title=''):
+    def __init__(self, values, labels=None, colors=None, y_label='',
+                 title=''):
         super().__init__()
         self.values = values
         self.labels = labels or [''] * len(values)
         self.title = title
         self.colors = colors
+        self.y_label = y_label
 
     def create(self):
         x = np.arange(len(self.values))
@@ -66,6 +68,7 @@ class BarChart(MatplotDiagram):
         bars = ax.bar(x, self.values, width, color=self.colors)
         ax.set_title(self.title)
         plt.xticks(x, self.labels)
+        plt.ylabel(self.y_label)
 
         for bar in bars:
             height = bar.get_height()
