@@ -37,9 +37,10 @@ class LandUse(Domain):
         self.ui.power_lines_button.setCheckable(False)
         self.ui.calculate_integration_button.clicked.connect(
             self.calculate_integration)
-        tool = LineMapTool(self.ui.draw_border_button, canvas=self.canvas,
-                           line_width=3, color='#33ccff')
-        tool.drawn.connect(self.add_border)
+        self.bordertool = LineMapTool(
+            self.ui.draw_border_button, canvas=self.canvas,
+            line_width=3)# , color='#33ccff')
+        self.bordertool.drawn.connect(self.add_border)
 
         self.ui.remove_drawing_button.clicked.connect(self.remove_borders)
 
@@ -72,6 +73,12 @@ class LandUse(Domain):
         self.add_border_output()
 
         self.change_area()
+
+        self.area_union = None
+        for area in self.areas:
+            self.area_union = area.geom if not self.area_union \
+                else self.area_union.combine(area.geom)
+        self.bordertool.set_snap_geometry(self.area_union)
 
     def setup_params(self):
         anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
@@ -246,10 +253,7 @@ class LandUse(Domain):
         )
 
     def calculate_integration(self):
-        union = None
-        for area in self.areas:
-            union = area.geom if not union else union.combine(area.geom)
-        area_outer_border = union.length()
+        area_outer_border = self.area_union.length()
         drawn_borders = sum([line.geom.length() for line in self.borders])
         shared_border = round(drawn_borders / area_outer_border, 3) * 100
         shared_border = min(shared_border, 100)
