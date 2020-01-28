@@ -163,7 +163,7 @@ padding: 2px;
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QPushButton" name="pushButton_27">
+            <widget class="QPushButton" name="draw_border_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -204,7 +204,7 @@ padding: 2px;
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_29">
+              <widget class="QPushButton" name="calculate_integration_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -237,7 +237,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_28">
+              <widget class="QPushButton" name="remove_drawing_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>

@@ -20,3 +20,9 @@ class WohnflaecheGebaeudetyp(ProjectTable):
 
     class Meta:
         workspace = 'definitions'
+
+
+class GrenzeSiedlungskoerper(ProjectTable):
+
+    class Meta:
+        workspace = 'definitions'

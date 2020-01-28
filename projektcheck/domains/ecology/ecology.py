@@ -1,4 +1,5 @@
 from qgis.PyQt.Qt import QPushButton
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
                                  QTableWidget, QTableWidgetItem)
 import numpy as np
@@ -221,7 +222,8 @@ class Ecology(Domain):
         }
 
         for button, floor_id in self.drawing_tools.items():
-            tool = PolygonMapTool(button, canvas=self.canvas)
+            tool = PolygonMapTool(button, canvas=self.canvas, draw_markers=True,
+                                  line_style=Qt.DotLine)
             tool.drawn.connect(
                 lambda geom, i=floor_id: self.add_geom(
                     geom, i,

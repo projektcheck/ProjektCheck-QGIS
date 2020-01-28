@@ -101,84 +101,84 @@ class FeaturePicker(MapTool, QgsMapToolEmitPoint):
             self.feature_picked.emit(features[0].mFeature)
 
 
-class DrawingTool(MapTool):
-    '''
-    abstract class for tools drawing on the canvas
-    '''
-
-    def draw(self, canvas):
-        raise NotImplementedError
-
-    def load(self):
-        raise NotImplementedError
-
-    def run(self):
-        pass
-
-
-class PolygonMapTool(MapTool, QgsMapToolEmitPoint):
+class LineMapTool(MapTool, QgsMapToolEmitPoint):
     drawn = pyqtSignal(QgsGeometry)
+    wkbtype = QgsWkbTypes.LineGeometry
 
-    def __init__(self, ui_element, canvas=None, color=None):
+    def __init__(self, ui_element, canvas=None, color=None, draw_markers=False,
+                 line_width=2, line_style=Qt.SolidLine):
         self.canvas = canvas
         MapTool.__init__(self, ui_element, self.canvas)
         QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
-        self.drawing_lines = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
-        color = color or QColor(0, 0, 255)
-        self.drawing_lines.setColor(color)
+        self.rubberband = QgsRubberBand(self.canvas,
+                                           self.wkbtype)
+        color = QColor(color) if color else QColor(0, 0, 255)
+        self.rubberband.setColor(color)
         color.setAlpha(100)
-        self.drawing_lines.setFillColor(color)
-        self.drawing_lines.setLineStyle(Qt.DotLine)
-        # should but doesn't work, making markers by hand instead
-        #self.drawing_lines.setIcon(QgsRubberBand.ICON_CIRCLE)
-        #self.drawing_lines.setIconSize(8)
-        self.drawing_lines.setWidth(2)
-        self.markers = []
+        self.rubberband.setFillColor(color)
+        self.rubberband.setLineStyle(line_style)
+        self.rubberband.setWidth(line_width)
+
+        self.draw_markers = draw_markers
+        if self.draw_markers:
+            # auto points on outline should but doesn't work:
+            #self.drawing_lines.setIcon(QgsRubberBand.ICON_CIRCLE)
+            #self.drawing_lines.setIconSize(8)
+
+            # drawing markers manually instead
+            self.markers = []
+
         self._drawing = False
         self._moving =  False
         self.reset()
 
     def reset(self):
         scene = self.canvas.scene()
-        for m in self.markers:
-            scene.removeItem(m)
-        self.markers = []
+        if self.draw_markers:
+            for m in self.markers:
+                scene.removeItem(m)
+            self.markers = []
         self._moving = False
         self._drawing = False
-        self.drawing_lines.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubberband.reset(self.wkbtype)
 
     def canvasDoubleClickEvent(self, e):
         if self._moving:
-            self.drawing_lines.removeLastPoint()
-        self.drawn.emit(self.drawing_lines.asGeometry())
+            self.rubberband.removeLastPoint()
+        self.drawn.emit(self.rubberband.asGeometry())
         self.reset()
 
     def canvasPressEvent(self, e):
         if(e.button() == Qt.RightButton):
             if self._moving:
-                self.drawing_lines.removeLastPoint()
-            self.drawn.emit(self.drawing_lines.asGeometry())
+                self.rubberband.removeLastPoint()
+            self.drawn.emit(self.rubberband.asGeometry())
             self.reset()
             return
         self._moving = False
         self._drawing = True
         point = self.toMapCoordinates(e.pos())
         point = QgsPointXY(point.x(), point.y())
-        self.drawing_lines.addPoint(point, True)
-        marker = QgsVertexMarker(self.canvas)
-        marker.setCenter(point)
-        marker.setColor(Qt.blue)
-        marker.setIconSize(8)
-        marker.setIconType(QgsVertexMarker.ICON_CIRCLE)
-        marker.setPenWidth(4)
-        self.markers.append(marker)
+        self.rubberband.addPoint(point, True)
+        if self.draw_markers:
+            marker = QgsVertexMarker(self.canvas)
+            marker.setCenter(point)
+            marker.setColor(Qt.blue)
+            marker.setIconSize(8)
+            marker.setIconType(QgsVertexMarker.ICON_CIRCLE)
+            marker.setPenWidth(4)
+            self.markers.append(marker)
 
     def canvasMoveEvent(self, e):
         if self._drawing:
             #self.rubberBand.removeLastPoint()
             if self._moving:
-                self.drawing_lines.removeLastPoint()
+                self.rubberband.removeLastPoint()
             point = self.toMapCoordinates(e.pos())
             point = QgsPointXY(point.x(), point.y())
-            self.drawing_lines.addPoint(point, True)
+            self.rubberband.addPoint(point, True)
             self._moving = True
+
+
+class PolygonMapTool(LineMapTool):
+    wkbtype = QgsWkbTypes.PolygonGeometry

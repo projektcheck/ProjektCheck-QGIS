@@ -3,7 +3,8 @@ from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.base.diagrams import BarChart
 from projektcheck.domains.landuse.tables import (WohnbaulandAnteile,
-                                                 WohnflaecheGebaeudetyp)
+                                                 WohnflaecheGebaeudetyp,
+                                                 GrenzeSiedlungskoerper)
 from projektcheck.domains.definitions.tables import (Wohneinheiten,
                                                      Projektrahmendaten)
 from projektcheck.domains.constants import Nutzungsart
@@ -11,6 +12,7 @@ from projektcheck.base.params import Params, Param, Title, Seperator
 from projektcheck.base.layers import TileLayer
 from projektcheck.base.inputs import Slider
 from projektcheck.utils.utils import clearLayout
+from projektcheck.base.tools import LineMapTool
 
 from settings import settings
 
@@ -33,6 +35,11 @@ class LandUse(Domain):
             self.calculate_wohnflaechendichte)
         self.ui.power_lines_button.clicked.connect(self.add_power_lines)
         self.ui.power_lines_button.setCheckable(False)
+        tool = LineMapTool(self.ui.draw_border_button, canvas=self.canvas,
+                           line_width=3, color='#33ccff')
+        tool.drawn.connect(self.add_border)
+
+        self.ui.remove_drawing_button.clicked.connect(self.remove_borders)
 
     def load_content(self):
         self.gebaeudetypen_base = self.basedata.get_table(
@@ -42,7 +49,8 @@ class LandUse(Domain):
             nutzungsart=Nutzungsart.WOHNEN.value)
         self.wohnbauland_anteile = WohnbaulandAnteile.features(create=True)
         self.wohnflaeche = WohnflaecheGebaeudetyp.features(create=True)
-        self.wohneinheiten = Wohneinheiten.features()
+        self.borders = GrenzeSiedlungskoerper.features(create=True)
+        self.wohneinheiten = Wohneinheiten.features(create=True)
         self.rahmendaten = Projektrahmendaten.features()[0]
         self.wohndichte_kreis = self.basedata.get_table(
             'Wohndichte_Wohnflaechendichte_Kreise', 'Flaeche_und_Oekologie')
@@ -57,6 +65,8 @@ class LandUse(Domain):
         for area in self.areas:
             self.ui.area_combo.addItem(area.name, area)
         self.ui.area_combo.blockSignals(False)
+
+        self.add_border_output()
 
         self.change_area()
 
@@ -206,6 +216,27 @@ class LandUse(Domain):
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw('Hochspannungsleitungen')
+
+    def add_border(self, geom):
+        self.borders.add(geom=geom)
+        # workaround: layer style is not applied correctly
+        # with empty features -> redraw on first geometry
+        if len(self.borders) == 1:
+            self.add_border_output()
+        self.canvas.refreshAllLayers()
+
+    def remove_borders(self):
+        self.borders.delete()
+        self.canvas.refreshAllLayers()
+
+    def add_border_output(self):
+        self.output_border = ProjectLayer.from_table(
+            self.borders._table, groupname=self.layer_group,
+            prepend=True)
+        self.output_border.draw(
+            label='Grenze Siedlunskörper',
+            style_file='flaeche_oekologie_grenze_siedlungskoerper.qml'
+        )
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
