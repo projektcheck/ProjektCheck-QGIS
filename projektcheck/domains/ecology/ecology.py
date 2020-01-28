@@ -306,7 +306,7 @@ class Ecology(Domain):
             self.boden_planfall.add(geom=feature.geom,
                                     IDBodenbedeckung=feature.IDBodenbedeckung,
                                     area=feature.geom.area())
-        self.canvas.refreshAllLayers()
+        self.add_output()
 
     def get_selected_type(self):
         for button, typ in self.drawing_tools.items():
