@@ -1,0 +1,8 @@
+{
+    "allgemein": "",
+    "wohnbauland_anteil": "",
+    "we_efh": "",
+    "we_zfh": "",
+    "we_rh": "",
+    "we_mfh": ""
+}

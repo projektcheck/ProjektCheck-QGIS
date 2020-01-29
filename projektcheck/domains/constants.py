@@ -1,10 +1,12 @@
 from enum import Enum
 
+
 class Nutzungsart(Enum):
     UNDEFINIERT = 0
     WOHNEN = 1
     GEWERBE = 2
     EINZELHANDEL = 3
+
 
 class Branche(Enum):
     VERARBEITEND = 1
@@ -13,6 +15,7 @@ class Branche(Enum):
     FINANZEN = 4
     DIENSTLEISTUNGEN = 5
     OEFFENTLICH = 6
+
 
 class Gewerbegebietstyp(Enum):
     BENUTZERDEFINIERT = 0
