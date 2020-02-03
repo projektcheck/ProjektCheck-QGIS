@@ -368,11 +368,11 @@ class ProjectLayer(Layer):
         return Layer.find(label, groupname=groupname)
 
     def draw(self, style_file=None, label='', checked=True, filter=None,
-             read_only=True):
+             read_only=True, redraw=True):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
         layer = super().draw(style_path=style_path, label=label, checked=checked,
-                             filter=filter)
+                             filter=filter, redraw=redraw)
         layer.setReadOnly(read_only)
         return layer
 

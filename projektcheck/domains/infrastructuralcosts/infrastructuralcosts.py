@@ -8,6 +8,11 @@ from projektcheck.domains.infrastructuralcosts.tables import (
 class InfrastructureDrawing:
     def __init__(self, parent):
         self.parent = parent
+
+        self.parent.ui.show_lines_button.clicked.connect(
+            lambda: self.draw_output('line'))
+        self.parent.ui.show_points_button.clicked.connect(
+            lambda: self.draw_output('point'))
         self.setup_tools()
 
     def load_content(self):
@@ -17,8 +22,6 @@ class InfrastructureDrawing:
         self.output_points = ProjectLayer.from_table(
             self.parent.points.table, groupname=self.parent.layer_group,
             prepend=True)
-        self.draw_output('line')
-        self.draw_output('point')
 
     def setup_tools(self):
         self.line_tools = {
@@ -34,6 +37,7 @@ class InfrastructureDrawing:
         }
 
         for button, net_id in self.line_tools.items():
+            button.clicked.connect(lambda: self.draw_output('line'))
             tool = LineMapTool(button, canvas=self.parent.canvas)
             tool.drawn.connect(
                 lambda geom, i=net_id: self.add_geom(geom, i, geom_typ='line'))
@@ -43,16 +47,17 @@ class InfrastructureDrawing:
             else self.parent.points
         features.add(IDNetzelement=net_id, geom=geom)
         if len(features) == 1:
-            self.draw_output(geom_typ)
+            self.draw_output(geom_typ, redraw=True)
+        self.parent.canvas.refreshAllLayers()
 
-    def draw_output(self, geom_typ='line'):
+    def draw_output(self, geom_typ='line', redraw=False):
         label = 'Erschließungsnetz'
         if geom_typ == 'point':
             label += ' - punktuelle Maßnahmen'
         output = self.output_lines if geom_typ == 'line' else self.output_points
         style = 'kosten_erschliessungsnetze_{}elemente.qml'.format(
             'linien' if geom_typ == 'line' else 'punkt')
-        output.draw(label=label, style_file=style)
+        output.draw(label=label, style_file=style, redraw=redraw)
 
 
 class InfrastructuralCosts(Domain):
