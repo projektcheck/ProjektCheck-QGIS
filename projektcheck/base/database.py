@@ -19,7 +19,7 @@ class Feature:
         self.__dict__['_fields'] = {f.name: f for f in table.fields()}
         self.id = kwargs.pop('id', None)
         self.geom = kwargs.pop('geom', None)
-        self._table = table
+        self.table = table
         self._fields = []
         for f in table.fields():
             self._fields.append(f.name)
@@ -45,15 +45,15 @@ class Feature:
         if self.geom and hasattr(self.geom, 'isGeosValid') \
            and not self.geom.isGeosValid():
             self.geom = self.geom.makeValid()
-        kwargs[self._table.geom_field] = self.geom
+        kwargs[self.table.geom_field] = self.geom
         if self.id is not None:
-            self._table.set(self.id, **kwargs)
+            self.table.set(self.id, **kwargs)
         else:
-            row = self._table.add(**kwargs)
-            self.id = row[self._table.id_field]
+            row = self.table.add(**kwargs)
+            self.id = row[self.table.id_field]
 
     def delete(self):
-        self._table.delete(self.id)
+        self.table.delete(self.id)
 
     def __repr__(self):
         return f'Feature <{self.id}> of {self._table}'
@@ -61,36 +61,36 @@ class Feature:
 
 class FeatureCollection:
     def __init__(self, table):
-        self._table = table
+        self.table = table
         self._it = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self._it >= len(self._table):
+        if self._it >= len(self.table):
             self._it = 0
-            self._table.reset_cursor()
+            self.table.reset_cursor()
             raise StopIteration
         else:
-            row = next(self._table)
+            row = next(self.table)
             self._it += 1
             return self._row_to_feature(row)
 
     def __len__(self):
-        return len(self._table)
+        return len(self.table)
 
     def delete(self):
         ids = [feat.id for feat in self]
         for id in ids:
-            self._table.delete(id)
+            self.table.delete(id)
 
     @property
     def workspace(self):
-        return self._table.workspace
+        return self.table.workspace
 
     def get(self, **kwargs):
-        table = self._table.copy()
+        table = self.table.copy()
         prev_where = table.where
         table.filter(**kwargs)
         if len(table) > 1:
@@ -106,42 +106,42 @@ class FeatureCollection:
         if 'id' in kwargs:
             raise Exception("You can't set the id when adding a new feature. "
                             "The id will be assigned automatically.")
-        feature = Feature(self._table, **kwargs)
+        feature = Feature(self.table, **kwargs)
         feature.save()
         return feature
 
     def fields(self):
-        return self._table.fields()
+        return self.table.fields()
 
     def add_field(self, field):
-        self._table.add_field(field)
+        self.table.add_field(field)
 
     def reset(self):
-        self._table.reset()
+        self.table.reset()
 
     def filter(self, **kwargs):
         '''
         filtering django style
         supported: __in, __gt, __lt
         '''
-        table = self._table.copy()
+        table = self.table.copy()
         table.filter(**kwargs)
         return FeatureCollection(table)
 
     def _row_to_feature(self, row):
-        id = row.pop(self._table.id_field)
-        geom = row.pop(self._table.geom_field)
-        return Feature(table=self._table, id=id, geom=geom, **row)
+        id = row.pop(self.table.id_field)
+        geom = row.pop(self.table.geom_field)
+        return Feature(table=self.table, id=id, geom=geom, **row)
 
     def __getitem__(self, idx):
-        row = self._table[idx]
+        row = self.table[idx]
         return self._row_to_feature(row)
 
     def to_pandas(self):
-        return self._table.to_pandas()
+        return self.table.to_pandas()
 
     def update_pandas(self, dataframe, **kwargs):
-        self._table.update_pandas(dataframe, **kwargs)
+        self.table.update_pandas(dataframe, **kwargs)
 
 
 class Database(ABC):

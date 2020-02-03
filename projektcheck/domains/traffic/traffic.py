@@ -153,7 +153,7 @@ class Traffic(Domain):
 
     def show_connectors(self):
         output = ProjectLayer.from_table(
-            self.connectors._table, groupname=self.layer_group)
+            self.connectors.table, groupname=self.layer_group)
         self.connector_layer = output.draw(
             label='Anbindungspunkte',
             style_file='verkehr_anbindungspunkte.qml')
@@ -195,12 +195,12 @@ class Traffic(Domain):
             self.draw_traffic()
 
     def draw_traffic(self):
-        output = ProjectLayer.from_table(self.links._table,
+        output = ProjectLayer.from_table(self.links.table,
                                          groupname=self.layer_group)
         output.draw(label='Zusätzliche PKW-Fahrten',
                     style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml')
 
-        output = ProjectLayer.from_table(self.transfer_nodes._table,
+        output = ProjectLayer.from_table(self.transfer_nodes.table,
                                          groupname=self.layer_group)
         output.draw(label='Zielpunkte',
                     style_file='verkehr_zielpunkte.qml')

@@ -645,5 +645,5 @@ class ProjectDefinitions(Domain):
             layer = output[0].layer()
             layer.removeSelection()
         if hasattr(self, 'areas'):
-            self.areas._table.workspace.close()
+            self.areas.table.workspace.close()
         super().close()

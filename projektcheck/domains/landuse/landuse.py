@@ -245,7 +245,7 @@ class LandUse(Domain):
 
     def add_border_output(self):
         self.output_border = ProjectLayer.from_table(
-            self.borders._table, groupname=self.layer_group,
+            self.borders.table, groupname=self.layer_group,
             prepend=True)
         self.output_border.draw(
             label='Grenze Siedlunskörper',
@@ -273,5 +273,5 @@ class LandUse(Domain):
             layer = output[0].layer()
             layer.removeSelection()
         if hasattr(self, 'areas'):
-            self.living_areas._table.workspace.close()
+            self.living_areas.table.workspace.close()
         super().close()

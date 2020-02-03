@@ -82,8 +82,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>517</width>
-         <height>870</height>
+         <width>523</width>
+         <height>888</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -113,7 +113,7 @@ padding: 2px;
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>22</height>
+            <height>16777215</height>
            </size>
           </property>
           <property name="title">
@@ -129,7 +129,7 @@ padding: 2px;
            <bool>false</bool>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -214,7 +214,7 @@ padding: 2px;
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_47">
+            <widget class="QPushButton" name="anliegerstrasse_innere_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -250,7 +250,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_50">
+            <widget class="QPushButton" name="sammelstrasse_innere_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -286,7 +286,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_45">
+            <widget class="QPushButton" name="anliegerstrasse_aeussere_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -322,7 +322,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_49">
+            <widget class="QPushButton" name="sammelstrasse_aeussere_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -358,7 +358,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_44">
+            <widget class="QPushButton" name="kanal_trennsystem_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -394,7 +394,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_42">
+            <widget class="QPushButton" name="kanal_mischsystem_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -430,7 +430,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_43">
+            <widget class="QPushButton" name="kanal_schmutzwasser_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -466,7 +466,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_48">
+            <widget class="QPushButton" name="trinkwasserleitung_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -502,7 +502,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_46">
+            <widget class="QPushButton" name="stromleitung_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -538,7 +538,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_41">
+            <widget class="QPushButton" name="remove_drawing_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -585,7 +585,7 @@ padding: 2px;
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <property name="spacing">

@@ -118,10 +118,10 @@ class Ecology(Domain):
         )
 
         self.output_nullfall = ProjectLayer.from_table(
-            self.boden_nullfall._table, groupname=self.layer_group,
+            self.boden_nullfall.table, groupname=self.layer_group,
             prepend=True)
         self.output_planfall = ProjectLayer.from_table(
-            self.boden_planfall._table, groupname=self.layer_group,
+            self.boden_planfall.table, groupname=self.layer_group,
             prepend=True)
         self.setup_params()
 
