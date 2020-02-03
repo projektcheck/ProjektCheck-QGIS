@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1175</width>
+    <width>1093</width>
     <height>79</height>
    </rect>
   </property>
@@ -297,6 +297,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
             </item>
             <item>
              <widget class="QPushButton" name="settings_button">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Speicherort für Ihre Projekte&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Vor der ersten Nutzung von Projekt-Check einmalig den Speicherort für Ihre Projekte festlegen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -345,6 +348,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               <property name="focusPolicy">
                <enum>Qt::WheelFocus</enum>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projekt&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Nur dieses Projekt können Sie editieren und analysieren. Weitere Projekte können angezeigt bleiben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="editable">
                <bool>false</bool>
               </property>
@@ -377,6 +383,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                 <family>MS Shell Dlg 2</family>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projekte löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Das aktuell gewählte Projekt löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -405,6 +414,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                 <family>MS Shell Dlg 2</family>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neues Projekt&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ein neues Projekt anlegen. Sie benötigen ein Shape-File o.ä. mit der Fläche (oder den Teilflächen) des Projekts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -426,6 +438,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                <font>
                 <family>MS Shell Dlg 2</family>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projekt kopieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Das aktuell gewählte Projekt kopieren und unter einem neuen Namen speichern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string/>

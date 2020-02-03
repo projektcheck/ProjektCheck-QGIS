@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>469</width>
-         <height>636</height>
+         <width>461</width>
+         <height>618</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -103,12 +103,18 @@ padding: 2px;
               <height>0</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anbindung der Teilflächen an das Straßennetz&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Für die einzelnen Teilflächen festlegen, an welcher Stelle die Verkehre aus bzw. in das Plangebiet in das Bestandsnetz einmünden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="connector_button">
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anbindung der Teilflächen an das Straßennetz&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Für die einzelnen Teilflächen festlegen, an welcher Stelle die Verkehre aus bzw. in das Plangebiet in das Bestandsnetz einmünden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>neu setzen</string>
@@ -177,6 +183,9 @@ padding: 2px;
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Straßenverkehrsbelastung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzliche Straßenverkehrsbelastung aufgrund der neuen Nutzungen schätzen/anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
@@ -362,6 +371,9 @@ padding: 2px;
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Verkehr im Umfeld“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -370,7 +382,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../../../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../../../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>
