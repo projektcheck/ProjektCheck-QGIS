@@ -14,17 +14,7 @@
    <string>Parameter einstellen</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="1">
-    <widget class="QPushButton" name="details_button">
-     <property name="text">
-      <string>Details &gt;&gt;</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -37,7 +27,17 @@
    <item row="1" column="0" colspan="2">
     <layout class="QVBoxLayout" name="base_layout"/>
    </item>
-   <item row="1" column="2" rowspan="2">
+   <item row="3" column="1">
+    <widget class="QPushButton" name="details_button">
+     <property name="text">
+      <string>Hilfe anzeigen &gt;&gt;</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" rowspan="3">
     <widget class="QWidget" name="help_widget" native="true">
      <property name="minimumSize">
       <size>
@@ -100,7 +100,7 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>...zurück</string>
+           <string>...zurück zur Gesamtbeschreibung</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -118,6 +118,19 @@
      </layout>
     </widget>
    </item>
+   <item row="2" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <resources/>
@@ -129,8 +142,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>405</y>
+     <x>121</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -145,8 +158,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>405</y>
+     <x>121</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -161,8 +174,8 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>244</x>
-     <y>401</y>
+     <x>195</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>284</x>
