@@ -84,8 +84,9 @@ class LandUse(Domain):
         anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         value = anteile.nettoflaeche if anteile else 15
         clearLayout(self.layout)
-        self.params = Params(self.layout,
-                             help_file='flaechennutzung_params.txt')
+        self.params = Params(
+            self.layout,
+            help_file='flaecheninanspruchnahme_wohnbauland_wohnflaeche.txt')
         self.params.add(Title('Wohnbauland'))
         self.params.nettoflaeche = Param(
             value, Slider(maximum=100),

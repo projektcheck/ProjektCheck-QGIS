@@ -82,7 +82,8 @@ class Traffic(Domain):
             clearLayout(layout)
         if self.params:
             self.params.close()
-        self.params = Params(parent=layout, button_label='Annahmen verändern')
+        self.params = Params(parent=layout, button_label='Annahmen verändern',
+                             help_file='verkehr_wege_gewichtungen.txt')
         if len(self.transfer_nodes) == 0:
             # workaround: otherwise the params don't show later (don't know why)
             self.params.show()

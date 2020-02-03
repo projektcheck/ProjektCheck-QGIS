@@ -36,7 +36,8 @@ class Wohnen:
     def setup_params(self, area):
         self.area = area
         clearLayout(self.layout)
-        self.params = Params(self.layout, help_file='wohnen_params.txt')
+        self.params = Params(self.layout,
+                             help_file='definitionen_wohnen.txt')
         self.params.add(Title('Bezugszeitraum'))
         self.params.beginn_nutzung = Param(
             area.beginn_nutzung, SpinBox(minimum=2000, maximum=2100),
@@ -276,7 +277,8 @@ class Gewerbe:
     def setup_params(self, area):
         self.area = area
         clearLayout(self.layout)
-        self.params = Params(self.layout, help_file='gewerbe_params.txt')
+        self.params = Params(self.layout,
+                             help_file='definitionen_gewerbe.txt')
 
         self.params.add(Title('Bezugszeitraum'))
         self.params.beginn_nutzung = Param(
@@ -467,7 +469,8 @@ class Einzelhandel:
     def setup_params(self, area):
         self.area = area
         clearLayout(self.layout)
-        self.params = Params(self.layout, help_file='einzelhandel_params.txt')
+        self.params = Params(self.layout,
+                             help_file='definitionen_einzelhandel.txt')
 
         for sortiment in self.sortimente_base.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
@@ -591,7 +594,8 @@ class ProjectDefinitions(Domain):
     def setup_type(self):
         layout = self.ui.parameter_group.layout()
         clearLayout(layout)
-        self.params = Params(layout, help_file='flaechen_params.txt')
+        self.params = Params(layout,
+                             help_file='definitionen_flaechen.txt')
         self.params.name = Param(self.area.name, LineEdit(width=300),
                                  label='Name')
 

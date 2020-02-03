@@ -260,6 +260,7 @@ class Params(QObject):
         fired on change of any parameter in collection
     '''
     changed = pyqtSignal()
+    HELP_PATH = os.path.join(settings.HELP_PATH, 'params')
 
     def __init__(self, parent: QObject = None,
                  button_label: str = 'Editieren', editable: bool = True,
@@ -282,13 +283,13 @@ class Params(QObject):
         self.help_dict = {}
         if help_file:
             self.help_file = help_file if os.path.exists(help_file) else \
-                os.path.join(settings.HELP_PATH, help_file)
+                os.path.join(self.HELP_PATH, help_file)
             if os.path.exists(self.help_file):
                 with open(self.help_file) as json_file:
                     self.help_dict = yaml.load(json_file)
         # passed help text overrides the one from file
-        if help_text or 'allgemein' not in self.help_dict:
-            self.help_dict['allgemein'] = help_text
+        if help_text or 'beschreibung' not in self.help_dict:
+            self.help_dict['beschreibung'] = help_text
 
     def add(self, element: Union[Param, Seperator, Title, QLayoutItem],
             name=''):
@@ -329,10 +330,12 @@ class Params(QObject):
         # with empty texts, should be removed in production
         if (settings.DEBUG and getattr(self, 'help_file', None) and
             not os.path.exists(self.help_file)):
+            if not os.path.exists(self.HELP_PATH):
+                os.mkdir(self.HELP_PATH)
             with open(self.help_file, 'w') as json_file:
                 json.dump(self.help_dict, json_file, indent=4)
 
-        self.dialog = ParamsDialog(help_text=self.help_dict['allgemein'])
+        self.dialog = ParamsDialog(help_text=self.help_dict['beschreibung'])
 
         self.layout = QVBoxLayout()
         self.layout.setSpacing(5)
@@ -414,22 +417,25 @@ class Params(QObject):
 
 
 class ParamsDialog(Dialog):
-    def __init__(self, parent=None, title=None, help_text=''):
+    def __init__(self, parent=None, title=None, help_text=None):
         super().__init__(modal=True, parent=parent,
                          ui_file='parameter_dialog.ui',
                          title='Parameter einstellen')
         self.layout = self.base_layout
         self.help_widget.setVisible(False)
-        if not help_text:
+        if help_text is None:
             self.details_button.setVisible(False)
         else:
             self.back_button.clicked.connect(
                 lambda: self.show_help(help_text, hide_back=True, expand=True))
             self.show_help(help_text, hide_back=True)
-        def adjust(checked):
+        def toggle(checked):
+            if checked:
+                self.details_button.setText('Hilfe ausblenden <<')
             if not checked:
                 self.adjustSize()
-        self.details_button.toggled.connect(adjust)
+                self.details_button.setText('Hilfe anzeigen >>')
+        self.details_button.toggled.connect(toggle)
         self.back_button.setCursor(QCursor(Qt.PointingHandCursor))
         self._grid = None
 

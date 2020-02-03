@@ -127,8 +127,12 @@ class Ecology(Domain):
 
     def setup_params(self):
 
-        self.params_nullfall = Params(self.ui.param_nullfall_tab.layout())
-        self.params_planfall = Params(self.ui.param_planfall_tab.layout())
+        self.params_nullfall = Params(
+            self.ui.param_nullfall_tab.layout(),
+            help_file='oekologie_bodenbedeckung_nullfall.txt')
+        self.params_planfall = Params(
+            self.ui.param_planfall_tab.layout(),
+            help_file='oekologie_bodenbedeckung_planfall.txt')
         clearLayout(self.ui.param_nullfall_tab.layout())
         clearLayout(self.ui.param_planfall_tab.layout())
 
