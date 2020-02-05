@@ -3,6 +3,7 @@ from projektcheck.base.tools import LineMapTool
 from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.infrastructuralcosts.tables import (
     ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
+from projektcheck.base.tools import FeaturePicker
 
 
 class InfrastructureDrawing:
@@ -42,6 +43,14 @@ class InfrastructureDrawing:
             tool.drawn.connect(
                 lambda geom, i=net_id: self.add_geom(geom, i, geom_typ='line'))
 
+        self.select_lines_tool = FeaturePicker(
+            self.parent.ui.select_lines_button, canvas=self.parent.canvas)
+        self.parent.ui.select_lines_button.clicked.connect(
+            lambda: self.draw_output('line'))
+        self.select_lines_tool.feature_picked.connect(self.line_selected)
+        self.parent.ui.remove_lines_button.clicked.connect(
+            self.remove_selected_lines)
+
     def add_geom(self, geom, net_id, geom_typ='line'):
         features = self.parent.lines if geom_typ == 'line' \
             else self.parent.points
@@ -58,6 +67,24 @@ class InfrastructureDrawing:
         style = 'kosten_erschliessungsnetze_{}elemente.qml'.format(
             'linien' if geom_typ == 'line' else 'punkt')
         output.draw(label=label, style_file=style, redraw=redraw)
+        if geom_typ == 'line':
+            self.select_lines_tool.set_layer(output.layer)
+
+    def line_selected(self, feature):
+        layer = self.output_lines.layer
+        selected = [f.id() for f in layer.selectedFeatures()]
+        if feature.id() not in selected:
+            layer.select(feature.id())
+        else:
+            layer.removeSelection()
+            layer.selectByIds([fid for fid in selected if fid != feature.id()])
+
+    def remove_selected_lines(self):
+        layer = self.output_lines.layer
+        for qf in layer.selectedFeatures():
+            feat = self.parent.lines.get(id=qf.id())
+            feat.delete()
+        self.parent.canvas.refreshAllLayers()
 
 
 class InfrastructuralCosts(Domain):
