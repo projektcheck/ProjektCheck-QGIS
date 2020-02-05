@@ -1,6 +1,6 @@
 {
-    "allgemein": "",
-    "wohnbauland_anteil": "",
+    "beschreibung": "",
+    "nettoflaeche": "",
     "we_efh": "",
     "we_zfh": "",
     "we_rh": "",

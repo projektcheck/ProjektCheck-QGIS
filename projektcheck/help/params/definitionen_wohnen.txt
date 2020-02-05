@@ -1,5 +1,5 @@
 {
-    "allgemein": "<b style='color: red'>Mit dieser Funktion können Sie für Ihr Plangebiet festlegen</b>,
+    "beschreibung": "<b style='color: red'>Mit dieser Funktion können Sie für Ihr Plangebiet festlegen</b>,
 ob die zukünftige Nutzung Wohnen, Gewerbe oder Einzelhandel ist. <br>
 Sofern Ihr Plangebiet mehrere Teilflächen umfasst, können Sie jeder Teilfläche eine eigene Nutzungsart (Wohnen, Gewerbe oder Einzelhandel) zuordnen.
 Zudem können Sie - bei Bedarf - jede Teilfläche umbenennen. Jeder Teilfläche kann nur eine Nutzung zugeordnet werden.

@@ -1,5 +1,5 @@
 {
-    "allgemein": "",
+    "beschreibung": "",
     "beginn_nutzung": "",
     "aufsiedlungsdauer": "",
     "anteil_verarbeitend": "",

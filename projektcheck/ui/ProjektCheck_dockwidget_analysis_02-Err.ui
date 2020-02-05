@@ -73,8 +73,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>441</width>
-         <height>716</height>
+         <width>447</width>
+         <height>734</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -90,7 +90,7 @@ padding: 2px;
            <bool>false</bool>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -263,38 +263,34 @@ padding: 2px;
                </widget>
               </item>
               <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Haltestelle</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_3">
+                 <widget class="QComboBox" name="stops_combo">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>170</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <item>
-                   <widget class="QLabel" name="label_8">
-                    <property name="text">
-                     <string>Haltestelle</string>
-                    </property>
-                   </widget>
+                   <property name="text">
+                    <string>[Haltestellenauswahl]</string>
+                   </property>
                   </item>
-                  <item>
-                   <widget class="QComboBox" name="stops_combo">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>170</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <item>
-                     <property name="text">
-                      <string>[Haltestellenauswahl]</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                 </layout>
+                 </widget>
                 </item>
                 <item>
                  <spacer name="horizontalSpacer_2">
@@ -429,7 +425,7 @@ padding: 2px;
            <bool>true</bool>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <property name="spacing">

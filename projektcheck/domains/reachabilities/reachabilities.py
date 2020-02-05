@@ -134,7 +134,7 @@ class Reachabilities(Domain):
 
     def draw_haltestellen(self, zoom_to=True):
         output = ProjectLayer.from_table(
-            self.haltestellen._table, groupname=self.layer_group)
+            self.haltestellen.table, groupname=self.layer_group)
         self.stops_layer = output.draw(
             label='Haltestellen',
             style_file='erreichbarkeit_haltestellen_alt.qml',
@@ -192,7 +192,7 @@ class Reachabilities(Domain):
         label = f'ab {stop.name}'
 
         output = ProjectLayer.from_table(
-            self.erreichbarkeiten._table,
+            self.erreichbarkeiten.table,
             groupname=f'{self.layer_group}/{sub_group}')
         output.draw(label=label,
                     style_file='erreichbarkeit_erreichbarkeiten_oepnv.qml',
@@ -227,7 +227,7 @@ class Reachabilities(Domain):
         sub_group = u'Erreichbarkeiten ÖPNV'
 
         output = ProjectLayer.from_table(
-            self.einrichtungen._table,
+            self.einrichtungen.table,
             groupname=f'{self.layer_group}/{sub_group}')
         output.draw(label='Einrichtungen',
                     style_file='erreichbarkeit_einrichtungen.qml')
@@ -237,7 +237,7 @@ class Reachabilities(Domain):
         sub_group = f'Erreichbarkeiten'
 
         output = ProjectLayer.from_table(
-            self.isochronen._table,
+            self.isochronen.table,
             groupname=f'{self.layer_group}/{sub_group}')
         end_color = (2, 120, 8) if modus == 'zu Fuß' \
             else (44, 96, 156) if modus == 'Fahrrad' \

@@ -49,7 +49,7 @@ class Layer(ABC):
         return found
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
-             filter=None):
+             filter=None, expanded=True):
         # ToDo: force redraw (delete and add)
         if not self.layer:
             for child in self.root.children():
@@ -66,6 +66,7 @@ class Layer(ABC):
             self.layer.loadNamedStyle(style_path)
             self._l = self.root.addLayer(self.layer)
         self._l.setItemVisibilityChecked(checked)
+        self._l.setExpanded(expanded)
         if filter is not None:
             self.layer.setSubsetString(filter)
         return self.layer
