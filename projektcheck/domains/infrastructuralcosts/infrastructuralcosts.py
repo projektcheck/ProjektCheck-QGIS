@@ -3,7 +3,7 @@ from projektcheck.base.tools import LineMapTool
 from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.infrastructuralcosts.tables import (
     ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
-from projektcheck.base.tools import FeaturePicker
+from projektcheck.base.tools import FeaturePicker, MapClickedTool
 
 
 class InfrastructureDrawing:
@@ -51,13 +51,18 @@ class InfrastructureDrawing:
         self.parent.ui.remove_lines_button.clicked.connect(
             self.remove_selected_lines)
 
+        self.draw_point_tool = MapClickedTool(
+            self.parent.ui.add_point_button, canvas=self.parent.canvas)
+        self.draw_point_tool.map_clicked.connect(self.add_point)
+
     def add_geom(self, geom, net_id, geom_typ='line'):
         features = self.parent.lines if geom_typ == 'line' \
             else self.parent.points
-        features.add(IDNetzelement=net_id, geom=geom)
+        feature = features.add(IDNetzelement=net_id, geom=geom)
         if len(features) == 1:
             self.draw_output(geom_typ, redraw=True)
         self.parent.canvas.refreshAllLayers()
+        return feature
 
     def draw_output(self, geom_typ='line', redraw=False):
         label = 'Erschließungsnetz'
@@ -85,6 +90,12 @@ class InfrastructureDrawing:
             feat = self.parent.lines.get(id=qf.id())
             feat.delete()
         self.parent.canvas.refreshAllLayers()
+
+    def add_point(self, geom):
+        feature = self.add_geom(geom, 1, geom_typ='point')
+        feature.bezeichnung = 'unbenannt'
+        feature.save()
+        #self.parent.points.add(bezeichnung='unbenannt', geom=geom)
 
 
 class InfrastructuralCosts(Domain):
