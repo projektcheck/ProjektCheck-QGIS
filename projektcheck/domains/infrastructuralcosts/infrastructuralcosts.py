@@ -180,7 +180,6 @@ class InfrastructureDrawing:
         self.params.bezeichnung = Param(point.bezeichnung, LineEdit(width=300),
                                         label='Bezeichnung')
 
-        self.params.add(Seperator(margin=0))
 
         punktelemente = list(self.parent.netzelemente.filter(Typ='Punkt'))
         type_names = [p.Netzelement for p in punktelemente]
@@ -194,10 +193,33 @@ class InfrastructureDrawing:
             label='Netzelement'
         )
 
+        self.params.add(Seperator(margin=0))
+
+        self.params.lebensdauer = Param(
+            point.lebensdauer, SpinBox(maximum=1000),
+            label='Lebensdauer'
+        )
+        self.params.euro_EH = Param(
+            point.euro_EH, DoubleSpinBox(),
+            unit='€', label='Euro EH'
+        )
+        self.params.euro_EN = Param(
+            point.euro_EN, DoubleSpinBox(),
+            unit='€', label='Euro EN'
+        )
+        self.params.cent_BU = Param(
+            point.cent_BU, DoubleSpinBox(),
+            unit='€', label='Cent BU'
+        )
+
         def save():
             point.bezeichnung = self.params.bezeichnung.value
             typ = type_combo.get_data()
             point.IDNetzelement = typ.IDNetzelement
+            point.lebensdauer = self.params.lebensdauer.value
+            point.euro_EH = self.params.euro_EH.value
+            point.euro_EN = self.params.euro_EN.value
+            point.cent_BU = self.params.cent_BU.value
             point.save()
             # lazy way to update the combo box
             self.fill_points_combo(select=point)
