@@ -1,5 +1,5 @@
 {
-    "allgemein": "",
+    "beschreibung": "",
     "name": "",
     "area": "",
     "typ": ""

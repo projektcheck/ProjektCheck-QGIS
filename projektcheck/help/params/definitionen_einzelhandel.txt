@@ -1,5 +1,5 @@
 {
-    "allgemein": "",
+    "beschreibung": "",
     "lebensmittel": "",
     "periodischer_bedarf": "",
     "aperiodischer_bedarf": "",

@@ -1,0 +1,14 @@
+{
+    "beschreibung": "",
+    "planfall_1": "",
+    "planfall_2": "",
+    "planfall_3": "",
+    "planfall_4": "",
+    "planfall_5": "",
+    "planfall_6": "",
+    "planfall_7": "",
+    "planfall_8": "",
+    "planfall_9": "",
+    "planfall_10": "",
+    "planfall_11": ""
+}
