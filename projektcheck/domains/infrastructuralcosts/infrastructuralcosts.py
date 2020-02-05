@@ -4,6 +4,10 @@ from projektcheck.base.project import ProjectLayer
 from projektcheck.domains.infrastructuralcosts.tables import (
     ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
 from projektcheck.base.tools import FeaturePicker, MapClickedTool
+from projektcheck.utils.utils import clearLayout
+from projektcheck.base.params import (Params, Param, Title, Seperator)
+from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
+                                      Slider, DoubleSpinBox)
 
 
 class InfrastructureDrawing:
@@ -12,14 +16,18 @@ class InfrastructureDrawing:
 
         self.parent.ui.show_lines_button.clicked.connect(
             lambda: self.draw_output('line'))
+        self.parent.ui.show_lines_button.setCheckable(False)
         self.parent.ui.show_points_button.clicked.connect(
             lambda: self.draw_output('point'))
+        self.parent.ui.show_points_button.setCheckable(False)
 
         self.parent.ui.points_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_point(
                 self.parent.ui.points_combo.currentData()))
         #self.parent.ui.points_combo.currentIndexChanged.connect(
             #lambda: self.draw_output('point'))
+
+        self.parent.ui.remove_point_button.clicked.connect(self.remove_point)
 
         self.setup_tools()
 
@@ -40,9 +48,12 @@ class InfrastructureDrawing:
         idx = 0
         for i, point in enumerate(points):
             # ToDo: show netztyp name in combo
+            typ = self.parent.netzelemente.get(
+                IDNetzelement=point.IDNetzelement)
             self.parent.ui.points_combo.addItem(
-                f'{point.bezeichnung} ({point.IDNetzelement})', point)
-            if point == select:
+                f'{point.bezeichnung} ({typ.Netzelement if typ else "-"})',
+                point)
+            if select and point.id == select.id:
                 idx = i
         if idx:
             self.parent.ui.points_combo.setCurrentIndex(idx)
@@ -125,10 +136,17 @@ class InfrastructureDrawing:
         self.parent.canvas.refreshAllLayers()
 
     def add_point(self, geom):
-        point = self.add_geom(geom, 1, geom_typ='point')
+        point = self.add_geom(geom, 0, geom_typ='point')
         point.bezeichnung = 'unbenannte Maßnahme'
         point.save()
         self.fill_points_combo(select=point)
+
+    def remove_point(self):
+        point = self.parent.ui.points_combo.currentData()
+        if not point:
+            return
+        point.delete()
+        self.fill_points_combo()
 
     def point_selected(self, feature):
         if not self.output_points.layer:
@@ -144,11 +162,48 @@ class InfrastructureDrawing:
     def toggle_point(self, point=None):
         if not point:
             point = self.parent.ui.points_combo.currentData()
+        self.setup_point_params(point)
         if not point:
             return
         if self.output_points.layer:
             self.output_points.layer.removeSelection()
             self.output_points.layer.select(point.id)
+        self.setup_point_params(point)
+
+    def setup_point_params(self, point):
+        layout = self.parent.ui.point_parameter_group.layout()
+        clearLayout(layout)
+        if not point:
+            return
+        self.params = Params(
+            layout, help_file='infrastruktur_punktmassnahme.txt')
+        self.params.bezeichnung = Param(point.bezeichnung, LineEdit(width=300),
+                                        label='Bezeichnung')
+
+        self.params.add(Seperator(margin=0))
+
+        punktelemente = list(self.parent.netzelemente.filter(Typ='Punkt'))
+        type_names = [p.Netzelement for p in punktelemente]
+        typ = self.parent.netzelemente.get(IDNetzelement=point.IDNetzelement)
+
+        type_combo = ComboBox(type_names, data=list(punktelemente), width=300)
+
+        self.params.typ = Param(
+            typ.Netzelement if typ else 'nicht gesetzt',
+            type_combo,
+            label='Netzelement'
+        )
+
+        def save():
+            point.bezeichnung = self.params.bezeichnung.value
+            typ = type_combo.get_data()
+            point.IDNetzelement = typ.IDNetzelement
+            point.save()
+            # lazy way to update the combo box
+            self.fill_points_combo(select=point)
+
+        self.params.show()
+        self.params.changed.connect(save)
 
 
 class InfrastructuralCosts(Domain):
@@ -166,4 +221,7 @@ class InfrastructuralCosts(Domain):
     def load_content(self):
         self.lines = ErschliessungsnetzLinien.features(create=True)
         self.points = ErschliessungsnetzPunkte.features(create=True)
+        self.netzelemente = self.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten'
+        ).features()
         self.drawing.load_content()

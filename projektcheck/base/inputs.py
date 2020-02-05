@@ -165,6 +165,9 @@ class ComboBox(InputType):
     def get_value(self):
         return self.input.currentText()
 
+    def get_data(self):
+        return self.input.currentData()
+
 
 class LineEdit(InputType):
     def __init__(self, width=None):
