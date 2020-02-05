@@ -14,6 +14,13 @@ class InfrastructureDrawing:
             lambda: self.draw_output('line'))
         self.parent.ui.show_points_button.clicked.connect(
             lambda: self.draw_output('point'))
+
+        self.parent.ui.points_combo.currentIndexChanged.connect(
+            lambda idx: self.toggle_point(
+                self.parent.ui.points_combo.currentData()))
+        #self.parent.ui.points_combo.currentIndexChanged.connect(
+            #lambda: self.draw_output('point'))
+
         self.setup_tools()
 
     def load_content(self):
@@ -23,6 +30,24 @@ class InfrastructureDrawing:
         self.output_points = ProjectLayer.from_table(
             self.parent.points.table, groupname=self.parent.layer_group,
             prepend=True)
+        self.fill_points_combo()
+
+    def fill_points_combo(self, select=None):
+        self.parent.ui.points_combo.blockSignals(True)
+        self.parent.ui.points_combo.clear()
+        points = [point for point in self.parent.points]
+        points.sort(key=lambda x: x.IDNetzelement)
+        idx = 0
+        for i, point in enumerate(points):
+            # ToDo: show netztyp name in combo
+            self.parent.ui.points_combo.addItem(
+                f'{point.bezeichnung} ({point.IDNetzelement})', point)
+            if point == select:
+                idx = i
+        if idx:
+            self.parent.ui.points_combo.setCurrentIndex(idx)
+        self.parent.ui.points_combo.blockSignals(False)
+        self.toggle_point()
 
     def setup_tools(self):
         self.line_tools = {
@@ -54,6 +79,13 @@ class InfrastructureDrawing:
         self.draw_point_tool = MapClickedTool(
             self.parent.ui.add_point_button, canvas=self.parent.canvas)
         self.draw_point_tool.map_clicked.connect(self.add_point)
+        self.select_point_tool = FeaturePicker(
+            self.parent.ui.select_point_button, canvas=self.parent.canvas)
+        self.select_point_tool.feature_picked.connect(self.point_selected)
+        self.parent.ui.select_point_button.clicked.connect(
+            lambda: self.draw_output('point'))
+        self.parent.ui.add_point_button.clicked.connect(
+            lambda: self.draw_output('point'))
 
     def add_geom(self, geom, net_id, geom_typ='line'):
         features = self.parent.lines if geom_typ == 'line' \
@@ -72,8 +104,9 @@ class InfrastructureDrawing:
         style = 'kosten_erschliessungsnetze_{}elemente.qml'.format(
             'linien' if geom_typ == 'line' else 'punkt')
         output.draw(label=label, style_file=style, redraw=redraw)
-        if geom_typ == 'line':
-            self.select_lines_tool.set_layer(output.layer)
+        tool = self.select_lines_tool if geom_typ == 'line' \
+            else self.select_point_tool
+        tool.set_layer(output.layer)
 
     def line_selected(self, feature):
         layer = self.output_lines.layer
@@ -92,10 +125,30 @@ class InfrastructureDrawing:
         self.parent.canvas.refreshAllLayers()
 
     def add_point(self, geom):
-        feature = self.add_geom(geom, 1, geom_typ='point')
-        feature.bezeichnung = 'unbenannt'
-        feature.save()
-        #self.parent.points.add(bezeichnung='unbenannt', geom=geom)
+        point = self.add_geom(geom, 1, geom_typ='point')
+        point.bezeichnung = 'unbenannte Maßnahme'
+        point.save()
+        self.fill_points_combo(select=point)
+
+    def point_selected(self, feature):
+        if not self.output_points.layer:
+            return
+        self.output_points.layer.removeSelection()
+        self.output_points.layer.select(feature.id())
+        fid = feature.id()
+        for idx in range(len(self.parent.ui.points_combo)):
+            if fid == self.parent.ui.points_combo.itemData(idx).id:
+                break
+        self.parent.ui.points_combo.setCurrentIndex(idx)
+
+    def toggle_point(self, point=None):
+        if not point:
+            point = self.parent.ui.points_combo.currentData()
+        if not point:
+            return
+        if self.output_points.layer:
+            self.output_points.layer.removeSelection()
+            self.output_points.layer.select(point.id)
 
 
 class InfrastructuralCosts(Domain):

@@ -56,7 +56,7 @@ class Feature:
         self.table.delete(self.id)
 
     def __repr__(self):
-        return f'Feature <{self.id}> of {self._table}'
+        return f'Feature <{self.id}> of {self.table}'
 
 
 class FeatureCollection:
