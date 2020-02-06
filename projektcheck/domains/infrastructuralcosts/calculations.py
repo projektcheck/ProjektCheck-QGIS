@@ -9,15 +9,12 @@ import numpy as np
 
 def apply_kostenkennwerte(project):
     """
-    Check if Kostenkennwerte_Linienelemente has data.
-    If not: Copy from Netze_und_Netzelemente (only if Shape == Line) and
+    Copy from Netze_und_Netzelemente (only if Shape == Line) and
     multiply by interest- and time-factor
 
     Parameters
     ----------
-    project : String
-        name of the active project
-
+    project : project, Project
     """
     kk_features = tables.KostenkennwerteLinienelemente.features(create=True)
     kk_features.delete()
@@ -54,6 +51,21 @@ def apply_kostenkennwerte(project):
     del df_networks['fid']
     kk_features.update_pandas(df_networks)
     return kk_features
+
+def kostenaufteilung_startwerte(project):
+    """
+    copy data from Kostenaufteilung_Startwerte
+
+    project : project, Project
+    """
+    ka_features = tables.Kostenaufteilung.features(create=True)
+    ka_features.delete()
+    df_cost_allocation = ka_features
+    df_cost_allocation_initial = tbx.table_to_dataframe(
+        'Kostenaufteilung_Startwerte', columns=[],
+        workspace='FGDB_Kosten_Tool.gdb', where=None, is_base_table=True)
+    tbx.dataframe_to_table(table, df_cost_allocation_initial, pkeys=['OBJECTID'],
+                           workspace='FGDB_Kosten.gdb', upsert=True)
 
 
 class Gesamtkosten(Worker):
@@ -138,3 +150,35 @@ class Gesamtkosten(Worker):
         df_results = df_results.merge(self.df_phases, on='IDKostenphase')
         df_results = df_results.merge(self.df_elements, on='IDNetz')
         return df_results
+
+
+class KostentraegerAuswerten(Worker):
+    _shares_results_table = 'Gesamtkosten_nach_Traeger'
+
+
+    def __init__(self, project, parent=None):
+        super().__init__(parent=parent)
+        self.project = project
+
+    def work(self):
+        kostenaufteilung_startwerte(self.par.get_projectname())
+        self.df_shares = self.parent_tbx.table_to_dataframe('Kostenaufteilung')
+        self.log('Berechne Aufteilung der Kosten nach Kostenträgern...')
+        self.calculate_shares()
+
+    def calculate_shares(self):
+        df_costs = self.parent_tbx.table_to_dataframe(
+            self._costs_results_table)
+        joined = df_costs.merge(self.df_shares,
+                                on=['IDNetz', 'IDKostenphase'], how='right')
+        joined.fillna(0, inplace=True)
+        joined['Betrag_GSB'] = (joined['Euro'] *
+                                joined['Anteil_GSB'] / 100.).round(2)
+        joined['Betrag_GEM'] = (joined['Euro'] *
+                                joined['Anteil_GEM'] / 100.).round(2)
+        joined['Betrag_ALL'] = (joined['Euro'] *
+                                joined['Anteil_ALL'] / 100.).round(2)
+        summed = joined.groupby('IDNetz').sum()
+        summed.reset_index(inplace=True)
+        self.parent_tbx.dataframe_to_table(self._shares_results_table, summed,
+                                           ['IDNetz'])

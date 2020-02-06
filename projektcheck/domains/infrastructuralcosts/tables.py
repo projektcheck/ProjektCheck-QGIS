@@ -44,3 +44,16 @@ class Gesamtkosten(ProjectTable):
 
     class Meta:
         workspace = 'infrastukturfolgekosten'
+
+
+class Kostenaufteilung(ProjectTable):
+    IDNetz = Field(int, 0)
+    Netz = Field(str, '')
+    IDKostenphase = Field(int, 0)
+    Kostenphase = Field(str, '')
+    Anteil_GSB = Field(int, 0)
+    Anteil_GEM = Field(int, 0)
+    Anteil_ALL = Field(int, 0)
+
+    class Meta:
+        workspace = 'infrastukturfolgekosten'
