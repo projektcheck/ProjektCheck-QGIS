@@ -137,7 +137,7 @@ padding: 2px;
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ÖPNVKarte anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einblenden einer Hintergrundkarte mit Streecken und Haltestellen des Öffentlichen Personennahverkehr.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ÖPNVKarte anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einblenden einer Hintergrundkarte mit Strecken und Haltestellen des Öffentlichen Personennahverkehr.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
