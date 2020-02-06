@@ -2,10 +2,9 @@ from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsProject, QgsSymbol,
                        QgsSimpleFillSymbolLayer,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer)
-from qgis.PyQt.QtGui import QIcon, QColor
-                       #QgsVectorLayer, QgsApplication, QgsSpatialIndex)
-from collections import OrderedDict
+from qgis.PyQt.QtGui import QIcon
 import os
+import pandas as pd
 
 from settings import settings
 
@@ -120,3 +119,22 @@ def clearLayout(layout):
             child.widget().deleteLater()
         elif child.layout() is not None:
             clearLayout(child.layout())
+
+def round_df_to(df, rounding_factor):
+    """
+    Round all values of a Dataframe to some value.
+    For example: round to 5 euro
+
+    Parameters
+    ----------
+    df : pandas dataframe
+        the input dataframe
+    rounding_factor : int
+        rounding value
+
+    """
+    df = df / rounding_factor
+    df = df.apply(pd.Series.round)
+    df *= rounding_factor
+    df = df.astype('int')
+    return df

@@ -81,7 +81,7 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-104</y>
+         <y>0</y>
          <width>510</width>
          <height>1633</height>
         </rect>
@@ -928,7 +928,7 @@ padding: 2px;
             <number>9</number>
            </property>
            <item>
-            <widget class="QPushButton" name="pushButton_26">
+            <widget class="QPushButton" name="gesamtkosten_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>

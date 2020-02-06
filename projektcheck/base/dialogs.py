@@ -177,7 +177,7 @@ class ProgressDialog(Dialog):
     def success(self, result):
         self._finished()
         self.progress(100)
-        self.show_status('<br>fertig')
+        self.show_status('<br><b>fertig</b>')
         if self.on_success and not self.error:
             self.on_success(result)
 

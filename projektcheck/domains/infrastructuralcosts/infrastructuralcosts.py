@@ -8,6 +8,8 @@ from projektcheck.utils.utils import clearLayout
 from projektcheck.base.params import (Params, Param, Title, Seperator)
 from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
                                       Slider, DoubleSpinBox)
+from projektcheck.domains.infrastructuralcosts.calculations import Gesamtkosten
+from projektcheck.base.dialogs import ProgressDialog
 
 
 class InfrastructureDrawing:
@@ -101,7 +103,10 @@ class InfrastructureDrawing:
     def add_geom(self, geom, net_id, geom_typ='line'):
         features = self.parent.lines if geom_typ == 'line' \
             else self.parent.points
-        feature = features.add(IDNetzelement=net_id, geom=geom)
+        typ = self.parent.netzelemente.get(IDNetzelement=net_id)
+        feature = features.add(IDNetzelement=net_id,
+                               IDNetz=typ.IDNetz if typ else 0,
+                               geom=geom)
         if len(features) == 1:
             self.draw_output(geom_typ, redraw=True)
         self.parent.canvas.refreshAllLayers()
@@ -200,15 +205,15 @@ class InfrastructureDrawing:
             label='Lebensdauer'
         )
         self.params.euro_EH = Param(
-            point.euro_EH, DoubleSpinBox(),
+            point.Euro_EH, DoubleSpinBox(),
             unit='€', label='Euro EH'
         )
         self.params.euro_EN = Param(
-            point.euro_EN, DoubleSpinBox(),
+            point.Euro_EN, DoubleSpinBox(),
             unit='€', label='Euro EN'
         )
         self.params.cent_BU = Param(
-            point.cent_BU, DoubleSpinBox(),
+            point.Cent_BU, DoubleSpinBox(),
             unit='€', label='Cent BU'
         )
 
@@ -216,10 +221,11 @@ class InfrastructureDrawing:
             point.bezeichnung = self.params.bezeichnung.value
             typ = type_combo.get_data()
             point.IDNetzelement = typ.IDNetzelement
+            point.IDNet = typ.IDNetz
             point.lebensdauer = self.params.lebensdauer.value
-            point.euro_EH = self.params.euro_EH.value
-            point.euro_EN = self.params.euro_EN.value
-            point.cent_BU = self.params.cent_BU.value
+            point.Euro_EH = self.params.euro_EH.value
+            point.Euro_EN = self.params.euro_EN.value
+            point.Cent_BU = self.params.cent_BU.value
             point.save()
             # lazy way to update the combo box
             self.fill_points_combo(select=point)
@@ -239,6 +245,7 @@ class InfrastructuralCosts(Domain):
 
     def setupUi(self):
         self.drawing = InfrastructureDrawing(self)
+        self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
 
     def load_content(self):
         self.lines = ErschliessungsnetzLinien.features(create=True)
@@ -247,3 +254,14 @@ class InfrastructuralCosts(Domain):
             'Netze_und_Netzelemente', 'Kosten'
         ).features()
         self.drawing.load_content()
+
+    def calculate_gesamtkosten(self):
+
+        job = Gesamtkosten(self.project)
+
+        def on_success(res):
+            pass
+
+        dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
+            # on_success=lambda project: on_success(project, date))
+        dialog.show()

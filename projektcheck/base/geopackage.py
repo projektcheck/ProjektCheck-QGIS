@@ -21,6 +21,7 @@ DATATYPES = {
     datetime.date: ogr.OFTDateTime
 }
 
+
 class GeopackageWorkspace(Workspace):
     def __init__(self, name, database):
         super().__init__(name, database)
@@ -343,6 +344,8 @@ class GeopackageTable(Table):
 
     def set(self, id, **kwargs):
         feature = self._layer.GetFeature(id)
+        if not feature:
+            False
         geom = kwargs.pop(self.geom_field, None)
         if geom:
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())
@@ -350,6 +353,7 @@ class GeopackageTable(Table):
         for field_name, value in kwargs.items():
             feature.SetField(field_name, value)
         self._layer.SetFeature(feature)
+        return True
 
     def get(self, id):
         feat = self._layer.GetFeature(id)
@@ -430,7 +434,9 @@ class GeopackageTable(Table):
                     self._filters = prev_filters
 
             if not isnan(pk):
-                self.set(int(pk), **items)
+                success = self.set(int(pk), **items)
+                if not success:
+                    self.add(**items)
             else:
                 self.add(**items)
 

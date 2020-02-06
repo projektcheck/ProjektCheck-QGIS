@@ -153,11 +153,17 @@ class Project:
     '''
     single project
     '''
+    settings = settings
+
     def __init__(self, name, path=''):
         self.name = name
         self.groupname = f'Projekt "{self.name}"'
         path = path or settings.project_path
         self.path = os.path.join(path, name)
+
+    @property
+    def basedata(self):
+        return self.settings.BASEDATA
 
     def remove(self):
         self.close()
