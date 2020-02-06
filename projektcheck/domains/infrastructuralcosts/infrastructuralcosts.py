@@ -1,15 +1,15 @@
 from projektcheck.base.domain import Domain
 from projektcheck.base.tools import LineMapTool
 from projektcheck.base.project import ProjectLayer
-from projektcheck.domains.infrastructuralcosts.tables import (
-    ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
 from projektcheck.base.tools import FeaturePicker, MapClickedTool
 from projektcheck.utils.utils import clearLayout
 from projektcheck.base.params import (Params, Param, Title, Seperator)
 from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
                                       Slider, DoubleSpinBox)
-from projektcheck.domains.infrastructuralcosts.calculations import Gesamtkosten
 from projektcheck.base.dialogs import ProgressDialog
+from .diagrams import GesamtkostenDiagramm
+from .calculations import Gesamtkosten
+from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
 
 
 class InfrastructureDrawing:
@@ -259,9 +259,11 @@ class InfrastructuralCosts(Domain):
 
         job = Gesamtkosten(self.project)
 
-        def on_success(res):
-            pass
+        def on_close(success):
+            diagram = GesamtkostenDiagramm(project=self.project,
+                                           years=Gesamtkosten.years)
+            diagram.draw()
 
-        dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
-            # on_success=lambda project: on_success(project, date))
+        dialog = ProgressDialog(job, parent=self.ui,
+                                on_close=on_close)
         dialog.show()

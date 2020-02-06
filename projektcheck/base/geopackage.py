@@ -345,7 +345,7 @@ class GeopackageTable(Table):
     def set(self, id, **kwargs):
         feature = self._layer.GetFeature(id)
         if not feature:
-            False
+            return False
         geom = kwargs.pop(self.geom_field, None)
         if geom:
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())
