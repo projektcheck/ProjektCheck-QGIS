@@ -28,17 +28,15 @@ class Feature:
                 v = f.default
             self.__dict__[f.name] = v
 
-    #def __getattr__(self, k):
-        #if k in self.__dict__['_fields']:
-            #return self._values[k]
-        #if k in self.__dict__:
-            #return self.__dict__[k]
-        #raise AttributeError(f'{k}')
+    def __getitem__(self, idx):
+        if idx not in self._fields:
+            raise KeyError(idx)
+        return getattr(self, idx)
 
-    #def __setattr__(self, k, v):
-        #if k in self._fields:
-            #self._values[k] = v
-        #self.__dict__[k] = v
+    def __setitem__(self, idx, value):
+        if idx not in self._fields:
+            raise KeyError(idx)
+        setattr(self, idx, value)
 
     def save(self):
         kwargs = {f: getattr(self, f) for f in self._fields}
