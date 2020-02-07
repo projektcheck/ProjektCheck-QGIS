@@ -149,6 +149,13 @@ class KostentraegerAuswerten(Worker):
             create=True).to_pandas()
         self.log('Berechne Aufteilung der Kosten nach Kostenträgern...')
 
+        self.df_elements = self.project.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten',
+            fields=['IDNetz', 'Netz']).to_pandas()
+        # duplicate entries for 'IDNetz'/'Netz' combinations
+        del self.df_elements['fid']
+        self.df_elements.drop_duplicates(inplace=True)
+
         self.shares_results.delete()
         df_results = self.calculate_shares()
         self.shares_results.update_pandas(df_results)
@@ -157,7 +164,8 @@ class KostentraegerAuswerten(Worker):
         df_costs = tables.Gesamtkosten.features(
             project=self.project).to_pandas()
         joined = df_costs.merge(self.df_shares,
-                                on=['IDNetz', 'IDKostenphase'], how='right')
+                                on=['IDNetz', 'IDKostenphase'],
+                                how='right')
         joined.fillna(0, inplace=True)
         joined['Betrag_GSB'] = (joined['Euro'] *
                                 joined['Anteil_GSB'] / 100.).round(2)
@@ -167,4 +175,6 @@ class KostentraegerAuswerten(Worker):
                                 joined['Anteil_ALL'] / 100.).round(2)
         summed = joined.groupby('IDNetz').sum()
         summed.reset_index(inplace=True)
+
+        summed = summed.merge(self.df_elements, on='IDNetz')
         return summed

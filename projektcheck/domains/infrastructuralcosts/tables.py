@@ -37,6 +37,7 @@ class KostenkennwerteLinienelemente(ProjectTable):
 
 class Gesamtkosten(ProjectTable):
     IDNetz = Field(int, 0)
+    Netz = Field(str, '')
     IDKostenphase = Field(int, 0)
     Kostenphase = Field(str, '')
     Euro = Field(float, 0)
@@ -58,6 +59,7 @@ class Kostenaufteilung(ProjectTable):
 
 class GesamtkostenTraeger(ProjectTable):
     IDNetz = Field(int, 0)
+    Netz = Field(str, '')
     Betrag_GSB = Field(float, 0)
     Betrag_GEM = Field(float, 0)
     Betrag_ALL = Field(float, 0)

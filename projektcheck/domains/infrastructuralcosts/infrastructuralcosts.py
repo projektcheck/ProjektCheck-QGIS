@@ -9,7 +9,7 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit,
                                       Slider, DoubleSpinBox)
 from projektcheck.base.dialogs import ProgressDialog
 
-from .diagrams import GesamtkostenDiagramm
+from .diagrams import GesamtkostenDiagramm, KostentraegerDiagramm
 from .calculations import Gesamtkosten, KostentraegerAuswerten
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
                      Kostenaufteilung)
@@ -284,10 +284,10 @@ class Kostentraeger:
         job = KostentraegerAuswerten(self.project)
 
         def on_close(success):
-            #diagram = GesamtkostenDiagramm(project=self.project,
-                                           #years=Gesamtkosten.years)
-            #diagram.draw()
-            pass
+            # the years originate from gesamtkosten calculation
+            diagram = KostentraegerDiagramm(project=self.project,
+                                           years=Gesamtkosten.years)
+            diagram.draw()
 
         dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
         dialog.show()
@@ -296,7 +296,8 @@ class Kostentraeger:
         layout = self.ui.kostenaufteilung_params_group.layout()
         clearLayout(layout)
 
-        self.params = Params(layout)#, help_file='infrastruktur_kostenaufteilung.txt')
+        self.params = Params(
+            layout, help_file='infrastruktur_kostenaufteilung.txt')
         field_names = ['Anteil_GSB', 'Anteil_GEM', 'Anteil_ALL']
         labels = ['Kostenanteil der Grunstücksbesitzer*Innen',
                   'Kostenanteil der Gemeinde',

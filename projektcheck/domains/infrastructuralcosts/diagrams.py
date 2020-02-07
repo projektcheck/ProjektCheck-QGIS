@@ -8,7 +8,8 @@ from textwrap import wrap
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.base.diagrams import MatplotDiagram
 from projektcheck.base.project import ProjectManager
-from .tables import Gesamtkosten
+from projektcheck.domains.infrastructuralcosts.tables import (
+    Gesamtkosten, GesamtkostenTraeger)
 
 
 #class NetzlaengenDiagramm(MatplotDiagram):
@@ -194,77 +195,70 @@ class GesamtkostenDiagramm(MatplotDiagram):
     #return s
 
 
-#class KostentraegerDiagramm(MatplotDiagram):
-    #colors = ['#005CE6', '#002673', '#894444', '#73FFDF', '#FFFF00']
-    #def _create(self, **kwargs):
-        #workspace = 'FGDB_Kosten.gdb'
-        #table = 'Gesamtkosten_nach_Traeger'
-        #self.title = (u"{}: Aufteilung der Gesamtkosten "
-                      #u"auf die Kostenträger".format(
-                          #self.tbx.par.get_projectname()))
-        #y_label = u"Kosten der erstmaligen Herstellung, \nBetriebs- und Unterhaltungskosten in den \nersten 20 Jahren sowie Erneuerungskosten \n(anteilig für die ersten 20 Jahre)"
+class KostentraegerDiagramm(MatplotDiagram):
+    colors = ['#005CE6', '#002673', '#894444', '#73FFDF', '#FFFF00']
 
-        #df_shares = self.tbx.table_to_dataframe(
-            #table, workspace=workspace
-        #)
+    def create(self, **kwargs):
+        project = kwargs.get('project', ProjectManager().active_project)
+        years = kwargs.get('years', 20)
+        self.title = (f'{project.name}: Aufteilung der Gesamtkosten '
+                      'auf die Kostenträger')
+        y_label = ('Kosten der erstmaligen Herstellung, \n'
+                   'Betriebs- und Unterhaltungskosten in den \n'
+                   f'ersten {years} Jahren sowie Erneuerungskosten \n'
+                   f'(anteilig für die ersten {years} Jahre)')
 
-        #df_shareholders = self.tbx.table_to_dataframe(
-            #'Kostentraeger', workspace='FGDB_Kosten_Tool.gdb',
-            #is_base_table=True
-        #)
-        #categories = df_shareholders['Kostentraeger']
-        #cols = df_shareholders['spalte']
+        df_shares = GesamtkostenTraeger.get_table(project=project).to_pandas()
 
-        #pos_idx = np.arange(len(categories))
+        df_shareholders = project.basedata.get_table(
+            'Kostentraeger', 'Kosten').to_pandas()
+        categories = df_shareholders['Kostentraeger']
+        cols = df_shareholders['spalte']
 
-        ##bar_width = 0.5
+        pos_idx = np.arange(len(categories))
 
-        #figure, ax = self.plt.subplots(figsize=(12, 5))
-        #colors = self.colors  #self.plt.cm.Paired(np.linspace(0, 1, len(df_shares)))
+        figure, ax = plt.subplots(figsize=(12, 5))
+        colors = self.colors
 
-        #summed = np.zeros(len(cols))
+        summed = np.zeros(len(cols))
 
-        #for j, (index, net_share) in enumerate(df_shares.iterrows()):
-            #data = []
-            #for i, col in enumerate(cols):
-                #data.append(net_share[col])
-            #patches = ax.bar(pos_idx, data, bottom=summed, color=colors[j])
-            #for i, rect in enumerate(patches.get_children()):
-                #value = data[i]
-                #bottom = summed[i]
-                #if value != 0:
-                    #color = 'black'
-                    #if j in [1, 2]:
-                        #color = 'white'
-                    #ax.text(i, bottom + value/2., u"{0:,} €".format(int(value)),
-                            #ha='center', va='center', color=color)
-                    ##,
-                            ##bbox=dict(facecolor='white',
-                                      ##edgecolor='white', boxstyle="round"))
+        for j, (index, net_share) in enumerate(df_shares.iterrows()):
+            data = []
+            for i, col in enumerate(cols):
+                data.append(net_share[col])
+            patches = ax.bar(pos_idx, data, bottom=summed, color=colors[j])
+            for i, rect in enumerate(patches.get_children()):
+                value = data[i]
+                bottom = summed[i]
+                if value != 0:
+                    color = 'black'
+                    if j in [1, 2]:
+                        color = 'white'
+                    ax.text(i, bottom + value/2., u"{0:,} €".format(int(value)),
+                            ha='center', va='center', color=color)
 
-            #summed += data
+            summed += data
 
-        #ax.set_xticks(pos_idx)
-        #ax.set_xticklabels(categories)
-        #ax.set_title(self.title)
-        #ax.set_ylabel(y_label, rotation=90, labelpad=15)
-        #fmt = u'{x:,.0f} €'
-        #tick = mticker.StrMethodFormatter(fmt)
-        ##tick = mticker.FuncFormatter(format_func)
-        #ax.yaxis.set_major_formatter(tick)
-        #ax.yaxis.grid(True, which='major')
+        ax.set_xticks(pos_idx)
+        ax.set_xticklabels(categories)
+        ax.set_title(self.title)
+        ax.set_ylabel(y_label, rotation=90, labelpad=15)
+        fmt = u'{x:,.0f} €'
+        tick = mticker.StrMethodFormatter(fmt)
+        ax.yaxis.set_major_formatter(tick)
+        ax.yaxis.grid(True, which='major')
 
-        #box = ax.get_position()
-        #ax.set_position([box.x0 + box.width * 0.2, box.y0 + box.height * 0.25,
-                         #box.width * 0.8, box.height * 0.75])
+        box = ax.get_position()
+        ax.set_position([box.x0 + box.width * 0.2, box.y0 + box.height * 0.25,
+                         box.width * 0.8, box.height * 0.75])
 
-        ## Put the legend to the right of the current axis
-        #ax.legend(df_shares['Netz'], loc='center left',
-                  #bbox_to_anchor=(0, -0.35))
-        ## didn't find a way to pass custom colors directly
-        #for color, handle in zip(colors, ax.get_legend().legendHandles):
-            #handle.set_color(color)
-        #return ax
+        # Put the legend to the right of the current axis
+        ax.legend(df_shares['Netz'], loc='center left',
+                  bbox_to_anchor=(0, -0.35))
+        # didn't find a way to pass custom colors directly
+        for color, handle in zip(colors, ax.get_legend().legendHandles):
+            handle.set_color(color)
+        return figure
 
 
 #class VergleichsDiagramm(MatplotDiagram):
