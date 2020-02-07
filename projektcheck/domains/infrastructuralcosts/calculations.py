@@ -52,21 +52,6 @@ def apply_kostenkennwerte(project):
     kk_features.update_pandas(df_networks)
     return kk_features
 
-def kostenaufteilung_startwerte(project):
-    """
-    copy data from Kostenaufteilung_Startwerte
-
-    project : project, Project
-    """
-    ka_features = tables.Kostenaufteilung.features(create=True)
-    ka_features.delete()
-    df_cost_allocation = ka_features
-    df_cost_allocation_initial = tbx.table_to_dataframe(
-        'Kostenaufteilung_Startwerte', columns=[],
-        workspace='FGDB_Kosten_Tool.gdb', where=None, is_base_table=True)
-    tbx.dataframe_to_table(table, df_cost_allocation_initial, pkeys=['OBJECTID'],
-                           workspace='FGDB_Kosten.gdb', upsert=True)
-
 
 class Gesamtkosten(Worker):
     years = 20

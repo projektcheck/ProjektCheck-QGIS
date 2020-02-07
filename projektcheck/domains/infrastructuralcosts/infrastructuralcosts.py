@@ -3,13 +3,16 @@ from projektcheck.base.tools import LineMapTool
 from projektcheck.base.project import ProjectLayer
 from projektcheck.base.tools import FeaturePicker, MapClickedTool
 from projektcheck.utils.utils import clearLayout
-from projektcheck.base.params import (Params, Param, Title, Seperator)
-from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
+from projektcheck.base.params import (Params, Param, Title, Seperator,
+                                      SumDependency)
+from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit,
                                       Slider, DoubleSpinBox)
 from projektcheck.base.dialogs import ProgressDialog
+
 from .diagrams import GesamtkostenDiagramm
 from .calculations import Gesamtkosten, KostentraegerAuswerten
-from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
+from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
+                     Kostenaufteilung)
 
 
 class InfrastructureDrawing:
@@ -234,39 +237,44 @@ class InfrastructureDrawing:
         self.params.changed.connect(save)
 
 
-class InfrastructuralCosts(Domain):
-    """"""
+class Kostentraeger:
 
-    ui_label = 'Infrastrukturfolgekosten'
-    ui_file = 'ProjektCheck_dockwidget_analysis_06-IFK.ui'
-    ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_infrstucturalcosts_4.png"
-
-    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
-
-    def setupUi(self):
-        self.drawing = InfrastructureDrawing(self)
-        self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
+    def __init__(self, ui, project):
+        self.ui = ui
+        self.project = project
         self.ui.kostentraeger_button.clicked.connect(
             self.calculate_kostentraeger)
+        self.ui.kostenaufteilung_widget.setVisible(False)
+
+        self.net_radios = {
+            self.ui.strasse_innere_radio: 1,
+            self.ui.strasse_aeussere_radio: 2,
+            self.ui.kanalisation_radio: 3,
+            self.ui.trinkwasser_radio: 4,
+            self.ui.elektrizitaet_radio: 5
+        }
+
+        for radio, net_id in self.net_radios.items():
+            radio.toggled.connect(
+                lambda b, i=net_id: self.setup_kostenaufteilung(net_id=i))
 
     def load_content(self):
-        self.lines = ErschliessungsnetzLinien.features(create=True)
-        self.points = ErschliessungsnetzPunkte.features(create=True)
-        self.netzelemente = self.basedata.get_table(
-            'Netze_und_Netzelemente', 'Kosten'
-        ).features()
-        self.drawing.load_content()
+        self.kostenaufteilung = Kostenaufteilung.features(
+            create=True, project=self.project)
+        self.default_kostenaufteilung = self.project.basedata.get_table(
+            'Kostenaufteilung_Startwerte', 'Kosten')
+        self.kostenphasen = self.project.basedata.get_table(
+            'Kostenphasen', 'Kosten').features()
 
-    def calculate_gesamtkosten(self):
-        job = Gesamtkosten(self.project)
-
-        def on_close(success):
-            diagram = GesamtkostenDiagramm(project=self.project,
-                                           years=Gesamtkosten.years)
-            diagram.draw()
-
-        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
-        dialog.show()
+        # initialize empty project 'kostenaufteilungen' with the default ones
+        if len(self.kostenaufteilung) == 0:
+            self.kostenaufteilung.update_pandas(
+                self.default_kostenaufteilung.to_pandas())
+        # load params for first radion (checking it also triggers setup)
+        if not self.ui.strasse_innere_radio.isChecked():
+            self.ui.strasse_innere_radio.setChecked(True)
+        else:
+            self.setup_kostenaufteilung()
 
     def calculate_kostentraeger(self):
         job = KostentraegerAuswerten(self.project)
@@ -278,4 +286,78 @@ class InfrastructuralCosts(Domain):
             pass
 
         dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
+        dialog.show()
+
+    def setup_kostenaufteilung(self, net_id=1):
+        layout = self.ui.kostenaufteilung_params_group.layout()
+        clearLayout(layout)
+
+        self.params = Params(layout)#, help_file='infrastruktur_kostenaufteilung.txt')
+
+        for i, phase in enumerate(self.kostenphasen):
+            dependency = SumDependency(100)
+            self.params.add(Title(phase.Kostenphase))
+            feature = self.kostenaufteilung.get(
+                IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
+
+            for (field_name, label) in [
+                ('Anteil_GSB', 'Kostenanteil der Grunstücksbesitzer*Innen'),
+                ('Anteil_GEM', 'Kostenanteil der Gemeinde'),
+                ('Anteil_ALL', 'Kostenanteil der Allgemeinheit der '
+                 'Netznutzer*innen und Tarifkundschaft')
+            ]:
+                param = Param(feature[field_name],
+                    Slider(maximum=100, lockable=True),
+                    label=label
+                )
+                self.params.add(
+                    param, name=f'{field_name}_phase{phase.IDKostenphase}')
+                dependency.add(param)
+            if i != len(self.kostenphasen) - 1:
+                self.params.add(Seperator(margin=0))
+        self.params.show()
+        self.params.changed.connect(lambda: self.save(net_id))
+
+    def save(self, net_id):
+        for phase in self.kostenphasen:
+            feature = self.kostenaufteilung.get(
+                IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
+            for field_name in ['Anteil_GSB', 'Anteil_GEM', 'Anteil_ALL']:
+                param = self.params[f'{field_name}_phase{phase.IDKostenphase}']
+                feature[field_name] = param.value
+            feature.save()
+
+
+class InfrastructuralCosts(Domain):
+    """"""
+
+    ui_label = 'Infrastrukturfolgekosten'
+    ui_file = 'ProjektCheck_dockwidget_analysis_06-IFK.ui'
+    ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_infrstucturalcosts_4.png"
+
+    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
+
+    def setupUi(self):
+        self.drawing = InfrastructureDrawing(self)
+        self.kostenaufteilung = Kostentraeger(self.ui, project=self.project)
+        self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
+
+    def load_content(self):
+        self.lines = ErschliessungsnetzLinien.features(create=True)
+        self.points = ErschliessungsnetzPunkte.features(create=True)
+        self.netzelemente = self.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten'
+        ).features()
+        self.drawing.load_content()
+        self.kostenaufteilung.load_content()
+
+    def calculate_gesamtkosten(self):
+        job = Gesamtkosten(self.project)
+
+        def on_close(success):
+            diagram = GesamtkostenDiagramm(project=self.project,
+                                           years=Gesamtkosten.years)
+            diagram.draw()
+
+        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
         dialog.show()
