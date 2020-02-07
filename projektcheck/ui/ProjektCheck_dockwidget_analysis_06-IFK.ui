@@ -82,8 +82,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>625</width>
-         <height>900</height>
+         <width>618</width>
+         <height>1697</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -117,7 +117,7 @@ padding: 2px;
            </size>
           </property>
           <property name="title">
-           <string>Erschließungsnetze</string>
+           <string>Erschließungsnetze zeichnen</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -568,22 +568,6 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>5</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_13">
              <item>
               <widget class="QPushButton" name="select_lines_button">
@@ -664,36 +648,13 @@ padding: 2px;
              </item>
             </layout>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
-          <property name="title">
-           <string>punktuelle Maßnahmen</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-          </property>
-          <property name="collapsed">
-           <bool>false</bool>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="leftMargin">
-            <number>9</number>
-           </property>
-           <property name="topMargin">
-            <number>9</number>
-           </property>
-           <property name="rightMargin">
-            <number>9</number>
-           </property>
-           <property name="bottomMargin">
-            <number>9</number>
-           </property>
+           <item>
+            <widget class="Line" name="line_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
@@ -933,7 +894,7 @@ padding: 2px;
         <item>
          <widget class="QgsCollapsibleGroupBox" name="mGroupBox_3">
           <property name="title">
-           <string>Analyse (???)</string>
+           <string>Auswertung der Zeichnung</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -978,26 +939,6 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_28">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten nach Kostenträgern auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auswerten, welcher Kostenträger welchen Anteil der zuvor abgeschätzten Gesamtkosten der zusätzlichen Erschließungselemente zu tragen hat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Kosten nach Kostenträgern auswerten</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="pushButton_27">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1015,7 +956,7 @@ padding: 2px;
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Kostenaufteilung festlegen</string>
+              <string>Kostenaufteilung festlegen ⯆</string>
              </property>
              <property name="icon">
               <iconset>
@@ -1026,6 +967,88 @@ padding: 2px;
              </property>
              <property name="flat">
               <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="kostenaufteilung_widget" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Netz</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QGridLayout" name="gridLayout_5">
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="strasse_innere_radio">
+                  <property name="text">
+                   <string>Straße (innere Erschließung)</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QRadioButton" name="kanalisation_radio">
+                  <property name="text">
+                   <string>Kanalisation</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QRadioButton" name="strasse_aeussere_radio">
+                  <property name="text">
+                   <string>Straße (äußere Erschließung)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QRadioButton" name="trinkwasser_radio">
+                  <property name="text">
+                   <string>Trinkwasser</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QRadioButton" name="elektrizitaet_radio">
+                  <property name="text">
+                   <string>Elektrizität</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="kostenaufteilung_params_group">
+                <property name="title">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="kostentraeger_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten nach Kostenträgern auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auswerten, welcher Kostenträger welchen Anteil der zuvor abgeschätzten Gesamtkosten der zusätzlichen Erschließungselemente zu tragen hat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Kosten nach Kostenträgern auswerten</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1126,45 +1149,6 @@ padding: 2px;
                   <string>Netz bearbeiten:</string>
                  </property>
                 </widget>
-               </item>
-               <item>
-                <layout class="QGridLayout" name="gridLayout_5">
-                 <item row="0" column="0">
-                  <widget class="QRadioButton" name="radioButton_12">
-                   <property name="text">
-                    <string>Straße (innere Erschließung)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QRadioButton" name="radioButton_13">
-                   <property name="text">
-                    <string>Kanalisation</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QRadioButton" name="radioButton_15">
-                   <property name="text">
-                    <string>Straße (äußere Erschließung)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QRadioButton" name="radioButton_14">
-                   <property name="text">
-                    <string>Trinkwasser</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QRadioButton" name="radioButton_16">
-                   <property name="text">
-                    <string>Elektrizität</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
                </item>
                <item>
                 <widget class="Line" name="line_9">
@@ -2146,12 +2130,12 @@ padding: 2px;
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>116</x>
-     <y>891</y>
+     <x>126</x>
+     <y>1348</y>
     </hint>
     <hint type="destinationlabel">
-     <x>130</x>
-     <y>1086</y>
+     <x>140</x>
+     <y>1676</y>
     </hint>
    </hints>
   </connection>
@@ -2162,12 +2146,28 @@ padding: 2px;
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>330</y>
+     <x>145</x>
+     <y>643</y>
     </hint>
     <hint type="destinationlabel">
-     <x>196</x>
-     <y>433</y>
+     <x>206</x>
+     <y>789</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_27</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kostenaufteilung_widget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>114</x>
+     <y>656</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>671</y>
     </hint>
    </hints>
   </connection>

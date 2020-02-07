@@ -8,7 +8,7 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
                                       Slider, DoubleSpinBox)
 from projektcheck.base.dialogs import ProgressDialog
 from .diagrams import GesamtkostenDiagramm
-from .calculations import Gesamtkosten
+from .calculations import Gesamtkosten, KostentraegerAuswerten
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte)
 
 
@@ -201,7 +201,7 @@ class InfrastructureDrawing:
         self.params.add(Seperator(margin=0))
 
         self.params.lebensdauer = Param(
-            point.lebensdauer, SpinBox(maximum=1000),
+            point.Lebensdauer, SpinBox(maximum=1000),
             label='Lebensdauer'
         )
         self.params.euro_EH = Param(
@@ -222,7 +222,7 @@ class InfrastructureDrawing:
             typ = type_combo.get_data()
             point.IDNetzelement = typ.IDNetzelement
             point.IDNet = typ.IDNetz
-            point.lebensdauer = self.params.lebensdauer.value
+            point.Lebensdauer = self.params.lebensdauer.value
             point.Euro_EH = self.params.euro_EH.value
             point.Euro_EN = self.params.euro_EN.value
             point.Cent_BU = self.params.cent_BU.value
@@ -246,6 +246,8 @@ class InfrastructuralCosts(Domain):
     def setupUi(self):
         self.drawing = InfrastructureDrawing(self)
         self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
+        self.ui.kostentraeger_button.clicked.connect(
+            self.calculate_kostentraeger)
 
     def load_content(self):
         self.lines = ErschliessungsnetzLinien.features(create=True)
@@ -256,7 +258,6 @@ class InfrastructuralCosts(Domain):
         self.drawing.load_content()
 
     def calculate_gesamtkosten(self):
-
         job = Gesamtkosten(self.project)
 
         def on_close(success):
@@ -264,6 +265,17 @@ class InfrastructuralCosts(Domain):
                                            years=Gesamtkosten.years)
             diagram.draw()
 
-        dialog = ProgressDialog(job, parent=self.ui,
-                                on_close=on_close)
+        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
+        dialog.show()
+
+    def calculate_kostentraeger(self):
+        job = KostentraegerAuswerten(self.project)
+
+        def on_close(success):
+            #diagram = GesamtkostenDiagramm(project=self.project,
+                                           #years=Gesamtkosten.years)
+            #diagram.draw()
+            pass
+
+        dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
         dialog.show()
