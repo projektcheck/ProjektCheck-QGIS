@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>944</height>
+    <width>645</width>
+    <height>974</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -82,8 +82,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>510</width>
-         <height>1633</height>
+         <width>625</width>
+         <height>900</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -186,6 +186,9 @@ padding: 2px;
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erschließungsnetze anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Der aktuellen Kartendarstellung die Layer mit den Erschließungsnetzen hinzufügen und das Plangebiet halbtransparent darstellen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="layoutDirection">
                 <enum>Qt::RightToLeft</enum>
                </property>
@@ -224,6 +227,9 @@ padding: 2px;
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anliegerstraße hinzufügen (innere Erschließung)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie eine oder mehrere Anliegerstraßen der inneren Erschließung in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Anliegerstraße hinzufügen (innere Erschließung)</string>
              </property>
@@ -259,6 +265,9 @@ padding: 2px;
              </property>
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sammelstraße hinzufügen (innere Erschließung)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie eine oder mehrere Sammelstraßen der inneren Erschließung in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Sammelstraße hinzufügen (innere Erschließung)</string>
@@ -296,6 +305,9 @@ padding: 2px;
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anliegerstraße hinzufügen (äußere Erschließung)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;eichnen Sie eine oder mehrere Anliegerstraßen der äußeren Erschließung in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Anliegerstraße hinzufügen (äußere Erschließung)</string>
              </property>
@@ -331,6 +343,9 @@ padding: 2px;
              </property>
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sammelstraße hinzufügen (äußere Erschließung)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie eine oder mehrere Sammelstraßen der äußeren Erschließung in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Sammelstraße hinzufügen (äußere Erschließung)</string>
@@ -368,6 +383,9 @@ padding: 2px;
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kanal (Trennsystem) hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie einen oder mehrere Trennsystem-Kanäle in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Kanal (Trennsystem) hinzufügen</string>
              </property>
@@ -403,6 +421,9 @@ padding: 2px;
              </property>
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kanal (Mischsystem) hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie einen oder mehrere Mischsystem-Kanäle in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Kanal (Mischsystem) hinzufügen</string>
@@ -440,6 +461,9 @@ padding: 2px;
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kanal (nur Schmutzwasser) hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie einen oder mehrere Schmutzwasserkanäle (z.B. im Falle einer lokalen Regenwasserversickerung) in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Kanal (nur Schmutzwasser) hinzufügen</string>
              </property>
@@ -476,6 +500,9 @@ padding: 2px;
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Trinkwasserleitung hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie eine oder mehrere Trinkwasserleitungen in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Trinkwasserleitung hinzufügen</string>
              </property>
@@ -511,6 +538,9 @@ padding: 2px;
              </property>
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stromleitung hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie eine oder mehrere Stromleitungen in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Stromleitung hinzufügen</string>
@@ -935,6 +965,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gesamtkosten ermitteln&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aus der Verknüpfung der Infrastrukturmengen (Netzabschnitte und punktuelle Maßnahmen) und der Kostenkennwerte die Gesamtkosten der Erschließung schätzen (noch ohne Aufteilung auf Kostenträger).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Gesamtkosten ermitteln</string>
              </property>
@@ -952,6 +985,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten nach Kostenträgern auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auswerten, welcher Kostenträger welchen Anteil der zuvor abgeschätzten Gesamtkosten der zusätzlichen Erschließungselemente zu tragen hat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Kosten nach Kostenträgern auswerten</string>
              </property>
@@ -968,6 +1004,9 @@ padding: 2px;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kostenaufteilung festlegen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Festlegen, welcher Kostenträger in welcher Kostenphase welchen Anteil der Kosten welches Erschließungsnetzes zu tragen hat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -1647,6 +1686,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten pro WE bzw. AP vergleichen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die ermittelten Erschließungskosten pro Wohneinheit bzw. Arbeitsplatz bundesweiten Vergleichswerten gegenüberstellen. (Nur verfügbar, wenn alle Teilflächen die Nutzung “Wohnen” oder alle Teilflächen die Nutzung “Gewerbe” haben.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Kosten pro WE / APL vergleichen</string>
              </property>
@@ -1663,6 +1705,9 @@ padding: 2px;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kostenkennwerte kontrollieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Kostensätze pro laufendem Meter für die einzelnen Erschließungsnetze ansehen und bei Bedarf anpassen (nicht relevant für punktuelle Maßnahmen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -1997,6 +2042,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Infrastrukturmengen bilanzieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Länge der bisher in der Karte eingezeichneten Erschließungsnetze sowie Gesamtkosten der punktuellen Maßnahmen aufsummieren und in zwei Diagrammen anzeigen lassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Infrastrukturmengen bilanzieren</string>
              </property>
@@ -2060,6 +2108,9 @@ padding: 2px;
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Infrastrukturfolgekosten“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>

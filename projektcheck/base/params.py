@@ -301,10 +301,11 @@ class Params(QObject):
         self._elements.append(element)
         if name and isinstance(element, Param):
             self._params[name] = element
-            if element.help_text or name not in self.help_dict:
-                self.help_dict[name] = element.help_text
-            else:
-                element.help_text = self.help_dict[name]
+            if element.input:
+                if element.help_text or name not in self.help_dict:
+                    self.help_dict[name] = element.help_text
+                else:
+                    element.help_text = self.help_dict[name]
 
     @property
     def params(self):
