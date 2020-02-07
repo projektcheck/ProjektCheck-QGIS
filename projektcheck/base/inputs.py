@@ -52,8 +52,8 @@ class Checkbox(InputType):
     '''
     checkbox input
     '''
-    def __init__(self, width=None):
-        super().__init__()
+    def __init__(self, width=None, **kwargs):
+        super().__init__(**kwargs)
         self.input = QCheckBox()
         self.input.stateChanged.connect(self.changed.emit)
         self.registerFocusEvent(self.input)
@@ -71,8 +71,8 @@ class Slider(InputType):
     '''
 
     def __init__(self, minimum=0, maximum=100000000, step=1, width=300,
-                 lockable=False):
-        super().__init__()
+                 lockable=False, **kwargs):
+        super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
         self.lockable = lockable
@@ -143,8 +143,8 @@ class Slider(InputType):
 
 
 class ComboBox(InputType):
-    def __init__(self, values=[], data=[], width=None):
-        super().__init__()
+    def __init__(self, values=[], data=[], width=None, **kwargs):
+        super().__init__(**kwargs)
         self.input = QComboBox()
         if width is not None:
             self.input.setFixedWidth(width)
@@ -170,8 +170,8 @@ class ComboBox(InputType):
 
 
 class LineEdit(InputType):
-    def __init__(self, width=None):
-        super().__init__()
+    def __init__(self, width=None, **kwargs):
+        super().__init__(**kwargs)
         self.input = QLineEdit()
         if width is not None:
             self.input.setFixedWidth(width)
@@ -187,8 +187,8 @@ class LineEdit(InputType):
 
 class SpinBox(InputType):
     InputClass = QSpinBox
-    def __init__(self, minimum=0, maximum=100000000, step=1):
-        super().__init__()
+    def __init__(self, minimum=0, maximum=100000000, step=1, **kwargs):
+        super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
         self.input = self.InputClass()

@@ -265,6 +265,10 @@ class Kostentraeger:
             'Kostenaufteilung_Startwerte', 'Kosten')
         self.kostenphasen = self.project.basedata.get_table(
             'Kostenphasen', 'Kosten').features()
+        self.aufteilungsregeln = self.project.basedata.get_table(
+            'Aufteilungsregeln', 'Kosten').features()
+        self.applyable_aufteilungsregeln = self.project.basedata.get_table(
+            'Aufteilungsregeln_zu_Netzen_und_Phasen', 'Kosten').features()
 
         # initialize empty project 'kostenaufteilungen' with the default ones
         if len(self.kostenaufteilung) == 0:
@@ -293,6 +297,18 @@ class Kostentraeger:
         clearLayout(layout)
 
         self.params = Params(layout)#, help_file='infrastruktur_kostenaufteilung.txt')
+        field_names = ['Anteil_GSB', 'Anteil_GEM', 'Anteil_ALL']
+        labels = ['Kostenanteil der Grunstücksbesitzer*Innen',
+                  'Kostenanteil der Gemeinde',
+                  'Netznutzer*innen und Tarifkundschaft']
+
+        def preset_changed(c, p):
+            preset = c.get_data()
+            if not preset:
+                return
+            for field_name in field_names:
+                param = self.params.get(f'{p.Kostenphase}_{field_name}')
+                param.input.value = preset[field_name]
 
         for i, phase in enumerate(self.kostenphasen):
             dependency = SumDependency(100)
@@ -300,30 +316,50 @@ class Kostentraeger:
             feature = self.kostenaufteilung.get(
                 IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
 
-            for (field_name, label) in [
-                ('Anteil_GSB', 'Kostenanteil der Grunstücksbesitzer*Innen'),
-                ('Anteil_GEM', 'Kostenanteil der Gemeinde'),
-                ('Anteil_ALL', 'Kostenanteil der Allgemeinheit der '
-                 'Netznutzer*innen und Tarifkundschaft')
-            ]:
-                param = Param(feature[field_name],
-                    Slider(maximum=100, lockable=True),
-                    label=label
-                )
+            preset_combo = self.create_presets(net_id, phase.IDKostenphase)
+            self.params.add(preset_combo, name=f'{phase.Kostenphase}_presets')
+
+            for i, field_name in enumerate(field_names):
+                label = labels[i]
+                slider = Slider(maximum=100, lockable=True)
+                param = Param(feature[field_name], slider, label=label)
                 self.params.add(
-                    param, name=f'{field_name}_phase{phase.IDKostenphase}')
+                    param, name=f'{phase.Kostenphase}_{field_name}')
                 dependency.add(param)
+                slider.changed.connect(
+                    lambda b, c=preset_combo: c.set_value('Benutzerdefiniert'))
+
             if i != len(self.kostenphasen) - 1:
                 self.params.add(Seperator(margin=0))
+
+            preset_combo.changed.connect(
+                lambda b, c=preset_combo, p=phase: preset_changed(c, p))
+
         self.params.show()
         self.params.changed.connect(lambda: self.save(net_id))
+
+    def create_presets(self, net_id, phase_id):
+        applyable_rules = self.applyable_aufteilungsregeln.filter(
+            IDNetz=net_id, IDPhase=phase_id)
+        rules = []
+        for applyable_rule in applyable_rules:
+            rule_id = applyable_rule.IDAufteilungsregel
+            rule = self.aufteilungsregeln.get(IDAufteilungsregel=rule_id)
+            rules.append(rule)
+
+        preset_combo = ComboBox(
+            ['Benutzerdefiniert'] + [rule.Aufteilungsregel for rule in rules],
+            [None] + rules,
+            hide_in_overview=True
+        )
+        return preset_combo
 
     def save(self, net_id):
         for phase in self.kostenphasen:
             feature = self.kostenaufteilung.get(
                 IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
             for field_name in ['Anteil_GSB', 'Anteil_GEM', 'Anteil_ALL']:
-                param = self.params[f'{field_name}_phase{phase.IDKostenphase}']
+                param = self.params[f'{phase.Kostenphase}_{field_name}']
                 feature[field_name] = param.value
             feature.save()
 
