@@ -1,8 +1,8 @@
 {
-    "beschreibung": "",
-    "lebensmittel": "",
-    "periodischer_bedarf": "",
-    "aperiodischer_bedarf": "",
-    "baumarkt": "",
-    "moebel": ""
+    "beschreibung": "<b>Mit dieser Funktion können Sie die Einzelhandelsnutzung genauer beschreiben, indem Sie die voraussichtliche Verkaufsfläche nach den angegebenen Sortimenten festlegen.</b><p>Sofern Sie im vorherigen Schritt (»Nutzungen auf Teilflächen definieren«) mehreren Teilflächen die Nutzung “Einzelhandel” zugewiesen haben, müssen Sie die vorstehenden Punkte für jede einzelne Teilfläche festlegen.</p>",
+    "lebensmittel": "<b>Tragen Sie hier ein, wieviel Quadratmeter der voraussichtlich auf der Teilfläche entstehenden Einzelhandelsverkaufsfläche dem Sortimentbereich »Lebensmittel« zuzurechnen sind.<b>",
+    "periodischer_bedarf": "<b>Tragen Sie hier ein, wieviel Quadratmeter der voraussichtlich auf der Teilfläche entstehenden Einzelhandelsverkaufsfläche dem Sortimentbereich »Sonstiger periodischer Bedarf« zuzurechnen sind.</b><p>Der »periodische Bedarf« umfasst alle Waren mit kurzfristigem Beschaffungsrhythmus (»täglicher Bedarf«). Dazu zählen Lebensmittel (Verkaufsfläche im vorstehenden Feld einzutragen) und der (hier einzutragende) »sonstige periodische Bedarf«. Letzterer umfasst insbesondere kurzfristige Verbrauchsgüter wie Wasch-, Putz- und Reinigungsmittel, Haushaltspapierwaren, Parfümerie-, Drogerie- und frei verkäufliche Pharmaziewaren, Zeitungen und Zeitschriften (ohne Abonnements) sowie Schnittblumen und Heimtierfutter.</p>",
+    "aperiodischer_bedarf": "<b>Tragen Sie hier ein, wieviel Quadratmeter der voraussichtlich auf der Teilfläche entstehenden Einzelhandelsverkaufsfläche dem Sortimentbereich »Aperiodischer Bedarf (ohne Baumarkt und Möbel)« zuzurechnen sind.</b><p>Der aperiodische Bedarf umfasst alle Waren mit mittel- bis langfristigem Beschaffungsrhythmus (»nicht-täglicher Bedarf«). Gebrauchsgüter für den mittel- und langfristigen Bedarf sind u.a. Textilien und Bekleidung, elektrotechnische / elektronische Erzeugnisse und sonstige Hartwaren.</p><p>An dieser Stelle nicht mehr einzutragen sind Verkaufsflächen von Baumärkten und Möbelgeschäften. Deren Verkaufsfläche wird mit den beiden folgenden Eingabefeldern separat erfasst.",
+    "baumarkt": "<b>Tragen Sie hier ein, wieviel Quadratmeter der voraussichtlich auf der Teilfläche entstehenden Einzelhandelsverkaufsfläche durch Baumärkte realisiert wird.</b><p>Diese Verkaufsfläche ist aus der vorstehenden Angabe zum »aperiodischen Bedarf« herauszurechnen.</p>",
+    "moebel": "<b>Tragen Sie hier ein, wieviel Quadratmeter der voraussichtlich auf der Teilfläche entstehenden Einzelhandelsverkaufsfläche durch Möbelgeschäfte realisiert wird.</b><p>Diese Verkaufsfläche ist aus der vorstehenden Angabe zum »aperiodischen Bedarf« herauszurechnen.</p>"
 }

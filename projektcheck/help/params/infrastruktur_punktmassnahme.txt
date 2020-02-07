@@ -1,9 +1,9 @@
 {
-    "beschreibung": "",
-    "bezeichnung": "",
-    "typ": "",
-    "lebensdauer": "",
-    "euro_EH": "",
-    "euro_EN": "",
-    "cent_BU": ""
+    "beschreibung": "<b>Legen Sie mit dieser Dialogbox fest, zu welchem Netz die Maßnahme gehört und welche Kosten mit ihr verbunden sind.</b><p>Sie können über die Auswahlliste »punktuelle Maßnahme« auch andere, bereits zuvor definierte punktuelle Maßnahmen auswählen und deren Netzzuordnung und Kostensätze verändern.",
+    "bezeichnung": "<b>Geben Sie der punktuellen Maßnahme eine kurze sprechende Bezeichnung, indem Sie den bisherigen, ggf. automatisch generierten Eintrag überschreiben.</b>",
+    "typ": "<b>Wählen Sie hier aus, zu welchem Erschließungsnetz die ausgewählte punktuelle Maßnahme gehört.</b>",
+    "lebensdauer": "<b>Wie viele Jahre umfasst im Mittel die technische bzw. wirtschaftliche Lebensdauer der mit der punktuellen Maßnahme geschaffenen Infrastrukturelemente?</b><p>Anders formuliert: Nach wie vielen Jahren ist trotz der eingesetzten jährlichen Mittel für Betrieb und Unterhaltung eine Erneuerung der mit der punktuellen Maßnahme geschaffenen Infrastrukturelemente notwendig?</p><p>Zu diesem Zeitpunkt fallen die im vorigen Eingabefeld eingetragenen Erneuerungskosten zum ersten Mal an. Danach wird von einem zyklischen Wiederauftreten der Erneuerungskosten nach Ablauf der jeweils gleichen Anzahl von Jahren ausgegangen.</p>",
+    "euro_EH": "<b>Wie hoch sind voraussichtlich die Kosten der erstmaligen Herstellung der mit der punktuellen Maßnahme geschaffenen Infrastrukturelemente?</b><p>Geben Sie den Gesamtbetrag an, unabhängig davon, wer diesen zu tragen hat.</p>",
+    "euro_EN": "<b>Wie hoch sind voraussichtlich die Kosten, wenn die mit der punktuellen Maßnahme geschaffenen Infrastrukturelemente nach Ablauf ihrer Lebensdauer erneuert werden müssen?</b><p>Geben Sie den Gesamtbetrag an, unabhängig davon, wer diesen zu tragen hat.</p>",
+    "cent_BU": "<b>Wie hoch sind voraussichtlich im Mittel die jährlichen Kosten für Betrieb und Unterhaltung der mit der punktuellen Maßnahme geschaffenen Infrastrukturelemente?</b><p>Geben Sie den Gesamtbetrag an, unabhängig davon, wer diesen zu tragen hat.</p>"
 }
