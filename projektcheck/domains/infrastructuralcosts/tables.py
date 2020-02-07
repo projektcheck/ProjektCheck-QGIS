@@ -37,7 +37,6 @@ class KostenkennwerteLinienelemente(ProjectTable):
 
 class Gesamtkosten(ProjectTable):
     IDNetz = Field(int, 0)
-    Netz = Field(str, '')
     IDKostenphase = Field(int, 0)
     Kostenphase = Field(str, '')
     Euro = Field(float, 0)
@@ -48,12 +47,21 @@ class Gesamtkosten(ProjectTable):
 
 class Kostenaufteilung(ProjectTable):
     IDNetz = Field(int, 0)
-    Netz = Field(str, '')
     IDKostenphase = Field(int, 0)
-    Kostenphase = Field(str, '')
     Anteil_GSB = Field(int, 0)
     Anteil_GEM = Field(int, 0)
     Anteil_ALL = Field(int, 0)
 
     class Meta:
         workspace = 'infrastukturfolgekosten'
+
+
+class GesamtkostenTraeger(ProjectTable):
+    IDNetz = Field(int, 0)
+    Betrag_GSB = Field(float, 0)
+    Betrag_GEM = Field(float, 0)
+    Betrag_ALL = Field(float, 0)
+
+    class Meta:
+        workspace = 'infrastukturfolgekosten'
+

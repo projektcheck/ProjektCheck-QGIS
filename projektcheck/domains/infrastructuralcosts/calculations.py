@@ -138,22 +138,24 @@ class Gesamtkosten(Worker):
 
 
 class KostentraegerAuswerten(Worker):
-    _shares_results_table = 'Gesamtkosten_nach_Traeger'
-
-
     def __init__(self, project, parent=None):
         super().__init__(parent=parent)
         self.project = project
 
     def work(self):
-        kostenaufteilung_startwerte(self.par.get_projectname())
-        self.df_shares = self.parent_tbx.table_to_dataframe('Kostenaufteilung')
+        self.shares_results = tables.GesamtkostenTraeger.features(
+            project=self.project, create=True)
+        self.df_shares = tables.Kostenaufteilung.features(
+            create=True).to_pandas()
         self.log('Berechne Aufteilung der Kosten nach Kostenträgern...')
-        self.calculate_shares()
+
+        self.shares_results.delete()
+        df_results = self.calculate_shares()
+        self.shares_results.update_pandas(df_results)
 
     def calculate_shares(self):
-        df_costs = self.parent_tbx.table_to_dataframe(
-            self._costs_results_table)
+        df_costs = tables.Gesamtkosten.features(
+            project=self.project).to_pandas()
         joined = df_costs.merge(self.df_shares,
                                 on=['IDNetz', 'IDKostenphase'], how='right')
         joined.fillna(0, inplace=True)
@@ -165,5 +167,4 @@ class KostentraegerAuswerten(Worker):
                                 joined['Anteil_ALL'] / 100.).round(2)
         summed = joined.groupby('IDNetz').sum()
         summed.reset_index(inplace=True)
-        self.parent_tbx.dataframe_to_table(self._shares_results_table, summed,
-                                           ['IDNetz'])
+        return summed
