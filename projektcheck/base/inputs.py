@@ -146,6 +146,7 @@ class ComboBox(InputType):
     def __init__(self, values=[], data=[], width=None):
         super().__init__()
         self.input = QComboBox()
+        self.registerFocusEvent(self.input)
         if width is not None:
             self.input.setFixedWidth(width)
         self.input.currentIndexChanged.connect(

@@ -1,6 +1,5 @@
 {
     "beschreibung": "",
-    "name": "",
-    "area": "",
-    "typ": ""
+    "name": "cxyvcxyycx",
+    "typ": "ycxycxy"
 }

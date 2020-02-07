@@ -452,8 +452,6 @@ class ParamsDialog(Dialog):
                 help_button.setMaximumWidth(20)
                 help_button.setToolTip('Hilfe')
                 help_button.setCursor(QCursor(Qt.PointingHandCursor))
-                #help_button.setSizePolicy(QSizePolicy.Fixed,
-                                          #QSizePolicy.Minimum)
                 help_button.setFlat(True)
                 font = help_button.font()
                 font.setUnderline(True)
@@ -473,7 +471,6 @@ class ParamsDialog(Dialog):
         self.adjustSize()
 
     def show_help(self, text, hide_back=False, expand=False):
-        print(hide_back)
         self.help_text_edit.setText(text)
         if expand:
             self.details_button.setChecked(True)
