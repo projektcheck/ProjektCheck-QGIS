@@ -104,6 +104,9 @@ padding: 2px;
              </property>
              <item>
               <widget class="QPushButton" name="pushButton_32">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden abschätzen/anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abschätzen/anzeigen, welchen Einfluss das Projekt auf die Einwohnerzahl der Gemeinden in der Region hat. (Nur relevant für Wohnnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Wanderungssalden anzeigen</string>
                </property>
@@ -145,6 +148,9 @@ padding: 2px;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bearbeiten Sie die geschätzten Wanderungssalden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>geschätze Salden bearbeiten</string>
@@ -358,6 +364,9 @@ padding: 2px;
              </property>
              <item>
               <widget class="QPushButton" name="pushButton_44">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen/anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abschätzen/anzeigen, welchen Einfluss das Projekt auf die Zahl der Beschäftigten in den Gemeinden der Region hat. (Nur relevant für Gewerbenutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Wanderungssalden anzeigen</string>
                </property>
@@ -399,6 +408,9 @@ padding: 2px;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bearbeiten Sie die geschätzten Wanderungssalden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>geschätze Salden bearbeiten</string>
@@ -593,6 +605,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Grundsteuer schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde aus der Grundsteuer B schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
              </property>
@@ -697,6 +712,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Einkommensteuer (Kommunalanteil) schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus der Einkommensteuer (Kommunalanteil) schätzen. (Nur relevant für Wohnnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Einkommenssteuer schätzen</string>
              </property>
@@ -713,6 +731,9 @@ padding: 2px;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Familienleistungsausgleich schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus dem Familienleistungsausgleich schätzen. (Nur relevant für Wohnnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Familienleistungsausgleich schätzen</string>
@@ -758,6 +779,9 @@ padding: 2px;
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hebesätze kontrollieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Vor der Berechnung der Gewerbesteuer die Hebesätze der Gemeinden in der Region kontrollieren und bei Bedarf anpassen. (Nur relevant für Gewerbe- und Einzelhandelsnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
@@ -863,6 +887,9 @@ padding: 2px;
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gewerbesteuer (netto) schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus der Gewerbesteuer (netto) schätzen. (Nur relevant für Gewerbe- und Einzelhandelsnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -895,6 +922,9 @@ padding: 2px;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Umsatzsteuer (Kommunalanteil) schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus der Umsatzsteuer (Kommunalanteil) schätzen. (Nur relevant für Gewerbe- und Einzelhandelsnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Umsatzsteuer schätzen</string>
              </property>
@@ -914,6 +944,9 @@ padding: 2px;
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gesamtsumme schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zuvor ermittelte Mehr- und Mindereinnahmen der Gemeinden aus der Grund-, Einkommens-, Gewerbe- und Umsatzsteuer sowie dem Familienleistungsausgleich aufsummieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Gesamtsumme schätzen</string>
@@ -946,6 +979,9 @@ padding: 2px;
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hinweise zur Ergebnisinterpretation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PDF-Kurzanleitung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -1015,6 +1051,9 @@ padding: 2px;
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Kommunale Steuereinnahmen“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
