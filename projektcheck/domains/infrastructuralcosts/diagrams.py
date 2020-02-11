@@ -10,6 +10,7 @@ from projektcheck.base.diagrams import MatplotDiagram
 from projektcheck.base.project import ProjectManager
 from projektcheck.domains.infrastructuralcosts.tables import (
     Gesamtkosten, GesamtkostenTraeger, ErschliessungsnetzLinien)
+from projektcheck.domains.definitions.tables import Teilflaechen
 
 
 class NetzlaengenDiagramm(MatplotDiagram):
@@ -189,10 +190,6 @@ class GesamtkostenDiagramm(MatplotDiagram):
         ax.legend(phase_names, loc='center left', bbox_to_anchor=(0, -0.3))
         return figure
 
-#def format_func(x, pos):
-    #s = '{:0,d}'.format(int(x))
-    #return s
-
 
 class KostentraegerDiagramm(MatplotDiagram):
     colors = ['#005CE6', '#002673', '#894444', '#73FFDF', '#FFFF00']
@@ -260,89 +257,82 @@ class KostentraegerDiagramm(MatplotDiagram):
         return figure
 
 
-#class VergleichsDiagramm(MatplotDiagram):
-    #_column = None
-    #_type_of_use = Nutzungsart.UNDEFINIERT
+class VergleichsDiagramm(MatplotDiagram):
+    _column = None
+    _type_of_use = Nutzungsart.UNDEFINIERT
+
+    def create(self, **kwargs):
+        project = kwargs.get('project', ProjectManager().active_project)
+        self.title = (f'Vergleich: Erschließungskosten pro {self._unit} '
+                      '(in den ersten 25 Jahren)')
+        x_label = (f'Gesamtkosten der Erschließung pro {self._unit} '
+                   '(in den ersten 25 Jahren)')
+        tou = self._type_of_use.value
+
+        df_areas = Teilflaechen.features(project=project).filter(
+            nutzungsart=tou).to_pandas()
+
+        df_reference = project.basedata.get_table(
+                    'Vergleichswerte', 'Kosten').to_pandas()
+
+        df_costs = Gesamtkosten.features(project=project).to_pandas()
+
+        # there is only one row for each type of use
+        df_reference = df_reference[
+            df_reference['IDNutzungsart'] == tou].iloc[0]
+        x = df_areas[self._column].sum()
+        total_costs = df_costs['Euro'].sum()
+        costs_per_x = int((total_costs / x) / 1000) * 1000
+        reference = df_reference['Wert']
+
+        categories = [
+            u'Vergleichswert (Schätzung):\n{}'
+            .format(df_reference['Beschreibung']),
+            f'Projekt "{project.name}" (alle Netze, '
+            '\nKostenphasen und Kostenträger)'
+        ]
+        categories = ['\n'.join(wrap(c, 40)) for c in categories]
+
+        figure, ax = plt.subplots(figsize=(9, 4))
+        y_pos = np.arange(len(categories))
+        bar_width = 0.5
+        patches = ax.barh(y_pos, [reference, costs_per_x], height=bar_width,
+                align='center')  #, color=[ '#99aaff', '#2c64ff'])
+        # Anfang Barlabels
+        text_offset = max([patch.get_x() + patch.get_width() for patch in
+                           patches.get_children()]) * 0.02
+        for i, patch in enumerate(patches.get_children()):
+                    width = patch.get_x() + patch.get_width()
+                    y = patch.get_y()
+                    ax.text(width + text_offset, y + bar_width/2,
+                            str(int(round(width, 0))) + u' €',
+                            color='black',ha='left', va='center')
+                            # bbox=dict(facecolor='white',
+                            # edgecolor='white', boxstyle="round"))
+        x_min, x_max = ax.get_xlim()
+        ax.set_xlim(x_min, x_max * 1.2)
+        # Ende Barlabels
+        ax.tick_params(axis='both', which='major', labelsize=9)
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(categories)
+        ax.set_title(self.title)
+        ax.set_xlabel(x_label)
+        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
+        ax.xaxis.grid(True, which='major')
+        box = ax.get_position()
+        ax.set_position([box.x0 + box.width * 0.2, box.y0,
+                         box.width * 0.8, box.height])
+        return figure
 
 
-    #def _create(self, **kwargs):
-        #self.title = (u'Vergleich: Erschließungskosten pro {} '
-                      #u'(in den ersten 25 Jahren)'.format(self._unit))
-        #x_label = (u'Gesamtkosten der Erschließung pro {} '
-                   #u'(in den ersten 25 Jahren)'.format(self._unit))
-
-        #df_areas = self.tbx.table_to_dataframe(
-            #'Teilflaechen_Plangebiet',
-            #workspace='FGDB_Definition_Projekt.gdb',
-            #columns=[self._column],
-            #where='Nutzungsart={}'.format(self._type_of_use)
-        #)
-        #df_reference = self.tbx.table_to_dataframe(
-            #'Vergleichswerte',
-            #workspace='FGDB_Kosten_Tool.gdb',
-            #where='IDNutzungsart={}'.format(self._type_of_use),
-            #is_base_table=True
-        #)
-        #df_costs = self.tbx.table_to_dataframe(
-            #'Gesamtkosten',
-            #workspace='FGDB_Kosten.gdb'
-        #)
-
-        ## there is only one row for each type of use
-        #df_reference = df_reference.iloc[0]
-        #x = df_areas[self._column].sum()
-        #total_costs = df_costs['Euro'].sum()
-        #costs_per_x = int((total_costs / x) / 1000) * 1000
-        #reference = df_reference['Wert']
-
-        #categories = [
-            #u'Vergleichswert (Schätzung):\n{}'
-            #.format(df_reference['Beschreibung']),
-            #u'Projekt "{}" (alle Netze, \nKostenphasen und Kostenträger)'
-            #.format(self.tbx.par.get_projectname())
-        #]
-        #categories = ['\n'.join(wrap(c, 40)) for c in categories]
-
-        #figure, ax = self.plt.subplots(figsize=(9, 4))
-        #y_pos = np.arange(len(categories))
-        #bar_width = 0.5
-        #patches = ax.barh(y_pos, [reference, costs_per_x], height=bar_width,
-                #align='center')  #, color=[ '#99aaff', '#2c64ff'])
-        ## Anfang Barlabels
-        #text_offset = max([patch.get_x() + patch.get_width() for patch in
-                           #patches.get_children()]) * 0.02
-        #for i, patch in enumerate(patches.get_children()):
-                    #width = patch.get_x() + patch.get_width()
-                    #y = patch.get_y()
-                    #ax.text(width + text_offset, y + bar_width/2,
-                            #str(int(round(width, 0))) + u' €',
-                            #color='black',ha='left', va='center')
-                            ## bbox=dict(facecolor='white',
-                            ## edgecolor='white', boxstyle="round"))
-        #x_min, x_max = ax.get_xlim()
-        #ax.set_xlim(x_min, x_max * 1.2)
-        ## Ende Barlabels
-        #ax.tick_params(axis='both', which='major', labelsize=9)
-        #ax.set_yticks(y_pos)
-        #ax.set_yticklabels(categories)
-        #ax.set_title(self.title)
-        #ax.set_xlabel(x_label)
-        #ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
-        #ax.xaxis.grid(True, which='major')
-        #box = ax.get_position()
-        #ax.set_position([box.x0 + box.width * 0.2, box.y0,
-                         #box.width * 0.8, box.height])
-        #return ax
+class VergleichWEDiagramm(VergleichsDiagramm):
+    _column = 'we_gesamt'
+    _type_of_use = Nutzungsart.WOHNEN
+    _unit = 'Wohneinheit'
 
 
-#class VergleichWEDiagramm(VergleichsDiagramm):
-    #_column = 'WE_gesamt'
-    #_type_of_use = Nutzungsart.WOHNEN
-    #_unit = 'Wohneinheit'
-
-
-#class VergleichAPDiagramm(VergleichsDiagramm):
-    #_column = 'AP_gesamt'
-    #_type_of_use = Nutzungsart.GEWERBE
-    #_unit = 'Arbeitsplatz'
+class VergleichAPDiagramm(VergleichsDiagramm):
+    _column = 'ap_gesamt'
+    _type_of_use = Nutzungsart.GEWERBE
+    _unit = 'Arbeitsplatz'
 

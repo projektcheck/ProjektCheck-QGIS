@@ -212,7 +212,8 @@ class GeopackageTable(Table):
         field_dict = dict([(f.name, f) for f in self.fields()])
 
         def check_quotation(value, field):
-            if field.datatype == str and not value.startswith('"'):
+            if field.datatype == str and (
+                not isinstance(value, str) or not value.startswith('"')):
                 value = f'"{value}"'
             return value
 

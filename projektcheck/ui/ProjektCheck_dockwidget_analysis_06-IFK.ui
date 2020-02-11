@@ -640,7 +640,7 @@ padding: 2px;
              <item>
               <widget class="QPushButton" name="remove_lines_button">
                <property name="text">
-                <string>ausgewählte Elemente löschen</string>
+                <string>Elemente löschen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -846,22 +846,6 @@ padding: 2px;
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>10</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
               <spacer name="horizontalSpacer_7">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -907,7 +891,7 @@ padding: 2px;
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer_9">
+              <spacer name="horizontalSpacer_6">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -1144,7 +1128,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="kosten_we_apl_button">
+            <widget class="QPushButton" name="kostenvergleich_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1155,7 +1139,7 @@ padding: 2px;
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten pro WE bzw. AP vergleichen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die ermittelten Erschließungskosten pro Wohneinheit bzw. Arbeitsplatz bundesweiten Vergleichswerten gegenüberstellen. (Nur verfügbar, wenn alle Teilflächen die Nutzung “Wohnen” oder alle Teilflächen die Nutzung “Gewerbe” haben.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Kosten pro WE / APL vergleichen</string>
+              <string>Kosten pro vergleichen</string>
              </property>
              <property name="icon">
               <iconset>

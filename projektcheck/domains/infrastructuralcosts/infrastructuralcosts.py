@@ -12,7 +12,8 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit,
 from projektcheck.base.dialogs import ProgressDialog
 
 from .diagrams import (GesamtkostenDiagramm, KostentraegerDiagramm,
-                       NetzlaengenDiagramm)
+                       NetzlaengenDiagramm, VergleichWEDiagramm,
+                       VergleichAPDiagramm)
 from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
                            apply_kostenkennwerte)
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
@@ -494,17 +495,25 @@ class InfrastructuralCosts(Domain):
 
     ui_label = 'Infrastrukturfolgekosten'
     ui_file = 'ProjektCheck_dockwidget_analysis_06-IFK.ui'
-    ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_infrstucturalcosts_4.png"
+    ui_icon = ('images/iconset_mob/'
+               '20190619_iconset_mob_domain_infrstucturalcosts_4.png')
 
     def setupUi(self):
         self.drawing = InfrastructureDrawing(self.ui, project=self.project,
                                              canvas=self.canvas)
         self.kostenaufteilung = Kostentraeger(self.ui, project=self.project)
         self.gesamtkosten = Gesamtkosten(self.ui, project=self.project)
+        self.ui.kostenvergleich_button.clicked.connect(self.kostenvergleich)
 
     def load_content(self):
         self.drawing.load_content()
         self.kostenaufteilung.load_content()
         self.gesamtkosten.load_content()
+
+    def kostenvergleich(self):
+        ap_diagram = VergleichAPDiagramm(project=self.project)
+        ap_diagram.draw()
+        we_diagram = VergleichWEDiagramm(project=self.project)
+        we_diagram.draw()
 
 
