@@ -1,5 +1,6 @@
 {
-    "beschreibung": "",
-    "name": "cxyvcxyycx",
-    "typ": "ycxycxy"
+    "beschreibung": "Sie können die gewählte Teilfläche bearbeiten (umbenennen und Nutzungsart festlegen). Ihre Eintragungen werden nach Bestätigung über den OK-Button, gespeichert.",
+    "name": "In diesem Feld können Sie die Teilflächen (um)benennen. Den Teilflächen wurde ggf. beim Anlegen des Projekts ein automatischer Name zugewiesen (»Flaeche_1«, …)",
+    "area": "",
+    "typ": "Mit dieser Funktion können Sie für die gewählte Fläche Ihres Plangebiets festlegen, ob die zukünftige Nutzung Wohnen, Gewerbe oder Einzelhandel ist."
 }
