@@ -62,6 +62,7 @@ class InfrastructureDrawing:
         points = [point for point in self.points]
         points.sort(key=lambda x: x.IDNetzelement)
         idx = 0
+        self.ui.points_combo.addItem('nichts ausgewählt')
         for i, point in enumerate(points):
             # ToDo: show netztyp name in combo
             typ = self.netzelemente.get(
@@ -179,14 +180,17 @@ class InfrastructureDrawing:
         self.ui.points_combo.setCurrentIndex(idx)
 
     def toggle_point(self, point=None):
+        if self.output_points.layer:
+            self.output_points.layer.removeSelection()
         if not point:
             point = self.ui.points_combo.currentData()
         self.setup_point_params(point)
         if not point:
+            self.ui.remove_point_button.setVisible(False)
             return
-        if self.output_points.layer:
-            self.output_points.layer.removeSelection()
-            self.output_points.layer.select(point.id)
+        self.ui.remove_point_button.setVisible(True)
+        self.draw_output('point')
+        self.output_points.layer.select(point.id)
         self.setup_point_params(point)
 
     def setup_point_params(self, point):

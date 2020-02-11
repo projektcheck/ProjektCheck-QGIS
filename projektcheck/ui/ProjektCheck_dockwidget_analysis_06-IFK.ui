@@ -862,18 +862,6 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="remove_point_button">
-               <property name="text">
-                <string>Maßnahme entfernen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
-                </iconset>
-               </property>
-              </widget>
-             </item>
-             <item>
               <spacer name="horizontalSpacer_7">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -903,6 +891,35 @@ padding: 2px;
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9"/>
             </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QPushButton" name="remove_point_button">
+               <property name="text">
+                <string>Maßnahme entfernen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
+                </iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -985,6 +1002,9 @@ padding: 2px;
            </item>
            <item>
             <widget class="QWidget" name="kostenkennwerte_widget" native="true">
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
                <widget class="QLabel" name="label_8">
