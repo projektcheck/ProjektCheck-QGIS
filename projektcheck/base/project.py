@@ -4,10 +4,9 @@ import json
 import shutil
 import sys
 from collections import OrderedDict
-from datetime import datetime
 
 from projektcheck.utils.singleton import Singleton
-from projektcheck.base.database import Field, Feature
+from projektcheck.base.database import Field
 from projektcheck.base.geopackage import Geopackage
 from projektcheck.base.layers import Layer, TileLayer
 

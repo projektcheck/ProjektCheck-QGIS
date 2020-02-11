@@ -179,7 +179,8 @@ class InfrastructureDrawing:
         self.setup_point_params(point)
 
     def setup_point_params(self, point):
-        layout = self.parent.ui.point_parameter_group.layout()
+        ui_group = self.parent.ui.point_parameter_group
+        layout = ui_group.layout()
         clearLayout(layout)
         if not point:
             return
@@ -198,26 +199,28 @@ class InfrastructureDrawing:
         self.params.typ = Param(
             typ.Netzelement if typ else 'nicht gesetzt',
             type_combo,
-            label='Netzelement'
+            label='Erschließungsnetz'
         )
 
         self.params.add(Seperator(margin=0))
 
         self.params.lebensdauer = Param(
             point.Lebensdauer, SpinBox(maximum=1000),
-            label='Lebensdauer'
+            label='Technische oder wirtschaftliche \n'
+            'Lebensdauer bis zur Erneuerung',
+            unit='Jahr(e)'
         )
         self.params.euro_EH = Param(
             point.Euro_EH, DoubleSpinBox(),
-            unit='€', label='Euro EH'
+            unit='€', label='Kosten der erstmaligen Herstellung'
         )
         self.params.euro_EN = Param(
             point.Euro_EN, DoubleSpinBox(),
-            unit='€', label='Euro EN'
+            unit='€', label='Erneuerungskosten nach Ablauf der Lebensdauer'
         )
         self.params.cent_BU = Param(
             point.Cent_BU, DoubleSpinBox(),
-            unit='€', label='Cent BU'
+            unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung'
         )
 
         def save():
@@ -269,6 +272,9 @@ class Kostentraeger:
             'Aufteilungsregeln', 'Kosten').features()
         self.applyable_aufteilungsregeln = self.project.basedata.get_table(
             'Aufteilungsregeln_zu_Netzen_und_Phasen', 'Kosten').features()
+        self.netzelemente = self.project.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten'
+        ).features()
 
         # initialize empty project 'kostenaufteilungen' with the default ones
         if len(self.kostenaufteilung) == 0:
@@ -293,7 +299,10 @@ class Kostentraeger:
         dialog.show()
 
     def setup_kostenaufteilung(self, net_id=1):
-        layout = self.ui.kostenaufteilung_params_group.layout()
+        ui_group = self.ui.kostenaufteilung_params_group
+        net_name = self.netzelemente.filter(IDNetz=net_id)[0].Netz
+        ui_group.setTitle(net_name)
+        layout = ui_group.layout()
         clearLayout(layout)
 
         self.params = Params(
@@ -320,8 +329,8 @@ class Kostentraeger:
             preset_combo = self.create_presets(net_id, phase.IDKostenphase)
             self.params.add(preset_combo, name=f'{phase.Kostenphase}_presets')
 
-            for i, field_name in enumerate(field_names):
-                label = labels[i]
+            for j, field_name in enumerate(field_names):
+                label = labels[j]
                 slider = Slider(maximum=100, lockable=True)
                 param = Param(feature[field_name], slider, label=label)
                 self.params.add(
