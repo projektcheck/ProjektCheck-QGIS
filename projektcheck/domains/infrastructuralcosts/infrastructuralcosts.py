@@ -1,3 +1,5 @@
+from qgis.PyQt.Qt import QRadioButton
+
 from projektcheck.base.domain import Domain
 from projektcheck.base.tools import LineMapTool
 from projektcheck.base.project import ProjectLayer
@@ -10,109 +12,118 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit,
 from projektcheck.base.dialogs import ProgressDialog
 
 from .diagrams import GesamtkostenDiagramm, KostentraegerDiagramm
-from .calculations import Gesamtkosten, KostentraegerAuswerten
+from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
+                           apply_kostenkennwerte)
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
-                     Kostenaufteilung)
+                     Kostenaufteilung, KostenkennwerteLinienelemente)
 
 
 class InfrastructureDrawing:
-    def __init__(self, parent):
-        self.parent = parent
+    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
 
-        self.parent.ui.show_lines_button.clicked.connect(
+    def __init__(self, ui, project, canvas):
+        self.ui = ui
+        self.project = project
+        self.canvas = canvas
+        self.ui.show_lines_button.clicked.connect(
             lambda: self.draw_output('line'))
-        self.parent.ui.show_lines_button.setCheckable(False)
-        self.parent.ui.show_points_button.clicked.connect(
+        self.ui.show_lines_button.setCheckable(False)
+        self.ui.show_points_button.clicked.connect(
             lambda: self.draw_output('point'))
-        self.parent.ui.show_points_button.setCheckable(False)
+        self.ui.show_points_button.setCheckable(False)
 
-        self.parent.ui.points_combo.currentIndexChanged.connect(
+        self.ui.points_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_point(
-                self.parent.ui.points_combo.currentData()))
-        #self.parent.ui.points_combo.currentIndexChanged.connect(
+                self.ui.points_combo.currentData()))
+        #self.ui.points_combo.currentIndexChanged.connect(
             #lambda: self.draw_output('point'))
 
-        self.parent.ui.remove_point_button.clicked.connect(self.remove_point)
+        self.ui.remove_point_button.clicked.connect(self.remove_point)
 
         self.setup_tools()
 
     def load_content(self):
+        self.netzelemente = self.project.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten'
+        ).features()
+        self.lines = ErschliessungsnetzLinien.features(create=True)
+        self.points = ErschliessungsnetzPunkte.features(create=True)
         self.output_lines = ProjectLayer.from_table(
-            self.parent.lines.table, groupname=self.parent.layer_group,
+            self.lines.table, groupname=self.layer_group,
             prepend=True)
         self.output_points = ProjectLayer.from_table(
-            self.parent.points.table, groupname=self.parent.layer_group,
+            self.points.table, groupname=self.layer_group,
             prepend=True)
         self.fill_points_combo()
 
     def fill_points_combo(self, select=None):
-        self.parent.ui.points_combo.blockSignals(True)
-        self.parent.ui.points_combo.clear()
-        points = [point for point in self.parent.points]
+        self.ui.points_combo.blockSignals(True)
+        self.ui.points_combo.clear()
+        points = [point for point in self.points]
         points.sort(key=lambda x: x.IDNetzelement)
         idx = 0
         for i, point in enumerate(points):
             # ToDo: show netztyp name in combo
-            typ = self.parent.netzelemente.get(
+            typ = self.netzelemente.get(
                 IDNetzelement=point.IDNetzelement)
-            self.parent.ui.points_combo.addItem(
+            self.ui.points_combo.addItem(
                 f'{point.bezeichnung} ({typ.Netzelement if typ else "-"})',
                 point)
             if select and point.id == select.id:
                 idx = i
         if idx:
-            self.parent.ui.points_combo.setCurrentIndex(idx)
-        self.parent.ui.points_combo.blockSignals(False)
+            self.ui.points_combo.setCurrentIndex(idx)
+        self.ui.points_combo.blockSignals(False)
         self.toggle_point()
 
     def setup_tools(self):
         self.line_tools = {
-            self.parent.ui.anliegerstrasse_innere_button: 11,
-            self.parent.ui.sammelstrasse_innere_button: 12,
-            self.parent.ui.anliegerstrasse_aeussere_button: 21,
-            self.parent.ui.sammelstrasse_aeussere_button: 22,
-            self.parent.ui.kanal_trennsystem_button: 31,
-            self.parent.ui.kanal_mischsystem_button: 32,
-            self.parent.ui.kanal_schmutzwasser_button: 33,
-            self.parent.ui.trinkwasserleitung_button: 41,
-            self.parent.ui.stromleitung_button: 51
+            self.ui.anliegerstrasse_innere_button: 11,
+            self.ui.sammelstrasse_innere_button: 12,
+            self.ui.anliegerstrasse_aeussere_button: 21,
+            self.ui.sammelstrasse_aeussere_button: 22,
+            self.ui.kanal_trennsystem_button: 31,
+            self.ui.kanal_mischsystem_button: 32,
+            self.ui.kanal_schmutzwasser_button: 33,
+            self.ui.trinkwasserleitung_button: 41,
+            self.ui.stromleitung_button: 51
         }
 
         for button, net_id in self.line_tools.items():
             button.clicked.connect(lambda: self.draw_output('line'))
-            tool = LineMapTool(button, canvas=self.parent.canvas)
+            tool = LineMapTool(button, canvas=self.canvas)
             tool.drawn.connect(
                 lambda geom, i=net_id: self.add_geom(geom, i, geom_typ='line'))
 
         self.select_lines_tool = FeaturePicker(
-            self.parent.ui.select_lines_button, canvas=self.parent.canvas)
-        self.parent.ui.select_lines_button.clicked.connect(
+            self.ui.select_lines_button, canvas=self.canvas)
+        self.ui.select_lines_button.clicked.connect(
             lambda: self.draw_output('line'))
         self.select_lines_tool.feature_picked.connect(self.line_selected)
-        self.parent.ui.remove_lines_button.clicked.connect(
+        self.ui.remove_lines_button.clicked.connect(
             self.remove_selected_lines)
 
         self.draw_point_tool = MapClickedTool(
-            self.parent.ui.add_point_button, canvas=self.parent.canvas)
+            self.ui.add_point_button, canvas=self.canvas)
         self.draw_point_tool.map_clicked.connect(self.add_point)
         self.select_point_tool = FeaturePicker(
-            self.parent.ui.select_point_button, canvas=self.parent.canvas)
+            self.ui.select_point_button, canvas=self.canvas)
         self.select_point_tool.feature_picked.connect(self.point_selected)
-        self.parent.ui.select_point_button.clicked.connect(
+        self.ui.select_point_button.clicked.connect(
             lambda: self.draw_output('point'))
-        self.parent.ui.add_point_button.clicked.connect(
+        self.ui.add_point_button.clicked.connect(
             lambda: self.draw_output('point'))
 
     def add_geom(self, geom, net_id, geom_typ='line'):
-        features = self.parent.lines if geom_typ == 'line' \
-            else self.parent.points
-        typ = self.parent.netzelemente.get(IDNetzelement=net_id)
+        features = self.lines if geom_typ == 'line' \
+            else self.points
+        typ = self.netzelemente.get(IDNetzelement=net_id)
         feature = features.add(IDNetzelement=net_id,
                                IDNetz=typ.IDNetz if typ else 0,
                                geom=geom)
         if len(features) == 1:
             self.draw_output(geom_typ, redraw=True)
-        self.parent.canvas.refreshAllLayers()
+        self.canvas.refreshAllLayers()
         return feature
 
     def draw_output(self, geom_typ='line', redraw=False):
@@ -139,9 +150,9 @@ class InfrastructureDrawing:
     def remove_selected_lines(self):
         layer = self.output_lines.layer
         for qf in layer.selectedFeatures():
-            feat = self.parent.lines.get(id=qf.id())
+            feat = self.lines.get(id=qf.id())
             feat.delete()
-        self.parent.canvas.refreshAllLayers()
+        self.canvas.refreshAllLayers()
 
     def add_point(self, geom):
         point = self.add_geom(geom, 0, geom_typ='point')
@@ -150,7 +161,7 @@ class InfrastructureDrawing:
         self.fill_points_combo(select=point)
 
     def remove_point(self):
-        point = self.parent.ui.points_combo.currentData()
+        point = self.ui.points_combo.currentData()
         if not point:
             return
         point.delete()
@@ -162,14 +173,14 @@ class InfrastructureDrawing:
         self.output_points.layer.removeSelection()
         self.output_points.layer.select(feature.id())
         fid = feature.id()
-        for idx in range(len(self.parent.ui.points_combo)):
-            if fid == self.parent.ui.points_combo.itemData(idx).id:
+        for idx in range(len(self.ui.points_combo)):
+            if fid == self.ui.points_combo.itemData(idx).id:
                 break
-        self.parent.ui.points_combo.setCurrentIndex(idx)
+        self.ui.points_combo.setCurrentIndex(idx)
 
     def toggle_point(self, point=None):
         if not point:
-            point = self.parent.ui.points_combo.currentData()
+            point = self.ui.points_combo.currentData()
         self.setup_point_params(point)
         if not point:
             return
@@ -179,7 +190,7 @@ class InfrastructureDrawing:
         self.setup_point_params(point)
 
     def setup_point_params(self, point):
-        ui_group = self.parent.ui.point_parameter_group
+        ui_group = self.ui.point_parameter_group
         layout = ui_group.layout()
         clearLayout(layout)
         if not point:
@@ -190,9 +201,9 @@ class InfrastructureDrawing:
                                         label='Bezeichnung')
 
 
-        punktelemente = list(self.parent.netzelemente.filter(Typ='Punkt'))
+        punktelemente = list(self.netzelemente.filter(Typ='Punkt'))
         type_names = [p.Netzelement for p in punktelemente]
-        typ = self.parent.netzelemente.get(IDNetzelement=point.IDNetzelement)
+        typ = self.netzelemente.get(IDNetzelement=point.IDNetzelement)
 
         type_combo = ComboBox(type_names, data=list(punktelemente), width=300)
 
@@ -218,8 +229,8 @@ class InfrastructureDrawing:
             point.Euro_EN, DoubleSpinBox(),
             unit='€', label='Erneuerungskosten nach Ablauf der Lebensdauer'
         )
-        self.params.cent_BU = Param(
-            point.Cent_BU, DoubleSpinBox(),
+        self.params.euro_BU = Param(
+            point.Cent_BU / 100, DoubleSpinBox(),
             unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung'
         )
 
@@ -231,13 +242,116 @@ class InfrastructureDrawing:
             point.Lebensdauer = self.params.lebensdauer.value
             point.Euro_EH = self.params.euro_EH.value
             point.Euro_EN = self.params.euro_EN.value
-            point.Cent_BU = self.params.cent_BU.value
+            point.Cent_BU = self.params.euro_BU.value * 100
             point.save()
             # lazy way to update the combo box
             self.fill_points_combo(select=point)
 
         self.params.show()
         self.params.changed.connect(save)
+
+
+class Gesamtkosten:
+
+    def __init__(self, ui, project):
+        self.ui = ui
+        self.project = project
+        self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
+
+        self.ui.kostenkennwerte_widget.setVisible(False)
+        self.netzelemente = self.project.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten'
+        ).features().filter(Typ='Linie')
+
+        for i, netzelement in enumerate(self.netzelemente):
+            net_element_id = netzelement.IDNetzelement
+            radio = QRadioButton(netzelement.Netzelement)
+            self.ui.kostenkennwerte_radio_grid.addWidget(radio, i // 2, i % 2)
+            if i == 0:
+                self.net_element_id = net_element_id
+                radio.setChecked(True)
+            radio.toggled.connect(
+                lambda b, i=net_element_id: self.setup_net_element(i)
+            )
+
+    def load_content(self):
+        self.kostenkennwerte = KostenkennwerteLinienelemente.features(
+            create=True)
+        #self.kostenaufteilung = Kostenaufteilung.features(
+            #create=True, project=self.project)
+        #self.default_kostenaufteilung = self.project.basedata.get_table(
+            #'Kostenaufteilung_Startwerte', 'Kosten')
+        #self.kostenphasen = self.project.basedata.get_table(
+            #'Kostenphasen', 'Kosten').features()
+        #self.aufteilungsregeln = self.project.basedata.get_table(
+            #'Aufteilungsregeln', 'Kosten').features()
+        #self.applyable_aufteilungsregeln = self.project.basedata.get_table(
+            #'Aufteilungsregeln_zu_Netzen_und_Phasen', 'Kosten').features()
+        #self.netzelemente = self.project.basedata.get_table(
+            #'Netze_und_Netzelemente', 'Kosten'
+        #).features()
+
+        # initialize empty project 'kostenaufteilungen' with the default ones
+        if len(self.kostenkennwerte) == 0:
+            apply_kostenkennwerte(self.project)
+        self.setup_net_element(self.net_element_id)
+
+    def calculate_gesamtkosten(self):
+        job = GesamtkostenErmitteln(self.project)
+
+        def on_close(success):
+            diagram = GesamtkostenDiagramm(project=self.project,
+                                           years=GesamtkostenErmitteln.years)
+            diagram.draw()
+
+        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
+        dialog.show()
+
+    def setup_net_element(self, net_element_id):
+        self.net_element_id = net_element_id
+        ui_group = self.ui.kostenkennwerte_params_group
+        net_element_name = self.netzelemente.get(
+            IDNetzelement=net_element_id).Netzelement
+        ui_group.setTitle(net_element_name)
+        layout = ui_group.layout()
+        clearLayout(layout)
+        net_element = self.kostenkennwerte.get(IDNetzelement=net_element_id)
+
+        self.params = Params(
+            layout, help_file='infrastruktur_kostenkennwerte.txt')
+
+        self.params.lebensdauer = Param(
+            net_element.Lebensdauer, SpinBox(maximum=1000),
+            label='Lebensdauer: Jahre zwischen den Erneuerungszyklen',
+            unit='Jahr(e)'
+        )
+        self.params.euro_EH = Param(
+            net_element.Euro_EH, DoubleSpinBox(),
+            unit='€', label='Kosten der erstmaligen Herstellung: \n'
+            'Euro pro laufenen Meter'
+        )
+        self.params.euro_EN = Param(
+            net_element.Euro_EN, DoubleSpinBox(),
+            unit='€', label='Kosten der Erneuerung: \n'
+            'Euro pro laufenden Meter und Erneuerungszyklus'
+        )
+        self.params.cent_BU = Param(
+            net_element.Cent_BU, SpinBox(),
+            unit='ct', label='Jährliche Kosten für Betrieb und Unterhaltung: \n'
+            'Cent pro laufenden Meter und Jahr'
+        )
+
+        self.params.show()
+        self.params.changed.connect(lambda: self.save(net_element_id))
+
+
+    def save(self, net_element_id):
+        net_element = self.kostenkennwerte.get(IDNetzelement=net_element_id)
+        net_element.Euro_EH = self.params.euro_EH.value
+        net_element.Lebensdauer = self.params.lebensdauer.value
+        net_element.Cent_BU = self.params.cent_BU.value
+        net_element.Euro_EN = self.params.euro_EN.value
+        net_element.save()
 
 
 class Kostentraeger:
@@ -249,21 +363,6 @@ class Kostentraeger:
             self.calculate_kostentraeger)
         self.ui.kostenaufteilung_widget.setVisible(False)
 
-        self.net_radios = {
-            self.ui.strasse_innere_radio: 1,
-            self.ui.strasse_aeussere_radio: 2,
-            self.ui.kanalisation_radio: 3,
-            self.ui.trinkwasser_radio: 4,
-            self.ui.elektrizitaet_radio: 5
-        }
-
-        for radio, net_id in self.net_radios.items():
-            radio.toggled.connect(
-                lambda b, i=net_id: self.setup_kostenaufteilung(net_id=i))
-
-    def load_content(self):
-        self.kostenaufteilung = Kostenaufteilung.features(
-            create=True, project=self.project)
         self.default_kostenaufteilung = self.project.basedata.get_table(
             'Kostenaufteilung_Startwerte', 'Kosten')
         self.kostenphasen = self.project.basedata.get_table(
@@ -273,18 +372,35 @@ class Kostentraeger:
         self.applyable_aufteilungsregeln = self.project.basedata.get_table(
             'Aufteilungsregeln_zu_Netzen_und_Phasen', 'Kosten').features()
         self.netzelemente = self.project.basedata.get_table(
-            'Netze_und_Netzelemente', 'Kosten'
+            'Netze_und_Netzelemente', 'Kosten', fields=['IDNetz', 'Netz']
         ).features()
+
+        df_netzelemente = self.netzelemente.to_pandas()
+        del df_netzelemente['fid']
+        df_netzelemente.drop_duplicates(inplace=True)
+
+
+        for i, (index, row) in enumerate(df_netzelemente.iterrows()):
+            net_id = row['IDNetz']
+            net_name = row['Netz']
+            radio = QRadioButton(net_name)
+            self.ui.kostenaufteilung_radio_grid.addWidget(radio, i // 2, i % 2)
+            if i == 0:
+                self.net_id = net_id
+                radio.setChecked(True)
+            radio.toggled.connect(
+                lambda b, i=net_id: self.setup_kostenaufteilung(i))
+
+    def load_content(self):
+        self.kostenaufteilung = Kostenaufteilung.features(
+            create=True, project=self.project)
 
         # initialize empty project 'kostenaufteilungen' with the default ones
         if len(self.kostenaufteilung) == 0:
             self.kostenaufteilung.update_pandas(
                 self.default_kostenaufteilung.to_pandas())
-        # load params for first radion (checking it also triggers setup)
-        if not self.ui.strasse_innere_radio.isChecked():
-            self.ui.strasse_innere_radio.setChecked(True)
-        else:
-            self.setup_kostenaufteilung()
+
+        self.setup_kostenaufteilung(self.net_id)
 
     def calculate_kostentraeger(self):
         job = KostentraegerAuswerten(self.project)
@@ -292,13 +408,14 @@ class Kostentraeger:
         def on_close(success):
             # the years originate from gesamtkosten calculation
             diagram = KostentraegerDiagramm(project=self.project,
-                                           years=Gesamtkosten.years)
+                                           years=GesamtkostenErmitteln.years)
             diagram.draw()
 
         dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
         dialog.show()
 
-    def setup_kostenaufteilung(self, net_id=1):
+    def setup_kostenaufteilung(self, net_id):
+        self.net_id = net_id
         ui_group = self.ui.kostenaufteilung_params_group
         net_name = self.netzelemente.filter(IDNetz=net_id)[0].Netz
         ui_group.setTitle(net_name)
@@ -382,29 +499,15 @@ class InfrastructuralCosts(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_06-IFK.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_infrstucturalcosts_4.png"
 
-    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
-
     def setupUi(self):
-        self.drawing = InfrastructureDrawing(self)
+        self.drawing = InfrastructureDrawing(self.ui, project=self.project,
+                                             canvas=self.canvas)
         self.kostenaufteilung = Kostentraeger(self.ui, project=self.project)
-        self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
+        self.gesamtkosten = Gesamtkosten(self.ui, project=self.project)
 
     def load_content(self):
-        self.lines = ErschliessungsnetzLinien.features(create=True)
-        self.points = ErschliessungsnetzPunkte.features(create=True)
-        self.netzelemente = self.basedata.get_table(
-            'Netze_und_Netzelemente', 'Kosten'
-        ).features()
         self.drawing.load_content()
         self.kostenaufteilung.load_content()
+        self.gesamtkosten.load_content()
 
-    def calculate_gesamtkosten(self):
-        job = Gesamtkosten(self.project)
 
-        def on_close(success):
-            diagram = GesamtkostenDiagramm(project=self.project,
-                                           years=Gesamtkosten.years)
-            diagram.draw()
-
-        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
-        dialog.show()

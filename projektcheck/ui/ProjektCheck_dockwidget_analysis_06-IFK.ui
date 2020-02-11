@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>645</width>
+    <width>520</width>
     <height>974</height>
    </rect>
   </property>
@@ -81,9 +81,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-277</y>
-         <width>618</width>
-         <height>1195</height>
+         <y>0</y>
+         <width>506</width>
+         <height>918</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -935,6 +935,79 @@ padding: 2px;
             <number>9</number>
            </property>
            <item>
+            <widget class="QPushButton" name="infrastrukturmengen_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Infrastrukturmengen bilanzieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Länge der bisher in der Karte eingezeichneten Erschließungsnetze sowie Gesamtkosten der punktuellen Maßnahmen aufsummieren und in zwei Diagrammen anzeigen lassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Infrastrukturmengen bilanzieren</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_25">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kostenkennwerte kontrollieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Kostensätze pro laufendem Meter für die einzelnen Erschließungsnetze ansehen und bei Bedarf anpassen (nicht relevant für punktuelle Maßnahmen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Kostenkennwerte kontrollieren ⯆</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="kostenkennwerte_widget" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Erschließungsnetz</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QGridLayout" name="kostenkennwerte_radio_grid"/>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="kostenkennwerte_params_group">
+                <property name="title">
+                 <string/>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_12"/>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="gesamtkosten_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -951,6 +1024,16 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -997,46 +1080,7 @@ padding: 2px;
                </widget>
               </item>
               <item>
-               <layout class="QGridLayout" name="gridLayout_5">
-                <item row="0" column="0">
-                 <widget class="QRadioButton" name="strasse_innere_radio">
-                  <property name="text">
-                   <string>Straße (innere Erschließung)</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QRadioButton" name="kanalisation_radio">
-                  <property name="text">
-                   <string>Kanalisation</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QRadioButton" name="strasse_aeussere_radio">
-                  <property name="text">
-                   <string>Straße (äußere Erschließung)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QRadioButton" name="trinkwasser_radio">
-                  <property name="text">
-                   <string>Trinkwasser</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QRadioButton" name="elektrizitaet_radio">
-                  <property name="text">
-                   <string>Elektrizität</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QGridLayout" name="kostenaufteilung_radio_grid"/>
               </item>
               <item>
                <widget class="QGroupBox" name="kostenaufteilung_params_group">
@@ -1070,7 +1114,17 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_29">
+            <widget class="Line" name="line_3">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="kosten_we_apl_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1086,362 +1140,6 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_statistics_1.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_25">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kostenkennwerte kontrollieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Kostensätze pro laufendem Meter für die einzelnen Erschließungsnetze ansehen und bei Bedarf anpassen (nicht relevant für punktuelle Maßnahmen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>Kostenkennwerte kontrollieren</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QScrollArea" name="scrollArea_3">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>322</height>
-              </size>
-             </property>
-             <property name="palette">
-              <palette>
-               <active>
-                <colorrole role="Button">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>255</red>
-                   <green>210</green>
-                   <blue>253</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </active>
-               <inactive>
-                <colorrole role="Button">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>255</red>
-                   <green>210</green>
-                   <blue>253</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </inactive>
-               <disabled>
-                <colorrole role="Button">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>255</red>
-                   <green>210</green>
-                   <blue>253</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </disabled>
-              </palette>
-             </property>
-             <property name="widgetResizable">
-              <bool>false</bool>
-             </property>
-             <widget class="QWidget" name="scrollAreaWidgetContents_3">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>590</width>
-                <height>371</height>
-               </rect>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_17">
-               <item row="5" column="0">
-                <widget class="QRadioButton" name="radioButton_9">
-                 <property name="text">
-                  <string>Kanal (Trennsystem)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="3">
-                <widget class="QRadioButton" name="radioButton_11">
-                 <property name="text">
-                  <string>Stromleitung</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QRadioButton" name="radioButton_7">
-                 <property name="text">
-                  <string>Sammelstraße (innere Erschließung)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QRadioButton" name="radioButton_3">
-                 <property name="text">
-                  <string>Anliegerstraße (innere Erschließung)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QRadioButton" name="radioButton_8">
-                 <property name="text">
-                  <string>Sammelstraße (äußere Erschließung)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0">
-                <widget class="QRadioButton" name="radioButton_6">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Trinkwasserleitung</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" colspan="5">
-                <layout class="QGridLayout" name="gridLayout_18">
-                 <item row="3" column="0">
-                  <widget class="QSpinBox" name="spinBox_27">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximum">
-                    <number>2000</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="QSpinBox" name="spinBox_28">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximum">
-                    <number>2000</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="1">
-                  <widget class="QSlider" name="horizontalSlider_19">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="QSlider" name="horizontalSlider_18">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="0">
-                  <widget class="QSpinBox" name="spinBox_29">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QSpinBox" name="spinBox_26">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximum">
-                    <number>2000</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QSlider" name="horizontalSlider_16">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QSlider" name="horizontalSlider_17">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0" colspan="2">
-                  <widget class="QLabel" name="label_54">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Kosten der erstmaligen Herstellung (€ / lfd. Meter)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0" colspan="2">
-                  <widget class="QLabel" name="label_55">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Jährliche Kosten für Betrieb und Unterhaltung (Cent / lfd. Meter und Jahr)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0" colspan="2">
-                  <widget class="QLabel" name="label_56">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Kosten der Erneuerung (€ / lfd. Meter und Erneuerungscyclus)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0" colspan="2">
-                  <widget class="QLabel" name="label_57">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Lebensdauer (Erneuerungscyclus)</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="5" column="3">
-                <widget class="QRadioButton" name="radioButton_5">
-                 <property name="text">
-                  <string>Kanal (Mischsystem)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QRadioButton" name="radioButton_10">
-                 <property name="text">
-                  <string>Kanal (nur Schmutzwasser)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="4">
-                <spacer name="horizontalSpacer_9">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="2" column="3">
-                <widget class="QRadioButton" name="radioButton_4">
-                 <property name="text">
-                  <string>Anliegerstraße (äußere Erschließung)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="0" colspan="5">
-                <widget class="QDialogButtonBox" name="buttonBox">
-                 <property name="standardButtons">
-                  <set>QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_3">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Dialog</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_24">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Infrastrukturmengen bilanzieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Länge der bisher in der Karte eingezeichneten Erschließungsnetze sowie Gesamtkosten der punktuellen Maßnahmen aufsummieren und in zwei Diagrammen anzeigen lassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Infrastrukturmengen bilanzieren</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1531,34 +1229,34 @@ padding: 2px;
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton_25</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>scrollArea_3</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>126</x>
-     <y>1348</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>140</x>
-     <y>1676</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>pushButton_27</sender>
    <signal>toggled(bool)</signal>
    <receiver>kostenaufteilung_widget</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>656</y>
+     <x>124</x>
+     <y>781</y>
     </hint>
     <hint type="destinationlabel">
-     <x>187</x>
-     <y>671</y>
+     <x>197</x>
+     <y>833</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_25</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kostenkennwerte_widget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>156</x>
+     <y>662</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>683</y>
     </hint>
    </hints>
   </connection>

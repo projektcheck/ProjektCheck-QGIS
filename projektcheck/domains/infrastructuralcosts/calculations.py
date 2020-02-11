@@ -1,7 +1,10 @@
 from projektcheck.base.domain import Worker
 from projektcheck.utils.utils import round_df_to
-from projektcheck.domains.infrastructuralcosts import tables
 from projektcheck.domains.definitions.tables import Projektrahmendaten
+
+from .tables import (KostenkennwerteLinienelemente, ErschliessungsnetzLinien,
+                     ErschliessungsnetzPunkte, Kostenaufteilung,
+                     Gesamtkosten, GesamtkostenTraeger)
 
 import time
 import pandas as pd
@@ -16,7 +19,7 @@ def apply_kostenkennwerte(project):
     ----------
     project : project, Project
     """
-    kk_features = tables.KostenkennwerteLinienelemente.features(create=True)
+    kk_features = KostenkennwerteLinienelemente.features(create=True)
     kk_features.delete()
 
     # calculate time factor
@@ -53,7 +56,7 @@ def apply_kostenkennwerte(project):
     return kk_features
 
 
-class Gesamtkosten(Worker):
+class GesamtkostenErmitteln(Worker):
     years = 20
 
     def __init__(self, project, parent=None):
@@ -62,14 +65,16 @@ class Gesamtkosten(Worker):
 
     def work(self):
         self.log('Bereite Ausgangsdaten auf...')
-        kk_features = apply_kostenkennwerte(self.project)
+        kk_features = KostenkennwerteLinienelemente.features(create=True)
+        if len(kk_features) == 0:
+            apply_kostenkennwerte(self.project)
         self.df_costs = kk_features.to_pandas()
         del self.df_costs['IDNetz']
-        self.df_lines = tables.ErschliessungsnetzLinien.features(
+        self.df_lines = ErschliessungsnetzLinien.features(
             project=self.project).to_pandas()
         lengths = self.df_lines['geom'].apply(lambda x: x.length())
         self.df_lines['length'] = lengths
-        self.df_points = tables.ErschliessungsnetzPunkte.features(
+        self.df_points = ErschliessungsnetzPunkte.features(
             project=self.project).to_pandas()
         self.joined_lines_costs = self.df_lines.merge(
             self.df_costs, on='IDNetzelement', how='left')
@@ -78,7 +83,7 @@ class Gesamtkosten(Worker):
         self.df_elements = self.project.basedata.get_table(
             'Netze_und_Netzelemente', 'Kosten',
             fields=['IDNetz', 'Netz']).to_pandas()
-        # duplicate entries for 'IDNetz'/'Netz' combinations
+        # duplicate entries for 'IDNetz'/'Netz' combinationsjean
         del self.df_elements['fid']
         self.df_elements.drop_duplicates(inplace=True)
 
@@ -90,7 +95,7 @@ class Gesamtkosten(Worker):
             ', <br>'.join(self.df_phases['Kostenphase'].tolist())
         ))
 
-        self.costs_results = tables.Gesamtkosten.features(
+        self.costs_results = Gesamtkosten.features(
             project=self.project, create=True)
         self.costs_results.delete()
         df_results = self.calculate_phases()
@@ -143,9 +148,9 @@ class KostentraegerAuswerten(Worker):
         self.project = project
 
     def work(self):
-        self.shares_results = tables.GesamtkostenTraeger.features(
+        self.shares_results = GesamtkostenTraeger.features(
             project=self.project, create=True)
-        self.df_shares = tables.Kostenaufteilung.features(
+        self.df_shares = Kostenaufteilung.features(
             create=True).to_pandas()
         self.log('Berechne Aufteilung der Kosten nach Kostenträgern...')
 
@@ -161,8 +166,7 @@ class KostentraegerAuswerten(Worker):
         self.shares_results.update_pandas(df_results)
 
     def calculate_shares(self):
-        df_costs = tables.Gesamtkosten.features(
-            project=self.project).to_pandas()
+        df_costs = Gesamtkosten.features(project=self.project).to_pandas()
         joined = df_costs.merge(self.df_shares,
                                 on=['IDNetz', 'IDKostenphase'],
                                 how='right')

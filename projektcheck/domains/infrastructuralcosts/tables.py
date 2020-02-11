@@ -16,7 +16,7 @@ class ErschliessungsnetzPunkte(ProjectTable):
     bezeichnung = Field(str, '')
     Euro_EH = Field(float, 0)
     Euro_EN = Field(float, 0)
-    Cent_BU = Field(float, 0)
+    Cent_BU = Field(int, 0)
     Lebensdauer = Field(int, 0)
 
     class Meta:
@@ -28,7 +28,7 @@ class KostenkennwerteLinienelemente(ProjectTable):
     IDNetzelement = Field(int, 0)
     Euro_EH = Field(float, 0)
     Euro_EN = Field(float, 0)
-    Cent_BU = Field(float, 0)
+    Cent_BU = Field(int, 0)
     Lebensdauer = Field(int, 0)
 
     class Meta:
