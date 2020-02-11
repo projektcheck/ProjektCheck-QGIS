@@ -327,7 +327,9 @@ class Kostentraeger:
                 IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
 
             preset_combo = self.create_presets(net_id, phase.IDKostenphase)
-            self.params.add(preset_combo, name=f'{phase.Kostenphase}_presets')
+            param = Param(0, preset_combo, label='Vorschlagswerte')
+            param.hide_in_overview = True
+            self.params.add(param, name=f'{phase.Kostenphase}_presets')
 
             for j, field_name in enumerate(field_names):
                 label = labels[j]
@@ -359,8 +361,7 @@ class Kostentraeger:
 
         preset_combo = ComboBox(
             ['Benutzerdefiniert'] + [rule.Aufteilungsregel for rule in rules],
-            [None] + rules,
-            hide_in_overview=True
+            [None] + rules
         )
         return preset_combo
 

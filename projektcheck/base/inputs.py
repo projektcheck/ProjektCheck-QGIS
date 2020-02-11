@@ -155,6 +155,7 @@ class ComboBox(InputType):
             if data:
                 args.append(data[i])
             self.add_value(*args)
+        self.registerFocusEvent(self.input)
 
     def add_value(self, value, data=None):
         self.input.addItem(value, userData=data)
