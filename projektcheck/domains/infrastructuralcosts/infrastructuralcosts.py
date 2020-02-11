@@ -62,17 +62,16 @@ class InfrastructureDrawing:
         self.ui.points_combo.clear()
         points = [point for point in self.points]
         points.sort(key=lambda x: x.IDNetzelement)
-        idx = 0
         self.ui.points_combo.addItem('nichts ausgewählt')
+        idx = 0
         for i, point in enumerate(points):
-            # ToDo: show netztyp name in combo
-            typ = self.netzelemente.get(
-                IDNetzelement=point.IDNetzelement)
+            typ = self.netzelemente.get(IDNetzelement=point.IDNetzelement)
             self.ui.points_combo.addItem(
                 f'{point.bezeichnung} ({typ.Netzelement if typ else "-"})',
-                point)
+                point
+            )
             if select and point.id == select.id:
-                idx = i
+                idx = i + 1
         if idx:
             self.ui.points_combo.setCurrentIndex(idx)
         self.ui.points_combo.blockSignals(False)
@@ -179,7 +178,8 @@ class InfrastructureDrawing:
         self.output_points.layer.select(feature.id())
         fid = feature.id()
         for idx in range(len(self.ui.points_combo)):
-            if fid == self.ui.points_combo.itemData(idx).id:
+            point = self.ui.points_combo.itemData(idx)
+            if point and fid == point.id:
                 break
         self.ui.points_combo.setCurrentIndex(idx)
 
