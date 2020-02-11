@@ -9,65 +9,64 @@ from projektcheck.domains.constants import Nutzungsart
 from projektcheck.base.diagrams import MatplotDiagram
 from projektcheck.base.project import ProjectManager
 from projektcheck.domains.infrastructuralcosts.tables import (
-    Gesamtkosten, GesamtkostenTraeger)
+    Gesamtkosten, GesamtkostenTraeger, ErschliessungsnetzLinien)
 
 
-#class NetzlaengenDiagramm(MatplotDiagram):
-    #def _create(self, **kwargs):
-        #line_table = 'Erschliessungsnetze_Linienelemente'
-        #self.title = (u"{}: Länge der zusätzlichen Infrastrukturnetze "
-                 #u"(ohne punktuelle Maßnahmen)".format(
-                     #self.tbx.par.get_projectname()))
-        #x_label = u"Meter zusätzliche Netzlänge (ohne punktuelle Maßnahmen)"
+class NetzlaengenDiagramm(MatplotDiagram):
+    def create(self, **kwargs):
+        project = kwargs.get('project', ProjectManager().active_project)
 
-        #linien_df = self.tbx.table_to_dataframe(
-            #line_table, columns=['SHAPE_Length', 'IDNetz'],
-            #workspace='FGDB_Kosten.gdb'
-        #)
-        #base_df = self.tbx.table_to_dataframe(
-            #'Netze_und_Netzelemente', workspace='FGDB_Kosten_Tool.gdb',
-            #columns=['IDNetz', 'Netz'],
-            #is_base_table=True
-        #)
-        #base_df.drop_duplicates(inplace=True)
-        #joined = linien_df.merge(base_df, on='IDNetz', how='right')
-        #joined.fillna(0, inplace=True)
-        #grouped = joined.groupby(by='IDNetz')
-        #categories = []
-        #lengths = []
-        #for id_netz, grouped_df in grouped:
-            #categories.append(grouped_df['Netz'].values[0])
-            #lengths.append(grouped_df['SHAPE_Length'].sum())
+        self.title = (f'{project.name}: Länge der zusätzlichen '
+                      'Infrastrukturnetze ohne punktuelle Maßnahmen)')
+        x_label = u"Meter zusätzliche Netzlänge (ohne punktuelle Maßnahmen)"
 
-        #figure, ax = self.plt.subplots(figsize=(10, 5))
-        #ax.tick_params(axis='both', which='major', labelsize=9)
-        #y_pos = np.arange(len(categories))
-        #bar_width = 0.5
-        #patches = ax.barh(y_pos, lengths, height=bar_width, align='center')
-        ## Anfang Barlabels
-        #text_offset = max([patch.get_x() + patch.get_width() for patch in
-                           #patches.get_children()]) * 0.02
-        #for i, patch in enumerate(patches.get_children()):
-                    #width = patch.get_x() + patch.get_width()
-                    #y = patch.get_y()
-                    #ax.text(width + text_offset, y + bar_width/2,
-                            #str(int(round(width, 0))) + u' m',
-                            #color='black',ha='left', va='center')
-                    ##bbox=dict(facecolor='white',
-                    ## edgecolor='white', boxstyle="round"))
-        #x_min, x_max = ax.get_xlim()
-        #ax.set_xlim(x_min, x_max * 1.2)
-        ## Ende Barlabels
-        #ax.set_yticks(y_pos)
-        #ax.set_yticklabels(categories)
-        #ax.set_title(self.title)
-        #ax.set_xlabel(x_label)
-        #ax.xaxis.grid(True, which='major')
-        #box = ax.get_position()
-        #ax.set_position([box.x0 + box.width * 0.12, box.y0,
-                         #box.width * 0.88, box.height])
+        linien_df = ErschliessungsnetzLinien.features(create=True).to_pandas()
 
-        #return ax
+        base_df = project.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten',
+            fields=['IDNetz', 'Netz']).to_pandas()
+        # duplicate entries for 'IDNetz'/'Netz' combinations
+        del base_df['fid']
+        base_df.drop_duplicates(inplace=True)
+
+        joined = linien_df.merge(base_df, on='IDNetz', how='right')
+        joined.fillna(0, inplace=True)
+        grouped = joined.groupby(by='IDNetz')
+        categories = []
+        lengths = []
+        for id_netz, grouped_df in grouped:
+            categories.append(grouped_df['Netz'].values[0])
+            lengths.append(grouped_df['length'].sum())
+
+        figure, ax = plt.subplots(figsize=(10, 5))
+        ax.tick_params(axis='both', which='major', labelsize=9)
+        y_pos = np.arange(len(categories))
+        bar_width = 0.5
+        patches = ax.barh(y_pos, lengths, height=bar_width, align='center')
+        # Anfang Barlabels
+        text_offset = max([patch.get_x() + patch.get_width() for patch in
+                           patches.get_children()]) * 0.02
+        for i, patch in enumerate(patches.get_children()):
+                    width = patch.get_x() + patch.get_width()
+                    y = patch.get_y()
+                    ax.text(width + text_offset, y + bar_width/2,
+                            str(int(round(width, 0))) + u' m',
+                            color='black',ha='left', va='center')
+                    #bbox=dict(facecolor='white',
+                    # edgecolor='white', boxstyle="round"))
+        x_min, x_max = ax.get_xlim()
+        ax.set_xlim(x_min, x_max * 1.2)
+        # Ende Barlabels
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(categories)
+        ax.set_title(self.title)
+        ax.set_xlabel(x_label)
+        ax.xaxis.grid(True, which='major')
+        box = ax.get_position()
+        ax.set_position([box.x0 + box.width * 0.12, box.y0,
+                         box.width * 0.88, box.height])
+
+        return figure
 
 
 #class MassnahmenKostenDiagramm(MatplotDiagram):

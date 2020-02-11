@@ -640,7 +640,7 @@ padding: 2px;
              <item>
               <widget class="QPushButton" name="remove_lines_button">
                <property name="text">
-                <string>Elemente löschen</string>
+                <string>ausgewählte Elemente löschen</string>
                </property>
                <property name="icon">
                 <iconset>

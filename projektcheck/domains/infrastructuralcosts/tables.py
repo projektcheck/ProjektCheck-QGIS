@@ -5,6 +5,7 @@ from projektcheck.base.database import Field
 class ErschliessungsnetzLinien(ProjectTable):
     IDNetz = Field(int, 0)
     IDNetzelement = Field(int, 0)
+    length = Field(float, 0)
 
     class Meta:
         workspace = 'infrastukturfolgekosten'

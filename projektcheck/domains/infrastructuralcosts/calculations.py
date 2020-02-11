@@ -72,8 +72,6 @@ class GesamtkostenErmitteln(Worker):
         del self.df_costs['IDNetz']
         self.df_lines = ErschliessungsnetzLinien.features(
             project=self.project).to_pandas()
-        lengths = self.df_lines['geom'].apply(lambda x: x.length())
-        self.df_lines['length'] = lengths
         self.df_points = ErschliessungsnetzPunkte.features(
             project=self.project).to_pandas()
         self.joined_lines_costs = self.df_lines.merge(

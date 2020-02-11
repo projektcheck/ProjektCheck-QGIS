@@ -88,6 +88,7 @@ class Layer(ABC):
             return
         QgsProject.instance().removeMapLayer(self.layer.id())
         self.layer = None
+        self._l = None
 
 
 class TileLayer(Layer):

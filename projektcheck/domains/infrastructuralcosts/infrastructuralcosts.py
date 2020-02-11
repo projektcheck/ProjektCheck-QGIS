@@ -11,7 +11,8 @@ from projektcheck.base.inputs import (SpinBox, ComboBox, LineEdit,
                                       Slider, DoubleSpinBox)
 from projektcheck.base.dialogs import ProgressDialog
 
-from .diagrams import GesamtkostenDiagramm, KostentraegerDiagramm
+from .diagrams import (GesamtkostenDiagramm, KostentraegerDiagramm,
+                       NetzlaengenDiagramm)
 from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
                            apply_kostenkennwerte)
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
@@ -35,8 +36,8 @@ class InfrastructureDrawing:
         self.ui.points_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_point(
                 self.ui.points_combo.currentData()))
-        #self.ui.points_combo.currentIndexChanged.connect(
-            #lambda: self.draw_output('point'))
+        self.ui.infrastrukturmengen_button.clicked.connect(
+            self.infrastrukturmengen)
 
         self.ui.remove_point_button.clicked.connect(self.remove_point)
 
@@ -122,6 +123,9 @@ class InfrastructureDrawing:
         feature = features.add(IDNetzelement=net_id,
                                IDNetz=typ.IDNetz if typ else 0,
                                geom=geom)
+        if geom_typ == 'line':
+            feature.length = geom.length()
+            feature.save()
         if len(features) == 1:
             self.draw_output(geom_typ, redraw=True)
         self.canvas.refreshAllLayers()
@@ -254,6 +258,10 @@ class InfrastructureDrawing:
         self.params.show()
         self.params.changed.connect(save)
 
+    def infrastrukturmengen(self):
+        diagram = NetzlaengenDiagramm(project=self.project)
+        diagram.draw()
+
 
 class Gesamtkosten:
 
@@ -281,21 +289,6 @@ class Gesamtkosten:
     def load_content(self):
         self.kostenkennwerte = KostenkennwerteLinienelemente.features(
             create=True)
-        #self.kostenaufteilung = Kostenaufteilung.features(
-            #create=True, project=self.project)
-        #self.default_kostenaufteilung = self.project.basedata.get_table(
-            #'Kostenaufteilung_Startwerte', 'Kosten')
-        #self.kostenphasen = self.project.basedata.get_table(
-            #'Kostenphasen', 'Kosten').features()
-        #self.aufteilungsregeln = self.project.basedata.get_table(
-            #'Aufteilungsregeln', 'Kosten').features()
-        #self.applyable_aufteilungsregeln = self.project.basedata.get_table(
-            #'Aufteilungsregeln_zu_Netzen_und_Phasen', 'Kosten').features()
-        #self.netzelemente = self.project.basedata.get_table(
-            #'Netze_und_Netzelemente', 'Kosten'
-        #).features()
-
-        # initialize empty project 'kostenaufteilungen' with the default ones
         if len(self.kostenkennwerte) == 0:
             apply_kostenkennwerte(self.project)
         self.setup_net_element(self.net_element_id)
