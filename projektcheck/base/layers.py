@@ -64,6 +64,9 @@ class Layer(ABC):
                 self.layer.setName(label)
             QgsProject.instance().addMapLayer(self.layer, False)
             self.layer.loadNamedStyle(style_path)
+        if not self._l:
+            self._l = self.root.findLayer(self.layer)
+        if not self._l:
             self._l = self.root.addLayer(self.layer)
         self._l.setItemVisibilityChecked(checked)
         self._l.setExpanded(expanded)
