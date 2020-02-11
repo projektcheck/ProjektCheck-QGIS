@@ -143,21 +143,24 @@ class ProgressDialog(Dialog):
     ui_file = 'progress.ui'
 
     def __init__(self, thread, on_success=None,
-                 parent=None, auto_close=False, auto_run=True):
+                 parent=None, auto_close=False, auto_run=True,
+                 on_close=None):
         super().__init__(self.ui_file, modal=True, parent=parent)
         self.parent = parent
         self.setupUi()
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.progress_bar.setValue(0)
-        self.close_button.clicked.connect(self.close)
         self.stop_button.setVisible(False)
         self.close_button.setVisible(False)
         self.auto_close = auto_close
         self.auto_run = auto_run
+        # ToDo: use signals instead of callbacks
         self.on_success = on_success
+        self.on_close = on_close
+        self.success = False
 
         self.thread = thread
-        self.thread.finished.connect(self.success)
+        self.thread.finished.connect(self._success)
         self.thread.error.connect(self.on_error)
         self.thread.message.connect(self.show_status)
         self.thread.progress.connect(self.progress)
@@ -169,17 +172,20 @@ class ProgressDialog(Dialog):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
 
+
     def show(self):
         QDialog.show(self)
         if self.auto_run:
             self.run()
 
-    def success(self, result):
+    def _success(self, result):
         self._finished()
         self.progress(100)
-        self.show_status('<br>fertig')
-        if self.on_success and not self.error:
-            self.on_success(result)
+        self.show_status('<br><b>fertig</b>')
+        if not self.error:
+            self.success = True
+            if self.on_success:
+                self.on_success(result)
 
     def _finished(self):
         #self.thread.quit()
@@ -192,6 +198,11 @@ class ProgressDialog(Dialog):
         self.stop_button.setVisible(False)
         if self.auto_close:
             self.close()
+
+    def close(self):
+        super().close()
+        if self.on_close:
+            self.on_close(self.on_close)
 
     def on_error(self, message):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')

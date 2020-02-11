@@ -4,10 +4,9 @@ import json
 import shutil
 import sys
 from collections import OrderedDict
-from datetime import datetime
 
 from projektcheck.utils.singleton import Singleton
-from projektcheck.base.database import Field, Feature
+from projektcheck.base.database import Field
 from projektcheck.base.geopackage import Geopackage
 from projektcheck.base.layers import Layer, TileLayer
 
@@ -153,11 +152,17 @@ class Project:
     '''
     single project
     '''
+    settings = settings
+
     def __init__(self, name, path=''):
         self.name = name
         self.groupname = f'Projekt "{self.name}"'
         path = path or settings.project_path
         self.path = os.path.join(path, name)
+
+    @property
+    def basedata(self):
+        return self.settings.BASEDATA
 
     def remove(self):
         self.close()

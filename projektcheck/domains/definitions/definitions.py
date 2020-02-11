@@ -300,8 +300,10 @@ class Gewerbe:
         preset_ids = self.df_industry_types_base['IDGewerbegebietstyp'].values
         self.preset_combo = ComboBox(
             ['Benutzerdefiniert'] + list(preset_names), [-1] + list(preset_ids))
-
-        self.i = 0
+        param = Param(0, self.preset_combo,
+                      label='Vorschlagswerte nach Gebietstyp')
+        param.hide_in_overview = True
+        self.params.add(param, name='gebietstyp')
 
         def values_changed():
             if self.auto_check.value:
