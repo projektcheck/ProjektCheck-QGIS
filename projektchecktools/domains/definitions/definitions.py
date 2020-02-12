@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from qgis.PyQt.QtCore import Qt
 
 from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
@@ -24,10 +25,13 @@ class Wohnen:
     def __init__(self, basedata, layout):
         self.gebaeudetypen_base = basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
-        )
+        ).features()
         self.einwohner_base = basedata.get_table(
             'Einwohner_pro_WE', 'Bewohner_Arbeitsplaetze'
         )
+        self.df_presets = basedata.get_table(
+            'WE_nach_Gebietstyp', 'Definition_Projekt'
+        ).to_pandas()
         self.wohneinheiten = Wohneinheiten.features(create=True)
         self.wohnen_struktur = WohnenStruktur.features(create=True)
         self.wohnen_pro_jahr = WohnenProJahr.features(create=True)
@@ -45,35 +49,57 @@ class Wohnen:
         )
         self.params.aufsiedlungsdauer = Param(
             area.aufsiedlungsdauer, SpinBox(minimum=1, maximum=100),
-            label='Dauer des Bezuges')
+            label='Dauer des Bezuges', unit='Jahr(e)')
         self.params.add(Seperator())
 
         self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
-        for bt in self.gebaeudetypen_base.features():
+        preset_names = np.unique(self.df_presets[
+            'Gebietstyp'].values)
+        self.preset_combo = ComboBox(['Benutzerdefiniert'] + list(preset_names))
+
+        param = Param(0, self.preset_combo,
+                      label='Vorschlagswerte nach Gebietstyp')
+        param.hide_in_overview = True
+        self.params.add(param, name='gebietstyp')
+
+        def preset_changed(gebietstyp):
+            presets = self.df_presets[self.df_presets['Gebietstyp']==gebietstyp]
+            for idx, preset in presets.iterrows():
+                id_bt = preset['IDGebaeudetyp']
+                bt = self.gebaeudetypen_base.get(id=id_bt)
+                param = self.params.get(bt.param_we)
+                param.input.value = self.area.area * preset['WE_pro_Hektar']
+
+        self.preset_combo.changed.connect(preset_changed)
+
+        for bt in self.gebaeudetypen_base:
             param_name = bt.param_we
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
             value = feature.we if feature else 0
+            slider = Slider(maximum=999)
             self.params.add(Param(
-                value, Slider(maximum=999),
+                value, slider,
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )
+            slider.changed.connect(
+                lambda: self.preset_combo.set_value('Benutzerdefiniert'))
+
         self.params.add(Seperator())
 
         self.params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
                               '(3 Jahre nach Bezug)'))
 
-        for bt in self.gebaeudetypen_base.features():
+        for bt in self.gebaeudetypen_base:
             param_name = bt.param_ew_je_we
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
             # set to default if no feature yet
             value = feature.ew_je_we if feature else bt.default_ew_je_we
             self.params.add(Param(
-                value,
-                DoubleSpinBox(step=0.1, maximum=50),
+                value, DoubleSpinBox(step=0.1, maximum=50),
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )
@@ -83,7 +109,7 @@ class Wohnen:
 
     def save(self):
         we_sum = 0
-        for bt in self.gebaeudetypen_base.features():
+        for bt in self.gebaeudetypen_base:
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
             if not feature:
@@ -288,7 +314,7 @@ class Gewerbe:
         self.params.aufsiedlungsdauer = Param(
             area.aufsiedlungsdauer, SpinBox(minimum=1, maximum=100),
             label='Dauer des Bezuges (Jahre, 1 = Bezug wird noch\n'
-            'im Jahr des Bezugsbeginns abgeschlossen)'
+            'im Jahr des Bezugsbeginns abgeschlossen)', unit='Jahr(e)'
         )
 
         self.params.add(Seperator(margin=10))
@@ -296,7 +322,8 @@ class Gewerbe:
         self.params.add(
             Title('Voraussichtlicher Anteil der Branchen an der Nettofläche'))
 
-        preset_names = self.df_industry_types_base['Name_Gewerbegebietstyp'].values
+        preset_names = self.df_industry_types_base[
+            'Name_Gewerbegebietstyp'].values
         preset_ids = self.df_industry_types_base['IDGewerbegebietstyp'].values
         self.preset_combo = ComboBox(
             ['Benutzerdefiniert'] + list(preset_names), [-1] + list(preset_ids))
