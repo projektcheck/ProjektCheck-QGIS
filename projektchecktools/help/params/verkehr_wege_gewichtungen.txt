@@ -1,7 +1,9 @@
 {
     "beschreibung": "",
-    "1_gesamt": "",
-    "1_miv": "",
-    "2_gesamt": "",
-    "2_miv": ""
+    "Wohnen_gesamt": "",
+    "Wohnen_miv": "",
+    "Einzelhandel_gesamt": "",
+    "Einzelhandel_miv": "",
+    "Gewerbe_gesamt": "",
+    "Gewerbe_miv": ""
 }

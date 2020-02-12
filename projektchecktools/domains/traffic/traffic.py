@@ -93,10 +93,10 @@ class Traffic(Domain):
         for i, way in enumerate(self.ways):
             name = Nutzungsart(way.nutzungsart).name.capitalize()
             self.params.add(Title(name, fontsize=8))
-            self.params[f'{way.nutzungsart}_gesamt'] = Param(
+            self.params[f'{name}_gesamt'] = Param(
                 way.wege_gesamt, SpinBox(),
                 label='Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)')
-            self.params[f'{way.nutzungsart}_miv'] = Param(
+            self.params[f'{name}_miv'] = Param(
                 way.miv_anteil, SpinBox(maximum=100),
                 label='Anteil der von Pkw-Fahrenden gefahrenen Wegen', unit='%')
             if i != len(self.ways) - 1:
@@ -137,8 +137,9 @@ class Traffic(Domain):
             node.save()
 
         for way in self.ways:
-            way.miv_anteil = self.params[f'{way.nutzungsart}_miv'].value
-            way.wege_gesamt = self.params[f'{way.nutzungsart}_gesamt'].value
+            name = Nutzungsart(way.nutzungsart).name.capitalize()
+            way.miv_anteil = self.params[f'{name}_miv'].value
+            way.wege_gesamt = self.params[f'{name}_gesamt'].value
             way.save()
 
         job = Routing(self.project, parent=self.ui, recalculate=True)
