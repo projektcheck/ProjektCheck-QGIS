@@ -229,9 +229,10 @@ class Title:
     '''
     title label appendable to ui layout
     '''
-    def __init__(self, title, fontsize=9):
+    def __init__(self, title, fontsize=8, bold=True):
         self.title = title
         self.fontsize = fontsize
+        self.bold = bold
 
     def draw(self, layout):
         '''
@@ -243,7 +244,8 @@ class Title:
             layout to append the drawn parameter to
         '''
         label = QLabel(self.title)
-        font = QFont()
+        font = label.font()
+        font.setBold(self.bold)
         font.setPointSize(self.fontsize)
         label.setFont(font)
         layout.addWidget(label)
