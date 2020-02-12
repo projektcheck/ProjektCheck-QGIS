@@ -9,12 +9,12 @@
 [general]
 name=Projekt-Check
 qgisMinimumVersion=3.0
-description=ProjektCheck Profi
-version=0.3
+description=Projekt-Check Profi
+version=0.3.1
 author=GGR
 email=franke@ggr-planung.de
 
-about=Check your project
+about=Mit Projekt-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.
 
 tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
@@ -26,9 +26,9 @@ repository=https://github.com/projektcheck/ProjektCheck-QGIS
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=projekt-check, rpc, projektcheck, planung
+tags=projekt-check,rpc,projektcheck,planung
 
-homepage=
+homepage=https://www.projekt-check.de/
 category=Plugins
 icon=icon.png
 # experimental flag

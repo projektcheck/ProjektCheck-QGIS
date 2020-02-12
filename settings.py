@@ -1,5 +1,5 @@
-from projektcheck.base.geopackage import Geopackage
-from projektcheck.base.project import settings
+from projektchecktools.base.geopackage import Geopackage
+from projektchecktools.base.project import settings
 
 import os
 
@@ -13,7 +13,7 @@ settings.MAX_AREA_DISTANCE = 1000
 settings.TEMPLATE_PATH = os.path.join(base_path, 'templates')
 settings.IMAGE_PATH = os.path.join(base_path, 'images')
 settings.TEMP_PATH = os.path.join(base_path, 'data', 'temp')
-settings.HELP_PATH = os.path.join(base_path, 'projektcheck', 'help')
+settings.HELP_PATH = os.path.join(base_path, 'projektchecktools', 'help')
 settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
                                read_only=True)
 settings.DEBUG = True

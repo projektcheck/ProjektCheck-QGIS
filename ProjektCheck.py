@@ -6,7 +6,7 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis import utils
 
 # Initialize Qt resources from file resources_rc.py
-from projektcheck.ui.resources_rc import *
+from projektchecktools.ui.resources_rc import *
 
 # Import the code for the DockWidget
 from ProjektCheck_dockwidget import ProjektCheckMainDockWidget

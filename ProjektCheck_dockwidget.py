@@ -5,16 +5,16 @@ from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import  QgsProject
 
-from projektcheck.base.domain import PCDockWidget
-from projektcheck.base.dialogs import (SettingsDialog, NewProjectDialog,
+from projektchecktools.base.domain import PCDockWidget
+from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
                                        ProgressDialog)
-from projektcheck.base.project import (ProjectLayer, OSMBackgroundLayer,
+from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
                                        TerrestrisBackgroundLayer)
-from projektcheck.base.database import Workspace
-from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.domains.definitions.project import (ProjectInitialization,
+from projektchecktools.base.database import Workspace
+from projektchecktools.domains.definitions.tables import Teilflaechen
+from projektchecktools.domains.definitions.project import (ProjectInitialization,
                                                       CloneProject)
-from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
+from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
                                   Traffic, Reachabilities, Ecology,
                                   LandUse, InfrastructuralCosts,
                                   MunicipalTaxRevenue,
