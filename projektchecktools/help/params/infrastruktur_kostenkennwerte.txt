@@ -3,5 +3,5 @@
     "lebensdauer": "",
     "euro_EH": "",
     "euro_EN": "",
-    "cent_BU": ""
+    "euro_BU": ""
 }

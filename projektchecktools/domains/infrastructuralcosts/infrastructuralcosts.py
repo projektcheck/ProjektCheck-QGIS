@@ -325,18 +325,18 @@ class Gesamtkosten:
         )
         self.params.euro_EH = Param(
             net_element.Euro_EH, DoubleSpinBox(),
-            unit='€', label='Kosten der erstmaligen Herstellung: \n'
-            'Euro pro laufenen Meter'
+            unit='€', label='Kosten der erstmaligen Herstellung \n'
+            'pro laufenden Meter'
         )
         self.params.euro_EN = Param(
             net_element.Euro_EN, DoubleSpinBox(),
-            unit='€', label='Kosten der Erneuerung: \n'
-            'Euro pro laufenden Meter und Erneuerungszyklus'
+            unit='€', label='Kosten der Erneuerung \n'
+            'pro laufenden Meter und Erneuerungszyklus'
         )
-        self.params.cent_BU = Param(
-            net_element.Cent_BU, SpinBox(),
-            unit='ct', label='Jährliche Kosten für Betrieb und Unterhaltung: \n'
-            'Cent pro laufenden Meter und Jahr'
+        self.params.euro_BU = Param(
+            net_element.Cent_BU / 100, DoubleSpinBox(),
+            unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung \n'
+            'pro laufenden Meter und Jahr'
         )
 
         self.params.show()
@@ -347,7 +347,7 @@ class Gesamtkosten:
         net_element = self.kostenkennwerte.get(IDNetzelement=net_element_id)
         net_element.Euro_EH = self.params.euro_EH.value
         net_element.Lebensdauer = self.params.lebensdauer.value
-        net_element.Cent_BU = self.params.cent_BU.value
+        net_element.Cent_BU = self.params.euro_BU.value * 100
         net_element.Euro_EN = self.params.euro_EN.value
         net_element.save()
 
