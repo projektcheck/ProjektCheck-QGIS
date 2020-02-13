@@ -20,8 +20,10 @@ class InputType(QObject):
         self.hide_in_overview = hide_in_overview
         super().__init__()
 
-    def draw(self, layout):
+    def draw(self, layout, unit=''):
         layout.addWidget(self.input)
+        if unit:
+            layout.addWidget(QLabel(unit))
 
     @property
     def value(self):
@@ -130,10 +132,12 @@ class Slider(InputType):
             return False
         return self.lock_button.isChecked()
 
-    def draw(self, layout):
+    def draw(self, layout, unit=''):
         l = QHBoxLayout()
         l.addWidget(self.slider)
         l.addWidget(self.spinbox)
+        if unit:
+            l.addWidget(QLabel(unit))
         if self.lockable:
             l.addWidget(self.lock_button)
         layout.addLayout(l)

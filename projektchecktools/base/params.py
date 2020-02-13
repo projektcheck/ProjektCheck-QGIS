@@ -116,12 +116,12 @@ class Param(QObject):
             self.row.addItem(spacer)
             layout.addLayout(self.row)
         if edit:
-            self.input.draw(self.row)
+            self.input.draw(self.row, unit=self.unit)
         else:
             self.row.addWidget(self._value_label)
-        if self.unit:
-            unit_label = QLabel(self.unit)
-            self.row.addWidget(unit_label)
+            if self.unit:
+                unit_label = QLabel(self.unit)
+                self.row.addWidget(unit_label)
 
 
 class Dependency(ABC):
