@@ -102,6 +102,8 @@ class Routing(Worker):
                 json = otp_router.get_routing_request(source, destination)
                 coords = otp_router.decode_coords(json, route_id=r_id,
                                                   source_id=area.id)
+                if not coords:
+                    continue
                 points = [QgsPoint(y, x) for (x, y) in coords]
                 polyline = QgsGeometry.fromPolyline(points)
                 polyline.transform(transform)
