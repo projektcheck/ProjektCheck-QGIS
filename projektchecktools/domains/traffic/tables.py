@@ -29,6 +29,12 @@ class Links(ProjectTable):
         workspace = 'traffic'
 
 
+class Legs(ProjectTable):
+
+    class Meta:
+        workspace = 'traffic'
+
+
 class Nodes(ProjectTable):
     node_id = Field(int, 0)
 

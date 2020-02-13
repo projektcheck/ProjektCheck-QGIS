@@ -1,12 +1,13 @@
 import os
+from qgis.core import (QgsGeometry, QgsPoint, QgsProject,
+                       QgsCoordinateReferenceSystem, QgsCoordinateTransform)
 
 from projektchecktools.utils.spatial import Point
 from projektchecktools.domains.traffic.otp_router import OTPRouter
 from projektchecktools.base.domain import Worker
 from projektchecktools.domains.definitions.tables import Teilflaechen
-from projektchecktools.domains.traffic.tables import (Connectors, Links, Nodes,
-                                                 TransferNodes, Ways)
-import pandas as pd
+from projektchecktools.domains.traffic.tables import (
+    Connectors, Links, Nodes, Legs, TransferNodes, Ways)
 
 from settings import settings
 
@@ -22,6 +23,7 @@ class Routing(Worker):
         self.distance = distance
         self.areas = Teilflaechen.features(project=project)
         self.connectors = Connectors.features(project=project)
+        self.legs = Legs.features(project=project, create=True)
         self.links = Links.features(project=project, create=True)
         self.ways = Ways.features(project=project, create=True)
         self.nodes = Nodes.features(project=project, create=True)
@@ -71,6 +73,8 @@ class Routing(Worker):
                 'auf den Teilflächen.')
             return
 
+        self.legs.delete()
+
         for i, area in enumerate(self.areas):
             self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
             #if area.wege_miv == 0:
@@ -86,12 +90,22 @@ class Routing(Worker):
             destinations = otp_router.create_circle(source, dist=outer_circle,
                                                     n_segments=self.n_segments)
             source.transform(otp_router.router_epsg)
+
+            source_crs = QgsCoordinateReferenceSystem(otp_router.router_epsg)
+            target_crs = QgsCoordinateReferenceSystem(project_epsg)
+            transform = QgsCoordinateTransform(source_crs, target_crs,
+                                               QgsProject.instance())
             # calculate the routes to the segments
             for (x, y) in destinations:
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 json = otp_router.get_routing_request(source, destination)
-                otp_router.decode_coords(json, route_id=r_id, source_id=area.id)
+                coords = otp_router.decode_coords(json, route_id=r_id,
+                                                  source_id=area.id)
+                points = [QgsPoint(y, x) for (x, y) in coords]
+                polyline = QgsGeometry.fromPolyline(points)
+                polyline.transform(transform)
+                self.legs.add(geom=polyline)
                 r_id += 1
             self.set_progress(60 * (i + 1) / len(self.areas))
 
