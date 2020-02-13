@@ -40,7 +40,7 @@ SOURCES = \
 	__init__.py \
 	projektcheck.py ProjektCheck_dockwidget.py
 
-PLUGINNAME = ProjektCheck
+PLUGINNAME = Projekt-Check
 
 PY_FILES = \
 	__init__.py \

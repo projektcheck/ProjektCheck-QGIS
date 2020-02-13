@@ -1,0 +1,14 @@
+{
+    "beschreibung": "",
+    "nullfall_1": "",
+    "nullfall_2": "",
+    "nullfall_3": "",
+    "nullfall_4": "",
+    "nullfall_5": "",
+    "nullfall_6": "",
+    "nullfall_7": "",
+    "nullfall_8": "",
+    "nullfall_9": "",
+    "nullfall_10": "",
+    "nullfall_11": ""
+}

@@ -1,0 +1,27 @@
+{
+    "beschreibung": "<b>Mit dieser Funktion können Sie die Wohnnutzung genauer beschreiben, indem Sie den Bezugszeitraum, die Anzahl der Wohneinheiten, die Art der Wohngebäude und die erwartete mittlere Haushaltsgröße festlegen.</b><p>Zur besseren Übersichtlichkeit sind die Eingabefelder in drei Eingabeabschnitten zusammengefasst.</p><p>Sofern Sie im vorherigen Schritt (“Nutzungen auf Teilflächen definieren”) mehreren Teilflächen die Nutzung “Wohnen” zugewiesen haben, müssen Sie die vorstehenden Punkte für jede einzelne Teilfläche festlegen.</p>",
+    "beginn_nutzung": "<b>Legen Sie hier fest, in welchem Jahr der Bezug der ersten fertiggestellten Wohnungen beginnt.</b>
+<p>Die Festlegung hat Einfluss auf die Skalierung der Zeitachse der Auswertungen der Funktion “Bewohnerzahl schätzen”
+(Analysieren; Bewohner und Arbeitsplätze; Bewohnerzahl schätzen).</p>
+<p>Der Bezugsbeginn ist nicht der Baubeginn, sondern liegt i.d.R. danach.</p>",
+    "aufsiedlungsdauer": "<p><b>Legen Sie hier fest, wie viele Jahre es dauert, bis die letzte Wohnung auf der
+Teilfläche gebaut und bezogen ist</b>, gerechnet ab dem Zeitpunkt des Bezugs der ersten fertig gestellten Wohnung
+(Jahreszahl aus der vorigen Eingabe).</p>
+<p>Beispiele: Die erste Wohnung wird 2019, die letzte 2021 bezogen.
+Eingabe = 3 (für die drei Jahre 2019, 2020 und 2021)</p>
+<p>Alle Wohnungen werden im gleichen Jahr bezogen:
+Eingabe = 1</p>
+<p>Hinweis: In den weiteren Berechnungen wird vereinfachend von einem linearen Zuwachs des Bezugs ausgegangen.
+Wenn Sie z.B. eine Bezugsdauer von 4 Jahren eingetragen haben, wird in den nachfolgenden Berechnungen für jedes Jahr
+von einem Erstbezug von 25% (= 1/4) der Wohnungen ausgegangen.</p>",
+    "we_efh": "<b>Tragen Sie hier bitte ein, wie viele Wohneinheiten (WE) in Einfamilienhäusern entstehen.</b>
+<p>Bei Einfamilienhäusern entspricht die Anzahl der Wohneinheiten (WE) i.d.R. der Anzahl der Gebäude.</p>
+<p>Die Gesamtsumme der Wohneinheiten (WE) auf der Teilfläche ergibt sich aus der Summe Ihrer Eintragungen in den vier Feldern des Eingabeabschnitts »Anzahl Wohneinheiten nach Gebäudetypen«.</p>",
+    "we_zfh": "<p><b>Tragen Sie hier bitte ein, wie viele Wohneinheiten (WE) in Zweifamilienhäusern entstehen.</b> Dazu zählen auch Doppelhaushälften.</p><p>Bei Zweifamilien- und Doppelhäusern entspricht die Anzahl der Wohneinheiten (WE) i.d.R. dem Doppelten der Anzahl der Gebäude.</p><p>Die Gesamtsumme der Wohneinheiten (WE) auf der Teilfläche ergibt sich aus der Summe Ihrer Eintragungen in den vier Feldern des Eingabeabschnitts »Anzahl Wohneinheiten nach Gebäudetypen«.</p>",
+    "we_rh": "<b>Tragen Sie hier bitte ein, wie viele Wohneinheiten (WE) in Reihenhäusern entstehen.</b><p>Bei Reihenhäusern entspricht die Anzahl der Wohneinheiten (WE) i.d.R. dem Drei- bis Achtfachen der Anzahl der Gebäude.</p><p>Die Gesamtsumme der Wohneinheiten (WE) auf der Teilfläche ergibt sich aus der Summe Ihrer Eintragungen in den vier Feldern des Eingabeabschnitts »Anzahl Wohneinheiten nach Gebäudetypen«.</p>",
+    "we_mfh": "<b>Tragen Sie hier bitte ein, wie viele Wohneinheiten (WE) in Mehrfamilienhäusern entstehen.</b><p>Bei Mehrfamilienhäusern entspricht die Anzahl der Wohneinheiten (WE) i.d.R. einem Mehrfachen der Anzahl der Gebäude.</p><p>Die Gesamtsumme der Wohneinheiten (WE) auf der Teilfläche ergibt sich aus der Summe Ihrer Eintragungen in den vier Feldern des Eingabeabschnitts »Anzahl Wohneinheiten nach Gebäudetypen«.</p>",
+    "ew_je_we_efh": "<p>Sofern aus Ihrer Sicht notwendig, können Sie an dieser Stelle die mittlere Zahl der Bewohner pro Wohneinheit in Einfamilienhäusern drei Jahre nach dem Bezug verändern. Dies kann z.B. sinnvoll sein, wenn die Wohneinheiten deutlich kleiner oder größer sind als üblich oder wenn das Projekt sehr spezifische Zielgruppen anspricht.</p><p>Die voreingestellte Standardannahme sind 2,9 Personen pro Wohneinheit.</p>",
+    "ew_je_we_zfh": "<p>Sofern aus Ihrer Sicht notwendig, können Sie an dieser Stelle die mittlere Zahl der Bewohner pro Wohneinheit in Zweifamilienhäusern (und Doppelhaushälften) drei Jahre nach dem Bezug verändern. Dies kann z.B. sinnvoll sein, wenn die Wohneinheiten deutlich kleiner oder größer sind als üblich oder wenn das Projekt sehr spezifische Zielgruppen anspricht.</p><p>Die voreingestellte Standardannahme sind 2,8 Personen pro Wohneinheit.</p>",
+    "ew_je_we_rh": "<p>Sofern aus Ihrer Sicht notwendig, können Sie an dieser Stelle die mittlere Zahl der Bewohner pro Wohneinheit in Reihenhäusern drei Jahre nach dem Bezug verändern. Dies kann z.B. sinnvoll sein, wenn die Wohneinheiten deutlich kleiner oder größer sind als üblich oder wenn das Projekt sehr spezifische Zielgruppen anspricht.</p><p>Die voreingestellte Standardannahme sind 2,7 Personen pro Wohneinheit.</p>",
+    "ew_je_we_mfh": "<p>Sofern aus Ihrer Sicht notwendig, können Sie an dieser Stelle die mittlere Zahl der Bewohner pro Wohneinheit in Mehrfamilienhäusern drei Jahre nach dem Bezug verändern. Dies kann z.B. sinnvoll sein, wenn die Wohneinheiten deutlich kleiner oder größer sind als üblich oder wenn das Projekt sehr spezifische Zielgruppen anspricht.</p><p>Die voreingestellte Standardannahme sind 1,9 Personen pro Wohneinheit.</p>"
+}

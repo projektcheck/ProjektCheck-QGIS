@@ -1,0 +1,7 @@
+{
+    "beschreibung": "",
+    "lebensdauer": "",
+    "euro_EH": "",
+    "euro_EN": "",
+    "euro_BU": ""
+}

@@ -1,6 +1,0 @@
-{
-    "allgemein": "",
-    "name": "",
-    "area": "",
-    "typ": ""
-}

@@ -1,0 +1,15 @@
+{
+    "beschreibung": "",
+    "1 - Erstmalige Herstellung_presets": "<y<yx",
+    "1 - Erstmalige Herstellung_Anteil_GSB": "",
+    "1 - Erstmalige Herstellung_Anteil_GEM": "",
+    "1 - Erstmalige Herstellung_Anteil_ALL": "",
+    "2 - Betrieb und Unterhaltung_presets": "dfdfdfd",
+    "2 - Betrieb und Unterhaltung_Anteil_GSB": "",
+    "2 - Betrieb und Unterhaltung_Anteil_GEM": "",
+    "2 - Betrieb und Unterhaltung_Anteil_ALL": "",
+    "3 - Erneuerung_presets": "fgfgffgf",
+    "3 - Erneuerung_Anteil_GSB": "",
+    "3 - Erneuerung_Anteil_GEM": "",
+    "3 - Erneuerung_Anteil_ALL": ""
+}
