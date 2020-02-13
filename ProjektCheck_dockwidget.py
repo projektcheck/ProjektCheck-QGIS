@@ -183,20 +183,28 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         infrastructuralcosts = InfrastructuralCosts()
         self.domains.append(infrastructuralcosts)
 
+        inactive = []
+
         municipaltaxrevenue = MunicipalTaxRevenue()
-        self.domains.append(municipaltaxrevenue)
+        inactive.append(municipaltaxrevenue)
 
         supermarkets = SupermarketsCompetition()
-        self.domains.append(supermarkets)
+        inactive.append(supermarkets)
 
         # fill the analysis menu with available domains
         menu = QMenu()
+        current_dir = os.path.dirname(os.path.realpath(__file__))
         for domain in self.domains:
-            current_dir = os.path.dirname(os.path.realpath(__file__))
             icon = QIcon(os.path.join(current_dir, domain.ui_icon))
             action = menu.addAction(icon, domain.ui_label)
             action.triggered.connect(
                 lambda e, d=domain: self.show_dockwidget(d))
+
+        for domain in inactive:
+            icon = QIcon(os.path.join(current_dir, domain.ui_icon))
+            action = menu.addAction(icon, f'{domain.ui_label} (demnächst)')
+            action.setEnabled(False)
+
         self.ui.domain_button.setMenu(menu)
 
     def install_pandas(self):

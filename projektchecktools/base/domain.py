@@ -35,7 +35,8 @@ class PCDockWidget(QObject):
     closingWidget = pyqtSignal()
     project_manager = ProjectManager()
 
-    def __init__(self, iface=None, canvas=None, position=Qt.RightDockWidgetArea):
+    def __init__(self, iface=None, canvas=None,
+                 position=Qt.RightDockWidgetArea):
         '''
         Parameters
         ----------
@@ -146,7 +147,8 @@ class Domain(PCDockWidget):
     ui_label = None
     ui_icon = ""
 
-    def __init__(self, iface=None, canvas=None, position=Qt.RightDockWidgetArea):
+    def __init__(self, iface=None, canvas=None,
+                 position=Qt.RightDockWidgetArea):
         super().__init__(iface=iface, canvas=canvas, position=position)
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
 
