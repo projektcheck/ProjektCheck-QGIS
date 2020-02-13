@@ -1,0 +1,9 @@
+{
+    "beschreibung": "",
+    "Wohnen_gesamt": "",
+    "Wohnen_miv": "",
+    "Einzelhandel_gesamt": "",
+    "Einzelhandel_miv": "",
+    "Gewerbe_gesamt": "",
+    "Gewerbe_miv": ""
+}

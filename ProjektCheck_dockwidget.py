@@ -5,16 +5,16 @@ from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import  QgsProject
 
-from projektcheck.base.domain import PCDockWidget
-from projektcheck.base.dialogs import (SettingsDialog, NewProjectDialog,
+from projektchecktools.base.domain import PCDockWidget
+from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
                                        ProgressDialog)
-from projektcheck.base.project import (ProjectLayer, OSMBackgroundLayer,
+from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
                                        TerrestrisBackgroundLayer)
-from projektcheck.base.database import Workspace
-from projektcheck.domains.definitions.tables import Teilflaechen
-from projektcheck.domains.definitions.project import (ProjectInitialization,
+from projektchecktools.base.database import Workspace
+from projektchecktools.domains.definitions.tables import Teilflaechen
+from projektchecktools.domains.definitions.project import (ProjectInitialization,
                                                       CloneProject)
-from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
+from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
                                   Traffic, Reachabilities, Ecology,
                                   LandUse, InfrastructuralCosts,
                                   MunicipalTaxRevenue,
@@ -127,7 +127,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.ui.clone_project_button.clicked.connect(clone_project)
 
-
+        self.setup_help()
         self.setup_projects()
 
     def setup_projects(self):
@@ -135,6 +135,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
+        self.ui.project_combo.clear()
+        self.ui.project_combo.addItem('Projekt wählen')
         self.ui.project_combo.model().item(0).setEnabled(False)
         self.ui.domain_button.setEnabled(False)
         self.ui.definition_button.setEnabled(False)
@@ -183,21 +185,46 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         infrastructuralcosts = InfrastructuralCosts()
         self.domains.append(infrastructuralcosts)
 
+        inactive = []
+
         municipaltaxrevenue = MunicipalTaxRevenue()
-        self.domains.append(municipaltaxrevenue)
+        inactive.append(municipaltaxrevenue)
 
         supermarkets = SupermarketsCompetition()
-        self.domains.append(supermarkets)
+        inactive.append(supermarkets)
 
         # fill the analysis menu with available domains
         menu = QMenu()
+        current_dir = os.path.dirname(os.path.realpath(__file__))
         for domain in self.domains:
-            current_dir = os.path.dirname(os.path.realpath(__file__))
             icon = QIcon(os.path.join(current_dir, domain.ui_icon))
             action = menu.addAction(icon, domain.ui_label)
             action.triggered.connect(
                 lambda e, d=domain: self.show_dockwidget(d))
+
+        for domain in inactive:
+            icon = QIcon(os.path.join(current_dir, domain.ui_icon))
+            action = menu.addAction(icon, f'{domain.ui_label} (demnächst)')
+            action.setEnabled(False)
+
         self.ui.domain_button.setMenu(menu)
+
+    def setup_help(self):
+        menu = QMenu()
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        icon_path = 'images/iconset_mob/20190619_iconset_mob_info_1.png'
+        menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)),
+            'Schnelleinstieg')
+        icon_path = 'images/icon.png'
+        menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)),
+            'Über Projekt-Check')
+        icon_path = 'images/iconset_mob/20190619_iconset_mob_asphalt_1.png'
+        menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)),
+            'Haftungssausschluss')
+        self.ui.help_button.setMenu(menu)
 
     def install_pandas(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))

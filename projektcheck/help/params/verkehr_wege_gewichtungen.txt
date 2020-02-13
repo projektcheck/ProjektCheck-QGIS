@@ -1,7 +1,0 @@
-{
-    "beschreibung": "",
-    "1_gesamt": "",
-    "1_miv": "",
-    "2_gesamt": "",
-    "2_miv": ""
-}
