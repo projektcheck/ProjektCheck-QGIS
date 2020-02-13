@@ -508,6 +508,7 @@ class InfrastructuralCosts(Domain):
         self.ui.kostenvergleich_button.clicked.connect(self.kostenvergleich)
 
     def load_content(self):
+        super().load_content()
         self.drawing.load_content()
         self.kostenaufteilung.load_content()
         self.gesamtkosten.load_content()

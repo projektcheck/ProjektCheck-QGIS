@@ -100,6 +100,7 @@ class Ecology(Domain):
             disabled_out.set_visibility(False)
 
     def load_content(self):
+        super().load_content()
         areas = Teilflaechen.features()
         self.area = None
         for area in areas:

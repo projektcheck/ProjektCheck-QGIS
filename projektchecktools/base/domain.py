@@ -152,6 +152,8 @@ class Domain(PCDockWidget):
                  position=Qt.RightDockWidgetArea):
         super().__init__(iface=iface, canvas=canvas, position=position)
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
+
+    def load_content(self):
         if self.layer_group:
             tree_layer = ProjectLayer.find(self.layer_group)
             if tree_layer:

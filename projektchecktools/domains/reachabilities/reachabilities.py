@@ -54,6 +54,7 @@ class Reachabilities(Domain):
         self.ui.oepnvkarte_button.clicked.connect(self.oepnv_map)
 
     def load_content(self):
+        super().load_content()
         self.haltestellen = Haltestellen.features(create=True)\
             .filter(flaechenzugehoerig=True, abfahrten__gt=0)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
