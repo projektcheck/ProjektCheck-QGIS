@@ -45,6 +45,7 @@ class LandUse(Domain):
         self.ui.remove_drawing_button.clicked.connect(self.remove_borders)
 
     def load_content(self):
+        super().load_content()
         self.gebaeudetypen_base = self.basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         )

@@ -367,7 +367,8 @@ class BahnRouter(Worker):
 
         for i, (index, center) in enumerate(df_centers.iterrows()):
             id_destination = center['id_haltestelle']
-            destination = self.haltestellen.get(id_bahn=id_destination)
+            destination = self.haltestellen.get(id_bahn=id_destination,
+                                                flaechenzugehoerig=0)
             self.log(f'  - {destination.name} ({i+1}/{n_centers})')
 
             progress += prog_share

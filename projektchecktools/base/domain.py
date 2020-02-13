@@ -3,7 +3,7 @@ from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject, QThread
 from qgis import utils
 import os
 
-from projektchecktools.base.project import ProjectManager
+from projektchecktools.base.project import ProjectManager, ProjectLayer
 
 UI_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'ui')
 
@@ -146,14 +146,25 @@ class Domain(PCDockWidget):
     '''
     ui_label = None
     ui_icon = ""
+    layer_group = ''
 
     def __init__(self, iface=None, canvas=None,
                  position=Qt.RightDockWidgetArea):
         super().__init__(iface=iface, canvas=canvas, position=position)
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
 
-    def connect(self):
-        pass
+    def load_content(self):
+        if self.layer_group:
+            tree_layer = ProjectLayer.find(self.layer_group)
+            if tree_layer:
+                tree_layer[0].setItemVisibilityChecked(True)
+
+    def close(self):
+        super().close()
+        if self.layer_group:
+            tree_layer = ProjectLayer.find(self.layer_group)
+            if tree_layer:
+                tree_layer[0].setItemVisibilityChecked(False)
 
 
 class Worker(QThread):

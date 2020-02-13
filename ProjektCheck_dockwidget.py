@@ -127,7 +127,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.ui.clone_project_button.clicked.connect(clone_project)
 
-
+        self.setup_help()
         self.setup_projects()
 
     def setup_projects(self):
@@ -135,6 +135,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
+        self.ui.project_combo.clear()
+        self.ui.project_combo.addItem('Projekt wählen')
         self.ui.project_combo.model().item(0).setEnabled(False)
         self.ui.domain_button.setEnabled(False)
         self.ui.definition_button.setEnabled(False)
@@ -206,6 +208,23 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             action.setEnabled(False)
 
         self.ui.domain_button.setMenu(menu)
+
+    def setup_help(self):
+        menu = QMenu()
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        icon_path = 'images/iconset_mob/20190619_iconset_mob_info_1.png'
+        menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)),
+            'Schnelleinstieg')
+        icon_path = 'images/icon.png'
+        menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)),
+            'Über Projekt-Check')
+        icon_path = 'images/iconset_mob/20190619_iconset_mob_asphalt_1.png'
+        menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)),
+            'Haftungssausschluss')
+        self.ui.help_button.setMenu(menu)
 
     def install_pandas(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))

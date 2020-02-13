@@ -46,6 +46,7 @@ class Traffic(Domain):
             self.calculate_traffic)
 
     def load_content(self):
+        super().load_content()
         self.connectors = Connectors.features(create=False)
         self.links = Links.features(project=self.project, create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,

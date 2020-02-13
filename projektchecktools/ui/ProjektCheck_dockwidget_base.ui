@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>742</width>
+    <width>802</width>
     <height>79</height>
    </size>
   </property>
@@ -484,7 +484,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                </font>
               </property>
               <property name="text">
-               <string>Projekt-Definitionen</string>
+               <string>Projektdefinition</string>
               </property>
              </widget>
             </item>
@@ -500,15 +500,70 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                <font>
                 <family>MS Shell Dlg 2</family>
                 <pointsize>8</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="contextMenuPolicy">
                <enum>Qt::DefaultContextMenu</enum>
               </property>
               <property name="text">
-               <string>Analyse-Tools  </string>
+               <string>Wirkungsanalysen  </string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>false</bool>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::NoArrow</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>12</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="help_button">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>MS Shell Dlg 2</family>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::DefaultContextMenu</enum>
+              </property>
+              <property name="text">
+               <string>Info  </string>
               </property>
               <property name="checkable">
                <bool>false</bool>

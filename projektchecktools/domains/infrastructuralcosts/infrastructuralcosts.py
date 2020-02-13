@@ -21,10 +21,10 @@ from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
 
 
 class InfrastructureDrawing:
-    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
 
-    def __init__(self, ui, project, canvas):
+    def __init__(self, ui, project, canvas, layer_group):
         self.ui = ui
+        self.layer_group = layer_group
         self.project = project
         self.canvas = canvas
         self.ui.show_lines_button.clicked.connect(
@@ -497,15 +497,18 @@ class InfrastructuralCosts(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_06-IFK.ui'
     ui_icon = ('images/iconset_mob/'
                '20190619_iconset_mob_domain_infrstucturalcosts_4.png')
+    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
 
     def setupUi(self):
         self.drawing = InfrastructureDrawing(self.ui, project=self.project,
-                                             canvas=self.canvas)
+                                             canvas=self.canvas,
+                                             layer_group=self.layer_group)
         self.kostenaufteilung = Kostentraeger(self.ui, project=self.project)
         self.gesamtkosten = Gesamtkosten(self.ui, project=self.project)
         self.ui.kostenvergleich_button.clicked.connect(self.kostenvergleich)
 
     def load_content(self):
+        super().load_content()
         self.drawing.load_content()
         self.kostenaufteilung.load_content()
         self.gesamtkosten.load_content()
