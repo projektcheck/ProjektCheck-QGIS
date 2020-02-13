@@ -376,8 +376,13 @@ class ProjectLayer(Layer):
              read_only=True, redraw=True):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
-        layer = super().draw(style_path=style_path, label=label, checked=checked,
-                             filter=filter, redraw=redraw)
+        #try:
+        layer = super().draw(style_path=style_path, label=label,
+                             checked=checked, filter=filter, redraw=redraw)
+        #except RuntimeError:
+            #layer = super().draw(style_path=style_path, label=label,
+                                 #checked=checked, filter=filter, redraw=redraw)
+
         layer.setReadOnly(read_only)
         return layer
 

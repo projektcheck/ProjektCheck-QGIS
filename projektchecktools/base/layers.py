@@ -17,15 +17,27 @@ def nest_groups(parent, groupnames, prepend=True):
 class Layer(ABC):
 
     def __init__(self, layername, data_path, groupname='', prepend=True):
-        self.root = QgsProject.instance().layerTreeRoot()
         self.layername = layername
         self.data_path = data_path
         self.layer = None
         self._l = None
-        if groupname:
-            groupnames = groupname.split('/')
-            group = nest_groups(self.root, groupnames, prepend=prepend)
-            self.root = group
+        self.groupname = groupname
+        self.prepend = prepend
+
+    @property
+    def root(self):
+        root = QgsProject.instance().layerTreeRoot()
+        if self.groupname:
+            groupnames = self.groupname.split('/')
+            group = nest_groups(root, groupnames, prepend=self.prepend)
+            root = group
+        return root
+
+    @property
+    def tree_layer(self):
+        if not self.layer:
+            return None
+        return self.root.findLayer(self.layer)
 
     @classmethod
     def find(self, label, groupname=''):
@@ -33,8 +45,10 @@ class Layer(ABC):
         if groupname:
             groupnames = groupname.split('/')
             while groupnames:
-                g = groupnames.pop()
+                g = groupnames.pop(0)
                 root = root.findGroup(g)
+                if not root:
+                    return
 
         def deep_find(node, label):
             found = []
@@ -51,34 +65,35 @@ class Layer(ABC):
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None, expanded=True):
         # ToDo: force redraw (delete and add)
-        if not self.layer:
-            for child in self.root.children():
-                if child.name() == label:
-                    self.layer = child.layer()
-                    break
         if redraw:
             self.remove()
+        elif not self.layer:
+            self.layer = Layer.find(label, groupname=self.groupname)
+
         if not self.layer:
             self.layer = QgsVectorLayer(self.data_path, self.layername, "ogr")
             if label:
                 self.layer.setName(label)
             QgsProject.instance().addMapLayer(self.layer, False)
             self.layer.loadNamedStyle(style_path)
-        if not self._l:
-            self._l = self.root.findLayer(self.layer)
-        if not self._l:
-            self._l = self.root.addLayer(self.layer)
-        self._l.setItemVisibilityChecked(checked)
-        self._l.setExpanded(expanded)
+        tree_layer = self.tree_layer
+        if not tree_layer:
+            self.root.addLayer(self.layer)
+            tree_layer = self.tree_layer
+        tree_layer.setItemVisibilityChecked(checked)
+        tree_layer.setExpanded(expanded)
         if filter is not None:
             self.layer.setSubsetString(filter)
         return self.layer
 
     def set_visibility(self, state):
-        if self._l:
-            self._l.setItemVisibilityChecked(state)
+        tree_layer = self.tree_layer
+        if tree_layer:
+            tree_layer.setItemVisibilityChecked(state)
 
     def zoom_to(self):
+        if not self.layer:
+            return
         canvas = iface.mapCanvas()
         self.layer.updateExtents()
         canvas.setExtent(self.layer.extent())
@@ -88,7 +103,6 @@ class Layer(ABC):
             return
         QgsProject.instance().removeMapLayer(self.layer.id())
         self.layer = None
-        self._l = None
 
 
 class TileLayer(Layer):
