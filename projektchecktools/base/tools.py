@@ -1,19 +1,13 @@
-try:
-    from shapely import geometry, wkt
-    from shapely.ops import nearest_points
-    SHAPELY_LOADED = True
-except:
-    SHAPELY_LOADED = False
-
+from qgis.core import QgsGeometryUtils
 from qgis import utils
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QTimer
 from qgis.PyQt.QtGui import QCursor, QColor
 from qgis.gui import (QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand,
                       QgsVertexMarker)
 from qgis.PyQt.QtWidgets import QToolTip
-from qgis.core import (QgsFeature, QgsCoordinateTransform,
+from qgis.core import (QgsFeature, QgsCoordinateTransform, QgsCurvePolygon,
                        QgsProject, QgsCoordinateReferenceSystem, QgsGeometry,
-                       QgsPointXY, QgsWkbTypes)
+                       QgsPointXY, QgsWkbTypes, QgsPoint)
 
 
 class MapTool:
@@ -149,9 +143,13 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
         self.reset()
 
     def set_snap_geometry(self, geom):
-        if not geom or not SHAPELY_LOADED:
+        #if not geom or not SHAPELY_LOADED:
+            #return
+        #self.snap_geometry = wkt.loads(geom.asWkt()).boundary
+        if not geom:
             return
-        self.snap_geometry = wkt.loads(geom.asWkt()).boundary
+        self.snap_geometry = QgsCurvePolygon()
+        self.snap_geometry.fromWkt(geom.asWkt())
 
     def reset(self):
         scene = self.canvas.scene()
@@ -170,10 +168,9 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
         self.reset()
 
     def _snap(self, x, y):
-        point = geometry.Point(x, y)
-        np = nearest_points(self.snap_geometry, point)[0]
-        point = QgsPointXY(np.x, np.y)
-        return point
+        closest = QgsGeometryUtils.closestPoint(
+            self.snap_geometry, QgsPoint(x, y))
+        return QgsPointXY(closest.x(), closest.y())
 
     def canvasPressEvent(self, e):
         if(e.button() == Qt.RightButton):
