@@ -1,13 +1,16 @@
 import os
+from qgis.core import QgsPoint, QgsLineString, QgsDistanceArea
+from qgis.core import QgsGeometryUtils
 from qgis.core import (QgsGeometry, QgsPoint, QgsProject,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform)
+import math
 
 from projektchecktools.utils.spatial import Point
 from projektchecktools.domains.traffic.otp_router import OTPRouter
 from projektchecktools.base.domain import Worker
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.traffic.tables import (
-    Connectors, Links, Nodes, Legs, TransferNodes, Ways)
+    Connectors, Links, Nodes, Itineraries, TransferNodes, Ways)
 
 from settings import settings
 
@@ -23,7 +26,7 @@ class Routing(Worker):
         self.distance = distance
         self.areas = Teilflaechen.features(project=project)
         self.connectors = Connectors.features(project=project)
-        self.legs = Legs.features(project=project, create=True)
+        self.itineraries = Itineraries.features(project=project, create=True)
         self.links = Links.features(project=project, create=True)
         self.ways = Ways.features(project=project, create=True)
         self.nodes = Nodes.features(project=project, create=True)
@@ -73,7 +76,7 @@ class Routing(Worker):
                 'auf den Teilflächen.')
             return
 
-        self.legs.delete()
+        self.itineraries.delete()
 
         for i, area in enumerate(self.areas):
             self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
@@ -107,18 +110,21 @@ class Routing(Worker):
                 points = [QgsPoint(y, x) for (x, y) in coords]
                 polyline = QgsGeometry.fromPolyline(points)
                 polyline.transform(transform)
-                self.legs.add(geom=polyline)
+                self.itineraries.add(geom=polyline)
                 r_id += 1
             self.set_progress(60 * (i + 1) / len(self.areas))
 
         otp_router.nodes.transform()
-        self.log("berechne Zielknoten...")
         self.set_progress(60)
+
+        self.log("berechne Zielknoten...")
         otp_router.nodes_to_graph(meters=inner_circle)
         otp_router.transfer_nodes.calc_initial_weight()
-        self.log("berechne Gewichte...")
         self.set_progress(70)
+
+        self.log("berechne Gewichte...")
         otp_router.calc_vertex_weights()
+
         self.log("schreibe Ergebnisse...")
         links_df = otp_router.get_polyline_features()
         self.links.delete()
@@ -129,6 +135,26 @@ class Routing(Worker):
         transfer_nodes_df = otp_router.get_transfer_node_features()
         self.transfer_nodes.delete()
         self.transfer_nodes.update_pandas(transfer_nodes_df)
+        self.set_progress(90)
+
+        self.log("Ordne Routen den Zielknoten zu...")
+        transfer_points = [n.geom.asPoint() for n in self.transfer_nodes]
+        transfer_points = [QgsPoint(n.x(), n.y()) for n in transfer_points]
+        transfer_ids = [node.id for node in self.transfer_nodes]
+        distance = QgsDistanceArea()
+        for itinerary in self.itineraries:
+            line = QgsLineString()
+            line.fromWkt(itinerary.geom.asWkt())
+            distances = []
+            for point in transfer_points:
+                closest =  QgsGeometryUtils.closestPoint(line, point)
+                distance = math.sqrt((closest.x() - point.x())**2 +
+                                     (closest.y() - point.y())**2)
+                distances.append(distance)
+            idx = distances.index(min(distances))
+            node_id = transfer_ids[idx]
+            itinerary.transfer_node_id = node_id
+            itinerary.save()
         otp_router.dump(self.otp_pickle_file)
 
     def recalculate(self):

@@ -11,7 +11,7 @@ from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.tools import MapClickedTool
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.traffic.tables import (
-    Connectors, Links, Legs, TransferNodes, Ways)
+    Connectors, Links, Itineraries, TransferNodes, Ways)
 from projektchecktools.domains.traffic.routing import Routing
 from projektchecktools.base.params import (Params, Param, Title,
                                            Seperator, SumDependency)
@@ -51,7 +51,7 @@ class Traffic(Domain):
         self.links = Links.features(project=self.project, create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
                                                      create=True)
-        self.legs = Legs.features(project=self.project, create=True)
+        self.itineraries = Itineraries.features(project=self.project, create=True)
         self.ways = Ways.features(project=self.project, create=True)
         self.areas = Teilflaechen.features()
 
@@ -192,7 +192,7 @@ class Traffic(Domain):
         output.draw(label='Zusätzliche PKW-Fahrten',
                     style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml')
 
-        output = ProjectLayer.from_table(self.legs.table,
+        output = ProjectLayer.from_table(self.itineraries.table,
                                          groupname=self.layer_group)
         output.draw(label='kürzeste Wege')
 

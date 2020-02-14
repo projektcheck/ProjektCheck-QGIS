@@ -390,7 +390,7 @@ class ProjectLayer(Layer):
         return Layer.find(label, groupname=groupname)
 
     def draw(self, style_file=None, label='', checked=True, filter=None,
-             read_only=True, redraw=False):
+             read_only=True, redraw=True):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
 
