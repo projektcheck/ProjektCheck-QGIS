@@ -144,6 +144,7 @@ class GeopackageTest(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: self.table.update_pandas(df_new, pkeys=['value']))
+        #df_new['fid'] = [10, 11, 12, 13]
         self.table.update_pandas(df_new, pkeys=['name'])
 
     def test_pandas_update(self):
@@ -172,7 +173,7 @@ class GeopackageTest(unittest.TestCase):
         assert len(uq1) == 1
         assert uq1[0] == 0
         assert len(uq2) == 1
-        assert uq2[0] == 'hallo'
+        assert uq2[0] == '"hallo"'
 
     @classmethod
     def tearDownClass(cls):

@@ -293,7 +293,10 @@ class GeopackageTable(Table):
 
     def add(self, **kwargs):
         geom = kwargs.pop(self.geom_field, None)
+        id = kwargs.pop(self.id_field, None)
         feature = ogr.Feature(self._layer.GetLayerDefn())
+        if id is not None:
+            feature.SetFID(id)
         for field, value in kwargs.items():
             if field not in self.field_names:
                 continue
@@ -437,6 +440,7 @@ class GeopackageTable(Table):
             if not isnan(pk):
                 success = self.set(int(pk), **items)
                 if not success:
+                    items[self.id_field] = pk
                     self.add(**items)
             else:
                 self.add(**items)

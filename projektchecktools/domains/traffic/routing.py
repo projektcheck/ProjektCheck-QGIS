@@ -134,6 +134,7 @@ class Routing(Worker):
         self.nodes.update_pandas(nodes_df)
         transfer_nodes_df = otp_router.get_transfer_node_features()
         self.transfer_nodes.delete()
+        transfer_nodes_df['fid'] = range(1, len(transfer_nodes_df) + 1)
         self.transfer_nodes.update_pandas(transfer_nodes_df)
         self.set_progress(90)
 
