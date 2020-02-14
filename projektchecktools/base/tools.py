@@ -1,5 +1,9 @@
-from shapely import geometry, wkt
-from shapely.ops import nearest_points
+try:
+    from shapely import geometry, wkt
+    from shapely.ops import nearest_points
+    SHAPELY_LOADED = True
+except:
+    SHAPELY_LOADED = False
 
 from qgis import utils
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QTimer
@@ -145,7 +149,7 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
         self.reset()
 
     def set_snap_geometry(self, geom):
-        if not geom:
+        if not geom or not SHAPELY_LOADED:
             return
         self.snap_geometry = wkt.loads(geom.asWkt()).boundary
 
