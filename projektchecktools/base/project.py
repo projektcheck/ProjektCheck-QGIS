@@ -355,6 +355,23 @@ class ProjectTable:
 
 
 class ProjectLayer(Layer):
+    #_project_layers = {}
+
+    #def __new__(cls, *args, **kwargs):
+        #project = kwargs.get('project', ProjectManager().active_project)
+        #groupname = kwargs.get('groupname', '')
+        #groupname = f'{project.groupname}/{groupname}' if groupname \
+            #else project.groupname
+        #layername = args[0]
+        #key = f'{project.groupname}-{groupname}-{layername}'
+        #layer = cls._project_layers.get(key, None)
+        #if not layer:
+            #layer = super().__new__(cls)
+            #layer.__init__(*args, **kwargs)
+            #layer.project = project
+            #cls._project_layers[key] = layer
+        #layer.root.setItemVisibilityChecked(True)
+        #return layer
 
     def __init__(self, layername, data_path, groupname='', project=None,
                  prepend=True):
@@ -373,7 +390,7 @@ class ProjectLayer(Layer):
         return Layer.find(label, groupname=groupname)
 
     def draw(self, style_file=None, label='', checked=True, filter=None,
-             read_only=True, redraw=True):
+             read_only=True, redraw=False):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
 

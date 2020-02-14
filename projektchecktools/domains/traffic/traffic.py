@@ -5,7 +5,7 @@ from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
 from qgis.PyQt.QtWidgets import QVBoxLayout
 
 from projektchecktools.base.domain import Domain
-from projektchecktools.utils.utils import clearLayout
+from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.tools import MapClickedTool
@@ -77,19 +77,15 @@ class Traffic(Domain):
 
     def setup_settings(self):
         layout = self.ui.settings_group.layout()
-        if not layout:
-            layout = QVBoxLayout()
-            self.ui.settings_group.setLayout(layout)
-        else:
-            clearLayout(layout)
+        clear_layout(layout)
         if self.params:
             self.params.close()
         self.params = Params(parent=layout, button_label='Annahmen verändern',
                              help_file='verkehr_wege_gewichtungen.txt')
-        if len(self.transfer_nodes) == 0:
-            # workaround: otherwise the params don't show later (don't know why)
-            self.params.show()
-            return
+        #if len(self.transfer_nodes) == 0:
+            ## workaround: otherwise the params don't show later (don't know why)
+            #self.params.show()
+            #return
 
         self.params.add(Title('Verkehrsaufkommen und Verkehrsmittelwahl'))
         for i, way in enumerate(self.ways):

@@ -2,6 +2,7 @@ from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
                           QLabel, QGridLayout, QDialogButtonBox, QWidget)
+from projektchecktools.utils.utils import clear_layout
 from qgis.PyQt.QtGui import QFont, QIcon, QCursor
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
                                  QPushButton, QLayoutItem)
@@ -282,6 +283,8 @@ class Params(QObject):
         self.parent = parent
         self.dialog = None
         self.editable = editable
+        self.layout = QVBoxLayout()
+        self.layout.setSpacing(5)
         self.help_dict = {}
         if help_file:
             self.help_file = help_file if os.path.exists(help_file) else \
@@ -338,10 +341,12 @@ class Params(QObject):
             with open(self.help_file, 'w') as json_file:
                 json.dump(self.help_dict, json_file, indent=4)
 
-        self.dialog = ParamsDialog(help_text=self.help_dict['beschreibung'])
-
-        self.layout = QVBoxLayout()
-        self.layout.setSpacing(5)
+        #parent = self.parent.parent() if not isinstance(self.parent) \
+            #else self.parent
+        #if not isinstance(parent, QWidget):
+        parent = None
+        self.dialog = ParamsDialog(parent=parent,
+                                   help_text=self.help_dict['beschreibung'])
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
@@ -378,7 +383,9 @@ class Params(QObject):
         close rendered parameters
         '''
         if self.dialog:
+            clear_layout(self.dialog.layout)
             del(self.dialog)
+        clear_layout(self.layout)
 
     def show_dialog(self):
         '''

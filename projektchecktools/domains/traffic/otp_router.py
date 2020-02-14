@@ -454,6 +454,8 @@ class OTPRouter(object):
         leg = itinerary['legs'][0]
         points = leg['legGeometry']['points']
         coord_list = PolylineCodec().decode(points)
+        if len(coord_list) == 0:
+            return
         route = self.routes.get_route(route_id, source_id)
         self.nodes.add_points(coord_list, route)
         if source_id not in self.areas:

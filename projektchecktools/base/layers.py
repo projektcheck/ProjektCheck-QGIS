@@ -64,11 +64,12 @@ class Layer(ABC):
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None, expanded=True):
-        # ToDo: force redraw (delete and add)
+        if not self.layer:
+            layers = Layer.find(label, groupname=self.groupname)
+            if layers:
+                self.layer = layers[0].layer()
         if redraw:
             self.remove()
-        elif not self.layer:
-            self.layer = Layer.find(label, groupname=self.groupname)
 
         if not self.layer:
             self.layer = QgsVectorLayer(self.data_path, self.layername, "ogr")

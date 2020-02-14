@@ -8,7 +8,7 @@ from projektchecktools.base.params import (Params, Param, Title,
                                       Seperator, SumDependency)
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
-from projektchecktools.utils.utils import clearLayout
+from projektchecktools.utils.utils import clear_layout
 from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.domains.traffic.traffic import Traffic
 from projektchecktools.domains.traffic.tables import Connectors
@@ -39,7 +39,7 @@ class Wohnen:
 
     def setup_params(self, area):
         self.area = area
-        clearLayout(self.layout)
+        clear_layout(self.layout)
         self.params = Params(self.layout,
                              help_file='definitionen_wohnen.txt')
         self.params.add(Title('Bezugszeitraum'))
@@ -302,7 +302,7 @@ class Gewerbe:
 
     def setup_params(self, area):
         self.area = area
-        clearLayout(self.layout)
+        clear_layout(self.layout)
         self.params = Params(self.layout,
                              help_file='definitionen_gewerbe.txt')
 
@@ -497,7 +497,7 @@ class Einzelhandel:
 
     def setup_params(self, area):
         self.area = area
-        clearLayout(self.layout)
+        clear_layout(self.layout)
         self.params = Params(self.layout,
                              help_file='definitionen_einzelhandel.txt')
 
@@ -622,7 +622,7 @@ class ProjectDefinitions(Domain):
 
     def setup_type(self):
         layout = self.ui.parameter_group.layout()
-        clearLayout(layout)
+        clear_layout(layout)
         self.params = Params(layout,
                              help_file='definitionen_flaechen.txt')
         self.params.name = Param(self.area.name, LineEdit(width=300),
@@ -664,7 +664,7 @@ class ProjectDefinitions(Domain):
 
     def setup_type_params(self):
         typ = self.params.typ.value
-        clearLayout(self.ui.type_parameter_group.layout())
+        clear_layout(self.ui.type_parameter_group.layout())
         self.typ = self.types[typ]
         if self.typ is None:
             return
