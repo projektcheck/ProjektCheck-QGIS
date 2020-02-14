@@ -1,7 +1,7 @@
 {
-    "beschreibung": "",
-    "lebensdauer": "",
-    "euro_EH": "",
-    "euro_EN": "",
-    "euro_BU": ""
+    "beschreibung": "<b>Mit dieser Funktion können Sie die Kostensätze pro laufendem Meter für die einzelnen Erschließungsnetze und ihre Netzelement ansehen und bei Bedarf anpassen.</b><p>Die in diesem Dialogfenster gezeigten Kostenkennwerte gelten nur für Linienelemente, nicht hingegen für punktuelle Maßnahmen. Für letztere geben Sie die Kostensätze direkt beim Einzeichnen ein.</p><p>Jedem linienhaften Netzelement sind jeweils vier Kostenkennwerte zugeordnet:</p><ul><li>die (einmaligen) Kosten der erstmaligen Herstellung (in Euro pro laufendem Meter)</li><li>die jährlichen Kosten für Betrieb und Unterhaltung (in Cent pro laufendem Meter und Jahr)</li><li>die (zyklischen) Kosten für die Erneuerung (in Euro pro laufendem Meter und Erneuerungszyklus)</li><li>die Lebensdauer der Bauteile, d.h. die Dauer zwischen erstmaliger Herstellung und erster Erneuerung (in Jahren)</li></ul>",
+    "lebensdauer": "<b>Wie viele Jahre umfasst im Mittel die technische bzw. wirtschaftliche Lebensdauer des ausgewählten Netzelements?</b><p>Anders formuliert: Nach wie vielen Jahren ist trotz der eingesetzten jährlichen Mittel für Betrieb und Unterhaltung eine Erneuerung des Netzelements notwendig?</p><p>Zu diesem Zeitpunkt fallen die im vorigen Eingabefeld eingetragenen Erneuerungskosten zum ersten Mal an. Danach wird von einem zyklischen Wiederauftreten der Erneuerungskosten nach Ablauf der jeweils gleichen Anzahl von Jahren ausgegangen.</p>",
+    "euro_EH": "<b>Wie hoch sind voraussichtlich die (einmaligen) Kosten der erstmaligen Herstellung pro laufendem Meter des ausgewählten Netzelements?</b><p>Geben Sie den Gesamtbetrag an, unabhängig davon, wer diesen zu tragen hat.</p>",
+    "euro_EN": "<b>Wie hoch sind voraussichtlich die Kosten pro laufendem Meter, wenn das ausgewählte Netzelement nach Ablauf seiner Lebensdauer erneuert werden muss? </b><p>Geben Sie den Gesamtbetrag an, unabhängig davon, wer diesen zu tragen hat.</p>",
+    "euro_BU": "<b>Wie hoch sind voraussichtlich im Mittel die jährlichen Kosten für Betrieb und Unterhaltung pro laufendem Meter des ausgewählten Netzelements?</b><p>Geben Sie den Gesamtbetrag an, unabhängig davon, wer diesen zu tragen hat.</p>"
 }
