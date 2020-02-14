@@ -520,3 +520,7 @@ class InfrastructuralCosts(Domain):
         we_diagram.draw()
 
 
+    def close(self):
+        self.kostenaufteilung.params.close()
+        self.gesamtkosten.params.close()
+        super().close()

@@ -679,4 +679,5 @@ class ProjectDefinitions(Domain):
             layer.removeSelection()
         if hasattr(self, 'areas'):
             self.areas.table.workspace.close()
+        self.params.close()
         super().close()

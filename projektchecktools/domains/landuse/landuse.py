@@ -267,7 +267,6 @@ class LandUse(Domain):
                          'Plangebietsgrenze',)
         chart.draw()
 
-
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
         output = ProjectLayer.find('Nutzungen des Plangebiets')
@@ -276,4 +275,5 @@ class LandUse(Domain):
             layer.removeSelection()
         if hasattr(self, 'areas'):
             self.living_areas.table.workspace.close()
+        self.params.close()
         super().close()

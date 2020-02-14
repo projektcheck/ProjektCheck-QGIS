@@ -433,4 +433,7 @@ class Ecology(Domain):
             title='Leistungskennwerte Änderungen Planfall')
         diagram.draw()
 
-
+    def close(self):
+        self.params_nullfall.close()
+        self.params_planfall.close()
+        super().close()

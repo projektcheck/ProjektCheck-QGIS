@@ -72,20 +72,13 @@ class Traffic(Domain):
             # there is a signal for that in the ui file, but it isn't working
             # if checkbox is already invisible
             self.ui.distance_frame.setVisible(True)
-        self.params = None
         self.setup_settings()
 
     def setup_settings(self):
         layout = self.ui.settings_group.layout()
         clear_layout(layout)
-        if self.params:
-            self.params.close()
         self.params = Params(parent=layout, button_label='Annahmen verändern',
                              help_file='verkehr_wege_gewichtungen.txt')
-        #if len(self.transfer_nodes) == 0:
-            ## workaround: otherwise the params don't show later (don't know why)
-            #self.params.show()
-            #return
 
         self.params.add(Title('Verkehrsaufkommen und Verkehrsmittelwahl'))
         for i, way in enumerate(self.ways):
@@ -113,7 +106,6 @@ class Traffic(Domain):
         dependency = SumDependency(100)
         for node in self.transfer_nodes:
             perc = round(100 * node.weight / sum_weights)
-            node.save()
             param = Param(
                 perc,
                 Slider(maximum=100, lockable=True),
@@ -210,3 +202,7 @@ class Traffic(Domain):
                     style_file='verkehr_zielpunkte.qml')
 
         output.zoom_to()
+
+    def close(self):
+        self.params.close()
+        super().close()
