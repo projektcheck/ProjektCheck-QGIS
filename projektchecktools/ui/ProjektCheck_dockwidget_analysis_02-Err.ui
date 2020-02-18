@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>474</width>
-    <height>790</height>
+    <height>913</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -88,7 +88,7 @@ padding: 2px;
          <x>0</x>
          <y>0</y>
          <width>454</width>
-         <height>692</height>
+         <height>815</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
