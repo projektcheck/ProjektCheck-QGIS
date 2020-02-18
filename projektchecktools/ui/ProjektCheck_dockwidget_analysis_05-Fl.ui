@@ -176,7 +176,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wohndichte bestimmen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Wohndichte (WE pro Hektar Nettowohnbauland) für Teilflächen mit der Nutzung „Wohnen“ ermitteln und mit regionalen Durchschnittswerten vergleichen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wohnungsdichte bestimmen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Wohnungsdichte (WE pro Hektar Nettowohnbauland) für die ausgewählte Teilfläche mit der Nutzung „Wohnen“ ermitteln und mit regionalen Durchschnittswerten vergleichen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -199,7 +199,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wohnflächendichte bestimmen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Wohnflächendichte (m² Wohnfläche pro Hektar Nettowohnbauland) für Teilflächen mit der Nutzung „Wohnen“ ermitteln und mit regionalen Durchschnittswerten vergleichen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wohnflächendichte bestimmen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Wohnflächendichte (m² Wohnfläche pro Hektar Nettowohnbauland) für die ausgewählte Teilfläche mit der Nutzung „Wohnen“ ermitteln und mit regionalen Durchschnittswerten vergleichen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
