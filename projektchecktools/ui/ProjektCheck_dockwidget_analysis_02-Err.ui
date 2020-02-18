@@ -156,7 +156,7 @@ padding: 2px;
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ÖPNVKarte anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einblenden einer Hintergrundkarte mit Strecken und Haltestellen des Öffentlichen Personennahverkehr.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Liniennetzplan einblenden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einblenden einer Hintergrundkarte mit Strecken und Haltestellen des ÖPNV. &lt;br&gt;Quelle: Karte memomaps.de auf Basis von Openstreetmap&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -312,6 +312,9 @@ padding: 2px;
              </item>
              <item>
               <widget class="QCheckBox" name="recalculatestops_check">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellendaten neu ermitteln&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wenn Haken gesetzt, werden die Haltestelleninformationen neu im Internet ermittelt. Dies kann ggf. etwas dauern. Ansonsten wird der Stand vom letzten Abruf erneut angezeigt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Neuberechnung</string>
                </property>
@@ -436,7 +439,7 @@ padding: 2px;
                      </size>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellenauswahl&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie eine Haltestelle aus der Liste, um nähere Informationen über sie zu erfahren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellenauswahl über Liste&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie eine Haltestelle aus der Liste, um nähere Informationen anzuzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <item>
                      <property name="text">
@@ -467,7 +470,7 @@ padding: 2px;
                      <cursorShape>PointingHandCursor</cursorShape>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellenauswahl&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie eine Haltestelle aus der Karte, um nähere Informationen über sie zu erfahren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellenauswahl über Karte&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie eine Haltestelle durch Anklicken in der Karte, um nähere Informationen anzuzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="layoutDirection">
                      <enum>Qt::RightToLeft</enum>
@@ -554,6 +557,9 @@ padding: 2px;
                 </item>
                 <item>
                  <widget class="QCheckBox" name="recalculate_time_check">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Fahrzeiten neu ermitteln&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wenn Haken gesetzt, werden die Fahrzeiten neu ermittelt. Dies kann ggf. etwas dauern. Ansonsten wird der Stand der letzten Berechnung erneut angezeigt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="text">
                    <string>Neuberechnung</string>
                   </property>
@@ -691,7 +697,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Isochronen erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ermitteln, welcher Bereich um das Plangebiet innerhalb einer bestimmten Zeit erreicht werden kann.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Isochronen erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ermitteln, welcher Bereich um das Plangebiet („Isochrone“) innerhalb einer bestimmten Zeit erreicht werden kann.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -721,7 +727,7 @@ padding: 2px;
              <item>
               <widget class="QLabel" name="label_3">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erreichbarkeit in Minuten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Geben Sie den Zeitraum an, für den die Isochronen berechnet werden sollen.  &lt;/p&gt;&lt;p&gt;Dies wirkt sich auf die Größe des abgedeckten Gebietes aus.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erreichbarkeit in Minuten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Geben Sie die Wegzeit an, für die die Isochrone berechnet werden sollen. Je länger die Wegzeit, desto größer die Isochrone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Erreichbarkeit in Minuten</string>
@@ -731,7 +737,7 @@ padding: 2px;
              <item>
               <widget class="QSpinBox" name="cutoff_input">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erreichbarkeit in Minuten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Geben Sie den Zeitraum an, für den die Isochronen berechnet werden sollen.  &lt;/p&gt;&lt;p&gt;Dies wirkt sich auf die Größe des abgedeckten Gebietes aus.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erreichbarkeit in Minuten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Geben Sie die Wegzeit an, für die die Isochrone berechnet werden sollen. Je länger die Wegzeit, desto größer die Isochrone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="minimum">
                 <number>1</number>
@@ -764,7 +770,7 @@ padding: 2px;
              <item>
               <widget class="QLabel" name="label_4">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anzahl Teilschritte&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Geben Sie die Anzahl der Teilschritte an, in die Erreichbarkeit in Minuten unterteilt werden soll. &lt;/p&gt;&lt;p&gt;Dies wirkt sich auf die Anzahl der Isochronen aus.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anzahl Teilschritte&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sie können die Isochrone für die gewählte Wegzeit in gleichmäßige Teilisochronen aufteilen. Drei Teilschritte bei 15 min Wegzeit erzeugen drei Teilisochronen. Eine bis 5 min, eine zweite bis 10 min, eine dritte bis 15 min.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Anzahl Teilschritte</string>
@@ -780,7 +786,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anzahl Teilschritte&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Geben Sie die Anzahl der Teilschritte an, in die Erreichbarkeit in Minuten unterteilt werden soll. &lt;/p&gt;&lt;p&gt;Dies wirkt sich auf die Anzahl der Isochronen aus.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anzahl Teilschritte&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sie können die Isochrone für die gewählte Wegzeit in gleichmäßige Teilisochronen aufteilen. Drei Teilschritte bei 15 min Wegzeit erzeugen drei Teilisochronen. Eine bis 5 min, eine zweite bis 10 min, eine dritte bis 15 min.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="minimum">
                 <number>1</number>

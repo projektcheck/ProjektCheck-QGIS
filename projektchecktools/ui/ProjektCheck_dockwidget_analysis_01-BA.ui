@@ -98,7 +98,7 @@ padding: 2px;
            <string>Bewohner</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
@@ -125,7 +125,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bewohnerzahl schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl und Altersstruktur der zukünftigen Bewohner der Teilflächen mit Wohnnutzung schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bewohneranzahl schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl und Altersstruktur der zukünftigen Bewohner der Teilflächen mit Wohnnutzung schätzen. Methodische Erläuterungen finden Sie in der Kurzanleitung (Schaltfläche unten rechts).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -163,7 +163,7 @@ padding: 2px;
            <string>Arbeitsplätze</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -190,7 +190,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Arbeitsplätze schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl der zukünftigen Arbeitsplätze nach Branchen auf den Teilflächen mit Gewerbenutzung schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Arbeitsplätze schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl der zukünftigen Arbeitsplätze und Branchenstruktur auf den Teilflächen mit Gewerbenutzung schätzen. Methodische Erläuterungen finden Sie in der Kurzanleitung (Schaltfläche unten rechts).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>

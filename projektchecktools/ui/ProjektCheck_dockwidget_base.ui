@@ -349,7 +349,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                <enum>Qt::WheelFocus</enum>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projekt&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Nur dieses Projekt können Sie editieren und analysieren. Weitere Projekte können angezeigt bleiben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projekt&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Nur dieses Projekt kann editiert und analysiert werden. Weitere Projekte können angezeigt bleiben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="editable">
                <bool>false</bool>
@@ -415,7 +415,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neues Projekt&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ein neues Projekt anlegen. Sie benötigen ein Shape-File o.ä. mit der Fläche (oder den Teilflächen) des Projekts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neues Projekt&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ein neues Projekt anlegen. Benötigt wird ein Shape-File o.ä. mit der Fläche (oder den Teilflächen) des Projekts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string/>
@@ -483,6 +483,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                 <bold>false</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projektdefinition&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Art und Maß der baulichen Nutzung für das aktuelle Projekt festlegen, z.B. „Wohnen: 50 Wohneinheiten“&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Projektdefinition</string>
               </property>
@@ -506,6 +509,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="contextMenuPolicy">
                <enum>Qt::DefaultContextMenu</enum>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wirkungsanalysen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Das aktuelle Projekt hinsichtlich seiner Auswirkungen analysieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Wirkungsanalysen  </string>
@@ -561,6 +567,9 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="contextMenuPolicy">
                <enum>Qt::DefaultContextMenu</enum>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Hier finden Sie eine Anleitung zum schnellen Einstieg, Hinweise zu den Autoren sowie einen Haftungsausschluss für Nutzung.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Info  </string>
