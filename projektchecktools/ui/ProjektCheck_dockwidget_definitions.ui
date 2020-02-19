@@ -50,8 +50,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>522</width>
-         <height>953</height>
+         <width>528</width>
+         <height>977</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -107,25 +107,6 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_5">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>(Teil-)Flächenname und Art der baulichen Nutzung</string>
-          </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <property name="indent">
-           <number>-1</number>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QGroupBox" name="parameter_group">
           <property name="font">
            <font>
@@ -136,7 +117,7 @@
            </font>
           </property>
           <property name="title">
-           <string/>
+           <string>(Teil-)Flächenname und Art der baulichen Nutzung</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2"/>
          </widget>

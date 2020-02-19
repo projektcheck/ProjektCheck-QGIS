@@ -1,79 +1,79 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.6.1-Noosa" styleCategories="AllStyleCategories" simplifyMaxScale="1" simplifyLocal="1" labelsEnabled="0" simplifyDrawingTol="1" readOnly="0" simplifyAlgorithm="0" maxScale="0" minScale="1e+08" hasScaleBasedVisibilityFlag="0" simplifyDrawingHints="1">
+<qgis hasScaleBasedVisibilityFlag="0" minScale="1e+08" readOnly="1" simplifyMaxScale="1" simplifyLocal="1" version="3.10.1-A Coruña" simplifyDrawingTol="1" maxScale="0" labelsEnabled="0" simplifyDrawingHints="1" styleCategories="AllStyleCategories" simplifyAlgorithm="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
   </flags>
-  <renderer-v2 symbollevels="0" forceraster="0" enableorderby="0" type="singleSymbol">
+  <renderer-v2 type="singleSymbol" forceraster="0" symbollevels="0" enableorderby="0">
     <symbols>
-      <symbol force_rhr="0" clip_to_extent="1" alpha="1" name="0" type="fill">
-        <layer enabled="1" locked="0" pass="0" class="LinePatternFill">
-          <prop k="angle" v="45"/>
-          <prop k="color" v="55,126,184,255"/>
-          <prop k="distance" v="2"/>
-          <prop k="distance_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="distance_unit" v="MM"/>
-          <prop k="line_width" v="0.26"/>
-          <prop k="line_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="line_width_unit" v="MM"/>
-          <prop k="offset" v="0"/>
-          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="offset_unit" v="MM"/>
-          <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="outline_width_unit" v="MM"/>
+      <symbol type="fill" alpha="1" force_rhr="0" clip_to_extent="1" name="0">
+        <layer locked="0" enabled="1" pass="0" class="LinePatternFill">
+          <prop v="45" k="angle"/>
+          <prop v="55,126,184,255" k="color"/>
+          <prop v="2" k="distance"/>
+          <prop v="3x:0,0,0,0,0,0" k="distance_map_unit_scale"/>
+          <prop v="MM" k="distance_unit"/>
+          <prop v="0.26" k="line_width"/>
+          <prop v="3x:0,0,0,0,0,0" k="line_width_map_unit_scale"/>
+          <prop v="MM" k="line_width_unit"/>
+          <prop v="0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
+          <prop v="MM" k="outline_width_unit"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option value="" name="name" type="QString"/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option value="collection" name="type" type="QString"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
-          <symbol force_rhr="0" clip_to_extent="1" alpha="1" name="@0@0" type="line">
-            <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-              <prop k="capstyle" v="square"/>
-              <prop k="customdash" v="5;2"/>
-              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-              <prop k="customdash_unit" v="MM"/>
-              <prop k="draw_inside_polygon" v="0"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="line_color" v="0,0,0,255"/>
-              <prop k="line_style" v="solid"/>
-              <prop k="line_width" v="0.3"/>
-              <prop k="line_width_unit" v="MM"/>
-              <prop k="offset" v="0"/>
-              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="ring_filter" v="0"/>
-              <prop k="use_custom_dash" v="0"/>
-              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <symbol type="line" alpha="1" force_rhr="0" clip_to_extent="1" name="@0@0">
+            <layer locked="0" enabled="1" pass="0" class="SimpleLine">
+              <prop v="square" k="capstyle"/>
+              <prop v="5;2" k="customdash"/>
+              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
+              <prop v="MM" k="customdash_unit"/>
+              <prop v="0" k="draw_inside_polygon"/>
+              <prop v="bevel" k="joinstyle"/>
+              <prop v="128,128,128,255" k="line_color"/>
+              <prop v="solid" k="line_style"/>
+              <prop v="0.3" k="line_width"/>
+              <prop v="MM" k="line_width_unit"/>
+              <prop v="0" k="offset"/>
+              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+              <prop v="MM" k="offset_unit"/>
+              <prop v="0" k="ring_filter"/>
+              <prop v="0" k="use_custom_dash"/>
+              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option value="" name="name" type="QString"/>
+                  <Option type="QString" value="" name="name"/>
                   <Option name="properties"/>
-                  <Option value="collection" name="type" type="QString"/>
+                  <Option type="QString" value="collection" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="color" v="0,0,0,255"/>
-          <prop k="joinstyle" v="bevel"/>
-          <prop k="offset" v="0,0"/>
-          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
-          <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="0,0,0,255"/>
-          <prop k="outline_style" v="solid"/>
-          <prop k="outline_width" v="0.46"/>
-          <prop k="outline_width_unit" v="MM"/>
-          <prop k="style" v="no"/>
+        <layer locked="0" enabled="1" pass="0" class="SimpleFill">
+          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+          <prop v="119,119,119,255" k="color"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="101,101,101,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0.46" k="outline_width"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="no" k="style"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option value="" name="name" type="QString"/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option value="collection" name="type" type="QString"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
@@ -83,7 +83,7 @@
     <sizescale/>
   </renderer-v2>
   <customproperties>
-    <property value="0" key="embeddedWidgets/count"/>
+    <property key="embeddedWidgets/count" value="0"/>
     <property key="variableNames"/>
     <property key="variableValues"/>
   </customproperties>
@@ -91,22 +91,29 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
-    <DiagramCategory sizeType="MM" labelPlacementMethod="XHeight" enabled="0" diagramOrientation="Up" minScaleDenominator="0" opacity="1" maxScaleDenominator="1e+08" penAlpha="255" backgroundAlpha="255" scaleDependency="Area" penColor="#000000" width="15" backgroundColor="#ffffff" barWidth="5" scaleBasedVisibility="0" rotationOffset="270" sizeScale="3x:0,0,0,0,0,0" lineSizeType="MM" height="15" lineSizeScale="3x:0,0,0,0,0,0" minimumSize="0" penWidth="0">
-      <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+    <DiagramCategory width="15" scaleBasedVisibility="0" backgroundAlpha="255" penAlpha="255" labelPlacementMethod="XHeight" scaleDependency="Area" penColor="#000000" maxScaleDenominator="1e+08" enabled="0" sizeType="MM" rotationOffset="270" lineSizeScale="3x:0,0,0,0,0,0" lineSizeType="MM" penWidth="0" height="15" opacity="1" backgroundColor="#ffffff" minimumSize="0" minScaleDenominator="0" diagramOrientation="Up" sizeScale="3x:0,0,0,0,0,0" barWidth="5">
+      <fontProperties style="" description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0"/>
+      <attribute field="" label="" color="#000000"/>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings placement="1" linePlacementFlags="18" showAll="1" obstacle="0" zIndex="0" dist="0" priority="0">
+  <DiagramLayerSettings linePlacementFlags="18" showAll="1" placement="1" dist="0" obstacle="0" priority="0" zIndex="0">
     <properties>
       <Option type="Map">
-        <Option value="" name="name" type="QString"/>
+        <Option type="QString" value="" name="name"/>
         <Option name="properties"/>
-        <Option value="collection" name="type" type="QString"/>
+        <Option type="QString" value="collection" name="type"/>
       </Option>
     </properties>
   </DiagramLayerSettings>
-  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
     <activeChecks/>
-    <checkConfiguration/>
+    <checkConfiguration type="Map">
+      <Option type="Map" name="QgsGeometryGapCheck">
+        <Option type="double" value="0" name="allowedGapsBuffer"/>
+        <Option type="bool" value="false" name="allowedGapsEnabled"/>
+        <Option type="QString" value="" name="allowedGapsLayer"/>
+      </Option>
+    </checkConfiguration>
   </geometryOptions>
   <fieldConfiguration>
     <field name="fid">
@@ -158,6 +165,13 @@
         </config>
       </editWidget>
     </field>
+    <field name="gemeinde_typ">
+      <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
     <field name="gemeinde_name">
       <editWidget type="TextEdit">
         <config>
@@ -174,6 +188,13 @@
     </field>
     <field name="ap_gesamt">
       <editWidget type="TextEdit">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="ap_ist_geschaetzt">
+      <editWidget type="Range">
         <config>
           <Option/>
         </config>
@@ -207,139 +228,6 @@
         </config>
       </editWidget>
     </field>
-    <field name="we_efh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="ew_je_we_efh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="we_zfh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="ew_je_we_zfh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="we_rh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="ew_je_we_rh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="we_mfh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="ew_je_we_mfh">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="anteil_verarbeitend">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="anteil_bau">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="anteil_grosshandel">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="anteil_finanzen">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="anteil_sonstige">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="anteil_oeffentlich">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="lebensmittel">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="periodischer_bedarf">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="aperiodischer_bedarf">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="baumarkt">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field name="moebel">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
   </fieldConfiguration>
   <aliases>
     <alias field="fid" name="" index="0"/>
@@ -349,32 +237,15 @@
     <alias field="validiert" name="" index="4"/>
     <alias field="beginn_nutzung" name="" index="5"/>
     <alias field="ags_bkg" name="" index="6"/>
-    <alias field="gemeinde_name" name="" index="7"/>
-    <alias field="we_gesamt" name="" index="8"/>
-    <alias field="ap_gesamt" name="" index="9"/>
-    <alias field="vf_gesamt" name="" index="10"/>
-    <alias field="ew" name="" index="11"/>
-    <alias field="wege_gesamt" name="" index="12"/>
-    <alias field="wege_miv" name="" index="13"/>
-    <alias field="we_efh" name="" index="14"/>
-    <alias field="ew_je_we_efh" name="" index="15"/>
-    <alias field="we_zfh" name="" index="16"/>
-    <alias field="ew_je_we_zfh" name="" index="17"/>
-    <alias field="we_rh" name="" index="18"/>
-    <alias field="ew_je_we_rh" name="" index="19"/>
-    <alias field="we_mfh" name="" index="20"/>
-    <alias field="ew_je_we_mfh" name="" index="21"/>
-    <alias field="anteil_verarbeitend" name="" index="22"/>
-    <alias field="anteil_bau" name="" index="23"/>
-    <alias field="anteil_grosshandel" name="" index="24"/>
-    <alias field="anteil_finanzen" name="" index="25"/>
-    <alias field="anteil_sonstige" name="" index="26"/>
-    <alias field="anteil_oeffentlich" name="" index="27"/>
-    <alias field="lebensmittel" name="" index="28"/>
-    <alias field="periodischer_bedarf" name="" index="29"/>
-    <alias field="aperiodischer_bedarf" name="" index="30"/>
-    <alias field="baumarkt" name="" index="31"/>
-    <alias field="moebel" name="" index="32"/>
+    <alias field="gemeinde_typ" name="" index="7"/>
+    <alias field="gemeinde_name" name="" index="8"/>
+    <alias field="we_gesamt" name="" index="9"/>
+    <alias field="ap_gesamt" name="" index="10"/>
+    <alias field="ap_ist_geschaetzt" name="" index="11"/>
+    <alias field="vf_gesamt" name="" index="12"/>
+    <alias field="ew" name="" index="13"/>
+    <alias field="wege_gesamt" name="" index="14"/>
+    <alias field="wege_miv" name="" index="15"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -386,149 +257,82 @@
     <default field="validiert" expression="" applyOnUpdate="0"/>
     <default field="beginn_nutzung" expression="" applyOnUpdate="0"/>
     <default field="ags_bkg" expression="" applyOnUpdate="0"/>
+    <default field="gemeinde_typ" expression="" applyOnUpdate="0"/>
     <default field="gemeinde_name" expression="" applyOnUpdate="0"/>
     <default field="we_gesamt" expression="" applyOnUpdate="0"/>
     <default field="ap_gesamt" expression="" applyOnUpdate="0"/>
+    <default field="ap_ist_geschaetzt" expression="" applyOnUpdate="0"/>
     <default field="vf_gesamt" expression="" applyOnUpdate="0"/>
     <default field="ew" expression="" applyOnUpdate="0"/>
     <default field="wege_gesamt" expression="" applyOnUpdate="0"/>
     <default field="wege_miv" expression="" applyOnUpdate="0"/>
-    <default field="we_efh" expression="" applyOnUpdate="0"/>
-    <default field="ew_je_we_efh" expression="" applyOnUpdate="0"/>
-    <default field="we_zfh" expression="" applyOnUpdate="0"/>
-    <default field="ew_je_we_zfh" expression="" applyOnUpdate="0"/>
-    <default field="we_rh" expression="" applyOnUpdate="0"/>
-    <default field="ew_je_we_rh" expression="" applyOnUpdate="0"/>
-    <default field="we_mfh" expression="" applyOnUpdate="0"/>
-    <default field="ew_je_we_mfh" expression="" applyOnUpdate="0"/>
-    <default field="anteil_verarbeitend" expression="" applyOnUpdate="0"/>
-    <default field="anteil_bau" expression="" applyOnUpdate="0"/>
-    <default field="anteil_grosshandel" expression="" applyOnUpdate="0"/>
-    <default field="anteil_finanzen" expression="" applyOnUpdate="0"/>
-    <default field="anteil_sonstige" expression="" applyOnUpdate="0"/>
-    <default field="anteil_oeffentlich" expression="" applyOnUpdate="0"/>
-    <default field="lebensmittel" expression="" applyOnUpdate="0"/>
-    <default field="periodischer_bedarf" expression="" applyOnUpdate="0"/>
-    <default field="aperiodischer_bedarf" expression="" applyOnUpdate="0"/>
-    <default field="baumarkt" expression="" applyOnUpdate="0"/>
-    <default field="moebel" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint field="fid" exp_strength="0" unique_strength="1" constraints="3" notnull_strength="1"/>
-    <constraint field="nutzungsart" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="name" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="aufsiedlungsdauer" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="validiert" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="beginn_nutzung" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ags_bkg" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="gemeinde_name" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="we_gesamt" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ap_gesamt" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="vf_gesamt" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ew" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="wege_gesamt" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="wege_miv" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="we_efh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ew_je_we_efh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="we_zfh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ew_je_we_zfh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="we_rh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ew_je_we_rh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="we_mfh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="ew_je_we_mfh" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="anteil_verarbeitend" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="anteil_bau" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="anteil_grosshandel" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="anteil_finanzen" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="anteil_sonstige" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="anteil_oeffentlich" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="lebensmittel" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="periodischer_bedarf" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="aperiodischer_bedarf" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="baumarkt" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="moebel" exp_strength="0" unique_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="fid" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
+    <constraint field="nutzungsart" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="name" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="aufsiedlungsdauer" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="validiert" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="beginn_nutzung" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="ags_bkg" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="gemeinde_typ" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="gemeinde_name" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="we_gesamt" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="ap_gesamt" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="ap_ist_geschaetzt" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="vf_gesamt" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="ew" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="wege_gesamt" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="wege_miv" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint field="fid" desc="" exp=""/>
-    <constraint field="nutzungsart" desc="" exp=""/>
-    <constraint field="name" desc="" exp=""/>
-    <constraint field="aufsiedlungsdauer" desc="" exp=""/>
-    <constraint field="validiert" desc="" exp=""/>
-    <constraint field="beginn_nutzung" desc="" exp=""/>
-    <constraint field="ags_bkg" desc="" exp=""/>
-    <constraint field="gemeinde_name" desc="" exp=""/>
-    <constraint field="we_gesamt" desc="" exp=""/>
-    <constraint field="ap_gesamt" desc="" exp=""/>
-    <constraint field="vf_gesamt" desc="" exp=""/>
-    <constraint field="ew" desc="" exp=""/>
-    <constraint field="wege_gesamt" desc="" exp=""/>
-    <constraint field="wege_miv" desc="" exp=""/>
-    <constraint field="we_efh" desc="" exp=""/>
-    <constraint field="ew_je_we_efh" desc="" exp=""/>
-    <constraint field="we_zfh" desc="" exp=""/>
-    <constraint field="ew_je_we_zfh" desc="" exp=""/>
-    <constraint field="we_rh" desc="" exp=""/>
-    <constraint field="ew_je_we_rh" desc="" exp=""/>
-    <constraint field="we_mfh" desc="" exp=""/>
-    <constraint field="ew_je_we_mfh" desc="" exp=""/>
-    <constraint field="anteil_verarbeitend" desc="" exp=""/>
-    <constraint field="anteil_bau" desc="" exp=""/>
-    <constraint field="anteil_grosshandel" desc="" exp=""/>
-    <constraint field="anteil_finanzen" desc="" exp=""/>
-    <constraint field="anteil_sonstige" desc="" exp=""/>
-    <constraint field="anteil_oeffentlich" desc="" exp=""/>
-    <constraint field="lebensmittel" desc="" exp=""/>
-    <constraint field="periodischer_bedarf" desc="" exp=""/>
-    <constraint field="aperiodischer_bedarf" desc="" exp=""/>
-    <constraint field="baumarkt" desc="" exp=""/>
-    <constraint field="moebel" desc="" exp=""/>
+    <constraint field="fid" exp="" desc=""/>
+    <constraint field="nutzungsart" exp="" desc=""/>
+    <constraint field="name" exp="" desc=""/>
+    <constraint field="aufsiedlungsdauer" exp="" desc=""/>
+    <constraint field="validiert" exp="" desc=""/>
+    <constraint field="beginn_nutzung" exp="" desc=""/>
+    <constraint field="ags_bkg" exp="" desc=""/>
+    <constraint field="gemeinde_typ" exp="" desc=""/>
+    <constraint field="gemeinde_name" exp="" desc=""/>
+    <constraint field="we_gesamt" exp="" desc=""/>
+    <constraint field="ap_gesamt" exp="" desc=""/>
+    <constraint field="ap_ist_geschaetzt" exp="" desc=""/>
+    <constraint field="vf_gesamt" exp="" desc=""/>
+    <constraint field="ew" exp="" desc=""/>
+    <constraint field="wege_gesamt" exp="" desc=""/>
+    <constraint field="wege_miv" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
+    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
+  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
     <columns>
-      <column width="-1" hidden="0" name="fid" type="field"/>
-      <column width="-1" hidden="0" name="nutzungsart" type="field"/>
-      <column width="-1" hidden="0" name="name" type="field"/>
-      <column width="-1" hidden="0" name="aufsiedlungsdauer" type="field"/>
-      <column width="-1" hidden="0" name="validiert" type="field"/>
-      <column width="-1" hidden="0" name="beginn_nutzung" type="field"/>
-      <column width="-1" hidden="0" name="ags_bkg" type="field"/>
-      <column width="-1" hidden="0" name="gemeinde_name" type="field"/>
-      <column width="-1" hidden="0" name="we_gesamt" type="field"/>
-      <column width="-1" hidden="0" name="ap_gesamt" type="field"/>
-      <column width="-1" hidden="0" name="vf_gesamt" type="field"/>
-      <column width="-1" hidden="0" name="ew" type="field"/>
-      <column width="-1" hidden="0" name="wege_gesamt" type="field"/>
-      <column width="-1" hidden="0" name="wege_miv" type="field"/>
-      <column width="-1" hidden="0" name="we_efh" type="field"/>
-      <column width="-1" hidden="0" name="ew_je_we_efh" type="field"/>
-      <column width="-1" hidden="0" name="we_zfh" type="field"/>
-      <column width="-1" hidden="0" name="ew_je_we_zfh" type="field"/>
-      <column width="-1" hidden="0" name="we_rh" type="field"/>
-      <column width="-1" hidden="0" name="ew_je_we_rh" type="field"/>
-      <column width="-1" hidden="0" name="we_mfh" type="field"/>
-      <column width="-1" hidden="0" name="ew_je_we_mfh" type="field"/>
-      <column width="-1" hidden="0" name="anteil_verarbeitend" type="field"/>
-      <column width="-1" hidden="0" name="anteil_bau" type="field"/>
-      <column width="-1" hidden="0" name="anteil_grosshandel" type="field"/>
-      <column width="-1" hidden="0" name="anteil_finanzen" type="field"/>
-      <column width="-1" hidden="0" name="anteil_sonstige" type="field"/>
-      <column width="-1" hidden="0" name="anteil_oeffentlich" type="field"/>
-      <column width="-1" hidden="0" name="lebensmittel" type="field"/>
-      <column width="-1" hidden="0" name="periodischer_bedarf" type="field"/>
-      <column width="-1" hidden="0" name="aperiodischer_bedarf" type="field"/>
-      <column width="-1" hidden="0" name="baumarkt" type="field"/>
-      <column width="-1" hidden="0" name="moebel" type="field"/>
-      <column width="-1" hidden="1" type="actions"/>
+      <column type="field" width="-1" name="fid" hidden="0"/>
+      <column type="field" width="-1" name="nutzungsart" hidden="0"/>
+      <column type="field" width="-1" name="name" hidden="0"/>
+      <column type="field" width="-1" name="aufsiedlungsdauer" hidden="0"/>
+      <column type="field" width="-1" name="validiert" hidden="0"/>
+      <column type="field" width="-1" name="beginn_nutzung" hidden="0"/>
+      <column type="field" width="-1" name="ags_bkg" hidden="0"/>
+      <column type="field" width="-1" name="gemeinde_name" hidden="0"/>
+      <column type="field" width="-1" name="we_gesamt" hidden="0"/>
+      <column type="field" width="-1" name="ap_gesamt" hidden="0"/>
+      <column type="field" width="-1" name="vf_gesamt" hidden="0"/>
+      <column type="field" width="-1" name="ew" hidden="0"/>
+      <column type="field" width="-1" name="wege_gesamt" hidden="0"/>
+      <column type="field" width="-1" name="wege_miv" hidden="0"/>
+      <column type="actions" width="-1" hidden="1"/>
+      <column type="field" width="-1" name="gemeinde_typ" hidden="0"/>
+      <column type="field" width="-1" name="ap_ist_geschaetzt" hidden="0"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
     <rowstyles/>
     <fieldstyles/>
   </conditionalstyles>
+  <storedexpressions/>
   <editform tolerant="1"></editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
@@ -561,6 +365,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="anteil_sonstige"/>
     <field editable="1" name="anteil_verarbeitend"/>
     <field editable="1" name="ap_gesamt"/>
+    <field editable="1" name="ap_ist_geschaetzt"/>
     <field editable="1" name="aperiodischer_bedarf"/>
     <field editable="1" name="aufsiedlungsdauer"/>
     <field editable="1" name="baumarkt"/>
@@ -572,6 +377,7 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="ew_je_we_zfh"/>
     <field editable="1" name="fid"/>
     <field editable="1" name="gemeinde_name"/>
+    <field editable="1" name="gemeinde_typ"/>
     <field editable="1" name="lebensmittel"/>
     <field editable="1" name="moebel"/>
     <field editable="1" name="name"/>
@@ -588,39 +394,41 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="wege_miv"/>
   </editable>
   <labelOnTop>
-    <field name="ags_bkg" labelOnTop="0"/>
-    <field name="anteil_bau" labelOnTop="0"/>
-    <field name="anteil_finanzen" labelOnTop="0"/>
-    <field name="anteil_grosshandel" labelOnTop="0"/>
-    <field name="anteil_oeffentlich" labelOnTop="0"/>
-    <field name="anteil_sonstige" labelOnTop="0"/>
-    <field name="anteil_verarbeitend" labelOnTop="0"/>
-    <field name="ap_gesamt" labelOnTop="0"/>
-    <field name="aperiodischer_bedarf" labelOnTop="0"/>
-    <field name="aufsiedlungsdauer" labelOnTop="0"/>
-    <field name="baumarkt" labelOnTop="0"/>
-    <field name="beginn_nutzung" labelOnTop="0"/>
-    <field name="ew" labelOnTop="0"/>
-    <field name="ew_je_we_efh" labelOnTop="0"/>
-    <field name="ew_je_we_mfh" labelOnTop="0"/>
-    <field name="ew_je_we_rh" labelOnTop="0"/>
-    <field name="ew_je_we_zfh" labelOnTop="0"/>
-    <field name="fid" labelOnTop="0"/>
-    <field name="gemeinde_name" labelOnTop="0"/>
-    <field name="lebensmittel" labelOnTop="0"/>
-    <field name="moebel" labelOnTop="0"/>
-    <field name="name" labelOnTop="0"/>
-    <field name="nutzungsart" labelOnTop="0"/>
-    <field name="periodischer_bedarf" labelOnTop="0"/>
-    <field name="validiert" labelOnTop="0"/>
-    <field name="vf_gesamt" labelOnTop="0"/>
-    <field name="we_efh" labelOnTop="0"/>
-    <field name="we_gesamt" labelOnTop="0"/>
-    <field name="we_mfh" labelOnTop="0"/>
-    <field name="we_rh" labelOnTop="0"/>
-    <field name="we_zfh" labelOnTop="0"/>
-    <field name="wege_gesamt" labelOnTop="0"/>
-    <field name="wege_miv" labelOnTop="0"/>
+    <field labelOnTop="0" name="ags_bkg"/>
+    <field labelOnTop="0" name="anteil_bau"/>
+    <field labelOnTop="0" name="anteil_finanzen"/>
+    <field labelOnTop="0" name="anteil_grosshandel"/>
+    <field labelOnTop="0" name="anteil_oeffentlich"/>
+    <field labelOnTop="0" name="anteil_sonstige"/>
+    <field labelOnTop="0" name="anteil_verarbeitend"/>
+    <field labelOnTop="0" name="ap_gesamt"/>
+    <field labelOnTop="0" name="ap_ist_geschaetzt"/>
+    <field labelOnTop="0" name="aperiodischer_bedarf"/>
+    <field labelOnTop="0" name="aufsiedlungsdauer"/>
+    <field labelOnTop="0" name="baumarkt"/>
+    <field labelOnTop="0" name="beginn_nutzung"/>
+    <field labelOnTop="0" name="ew"/>
+    <field labelOnTop="0" name="ew_je_we_efh"/>
+    <field labelOnTop="0" name="ew_je_we_mfh"/>
+    <field labelOnTop="0" name="ew_je_we_rh"/>
+    <field labelOnTop="0" name="ew_je_we_zfh"/>
+    <field labelOnTop="0" name="fid"/>
+    <field labelOnTop="0" name="gemeinde_name"/>
+    <field labelOnTop="0" name="gemeinde_typ"/>
+    <field labelOnTop="0" name="lebensmittel"/>
+    <field labelOnTop="0" name="moebel"/>
+    <field labelOnTop="0" name="name"/>
+    <field labelOnTop="0" name="nutzungsart"/>
+    <field labelOnTop="0" name="periodischer_bedarf"/>
+    <field labelOnTop="0" name="validiert"/>
+    <field labelOnTop="0" name="vf_gesamt"/>
+    <field labelOnTop="0" name="we_efh"/>
+    <field labelOnTop="0" name="we_gesamt"/>
+    <field labelOnTop="0" name="we_mfh"/>
+    <field labelOnTop="0" name="we_rh"/>
+    <field labelOnTop="0" name="we_zfh"/>
+    <field labelOnTop="0" name="wege_gesamt"/>
+    <field labelOnTop="0" name="wege_miv"/>
   </labelOnTop>
   <widgets/>
   <previewExpression>fid</previewExpression>
