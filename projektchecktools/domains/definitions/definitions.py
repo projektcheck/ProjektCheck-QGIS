@@ -585,6 +585,7 @@ class ProjectDefinitions(Domain):
             lambda: self.change_area())
 
     def load_content(self):
+        super().load_content()
         self.areas = Teilflaechen.features()
         self.connectors = Connectors.features()
         self.ui.area_combo.blockSignals(True)

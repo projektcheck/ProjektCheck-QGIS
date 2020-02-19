@@ -145,7 +145,7 @@ class LandUse(Domain):
         if not self.area:
             return
 
-        output = ProjectLayer.find('Nutzungen des Plangebiets')
+        output = ProjectLayer.find('Umriss des Plangebiets')
         if output:
             layer = output[0].layer()
             layer.removeSelection()
@@ -257,7 +257,7 @@ class LandUse(Domain):
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
-        output = ProjectLayer.find('Nutzungen des Plangebiets')
+        output = ProjectLayer.find('Umriss des Plangebiets')
         if output:
             layer = output[0].layer()
             layer.removeSelection()

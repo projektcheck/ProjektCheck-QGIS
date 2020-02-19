@@ -240,6 +240,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
     def show_dockwidget(self, widget):
         if self.active_dockwidget:
             self.active_dockwidget.close()
+        else:
+            tree_layer = ProjectLayer.find(ProjectDefinitions.layer_group)
+            if tree_layer:
+                tree_layer[0].setItemVisibilityChecked(False)
         self.active_dockwidget = widget
         widget.show()
 

@@ -521,7 +521,7 @@ class InfrastructuralCosts(Domain):
 
     def close(self):
         if hasattr(self.kostenaufteilung, 'params'):
-            self.params.close()
+            self.kostenaufteilung.params.close()
         if hasattr(self.gesamtkosten, 'params'):
-            self.params.close()
+            self.gesamtkosten.params.close()
         super().close()
