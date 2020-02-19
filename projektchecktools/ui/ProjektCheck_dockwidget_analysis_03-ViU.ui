@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>461</width>
-         <height>618</height>
+         <width>469</width>
+         <height>636</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -317,6 +317,7 @@ padding: 2px;
           <property name="title">
            <string>Wege und Gewichtungen (Annahmen)</string>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout"/>
          </widget>
         </item>
         <item>

@@ -4,7 +4,7 @@ from projektchecktools.base.domain import Domain
 from projektchecktools.base.tools import LineMapTool
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.tools import FeaturePicker, MapClickedTool
-from projektchecktools.utils.utils import clearLayout
+from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.params import (Params, Param, Title, Seperator,
                                       SumDependency)
 from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit,
@@ -201,7 +201,7 @@ class InfrastructureDrawing:
     def setup_point_params(self, point):
         ui_group = self.ui.point_parameter_group
         layout = ui_group.layout()
-        clearLayout(layout)
+        clear_layout(layout)
         if not point:
             return
         self.params = Params(
@@ -312,7 +312,7 @@ class Gesamtkosten:
             IDNetzelement=net_element_id).Netzelement
         ui_group.setTitle(net_element_name)
         layout = ui_group.layout()
-        clearLayout(layout)
+        clear_layout(layout)
         net_element = self.kostenkennwerte.get(IDNetzelement=net_element_id)
 
         self.params = Params(
@@ -418,7 +418,7 @@ class Kostentraeger:
         net_name = self.netzelemente.filter(IDNetz=net_id)[0].Netz
         ui_group.setTitle(net_name)
         layout = ui_group.layout()
-        clearLayout(layout)
+        clear_layout(layout)
 
         self.params = Params(
             layout, help_file='infrastruktur_kostenaufteilung.txt')
@@ -519,4 +519,9 @@ class InfrastructuralCosts(Domain):
         we_diagram = VergleichWEDiagramm(project=self.project)
         we_diagram.draw()
 
-
+    def close(self):
+        if hasattr(self.kostenaufteilung, 'params'):
+            self.params.close()
+        if hasattr(self.gesamtkosten, 'params'):
+            self.params.close()
+        super().close()

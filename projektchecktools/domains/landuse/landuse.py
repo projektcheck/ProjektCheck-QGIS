@@ -11,7 +11,7 @@ from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.base.params import Params, Param, Title, Seperator
 from projektchecktools.base.layers import TileLayer
 from projektchecktools.base.inputs import Slider
-from projektchecktools.utils.utils import clearLayout
+from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.tools import LineMapTool
 
 from settings import settings
@@ -82,7 +82,7 @@ class LandUse(Domain):
     def setup_params(self):
         anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         value = anteile.nettoflaeche if anteile else 15
-        clearLayout(self.layout)
+        clear_layout(self.layout)
         self.params = Params(
             self.layout,
             help_file='flaecheninanspruchnahme_wohnbauland_wohnflaeche.txt')
@@ -255,7 +255,6 @@ class LandUse(Domain):
                          'Plangebietsgrenze',)
         chart.draw()
 
-
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
         output = ProjectLayer.find('Nutzungen des Plangebiets')
@@ -264,4 +263,6 @@ class LandUse(Domain):
             layer.removeSelection()
         if hasattr(self, 'areas'):
             self.living_areas.table.workspace.close()
+        if hasattr(self, 'params'):
+            self.params.close()
         super().close()

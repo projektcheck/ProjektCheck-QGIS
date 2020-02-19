@@ -5,16 +5,16 @@ from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
 from qgis.PyQt.QtWidgets import QVBoxLayout
 
 from projektchecktools.base.domain import Domain
-from projektchecktools.utils.utils import clearLayout
+from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.tools import MapClickedTool
 from projektchecktools.domains.definitions.tables import Teilflaechen
-from projektchecktools.domains.traffic.tables import (Connectors, Links,
-                                                 TransferNodes, Ways)
+from projektchecktools.domains.traffic.tables import (
+    Connectors, Links, Itineraries, TransferNodes, Ways)
 from projektchecktools.domains.traffic.routing import Routing
 from projektchecktools.base.params import (Params, Param, Title,
-                                      Seperator, SumDependency)
+                                           Seperator, SumDependency)
 from projektchecktools.base.inputs import (SpinBox, Slider)
 from projektchecktools.domains.constants import Nutzungsart
 
@@ -51,6 +51,7 @@ class Traffic(Domain):
         self.links = Links.features(project=self.project, create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
                                                      create=True)
+        self.itineraries = Itineraries.features(project=self.project, create=True)
         self.ways = Ways.features(project=self.project, create=True)
         self.areas = Teilflaechen.features()
 
@@ -71,24 +72,13 @@ class Traffic(Domain):
             # there is a signal for that in the ui file, but it isn't working
             # if checkbox is already invisible
             self.ui.distance_frame.setVisible(True)
-        self.params = None
         self.setup_settings()
 
     def setup_settings(self):
         layout = self.ui.settings_group.layout()
-        if not layout:
-            layout = QVBoxLayout()
-            self.ui.settings_group.setLayout(layout)
-        else:
-            clearLayout(layout)
-        if self.params:
-            self.params.close()
+        clear_layout(layout)
         self.params = Params(parent=layout, button_label='Annahmen verändern',
                              help_file='verkehr_wege_gewichtungen.txt')
-        if len(self.transfer_nodes) == 0:
-            # workaround: otherwise the params don't show later (don't know why)
-            self.params.show()
-            return
 
         self.params.add(Title('Verkehrsaufkommen und Verkehrsmittelwahl'))
         for i, way in enumerate(self.ways):
@@ -116,7 +106,6 @@ class Traffic(Domain):
         dependency = SumDependency(100)
         for node in self.transfer_nodes:
             perc = round(100 * node.weight / sum_weights)
-            node.save()
             param = Param(
                 perc,
                 Slider(maximum=100, lockable=True),
@@ -198,13 +187,24 @@ class Traffic(Domain):
             self.draw_traffic()
 
     def draw_traffic(self):
+        output = ProjectLayer.from_table(self.transfer_nodes.table,
+                                         groupname=self.layer_group)
+        output.draw(label='Zielpunkte',
+                    style_file='verkehr_zielpunkte.qml')
+
         output = ProjectLayer.from_table(self.links.table,
                                          groupname=self.layer_group)
         output.draw(label='Zusätzliche PKW-Fahrten',
                     style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml')
 
-        output = ProjectLayer.from_table(self.transfer_nodes.table,
+        output = ProjectLayer.from_table(self.itineraries.table,
                                          groupname=self.layer_group)
-        output.draw(label='Zielpunkte',
-                    style_file='verkehr_zielpunkte.qml')
+        output.draw(label='kürzeste Wege')
+
+
         output.zoom_to()
+
+    def close(self):
+        if hasattr(self, 'params'):
+            self.params.close()
+        super().close()

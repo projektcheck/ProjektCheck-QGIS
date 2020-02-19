@@ -454,45 +454,13 @@ class OTPRouter(object):
         leg = itinerary['legs'][0]
         points = leg['legGeometry']['points']
         coord_list = PolylineCodec().decode(points)
+        if len(coord_list) == 0:
+            return
         route = self.routes.get_route(route_id, source_id)
         self.nodes.add_points(coord_list, route)
         if source_id not in self.areas:
             self.areas.add_area(source_id)
-
-    def coord_list2polyline(self, coord_list):
-        """
-        create arcpy.Polyline from list of coordinates
-        and append to polylines list
-
-        Parameters
-        ----------
-        coord_list : list of tuples of coordinates
-
-
-        """
-        if not len(coord_list):
-            return None
-        geom = arcpy.Polyline(
-            arcpy.Array([arcpy.Point(coords[1], coords[0])
-                         for coords in coord_list]))
-        self.polylines.append(geom)
-
-    def insert_polyline(self, fc):
-        """
-        Insert polylines to fc
-
-        Parameters
-        ----------
-        fc : str
-            the path of the feature-class
-
-        """
-        sr = arcpy.SpatialReference(4326)
-        fields = ['source', 'destination', 'SHAPE@']
-        with arcpy.da.InsertCursor(fc, fields) as rows:
-            for dest, geom in enumerate(self.polylines):
-                if geom:
-                    rows.insertRow((1, dest, geom))
+        return coord_list
 
     def create_circle(self, source, dist=1000, n_segments=20):
         """

@@ -17,7 +17,7 @@ from projektchecktools.domains.ecology.diagrams import (
 from projektchecktools.base.params import (Params, Param, SumDependency)
 from projektchecktools.base.dialogs import Dialog
 from projektchecktools.base.inputs import Slider
-from projektchecktools.utils.utils import clearLayout
+from projektchecktools.utils.utils import clear_layout
 
 from settings import settings
 
@@ -147,8 +147,8 @@ class Ecology(Domain):
         self.params_planfall = Params(
             self.ui.param_planfall_tab.layout(),
             help_file='oekologie_bodenbedeckung_planfall.txt')
-        clearLayout(self.ui.param_nullfall_tab.layout())
-        clearLayout(self.ui.param_planfall_tab.layout())
+        clear_layout(self.ui.param_nullfall_tab.layout())
+        clear_layout(self.ui.param_planfall_tab.layout())
 
         def apply_nf():
             self.apply_drawing(False)
@@ -446,4 +446,9 @@ class Ecology(Domain):
             title='Leistungskennwerte Änderungen Planfall')
         diagram.draw()
 
-
+    def close(self):
+        if hasattr(self, 'params_nullfall'):
+            self.params_nullfall.close()
+        if hasattr(self, 'params_planfall'):
+            self.params_planfall.close()
+        super().close()

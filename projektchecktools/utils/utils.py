@@ -110,7 +110,7 @@ def get_ags(features, source_crs=None):
         ags_feats.append(list(ags_table.features())[0])
     return ags_feats
 
-def clearLayout(layout):
+def clear_layout(layout):
     while layout.count():
         child = layout.takeAt(0)
         if not child:
@@ -118,7 +118,7 @@ def clearLayout(layout):
         if child.widget():
             child.widget().deleteLater()
         elif child.layout() is not None:
-            clearLayout(child.layout())
+            clear_layout(child.layout())
 
 def round_df_to(df, rounding_factor):
     """
