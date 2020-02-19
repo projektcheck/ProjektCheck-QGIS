@@ -576,8 +576,9 @@ class Einzelhandel:
 
 class ProjectDefinitions(Domain):
     """"""
-    ui_label = 'Projekt-Definitionen'
+    ui_label = 'Projektdefinition'
     ui_file = 'ProjektCheck_dockwidget_definitions.ui'
+    layer_group = 'Projektdefinition'
 
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(

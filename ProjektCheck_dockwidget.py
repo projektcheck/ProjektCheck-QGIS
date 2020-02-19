@@ -7,18 +7,18 @@ from qgis.core import  QgsProject
 
 from projektchecktools.base.domain import PCDockWidget
 from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
-                                       ProgressDialog)
+                                            ProgressDialog)
 from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
-                                       TerrestrisBackgroundLayer)
+                                            TerrestrisBackgroundLayer)
 from projektchecktools.base.database import Workspace
 from projektchecktools.domains.definitions.tables import Teilflaechen
-from projektchecktools.domains.definitions.project import (ProjectInitialization,
-                                                      CloneProject)
+from projektchecktools.domains.definitions.project import (
+    ProjectInitialization, CloneProject)
 from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
-                                  Traffic, Reachabilities, Ecology,
-                                  LandUse, InfrastructuralCosts,
-                                  MunicipalTaxRevenue,
-                                  SupermarketsCompetition)
+                                       Traffic, Reachabilities, Ecology,
+                                       LandUse, InfrastructuralCosts,
+                                       MunicipalTaxRevenue,
+                                       SupermarketsCompetition)
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -275,6 +275,14 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.setup_definitions()
             self.setup_domains()
 
+            # append groups to force initial order of layers
+            ProjectLayer.add_group(self.project_definitions.layer_group,
+                                   prepend=True)
+            for domain in self.domains:
+                group = ProjectLayer.add_group(domain.layer_group,
+                                               prepend=False)
+                group.setItemVisibilityChecked(False)
+
             table = Teilflaechen.get_table()
             layer_root = QgsProject.instance().layerTreeRoot()
             for child in layer_root.children():
@@ -285,7 +293,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             output = ProjectLayer.from_table(
                 table, groupname='Projektdefinition')
             output.draw(label='Nutzungen des Plangebiets',
-                        style_file='definitions.qml')
+                        style_file='definitions.qml', redraw=False)
             output = ProjectLayer.from_table(table, groupname='Hintergrund',
                                              prepend=False)
             output.draw(label='Umriss des Plangebiets', style_file='areas.qml')

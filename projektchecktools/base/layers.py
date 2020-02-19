@@ -28,9 +28,7 @@ class Layer(ABC):
     def root(self):
         root = QgsProject.instance().layerTreeRoot()
         if self.groupname:
-            groupnames = self.groupname.split('/')
-            group = nest_groups(root, groupnames, prepend=self.prepend)
-            root = group
+            root = Layer.add_group(self.groupname, prepend=self.prepend)
         return root
 
     @property
@@ -38,6 +36,13 @@ class Layer(ABC):
         if not self.layer:
             return None
         return self.root.findLayer(self.layer)
+
+    @classmethod
+    def add_group(self, groupname, prepend=True):
+        groupnames = groupname.split('/')
+        root = QgsProject.instance().layerTreeRoot()
+        group = nest_groups(root, groupnames, prepend=prepend)
+        return group
 
     @classmethod
     def find(self, label, groupname=''):
@@ -68,7 +73,8 @@ class Layer(ABC):
         if redraw:
             self.remove()
         elif not self.layer:
-            self.layer = Layer.find(label, groupname=self.groupname)
+            layers = Layer.find(label, groupname=self.groupname)
+            self.layer = layers[0].layer() if layers else None
 
         if not self.layer:
             self.layer = QgsVectorLayer(self.data_path, self.layername, "ogr")
