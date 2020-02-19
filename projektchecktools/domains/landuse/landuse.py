@@ -33,8 +33,6 @@ class LandUse(Domain):
             self.calculate_wohndichte)
         self.ui.calculate_areadensity_button.clicked.connect(
             self.calculate_wohnflaechendichte)
-        self.ui.power_lines_button.clicked.connect(self.add_power_lines)
-        self.ui.power_lines_button.setCheckable(False)
         self.ui.calculate_integration_button.clicked.connect(
             self.calculate_integration)
         self.bordertool = LineMapTool(
@@ -222,16 +220,6 @@ class LandUse(Domain):
         kreisname = kreis.Kreis_kreisfreie_Stadt.split(',')[0]
         typname = self.raumtypen.features().get(ID=kreistyp_id).Name
         return kreis, kreisname, kreistyp, typname
-
-    def add_power_lines(self):
-        group = (f'{self.project.groupname}/{self.layer_group}')
-        geoserver = ('https://geoserver.ggr-planung.de/geoserver/'
-                     'projektcheck/wms?')
-        layername = '51005_ax_leitung'
-        url = (f'url={geoserver}&layers={layername}&crs=EPSG:{settings.EPSG}'
-               '&format=image/png&dpiMode=7&styles')
-        layer = TileLayer(url, groupname=group)
-        layer.draw('Hochspannungsleitungen')
 
     def add_border(self, geom):
         self.borders.add(geom=geom)

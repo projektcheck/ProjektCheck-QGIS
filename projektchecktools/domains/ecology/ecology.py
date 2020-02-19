@@ -91,6 +91,19 @@ class Ecology(Domain):
             lambda: self.show_drawing_analysis(
                 planfall=self.ui.planfall_radio.isChecked()))
 
+        self.ui.power_lines_button.clicked.connect(self.add_power_lines)
+        self.ui.power_lines_button.setCheckable(False)
+
+    def add_power_lines(self):
+        group = (f'{self.project.groupname}/{self.layer_group}')
+        geoserver = ('https://geoserver.ggr-planung.de/geoserver/'
+                     'projektcheck/wms?')
+        layername = '51005_ax_leitung'
+        url = (f'url={geoserver}&layers={layername}&crs=EPSG:{settings.EPSG}'
+               '&format=image/png&dpiMode=7&styles')
+        layer = TileLayer(url, groupname=group)
+        layer.draw('Hochspannungsleitungen')
+
     def toggle_planfall_nullfall(self):
         self.planfall = self.ui.planfall_radio.isChecked()
         self.ui.import_nullfall_button.setVisible(self.planfall)
