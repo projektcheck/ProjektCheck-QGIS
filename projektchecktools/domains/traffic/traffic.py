@@ -187,6 +187,11 @@ class Traffic(Domain):
             self.draw_traffic()
 
     def draw_traffic(self):
+        output = ProjectLayer.from_table(self.transfer_nodes.table,
+                                         groupname=self.layer_group)
+        output.draw(label='Zielpunkte',
+                    style_file='verkehr_zielpunkte.qml')
+
         output = ProjectLayer.from_table(self.links.table,
                                          groupname=self.layer_group)
         output.draw(label='Zusätzliche PKW-Fahrten',
@@ -196,10 +201,6 @@ class Traffic(Domain):
                                          groupname=self.layer_group)
         output.draw(label='kürzeste Wege')
 
-        output = ProjectLayer.from_table(self.transfer_nodes.table,
-                                         groupname=self.layer_group)
-        output.draw(label='Zielpunkte',
-                    style_file='verkehr_zielpunkte.qml')
 
         output.zoom_to()
 
