@@ -9,7 +9,8 @@ from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.base.diagrams import MatplotDiagram
 from projektchecktools.base.project import ProjectManager
 from projektchecktools.domains.infrastructuralcosts.tables import (
-    Gesamtkosten, GesamtkostenTraeger, ErschliessungsnetzLinien)
+    Gesamtkosten, GesamtkostenTraeger, ErschliessungsnetzLinien,
+    ErschliessungsnetzPunkte)
 from projektchecktools.domains.definitions.tables import Teilflaechen
 
 
@@ -18,7 +19,7 @@ class NetzlaengenDiagramm(MatplotDiagram):
         project = kwargs.get('project', ProjectManager().active_project)
 
         self.title = (f'{project.name}: Länge der zusätzlichen '
-                      'Infrastrukturnetze ohne punktuelle Maßnahmen)')
+                      'Infrastrukturnetze (ohne punktuelle Maßnahmen)')
         x_label = u"Meter zusätzliche Netzlänge (ohne punktuelle Maßnahmen)"
 
         linien_df = ErschliessungsnetzLinien.features(create=True).to_pandas()
@@ -70,59 +71,60 @@ class NetzlaengenDiagramm(MatplotDiagram):
         return figure
 
 
-#class MassnahmenKostenDiagramm(MatplotDiagram):
+class MassnahmenKostenDiagramm(MatplotDiagram):
 
-    #def _create(self, **kwargs):
-        #point_table = 'Erschliessungsnetze_Punktelemente'
-        #self.title = u"{}: Kosten der punktuellen Maßnahmen (nur erstmalige Herstellung)".format(
-            #self.tbx.par.get_projectname())
-        #x_label = u"Kosten der punktuellen Maßnahmen (nur erstmalige Herstellung)"
+    def create(self, **kwargs):
+        project = kwargs.get('project', ProjectManager().active_project)
+        self.title = (f'{project.name}: Kosten der punktuellen Maßnahmen '
+                      '(nur erstmalige Herstellung)')
+        x_label = ('Kosten der punktuellen Maßnahmen '
+                   '(nur erstmalige Herstellung)')
 
-        #point_df = self.tbx.table_to_dataframe(
-            #point_table, workspace='FGDB_Kosten.gdb')
-        #base_df = self.tbx.table_to_dataframe(
-            #'Netze_und_Netzelemente', workspace='FGDB_Kosten_Tool.gdb',
-            #columns=['IDNetz', 'Netz'],
-            #is_base_table=True
-        #)
-        #base_df.drop_duplicates(inplace=True)
+        point_df = ErschliessungsnetzPunkte.features(create=True).to_pandas()
 
-        #joined = point_df.merge(base_df, on='IDNetz', how='right')
-        #joined.fillna(0, inplace=True)
-        #grouped = joined.groupby(by='IDNetz')
-        #categories = []
-        #costs = []
-        #for id_netz, grouped_df in grouped:
-            #categories.append(grouped_df['Netz'].values[0])
-            #costs.append(grouped_df['Euro_EH'].sum())
+        base_df = project.basedata.get_table(
+            'Netze_und_Netzelemente', 'Kosten',
+            fields=['IDNetz', 'Netz']).to_pandas()
+        # duplicate entries for 'IDNetz'/'Netz' combinations
+        del base_df['fid']
+        base_df.drop_duplicates(inplace=True)
 
-        #figure, ax = self.plt.subplots(figsize=(10, 5))
-        #y_pos = np.arange(len(categories))
-        #bar_width = 0.5
-        #patches = ax.barh(y_pos, costs, height=bar_width, align='center')
-        #text_offset = max([patch.get_x() + patch.get_width() for patch in
-                           #patches.get_children()]) * 0.02
-        #for i, patch in enumerate(patches.get_children()):
-            #width = patch.get_x() + patch.get_width()
-            #y = patch.get_y() + bar_width / 2
-            #ax.text(width + text_offset, y, str(int(round(width, 0))) + u' €',
-                    #color='black',ha='left', va='center')
-            ##bbox=dict(facecolor='white', edgecolor='white', boxstyle="round"))
-        #x_min, x_max = ax.get_xlim()
-        #ax.set_xlim(x_min, x_max * 1.2)
+        joined = point_df.merge(base_df, on='IDNetz', how='right')
+        joined.fillna(0, inplace=True)
+        grouped = joined.groupby(by='IDNetz')
+        categories = []
+        costs = []
+        for id_netz, grouped_df in grouped:
+            categories.append(grouped_df['Netz'].values[0])
+            costs.append(grouped_df['Euro_EH'].sum())
+
+        figure, ax = plt.subplots(figsize=(10, 5))
+        y_pos = np.arange(len(categories))
+        bar_width = 0.5
+        patches = ax.barh(y_pos, costs, height=bar_width, align='center')
+        text_offset = max([patch.get_x() + patch.get_width() for patch in
+                           patches.get_children()]) * 0.02
+        for i, patch in enumerate(patches.get_children()):
+            width = patch.get_x() + patch.get_width()
+            y = patch.get_y() + bar_width / 2
+            ax.text(width + text_offset, y, str(int(round(width, 0))) + u' €',
+                    color='black',ha='left', va='center')
+            #bbox=dict(facecolor='white', edgecolor='white', boxstyle="round"))
+        x_min, x_max = ax.get_xlim()
+        ax.set_xlim(x_min, x_max * 1.2)
 
 
-        #ax.set_yticks(y_pos)
-        #ax.set_yticklabels(categories)
-        #ax.set_title(self.title)
-        #ax.set_xlabel(x_label)
-        #ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
-        #ax.xaxis.grid(True, which='major')
-        #box = ax.get_position()
-        #ax.set_position([box.x0 + box.width * 0.12, box.y0,
-                         #box.width * 0.88, box.height])
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(categories)
+        ax.set_title(self.title)
+        ax.set_xlabel(x_label)
+        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
+        ax.xaxis.grid(True, which='major')
+        box = ax.get_position()
+        ax.set_position([box.x0 + box.width * 0.12, box.y0,
+                         box.width * 0.88, box.height])
 
-        #return ax
+        return figure
 
 
 class GesamtkostenDiagramm(MatplotDiagram):

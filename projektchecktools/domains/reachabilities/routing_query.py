@@ -40,11 +40,6 @@ class RoutingQuery:
         if point.epsg != self.epsg:
             point.transform(self.epsg)
         params['fromPlace'] = '{y},{x}'.format(y = point.y, x = point.x)
-        #params['toPlace'] = '53.337871,9.860569'
-        #url = ('https://projektcheck.ggr-planung.de/otp/surfaces')
-        #r = requests.post(url, params=params, verify=False)
-        #sid = r.json()['id']
-        #r = requests.get(f'https://projektcheck.ggr-planung.de/otp/surfaces/{sid}')
         r = requests.get(self.isochrone_url, params=params, verify=False)
         r.raise_for_status()
         geojson = r.json()

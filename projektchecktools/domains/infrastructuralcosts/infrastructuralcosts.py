@@ -14,7 +14,7 @@ from projektchecktools.base.dialogs import ProgressDialog
 
 from .diagrams import (GesamtkostenDiagramm, KostentraegerDiagramm,
                        NetzlaengenDiagramm, VergleichWEDiagramm,
-                       VergleichAPDiagramm)
+                       VergleichAPDiagramm, MassnahmenKostenDiagramm)
 from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
                            apply_kostenkennwerte)
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
@@ -268,6 +268,9 @@ class InfrastructureDrawing:
 
     def infrastrukturmengen(self):
         diagram = NetzlaengenDiagramm(project=self.project)
+        diagram.draw()
+
+        diagram = MassnahmenKostenDiagramm(project=self.project)
         diagram.draw()
 
     def close(self):
