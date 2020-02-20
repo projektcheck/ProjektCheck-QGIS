@@ -68,7 +68,7 @@ class Layer(ABC):
         return found
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
-             filter=None, expanded=True):
+             filter=None, expanded=True, prepend=False):
         if not self.layer:
             layers = Layer.find(label, groupname=self.groupname)
             if layers:
@@ -84,8 +84,8 @@ class Layer(ABC):
             self.layer.loadNamedStyle(style_path)
         tree_layer = self.tree_layer
         if not tree_layer:
-            self.root.addLayer(self.layer)
-            tree_layer = self.tree_layer
+            tree_layer = self.root.insertLayer(0, self.layer) if prepend else\
+                self.root.addLayer(self.layer)
         tree_layer.setItemVisibilityChecked(checked)
         tree_layer.setExpanded(expanded)
         if filter is not None:
