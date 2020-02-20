@@ -18,8 +18,6 @@ from projektchecktools.domains.reachabilities.routing_query import (
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.utils.utils import set_category_renderer
 
-#from settings import settings
-
 
 class Reachabilities(Domain):
     """"""
@@ -245,15 +243,18 @@ class Reachabilities(Domain):
             else 'Auto'
         steps = self.ui.timestep_input.value()
         cutoff = self.ui.cutoff_input.value()
+        connector = self.ui.connector_combo.currentData()
+        if not connector:
+            return
         job = Isochrones(self.project, modus=modus, steps=steps, cutoff=cutoff,
-                         parent=self.ui)
+                         parent=self.ui, connector=connector)
 
-        def on_success(modus):
-            self.draw_isochrones(modus)
+        def on_success():
+            self.draw_isochrones(modus, connector)
 
         dialog = ProgressDialog(
             job, parent=self.ui,
-            on_success=lambda x: on_success(modus))
+            on_success=lambda x: on_success())
         dialog.show()
 
     def get_einrichtungen(self):
@@ -273,7 +274,7 @@ class Reachabilities(Domain):
                     style_file='erreichbarkeit_einrichtungen.qml')
         output.zoom_to()
 
-    def draw_isochrones(self, modus):
+    def draw_isochrones(self, modus, connector):
         sub_group = f'Erreichbarkeiten'
 
         output = ProjectLayer.from_table(
@@ -282,9 +283,11 @@ class Reachabilities(Domain):
         end_color = (2, 120, 8) if modus == 'zu Fuß' \
             else (44, 96, 156) if modus == 'Fahrrad' \
             else (64, 56, 56)
-        layer = output.draw(label=modus, filter=f'modus="{modus}"')
+        layer = output.draw(
+            label=f'{modus} (Anbindungspunkt {connector.name_teilflaeche})',
+            filter=f'modus="{modus}" AND id_connector={connector.id}'
+        )
         output.zoom_to()
-        df = self.isochronen.to_pandas()
         set_category_renderer(layer, 'minuten',
                               (255, 255, 255), end_color,
                               unit='Minuten')

@@ -52,6 +52,7 @@ class Isochronen(ProjectTable):
     sekunden = Field(int, 0)
     minuten = Field(float, 0)
     modus = Field(str, '')
+    id_connector = Field(int, 0)
 
     class Meta:
         workspace = 'erreichbarkeiten'

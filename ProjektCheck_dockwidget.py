@@ -3,7 +3,7 @@ import os
 import subprocess
 from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import  QgsProject
+from qgis.core import QgsProject
 
 from projektchecktools.base.domain import PCDockWidget
 from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
