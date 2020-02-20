@@ -287,28 +287,19 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                                                prepend=False)
                 group.setItemVisibilityChecked(False)
 
-            table = Teilflaechen.get_table()
             layer_root = QgsProject.instance().layerTreeRoot()
             for child in layer_root.children():
                 name = child.name()
                 if name.startswith('Projekt'):
                     child.setItemVisibilityChecked(name==project.groupname)
 
-            output = ProjectLayer.from_table(
-                table, groupname='Projektdefinition')
-            output.draw(label='Nutzungen des Plangebiets',
-                        style_file='definitions.qml', redraw=False)
-            output = ProjectLayer.from_table(table, groupname='Hintergrund',
-                                             prepend=False)
-            output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
+            self.project_definitions.show_outputs()
 
             backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
             backgroundOSM.draw(checked=False)
             backgroundGrey = TerrestrisBackgroundLayer(
                 groupname='Hintergrundkarten')
             backgroundGrey.draw()
-
-            output.zoom_to()
             # ToDo: show last active widget
         except FileNotFoundError as e:
             message = QMessageBox()

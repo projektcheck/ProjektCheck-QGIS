@@ -38,20 +38,21 @@ class TrafficConnectors:
         self.toggle_connector(area)
 
     def show_connectors(self):
-        output = ProjectLayer.from_table(
-            self.connectors.table, groupname=self.layer_group)
-        self.connector_layer = output.draw(
+        self.output = ProjectLayer.from_table(
+            Connectors.get_table(), groupname=self.layer_group)
+        self.output.draw(
             label='Anbindungspunkte',
             style_file='verkehr_anbindungspunkte.qml', prepend=True)
 
     def toggle_connector(self, area=None):
         self.connector = None
-        if not self.connector_layer:
+        layer = self.output.layer
+        if not layer:
             return
-        self.connector_layer.removeSelection()
+        layer.removeSelection()
         if area:
             self.connector = self.connectors.get(id_teilflaeche=area.id)
-            self.connector_layer.select(self.connector.id)
+            layer.select(self.connector.id)
 
     def map_clicked(self, geom):
         if not self.connector:
@@ -62,6 +63,9 @@ class TrafficConnectors:
 
     def close(self):
         self.connector_tool.set_active(False)
+        layer = self.output.layer
+        if layer:
+            layer.removeSelection()
 
 
 class Wohnen:
@@ -638,11 +642,11 @@ class ProjectDefinitions(Domain):
             'Gewerbe': Gewerbe(self.basedata, type_layout),
             'Einzelhandel': Einzelhandel(self.basedata, type_layout)
         }
+        self.areas = Teilflaechen.features()
         self.typ = None
 
     def load_content(self):
         super().load_content()
-        self.areas = Teilflaechen.features()
         self.connectors = Connectors.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
@@ -652,6 +656,7 @@ class ProjectDefinitions(Domain):
                 f'({Nutzungsart(area.nutzungsart).name.capitalize()})',
                 area)
         self.ui.area_combo.blockSignals(False)
+        self.show_outputs()
         self.change_area()
 
     def change_area(self):
@@ -659,9 +664,8 @@ class ProjectDefinitions(Domain):
         self.area = self.ui.area_combo.itemData(
             self.ui.area_combo.currentIndex())
 
-        output = ProjectLayer.find('Nutzungen des Plangebiets')
-        if output:
-            layer = output[0].layer()
+        layer = self.tou_layer.layer
+        if layer:
             layer.removeSelection()
             layer.select(self.area.id)
 
@@ -669,6 +673,17 @@ class ProjectDefinitions(Domain):
 
         self.setup_type()
         self.setup_type_params()
+
+    def show_outputs(self):
+        table = Teilflaechen.get_table()
+        self.tou_layer = ProjectLayer.from_table(
+            table, groupname=self.layer_group)
+        self.tou_layer.draw(label='Nutzungen des Plangebiets',
+                            style_file='definitions.qml', redraw=False)
+        output = ProjectLayer.from_table(table, groupname='Hintergrund',
+                                         prepend=False)
+        output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
+        self.connector_setter.show_connectors()
 
     def setup_type(self):
         layout = self.ui.parameter_group.layout()
@@ -724,9 +739,8 @@ class ProjectDefinitions(Domain):
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
         self.connector_setter.close()
-        output = ProjectLayer.find('Nutzungen des Plangebiets')
-        if output:
-            layer = output[0].layer()
+        layer = self.tou_layer.layer
+        if layer:
             layer.removeSelection()
         if hasattr(self, 'areas'):
             self.areas.table.workspace.close()
