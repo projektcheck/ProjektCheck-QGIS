@@ -1,4 +1,5 @@
 from qgis.PyQt.Qt import QRadioButton
+from qgis.PyQt.QtWidgets import QMessageBox
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.tools import LineMapTool
@@ -18,6 +19,8 @@ from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
                            apply_kostenkennwerte)
 from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
                      Kostenaufteilung, KostenkennwerteLinienelemente)
+from projektchecktools.domains.definitions.tables import Teilflaechen
+from projektchecktools.domains.constants import Nutzungsart
 
 
 class InfrastructureDrawing:
@@ -517,15 +520,32 @@ class InfrastructuralCosts(Domain):
 
     def load_content(self):
         super().load_content()
+        self.areas = Teilflaechen.features()
         self.drawing.load_content()
         self.kostenaufteilung.load_content()
         self.gesamtkosten.load_content()
 
     def kostenvergleich(self):
-        ap_diagram = VergleichAPDiagramm(project=self.project)
-        ap_diagram.draw()
-        we_diagram = VergleichWEDiagramm(project=self.project)
-        we_diagram.draw()
+        types_of_use = [area.nutzungsart for area in self.areas
+                        if area.nutzungsart not in (
+                            Nutzungsart.UNDEFINIERT.value,
+                            Nutzungsart.EINZELHANDEL.value)
+                        ]
+        if len(types_of_use) != 1:
+            message = QMessageBox()
+            message.setIcon(QMessageBox.Warning)
+            message.setText(
+                f'Die Funktion steht nur für Projekte zur '
+                u'Verfügung, bei denen alle Teilflächen '
+                u'ausschließlich die Nutzung Wohnen bzw. Gewerbe haben.')
+            message.setWindowTitle('Fehler')
+            message.exec_()
+            return
+        if types_of_use[0] == Nutzungsart.WOHNEN.value:
+            diagram = VergleichWEDiagramm(project=self.project)
+        else:
+            diagram = VergleichAPDiagramm(project=self.project)
+        diagram.draw()
 
     def close(self):
         if hasattr(self.kostenaufteilung, 'params'):

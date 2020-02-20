@@ -282,7 +282,7 @@ class VergleichsDiagramm(MatplotDiagram):
             df_reference['IDNutzungsart'] == tou].iloc[0]
         x = df_areas[self._column].sum()
         total_costs = df_costs['Euro'].sum()
-        costs_per_x = int((total_costs / x) / 1000) * 1000
+        costs_per_x = int((total_costs / x) / 1000) * 1000 if x > 0 else 0
         reference = df_reference['Wert']
 
         categories = [

@@ -1139,7 +1139,7 @@ padding: 2px;
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten pro WE bzw. AP vergleichen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die ermittelten Erschließungskosten pro Wohneinheit bzw. Arbeitsplatz bundesweiten Vergleichswerten gegenüberstellen. (Nur verfügbar, wenn alle Teilflächen die Nutzung “Wohnen” oder alle Teilflächen die Nutzung “Gewerbe” haben.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Kosten pro vergleichen</string>
+              <string>Kosten vergleichen</string>
              </property>
              <property name="icon">
               <iconset>
