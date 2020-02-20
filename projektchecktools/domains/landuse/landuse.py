@@ -265,4 +265,5 @@ class LandUse(Domain):
             self.living_areas.table.workspace.close()
         if hasattr(self, 'params'):
             self.params.close()
+        self.bordertool.set_active(False)
         super().close()

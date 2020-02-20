@@ -79,6 +79,7 @@ class InfrastructureDrawing:
         self.toggle_point()
 
     def setup_tools(self):
+        self._tools = []
         self.line_tools = {
             self.ui.anliegerstrasse_innere_button: 11,
             self.ui.sammelstrasse_innere_button: 12,
@@ -96,6 +97,7 @@ class InfrastructureDrawing:
             tool = LineMapTool(button, canvas=self.canvas)
             tool.drawn.connect(
                 lambda geom, i=net_id: self.add_geom(geom, i, geom_typ='line'))
+            self._tools.append(tool)
 
         self.select_lines_tool = FeaturePicker(
             self.ui.select_lines_button, canvas=self.canvas)
@@ -104,6 +106,7 @@ class InfrastructureDrawing:
         self.select_lines_tool.feature_picked.connect(self.line_selected)
         self.ui.remove_lines_button.clicked.connect(
             self.remove_selected_lines)
+        self._tools.append(self.select_lines_tool)
 
         self.draw_point_tool = MapClickedTool(
             self.ui.add_point_button, canvas=self.canvas)
@@ -115,6 +118,7 @@ class InfrastructureDrawing:
             lambda: self.draw_output('point'))
         self.ui.add_point_button.clicked.connect(
             lambda: self.draw_output('point'))
+        self._tools.append(self.draw_point_tool)
 
     def add_geom(self, geom, net_id, geom_typ='line'):
         features = self.lines if geom_typ == 'line' \
@@ -262,6 +266,10 @@ class InfrastructureDrawing:
     def infrastrukturmengen(self):
         diagram = NetzlaengenDiagramm(project=self.project)
         diagram.draw()
+
+    def close(self):
+        for tool in self._tools:
+            tool.set_active(False)
 
 
 class Gesamtkosten:
@@ -524,4 +532,5 @@ class InfrastructuralCosts(Domain):
             self.kostenaufteilung.params.close()
         if hasattr(self.gesamtkosten, 'params'):
             self.gesamtkosten.params.close()
+        self.drawing.close()
         super().close()

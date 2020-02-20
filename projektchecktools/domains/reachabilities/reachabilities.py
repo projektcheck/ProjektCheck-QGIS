@@ -260,3 +260,7 @@ class Reachabilities(Domain):
         layer.draw('ÖPNVKarte (memomaps.de)')
         layer.layer.setTitle(
             'Karte memomaps.de CC-BY-SA, Kartendaten Openstreetmap ODbL')
+
+    def close(self):
+        self.feature_picker.set_active(False)
+        super().close()

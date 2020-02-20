@@ -81,8 +81,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>435</width>
-         <height>798</height>
+         <width>441</width>
+         <height>822</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -126,19 +126,6 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Schritt 2: Annahmen festlegen</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QGroupBox" name="parameter_group">
              <property name="font">
               <font>
@@ -149,7 +136,7 @@ padding: 2px;
               </font>
              </property>
              <property name="title">
-              <string/>
+              <string>Schritt 2: Annahmen festlegen</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5"/>
             </widget>

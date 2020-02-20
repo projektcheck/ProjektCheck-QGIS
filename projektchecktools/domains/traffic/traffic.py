@@ -157,7 +157,6 @@ class Traffic(Domain):
         output.draw(label='kürzeste Wege',
                     style_file='verkehr_kuerzeste_Wege.qml')
 
-
         output.zoom_to()
 
     def close(self):

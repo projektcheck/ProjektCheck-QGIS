@@ -225,6 +225,7 @@ class Ecology(Domain):
         )
 
     def setup_drawing_tools(self):
+        self._tools = []
         self.drawing_tools = {
             self.ui.draw_builtup_button: 1,
             self.ui.draw_water_button: 2,
@@ -248,6 +249,7 @@ class Ecology(Domain):
                     in_area_only=self.ui.in_area_only_check.isChecked(),
                     planfall=self.ui.planfall_radio.isChecked()
                 ))
+            self._tools.append(tool)
 
     def add_geom(self, geom, typ, unite=True, in_area_only=True,
                  difference=True, planfall=True):
@@ -451,4 +453,6 @@ class Ecology(Domain):
             self.params_nullfall.close()
         if hasattr(self, 'params_planfall'):
             self.params_planfall.close()
+        for tool in self._tools:
+            tool.set_active(False)
         super().close()
