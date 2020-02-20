@@ -90,7 +90,6 @@ class Isochrones(Worker):
         self.isochronen.filter(modus=self.modus)
         self.isochronen.delete()
         self.isochronen.reset()
-        table = 'Isochrone'
         centroid = self.project_frame.geom.asPoint()
         epsg = settings.EPSG
         centroid = Point(centroid.x(), centroid.y(), epsg=epsg)

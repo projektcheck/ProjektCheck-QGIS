@@ -10,6 +10,7 @@ from projektchecktools.domains.reachabilities.bahn_query import (
     BahnQuery, StopScraper, BahnRouter, next_working_day)
 from projektchecktools.domains.reachabilities.tables import (
     Haltestellen, ErreichbarkeitenOEPNV, Einrichtungen, Isochronen)
+from projektchecktools.domains.traffic.tables import Connectors
 from projektchecktools.domains.reachabilities.geoserver_query import (
     EinrichtungenQuery)
 from projektchecktools.domains.reachabilities.routing_query import (
@@ -53,8 +54,12 @@ class Reachabilities(Domain):
         self.ui.oepnvkarte_button.setCheckable(False)
         self.ui.oepnvkarte_button.clicked.connect(self.oepnv_map)
 
+        self.ui.connector_combo.currentIndexChanged.connect(
+            self.toggle_connector)
+
     def load_content(self):
         super().load_content()
+        self.connectors = Connectors.features()
         self.haltestellen = Haltestellen.features(create=True)\
             .filter(flaechenzugehoerig=True, abfahrten__gt=0)
         self.erreichbarkeiten = ErreichbarkeitenOEPNV.features(create=True)
@@ -63,6 +68,7 @@ class Reachabilities(Domain):
         self.project_frame = Projektrahmendaten.features()[0]
         self.stops_layer = None
         self.fill_haltestellen()
+        self.fill_connectors()
 
     def feature_picked(self, feature):
         self.stops_layer.removeSelection()
@@ -72,6 +78,30 @@ class Reachabilities(Domain):
             if fid == self.ui.stops_combo.itemData(idx).id:
                 break
         self.ui.stops_combo.setCurrentIndex(idx)
+
+    def toggle_connector(self):
+        connector = self.ui.connector_combo.currentData()
+        if not connector:
+            return
+
+        output = ProjectLayer.find('Umriss des Plangebiets')
+        if output:
+            layer = output[0].layer()
+            layer.removeSelection()
+            layer.select(connector.id_teilflaeche)
+
+        output = ProjectLayer.find('Anbindungspunkte')
+        if output:
+            tree_layer = output[0]
+            tree_layer.setItemVisibilityCheckedParentRecursive(True)
+            layer = tree_layer.layer()
+            layer.removeSelection()
+            layer.select(connector.id)
+
+        output = ProjectLayer.find('Nutzungen des Plangebiets')
+        if output:
+            tree_layer = output[0]
+            tree_layer.setItemVisibilityChecked(False)
 
     def toggle_stop(self, stop=None):
         if not stop:
@@ -132,6 +162,15 @@ class Reachabilities(Domain):
             #self.ui.stops_status_label
         self.ui.stops_combo.blockSignals(False)
         self.toggle_stop()
+
+    def fill_connectors(self):
+        self.ui.connector_combo.blockSignals(True)
+        self.ui.connector_combo.clear()
+        for connector in self.connectors:
+            self.ui.connector_combo.addItem(
+                f'Anbindungspunkt {connector.name_teilflaeche}', connector)
+        self.ui.connector_combo.blockSignals(False)
+        self.toggle_connector()
 
     def draw_haltestellen(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -263,4 +302,12 @@ class Reachabilities(Domain):
 
     def close(self):
         self.feature_picker.set_active(False)
+        output = ProjectLayer.find('Umriss des Plangebiets')
+        if output:
+            layer = output[0].layer()
+            layer.removeSelection()
+        output = ProjectLayer.find('Anbindungspunkte')
+        if output:
+            layer = output[0].layer()
+            layer.removeSelection()
         super().close()

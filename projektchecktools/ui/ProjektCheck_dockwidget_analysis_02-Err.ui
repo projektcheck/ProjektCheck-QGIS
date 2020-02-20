@@ -87,8 +87,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>454</width>
-         <height>815</height>
+         <width>460</width>
+         <height>839</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -624,6 +624,20 @@ padding: 2px;
              </property>
              <property name="text">
               <string>Weg- und Fahrzeit-Isochronen erzeugen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Ausgangspunkt der Isochronen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="connector_combo">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Teilfläche auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier die Teilfläche aus, deren bauliche Nutzung Sie im Folgenden definieren möchten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
