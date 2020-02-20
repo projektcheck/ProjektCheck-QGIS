@@ -396,11 +396,12 @@ class ProjectLayer(Layer):
         return Layer.add_group(groupname, prepend=prepend)
 
     def draw(self, style_file=None, label='', checked=True, filter=None,
-             read_only=True, redraw=True):
+             read_only=True, redraw=True, prepend=False):
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
         layer = super().draw(style_path=style_path, label=label,
-                             checked=checked, filter=filter, redraw=redraw)
+                             checked=checked, filter=filter, redraw=redraw,
+                             prepend=prepend)
         layer.setReadOnly(read_only)
         return layer
 

@@ -1,15 +1,11 @@
 from qgis.gui import QgsMapToolEmitPoint
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
-from qgis.PyQt.QtWidgets import QVBoxLayout
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
-from projektchecktools.base.tools import MapClickedTool
-from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.traffic.tables import (
     Connectors, Links, Itineraries, TransferNodes, Ways)
 from projektchecktools.domains.traffic.routing import Routing
@@ -36,34 +32,16 @@ class Traffic(Domain):
         nodes.delete()
 
     def setupUi(self):
-        self.ui.area_combo.currentIndexChanged.connect(
-            lambda idx: self.toggle_connector(self.ui.area_combo.currentData()))
-        self.connector_tool = MapClickedTool(self.ui.connector_button,
-                                             canvas=self.canvas,
-                                             target_crs=self.settings.EPSG)
-        self.connector_tool.map_clicked.connect(self.map_clicked)
         self.ui.calculate_traffic_button.clicked.connect(
             self.calculate_traffic)
 
     def load_content(self):
         super().load_content()
-        self.connectors = Connectors.features(create=False)
         self.links = Links.features(project=self.project, create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
                                                      create=True)
         self.itineraries = Itineraries.features(project=self.project, create=True)
         self.ways = Ways.features(project=self.project, create=True)
-        self.areas = Teilflaechen.features()
-
-        self.ui.area_combo.blockSignals(True)
-        self.ui.area_combo.clear()
-        self.ui.area_combo.addItem('Fläche wählen', None)
-        for area in self.areas:
-            self.ui.area_combo.addItem(area.name, area)
-        self.ui.area_combo.blockSignals(False)
-
-        self.show_connectors()
-        self.toggle_connector()
 
         self.ui.distance_frame.setVisible(False)
         if len(self.transfer_nodes) == 0:
@@ -142,29 +120,6 @@ class Traffic(Domain):
         )
         dialog.setAttribute(Qt.WA_DeleteOnClose)
         dialog.show()
-
-    def show_connectors(self):
-        output = ProjectLayer.from_table(
-            self.connectors.table, groupname=self.layer_group)
-        self.connector_layer = output.draw(
-            label='Anbindungspunkte',
-            style_file='verkehr_anbindungspunkte.qml')
-
-    def toggle_connector(self, area=None):
-        self.connector = None
-        if not self.connector_layer:
-            return
-        self.connector_layer.removeSelection()
-        if area:
-            self.connector = self.connectors.get(id_teilflaeche=area.id)
-            self.connector_layer.select(self.connector.id)
-
-    def map_clicked(self, geom):
-        if not self.connector:
-            return
-        self.connector.geom = geom
-        self.canvas.refreshAllLayers()
-        self.connector.save()
 
     def calculate_traffic(self):
         distance = self.ui.distance_input.value()

@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 from qgis.PyQt.QtCore import Qt
 
-from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit, Checkbox,
-                                      Slider, DoubleSpinBox)
+from projektchecktools.base.tools import MapClickedTool
+from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit,
+                                           Checkbox, Slider, DoubleSpinBox)
 from projektchecktools.base.params import (Params, Param, Title,
-                                      Seperator, SumDependency)
+                                           Seperator, SumDependency)
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.utils.utils import clear_layout
@@ -17,6 +18,50 @@ from projektchecktools.domains.definitions.tables import (
     Gewerbeanteile, Projektrahmendaten)
 from projektchecktools.domains.jobs_inhabitants.tables import (
     ApProJahr, WohnenProJahr, WohnenStruktur)
+
+
+class TrafficConnectors:
+    layer_group = 'Projektdefinition'
+
+    def __init__(self, ui, canvas, project):
+        self.project = project
+        self.canvas = canvas
+        self.connector_tool = MapClickedTool(ui.connector_button,
+                                             canvas=canvas,
+                                             target_crs=project.settings.EPSG)
+        self.connector_tool.map_clicked.connect(self.map_clicked)
+
+    def load_content(self, area):
+        self.connectors = Connectors.features(create=False,
+                                              project=self.project)
+        self.show_connectors()
+        self.toggle_connector(area)
+
+    def show_connectors(self):
+        output = ProjectLayer.from_table(
+            self.connectors.table, groupname=self.layer_group)
+        self.connector_layer = output.draw(
+            label='Anbindungspunkte',
+            style_file='verkehr_anbindungspunkte.qml', prepend=True)
+
+    def toggle_connector(self, area=None):
+        self.connector = None
+        if not self.connector_layer:
+            return
+        self.connector_layer.removeSelection()
+        if area:
+            self.connector = self.connectors.get(id_teilflaeche=area.id)
+            self.connector_layer.select(self.connector.id)
+
+    def map_clicked(self, geom):
+        if not self.connector:
+            return
+        self.connector.geom = geom
+        self.canvas.refreshAllLayers()
+        self.connector.save()
+
+    def close(self):
+        self.connector_tool.set_active(False)
 
 
 class Wohnen:
@@ -584,6 +629,17 @@ class ProjectDefinitions(Domain):
         self.ui.area_combo.currentIndexChanged.connect(
             lambda: self.change_area())
 
+        self.connector_setter = TrafficConnectors(
+            self.ui, self.canvas, self.project)
+        type_layout = self.ui.type_parameter_group.layout()
+        self.types = {
+            'Undefiniert': None,
+            'Wohnen': Wohnen(self.basedata, type_layout),
+            'Gewerbe': Gewerbe(self.basedata, type_layout),
+            'Einzelhandel': Einzelhandel(self.basedata, type_layout)
+        }
+        self.typ = None
+
     def load_content(self):
         super().load_content()
         self.areas = Teilflaechen.features()
@@ -596,16 +652,6 @@ class ProjectDefinitions(Domain):
                 f'({Nutzungsart(area.nutzungsart).name.capitalize()})',
                 area)
         self.ui.area_combo.blockSignals(False)
-
-        type_layout = self.ui.type_parameter_group.layout()
-        self.types = {
-            'Undefiniert': None,
-            'Wohnen': Wohnen(self.basedata, type_layout),
-            'Gewerbe': Gewerbe(self.basedata, type_layout),
-            'Einzelhandel': Einzelhandel(self.basedata, type_layout)
-        }
-        self.typ = None
-
         self.change_area()
 
     def change_area(self):
@@ -618,6 +664,8 @@ class ProjectDefinitions(Domain):
             layer = output[0].layer()
             layer.removeSelection()
             layer.select(self.area.id)
+
+        self.connector_setter.load_content(self.area)
 
         self.setup_type()
         self.setup_type_params()
@@ -675,6 +723,7 @@ class ProjectDefinitions(Domain):
 
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
+        self.connector_setter.close()
         output = ProjectLayer.find('Nutzungen des Plangebiets')
         if output:
             layer = output[0].layer()

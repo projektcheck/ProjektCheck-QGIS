@@ -21,13 +21,14 @@ class MapTool:
         self.canvas = canvas or utils.iface.mapCanvas()
         # workaround: .clicked.connect(self.toggle) works only occasionally
         # reason unknown
-        self.ui_element.clicked.connect(lambda x: self.toggle(x))
+        self.ui_element.clicked.connect(
+            lambda checked: self.set_active(checked))
         self.tip = tip
         if tip:
             self.map_timer = QTimer(self.canvas)
             self.map_timer.timeout.connect(self.show_tip)
 
-    def toggle(self, active):
+    def set_active(self, active):
         if active:
             self.canvas.setMapTool(self)
             self.canvas.mapToolSet.connect(self.disconnect)
@@ -40,7 +41,7 @@ class MapTool:
 
     def disconnect(self, **kwargs):
         self.canvas.mapToolSet.disconnect(self.disconnect)
-        self.toggle(False)
+        self.set_active(False)
 
     def canvasMoveEvent(self, e):
         if self.tip and self.canvas.underMouse():
