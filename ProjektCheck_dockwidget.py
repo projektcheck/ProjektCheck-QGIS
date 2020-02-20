@@ -220,7 +220,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)),
             'Über Projekt-Check')
-        icon_path = 'images/iconset_mob/20190619_iconset_mob_asphalt_1.png'
+        icon_path = 'images/iconset_mob/20190619_iconset_mob_legal_01.png'
         menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)),
             'Haftungssausschluss')
