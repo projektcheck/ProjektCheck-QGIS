@@ -546,11 +546,22 @@ class InfrastructuralCosts(Domain):
             message.setWindowTitle('Fehler')
             message.exec_()
             return
-        if types_of_use[0] == Nutzungsart.WOHNEN.value:
-            diagram = VergleichWEDiagramm(project=self.project)
-        else:
-            diagram = VergleichAPDiagramm(project=self.project)
-        diagram.draw()
+
+        job = GesamtkostenErmitteln(self.project)
+
+        def on_close(success):
+            if not success:
+                return
+            if types_of_use[0] == Nutzungsart.WOHNEN.value:
+                diagram = VergleichWEDiagramm(project=self.project)
+            else:
+                diagram = VergleichAPDiagramm(project=self.project)
+            diagram.draw()
+
+        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close,
+                                auto_close=True)
+        dialog.show()
+
 
     def close(self):
         if hasattr(self.kostenaufteilung, 'params'):

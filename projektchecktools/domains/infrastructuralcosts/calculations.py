@@ -147,6 +147,11 @@ class KostentraegerAuswerten(Worker):
         self.project = project
 
     def work(self):
+        self.log('Ermittle Gesamtkosten...')
+        gesamtkosten_worker = GesamtkostenErmitteln(
+            self.project, parent=self.parent())
+        gesamtkosten_worker.work()
+
         self.shares_results = GesamtkostenTraeger.features(
             project=self.project, create=True)
         self.df_shares = Kostenaufteilung.features(
