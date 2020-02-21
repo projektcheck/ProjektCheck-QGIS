@@ -319,7 +319,7 @@ class Params(QObject):
     def load(self):
         pass
 
-    def show(self, *args):
+    def show(self, *args, title='Parameter einstellen'):
         '''
         render parameters and elements in parent
 
@@ -346,7 +346,8 @@ class Params(QObject):
         #if not isinstance(parent, QWidget):
         parent = None
         self.dialog = ParamsDialog(parent=parent,
-                                   help_text=self.help_dict['beschreibung'])
+                                   help_text=self.help_dict['beschreibung'],
+                                   title=title)
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
@@ -427,10 +428,10 @@ class Params(QObject):
 
 
 class ParamsDialog(Dialog):
-    def __init__(self, parent=None, title=None, help_text=None):
+    def __init__(self, parent=None, title='Parameter einstellen', help_text=None):
         super().__init__(modal=True, parent=parent,
                          ui_file='parameter_dialog.ui',
-                         title='Parameter einstellen')
+                         title=title)
         self.layout = self.base_layout
         self.help_widget.setVisible(False)
         if help_text is None:

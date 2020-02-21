@@ -80,24 +80,27 @@ class LandUse(Domain):
         self.bordertool.set_snap_geometry(self.area_union)
 
     def setup_params(self):
-        anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
-        value = anteile.nettoflaeche if anteile else 15
+        anteil = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
+        value = anteil.nettoflaeche if anteil else 85
         clear_layout(self.layout)
+
         self.params = Params(
             self.layout,
-            help_file='flaecheninanspruchnahme_wohnbauland_wohnflaeche.txt')
-        self.params.add(Title('Wohnbauland'))
+            help_file='flaecheninanspruchnahme_wohnbauland_wohnflaeche.txt'
+        )
+
+        self.params.add(Title('Anteil Nettowohnbauland'))
         self.params.nettoflaeche = Param(
             value, Slider(maximum=100),
-            label='Anteil der Fläche der ausgewählten Teilfläche,\n'
-            'welcher kein Nettowohnbauland\n'
-            '(= Wohnbaugrundstücke) ist',
+            label='Anteil des Nettowohnbaulandes (= Summe aller\n'
+            'Wohnbaugrundstücke) an der Gesamtfläche der \n'
+            'ausgewählten Teilfläche',
             unit='%'
         )
 
         self.params.add(Seperator())
 
-        self.params.add(Title('Durchschnittliche Wohnfläche je Wohneinheit'))
+        self.params.add(Title('Durchschnittliche Wohnfläche je Wohnung'))
 
         for bt in self.gebaeudetypen_base.features():
             param_name = bt.param_we
@@ -108,15 +111,14 @@ class LandUse(Domain):
                 else feature.mean_wohnflaeche
             self.params.add(Param(
                 value, Slider(maximum=200),
-                label=f'... in {bt.display_name}'),
+                label=f'... in {bt.display_name}', unit='m²'),
                 name=param_name
             )
 
         self.params.changed.connect(self.save)
-        self.params.show()
+        self.params.show(
+            title='Annahmen für Wohnungsdichte und Wohnflächendichte')
 
-        # ToDo: check features if they have to be created instead of saving on
-        # suspicion
         self.save()
 
     def save(self):
@@ -157,9 +159,8 @@ class LandUse(Domain):
         if not self.area:
             return
         # calculation for area
-        anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
-        netto_wb = (self.area.geom.area() / 10000 *
-                    (1 - anteile.nettoflaeche / 100))
+        anteil = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
+        netto_wb = (self.area.geom.area() / 10000) * (anteil.nettoflaeche / 100)
         wohndichte = round(self.area.we_gesamt / netto_wb, 1)
 
         # get data to compare to
@@ -169,19 +170,27 @@ class LandUse(Domain):
 
         # chart
         values = [wohndichte, wohndichte_kreis, wohndichte_kreistyp]
-        labels = [f'Teilfläche {self.area.name}', f'Kreis {kreisname}', typname]
-        colors = ['r', 'b', 'b']
-        chart = BarChart(values, labels=labels,
-                         title=f'Teilfläche {self.area.name}: '
-                         'Wohneinheiten pro Hektar Nettowohnbauland',
-                         colors=colors, y_label='Wohneinheiten pro Hektar')
+        labels = [f'Teilfläche "{self.area.name}"', f'Kreis "{kreisname}"',
+                  typname]
+        colors = ['#70ad47', '#385723', '#385723']
+        custom_legend={
+            f'Teilfläche "{self.area.name}"': '#70ad47',
+            'Vergleichswerte': '#385723'
+        }
+        chart = BarChart(
+            values, labels=labels,
+            title=f'Teilfläche "{self.area.name}": '
+            'Wohneinheiten pro Hektar Nettowohnbauland',
+            y_label='Wohneinheiten pro Hektar Nettowohnbauland',
+            colors=colors, custom_legend=custom_legend
+        )
         chart.draw()
 
     def calculate_wohnflaechendichte(self):
         if not self.area:
             return
         # calculation for area
-        anteile = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
+        anteil = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         wohneinheiten = self.wohneinheiten.filter(id_teilflaeche=self.area.id)
         wohnflaeche = self.wohnflaeche.filter(id_teilflaeche=self.area.id)
 
@@ -190,25 +199,33 @@ class LandUse(Domain):
         df_merged = df_wohneinheiten.merge(df_wohnflaeche, on='id_gebaeudetyp')
         wohnflaeche_gesamt = (df_merged['mean_wohnflaeche'] *
                               df_merged['we']).sum()
-        netto_wb = (self.area.geom.area() / 10000 *
-                    (1 - anteile.nettoflaeche / 100))
-        wohnflaechendichte = round(wohnflaeche_gesamt / netto_wb, 1)
+        netto_wb = (self.area.geom.area() / 10000) * (anteil.nettoflaeche / 100)
+        wohnflaechendichte = round(wohnflaeche_gesamt / netto_wb)
 
         # get data to compare to
         kreis, kreisname, kreistyp, typname = self.get_kreis_data()
         wohndichte_kreis = \
-            kreis.Wohnflaechendichte_qm_Wohnfl_pro_ha_Nettowohnbauland
+            round(kreis.Wohnflaechendichte_qm_Wohnfl_pro_ha_Nettowohnbauland)
         wohndichte_kreistyp = \
-            kreistyp.Wohnflaechendichte_qm_Wohnfl_pro_ha_Nettowohnbauland
+            round(kreistyp.Wohnflaechendichte_qm_Wohnfl_pro_ha_Nettowohnbauland)
 
         # chart
         values = [wohnflaechendichte, wohndichte_kreis, wohndichte_kreistyp]
-        labels = [f'Teilfläche {self.area.name}', f'Kreis {kreisname}', typname]
-        colors = ['r', 'b', 'b']
-        chart = BarChart(values, labels=labels,
-                         title=f'{self.project.name} - {self.area.name}: '
-                         'Wohnfläche(m²) pro Hektar Nettowohnbauland',
-                         colors=colors, y_label='Quadratmeter pro Hektar')
+        values = [round(v) for v in values]
+        labels = [f'Teilfläche "{self.area.name}"',
+                  f'Kreis {kreisname}', typname]
+        colors = ['#70ad47', '#385723', '#385723']
+        custom_legend={
+            f'Teilfläche "{self.area.name}"': '#70ad47',
+            'Vergleichswerte': '#385723'
+        }
+        chart = BarChart(
+            values, labels=labels,
+            title=f'Teilfläche "{self.area.name}": '
+            'Wohnfläche (m²) pro Hektar Nettowohnbauland',
+            colors=colors, custom_legend=custom_legend,
+            y_label='Quadratmeter Wohnfläche pro Hektar Nettowohnbauland'
+        )
         chart.draw()
 
     def get_kreis_data(self):
@@ -245,14 +262,16 @@ class LandUse(Domain):
     def calculate_integration(self):
         area_outer_border = self.area_union.length()
         drawn_borders = sum([line.geom.length() for line in self.borders])
-        shared_border = round(drawn_borders / area_outer_border, 3) * 100
+        shared_border = round(drawn_borders / area_outer_border, 2) * 100
         shared_border = min(shared_border, 100)
         values = [shared_border, 100 - shared_border]
-        labels = ['an bestehende Siedlungen angrenzend',
-                  'nicht an bestehende Siedlungen angrenzend']
+        labels = ['Anteil der Plangebietsgrenze, die an\n'
+                  'bestehende Siedlungsflächen angrenzt',
+                  'Anteil der Plangebietsgrenze, die nicht an\n'
+                  'bestehende Siedlungsflächen angrenzt']
         chart = PieChart(values, labels=labels, colors=None,
-                         title=f'{self.project.name}: Anteil der '
-                         'Plangebietsgrenze',)
+                         title=f'{self.project.name}: Lage zu bestehenden '
+                         'Siedlungsflächen')
         chart.draw()
 
     def close(self):
