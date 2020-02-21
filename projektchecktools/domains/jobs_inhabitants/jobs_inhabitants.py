@@ -38,4 +38,4 @@ class JobsInhabitants(Domain):
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Branchenanteile an den Arbeitsplätzen")
             diagram = BranchenAnteile(area=area, title=title)
-            diagram.draw()
+            diagram.draw(offset_x=100, offset_y=100)

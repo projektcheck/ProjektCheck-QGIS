@@ -305,8 +305,12 @@ class DiagramDialog(Dialog):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-    def show(self):
+    def show(self, offset_x=0, offset_y=0):
         #subplot.set_axis_off()
         plt.gcf().canvas.draw_idle()
         self.adjustSize()
         QDialog.show(self)
+        if offset_x or offset_y:
+            geometry = self.geometry()
+            self.setGeometry(geometry.x() + offset_x, geometry.y() + offset_y,
+                             geometry.width(), geometry.height())

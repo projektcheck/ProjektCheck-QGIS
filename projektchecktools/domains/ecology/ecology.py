@@ -446,7 +446,7 @@ class Ecology(Domain):
         diagram = LeistungskennwerteDelta(
             delta=rating_delta, columns=columns,
             title='Leistungskennwerte Änderungen Planfall')
-        diagram.draw()
+        diagram.draw(offset_x=100, offset_y=100)
 
     def close(self):
         if hasattr(self, 'params_nullfall'):

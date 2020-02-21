@@ -271,7 +271,7 @@ class InfrastructureDrawing:
         diagram.draw()
 
         diagram = MassnahmenKostenDiagramm(project=self.project)
-        diagram.draw()
+        diagram.draw(offset_x=100, offset_y=100)
 
     def close(self):
         for tool in self._tools:

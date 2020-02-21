@@ -27,7 +27,7 @@ class MatplotDiagram(ABC):
         self.kwargs = kwargs
         self.title = kwargs.get('title', '')
 
-    def draw(self):
+    def draw(self, offset_x=0, offset_y=0):
         '''
         show the created plot in current process or externally in own process
 
@@ -42,7 +42,7 @@ class MatplotDiagram(ABC):
         if not self.dialog:
             figure = self.create(**self.kwargs)
             self.dialog = DiagramDialog(figure, title=self.title)
-        self.dialog.show()
+        self.dialog.show(offset_x=offset_x, offset_y=offset_y)
 
     def create(self, **kwargs):
         """to be implemented by subclasses,
