@@ -642,11 +642,11 @@ class ProjectDefinitions(Domain):
             'Gewerbe': Gewerbe(self.basedata, type_layout),
             'Einzelhandel': Einzelhandel(self.basedata, type_layout)
         }
-        self.areas = Teilflaechen.features()
         self.typ = None
 
     def load_content(self):
         super().load_content()
+        self.areas = Teilflaechen.features()
         self.connectors = Connectors.features()
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
