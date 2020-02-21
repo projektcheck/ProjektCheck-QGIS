@@ -1,10 +1,12 @@
 from abc import ABC
 import numpy as np
 import matplotlib
-from cycler import cycler
+from matplotlib.patches import Patch
+import locale
 matplotlib.use('ps')
-#matplotlib.rcParams['axes.prop_cycle'] = cycler(color='bgrcmyk')
-#matplotlib.style.use('classic')
+locale.setlocale(locale.LC_ALL, '')
+matplotlib.rcParams['axes.formatter.use_locale'] = True
+
 import matplotlib.pyplot as plt
 import os
 
@@ -52,34 +54,45 @@ class MatplotDiagram(ABC):
 
 class BarChart(MatplotDiagram):
     def __init__(self, values, labels=None, colors=None, y_label='',
-                 title=''):
+                 title='', show_legend=True, custom_legend=None):
         super().__init__()
         self.values = values
         self.labels = labels or [''] * len(values)
         self.title = title
-        self.colors = colors
+        self.colors = colors or ['b'] * len(values)
         self.y_label = y_label
+        self.show_legend = show_legend
+        self.custom_legend = custom_legend
 
     def create(self):
         x = np.arange(len(self.values))
 
         figure, ax = plt.subplots()
         width = 0.6
-        bars = ax.bar(x, self.values, width, color=self.colors)
+        bars = ax.bar(x, self.values, width, color=self.colors,
+                      tick_label=self.labels)
         ax.set_title(self.title)
-        plt.xticks(x, self.labels)
         plt.ylabel(self.y_label)
 
         for bar in bars:
             height = bar.get_height()
-            ax.annotate('{}'.format(height),
+            ax.annotate(f'{height:n}',
                         xy=(bar.get_x() + bar.get_width() / 2, height),
-                        va='bottom')
-
-        #ax.set_color_cycle(['kbkykrkg'])
-        #ax.set_xticks(self.labels)
-
-        #figure.tight_layout()
+                        va='bottom', ha='center')
+        ax.get_yaxis().set_major_formatter(
+            matplotlib.ticker.FuncFormatter(lambda y, p: f'{y:n}'))
+        if self.show_legend:
+            legend_elements = []
+            if self.custom_legend:
+                for label, color in self.custom_legend.items():
+                    legend_elements.append(
+                        Patch(facecolor=color, label=label))
+            else:
+                for i, label in enumerate(self.labels):
+                    legend_elements.append(
+                        Patch(facecolor=self.colors[i], label=label))
+            ax.legend(handles=legend_elements, loc='best')
+        figure.tight_layout()
         return figure
 
 
