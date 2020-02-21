@@ -1,7 +1,8 @@
 from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
-                                 QTableWidget, QTableWidgetItem)
+                                 QTableWidget, QTableWidgetItem,
+                                 QAbstractScrollArea)
 import numpy as np
 import os
 
@@ -185,7 +186,8 @@ class Ecology(Domain):
                 dependency.add(param)
                 params.add(param, name=f'{prefix}_{bb_id}')
             params.changed.connect(lambda p=prefix: self.save(p))
-            params.show()
+            params.show(title='Flächenanteile der Bodenbedeckung für die '
+                        f'Analyse: {prefix.capitalize()}')
             last_row = params.layout.children()[-1]
             button = QPushButton()
             button.setText('aus Zeichnung übernehmen')
@@ -368,22 +370,29 @@ class Ecology(Domain):
 
     def show_drawing_analysis(self, planfall=True):
         shares = self.analyse_shares(planfall)
-        dialog = Dialog(title='Anteile Bodenbedeckung')
+        l = 'Planfall' if planfall else 'Nullfall'
+        dialog = Dialog(
+            title='Flächenanteile der Bodenbedeckung in '
+            f'der Zeichnung für den {l}'
+        )
         layout = QVBoxLayout()
         dialog.setLayout(layout)
-        tableWidget = QTableWidget()
-        layout.addWidget(tableWidget)
-        tableWidget.setColumnCount(2)
-        tableWidget.setHorizontalHeaderItem(
+        table_widget = QTableWidget()
+        layout.addWidget(table_widget)
+        table_widget.setColumnCount(2)
+        table_widget.setHorizontalHeaderItem(
             0, QTableWidgetItem('Bodenbedeckungstyp'))
-        tableWidget.setHorizontalHeaderItem(
+        table_widget.setHorizontalHeaderItem(
             1, QTableWidgetItem('Anteil'))
         types = self.bb_types.features()
-        tableWidget.setRowCount(len(types))
+        table_widget.setRowCount(len(types))
         for i, bb_typ in enumerate(types):
             share = shares.get(bb_typ.IDBodenbedeckung) or 0
-            tableWidget.setItem(i, 0, QTableWidgetItem(bb_typ.name))
-            tableWidget.setItem(i, 1, QTableWidgetItem(f'{share}%'))
+            table_widget.setItem(i, 0, QTableWidgetItem(bb_typ.name))
+            table_widget.setItem(i, 1, QTableWidgetItem(f'{share}%'))
+        table_widget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        table_widget.resizeColumnsToContents()
+        dialog.showEvent = lambda e: dialog.adjustSize()
         dialog.show()
 
     def clear_drawing(self, planfall=True):
