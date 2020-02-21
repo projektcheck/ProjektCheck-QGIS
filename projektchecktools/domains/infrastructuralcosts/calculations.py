@@ -97,6 +97,7 @@ class GesamtkostenErmitteln(Worker):
             project=self.project, create=True)
         self.costs_results.delete()
         df_results = self.calculate_phases()
+        del df_results['fid']
         self.costs_results.update_pandas(df_results)
 
     def calculate_phases(self):

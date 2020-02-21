@@ -221,11 +221,11 @@ class InfrastructureDrawing:
         type_names = [p.Netzelement for p in punktelemente]
         typ = self.netzelemente.get(IDNetzelement=point.IDNetzelement)
 
-        type_combo = ComboBox(type_names, data=list(punktelemente), width=300)
+        type_combo = ComboBox( ['nicht gesetzt'] + type_names,
+                               data=[None] + list(punktelemente), width=300)
 
         self.params.typ = Param(
-            typ.Netzelement if typ else 'nicht gesetzt',
-            type_combo,
+            typ.Netzelement if typ else 'nicht gesetzt', type_combo,
             label='Erschließungsnetz'
         )
 
@@ -253,8 +253,8 @@ class InfrastructureDrawing:
         def save():
             point.bezeichnung = self.params.bezeichnung.value
             typ = type_combo.get_data()
-            point.IDNetzelement = typ.IDNetzelement
-            point.IDNet = typ.IDNetz
+            point.IDNetzelement = typ.IDNetzelement if typ else 0
+            point.IDNetz = typ.IDNetz if typ else 0
             point.Lebensdauer = self.params.lebensdauer.value
             point.Euro_EH = self.params.euro_EH.value
             point.Euro_EN = self.params.euro_EN.value
