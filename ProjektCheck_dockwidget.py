@@ -11,7 +11,6 @@ from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
 from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
                                             TerrestrisBackgroundLayer)
 from projektchecktools.base.database import Workspace
-from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.definitions.project import (
     ProjectInitialization, CloneProject)
 from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
@@ -293,7 +292,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 if name.startswith('Projekt'):
                     child.setItemVisibilityChecked(name==project.groupname)
 
-            self.project_definitions.show_outputs()
+            self.project_definitions.show_outputs(zoom=True)
 
             backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
             backgroundOSM.draw(checked=False)

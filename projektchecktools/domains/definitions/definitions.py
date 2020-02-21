@@ -664,7 +664,7 @@ class ProjectDefinitions(Domain):
         self.area = self.ui.area_combo.itemData(
             self.ui.area_combo.currentIndex())
 
-        layer = self.tou_layer.layer
+        layer = self.tou_output.layer
         if layer:
             layer.removeSelection()
             layer.select(self.area.id)
@@ -674,12 +674,14 @@ class ProjectDefinitions(Domain):
         self.setup_type()
         self.setup_type_params()
 
-    def show_outputs(self):
+    def show_outputs(self, zoom=False):
         table = Teilflaechen.get_table()
-        self.tou_layer = ProjectLayer.from_table(
+        self.tou_output = ProjectLayer.from_table(
             table, groupname=self.layer_group)
-        self.tou_layer.draw(label='Nutzungen des Plangebiets',
+        self.tou_output.draw(label='Nutzungen des Plangebiets',
                             style_file='definitions.qml', redraw=False)
+        if zoom:
+            self.tou_output.zoom_to()
         output = ProjectLayer.from_table(table, groupname='Hintergrund',
                                          prepend=False)
         output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
@@ -739,7 +741,7 @@ class ProjectDefinitions(Domain):
     def close(self):
         # ToDo: implement this in project (collecting all used workscpaces)
         self.connector_setter.close()
-        layer = self.tou_layer.layer
+        layer = self.tou_output.layer
         if layer:
             layer.removeSelection()
         if hasattr(self, 'areas'):
