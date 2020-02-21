@@ -461,13 +461,16 @@ class Ecology(Domain):
 
         diagram = Leistungskennwerte(
             nullfall=rating_nf, planfall=rating_pf,
-            columns=columns, title='Leistungskennwerte Nullfall/Planfall',
+            columns=columns,
+            title='Leistungskennwerte im Nullfall und Planfall',
             max_rating=self.MAX_RATING
         )
         diagram.draw()
+
         diagram = LeistungskennwerteDelta(
             delta=rating_delta, columns=columns,
-            title='Leistungskennwerte Änderungen Planfall')
+            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der '
+            'Leistungskennwerte im Planfall gegenüber dem Nullfall)')
         diagram.draw(offset_x=100, offset_y=100)
 
     def close(self):
