@@ -13,6 +13,7 @@ from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
 from projektchecktools.base.database import Workspace
 from projektchecktools.domains.definitions.project import (
     ProjectInitialization, CloneProject)
+from projektchecktools.utils.utils import open_file
 from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
                                        Traffic, Reachabilities, Ecology,
                                        LandUse, InfrastructuralCosts,
@@ -210,19 +211,33 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def setup_help(self):
         menu = QMenu()
+        help_path = self.settings.HELP_PATH
         current_dir = os.path.dirname(os.path.realpath(__file__))
+
+        # Overview
         icon_path = 'images/iconset_mob/20190619_iconset_mob_info_1.png'
-        menu.addAction(
-            QIcon(os.path.join(current_dir, icon_path)),
-            'Schnelleinstieg')
+        pdf_path = os.path.join(
+            help_path, 'ProjektCheck_QGIS_Anleitung_Gesamtueberblick.pdf')
+        action = menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)), 'Schnelleinstieg')
+        action.triggered.connect(lambda b, p=pdf_path: open_file(p))
+
+        # About
         icon_path = 'images/icon.png'
-        menu.addAction(
-            QIcon(os.path.join(current_dir, icon_path)),
-            'Über Projekt-Check')
+        pdf_path = os.path.join(
+            help_path, 'ProjektCheck_QGIS_About.pdf')
+        action = menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)), 'Über Projekt-Check')
+        action.triggered.connect(lambda b, p=pdf_path: open_file(p))
+
+        # Legal notes
         icon_path = 'images/iconset_mob/20190619_iconset_mob_legal_01.png'
-        menu.addAction(
-            QIcon(os.path.join(current_dir, icon_path)),
-            'Haftungssausschluss')
+        pdf_path = os.path.join(
+            help_path, 'ProjektCheck_QGIS_Haftungsausschluss.pdf')
+        action = menu.addAction(
+            QIcon(os.path.join(current_dir, icon_path)), 'Haftungssausschluss')
+        action.triggered.connect(lambda b, p=pdf_path: open_file(p))
+
         self.ui.help_button.setMenu(menu)
 
     def install_pandas(self):
@@ -230,8 +245,13 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         process = subprocess.Popen(os.path.join(dir_path, 'install-pandas.bat'),
                                    shell=True, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
-        #process = subprocess.Popen(['runas', '/user:Administrator', '/noprofile', os.path.join(dir_path, 'install-pandas.bat')], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,stdin=subprocess.PIPE)#os.path.join(dir_path, 'install-pandas.bat')])
-        #process.stdin.write(b'')
+        #process = subprocess.Popen(
+            #['runas', '/user:Administrator', '/noprofile',
+             #os.path.join(dir_path, 'install-pandas.bat')],
+            #shell=True, stdout=subprocess.PIPE,
+            #stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        ##os.path.join(dir_path, 'install-pandas.bat')])
+        ##process.stdin.write(b'')
         stdout, stderr = process.communicate()
         print('STDOUT:{}'.format(stdout))
         print('STDERR:{}'.format(stderr))

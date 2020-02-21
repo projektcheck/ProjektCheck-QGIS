@@ -161,6 +161,8 @@ class InfrastructureDrawing:
 
     def remove_selected_lines(self):
         layer = self.output_lines.layer
+        if not layer:
+            return
         for qf in layer.selectedFeatures():
             feat = self.lines.get(id=qf.id())
             feat.delete()

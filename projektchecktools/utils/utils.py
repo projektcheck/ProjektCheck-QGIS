@@ -5,6 +5,8 @@ from qgis.core import (QgsCoordinateReferenceSystem,
 from qgis.PyQt.QtGui import QIcon
 import os
 import pandas as pd
+import functools
+import threading
 
 from settings import settings
 
@@ -138,3 +140,14 @@ def round_df_to(df, rounding_factor):
     df *= rounding_factor
     df = df.astype('int')
     return df
+
+def threaded(function):
+    @functools.wraps(function)
+    def _threaded(*args, **kwargs):
+        thread = threading.Thread(target=function, args=args, kwargs=kwargs)
+        thread.start()
+        thread.join()
+    return _threaded
+
+def open_file(path):
+    threaded(os.startfile)(path)

@@ -156,7 +156,7 @@ class GesamtkostenDiagramm(MatplotDiagram):
         grouped = df_costs.groupby(by='IDKostenphase')
         phase_names = []
 
-        text_offset =  max(df_costs['Euro']) * 0.07
+        text_offset =  max(df_costs['Euro']) * 0.07 if len(df_costs) > 0 else 0
         for i, (phase_id, group) in enumerate(grouped):
             costs = group['Euro'].values
             patches = ax.barh(pos_idx + i * bar_width * spacing, costs,
