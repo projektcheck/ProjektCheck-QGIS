@@ -61,6 +61,12 @@ class Reachabilities(Domain):
             self.settings.HELP_PATH, 'Anleitung_Erreichbarkeit.pdf')
         self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
+        self.ui.oepnv_info_button.clicked.connect(
+            lambda: QMessageBox.information(
+                self.ui, 'ÖPNVKarte','Karte: © memomaps.de, CC-BY-SA;\n'
+                'Kartendaten: © OpenStreetMap.org-Mitwirkende, ODbL.')
+        )
+
     def load_content(self):
         super().load_content()
         self.connectors = Connectors.features()

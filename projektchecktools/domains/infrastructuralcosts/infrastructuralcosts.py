@@ -543,14 +543,11 @@ class InfrastructuralCosts(Domain):
                             Nutzungsart.EINZELHANDEL.value)
                         ]
         if len(types_of_use) != 1:
-            message = QMessageBox()
-            message.setIcon(QMessageBox.Warning)
-            message.setText(
-                f'Die Funktion steht nur für Projekte zur '
-                u'Verfügung, bei denen alle Teilflächen '
-                u'ausschließlich die Nutzung Wohnen bzw. Gewerbe haben.')
-            message.setWindowTitle('Fehler')
-            message.exec_()
+            QMessageBox.warning(
+                self.ui, 'Hinweis', 'Die Funktion steht nur für Projekte zur '
+                'Verfügung, bei denen alle Teilflächen '
+                'ausschließlich die Nutzung Wohnen bzw. Gewerbe haben.'
+            )
             return
 
         job = GesamtkostenErmitteln(self.project)
