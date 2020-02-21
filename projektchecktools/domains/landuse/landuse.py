@@ -262,16 +262,16 @@ class LandUse(Domain):
     def calculate_integration(self):
         area_outer_border = self.area_union.length()
         drawn_borders = sum([line.geom.length() for line in self.borders])
-        shared_border = round(drawn_borders / area_outer_border, 2) * 100
+        shared_border = round(100 * drawn_borders / area_outer_border)
         shared_border = min(shared_border, 100)
         values = [shared_border, 100 - shared_border]
         labels = ['Anteil der Plangebietsgrenze, die an\n'
                   'bestehende Siedlungsflächen angrenzt',
                   'Anteil der Plangebietsgrenze, die nicht an\n'
                   'bestehende Siedlungsflächen angrenzt']
-        chart = PieChart(values, labels=labels, colors=None,
+        chart = PieChart(values, labels=labels,
                          title=f'{self.project.name}: Lage zu bestehenden '
-                         'Siedlungsflächen')
+                         'Siedlungsflächen', decimals=0)
         chart.draw()
 
     def close(self):
