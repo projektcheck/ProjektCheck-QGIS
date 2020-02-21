@@ -87,8 +87,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>469</width>
-         <height>588</height>
+         <width>475</width>
+         <height>612</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -258,7 +258,7 @@ padding: 2px;
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="manual_button">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

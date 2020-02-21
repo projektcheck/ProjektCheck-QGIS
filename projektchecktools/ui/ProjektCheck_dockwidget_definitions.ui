@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>542</width>
-    <height>1051</height>
+    <height>897</height>
    </rect>
   </property>
   <property name="font">
@@ -51,7 +51,7 @@
          <x>0</x>
          <y>0</y>
          <width>528</width>
-         <height>977</height>
+         <height>823</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -262,7 +262,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="manual_button">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

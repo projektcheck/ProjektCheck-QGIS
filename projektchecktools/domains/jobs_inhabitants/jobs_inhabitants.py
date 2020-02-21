@@ -1,9 +1,11 @@
+import os
+
 from projektchecktools.base.domain import Domain
 from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.domains.jobs_inhabitants.diagrams import (
     BewohnerEntwicklung, ArbeitsplatzEntwicklung, BranchenAnteile)
 from projektchecktools.domains.definitions.tables import Teilflaechen
-from projektchecktools.base.dialogs import DiagramDialog
+from projektchecktools.utils.utils import open_file
 
 
 class JobsInhabitants(Domain):
@@ -16,6 +18,10 @@ class JobsInhabitants(Domain):
     def setupUi(self):
         self.ui.inhabitants_button.clicked.connect(self.inhabitants_diagram)
         self.ui.jobs_button.clicked.connect(self.jobs_diagram)
+
+        pdf_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Bewohner_und_Arbeitsplätze.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def inhabitants_diagram(self):
         areas = Teilflaechen.features().filter(

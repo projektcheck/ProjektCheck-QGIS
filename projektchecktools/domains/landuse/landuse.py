@@ -1,3 +1,5 @@
+import os
+
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.domains.definitions.tables import Teilflaechen
@@ -9,12 +11,10 @@ from projektchecktools.domains.definitions.tables import (Wohneinheiten,
                                                      Projektrahmendaten)
 from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.base.params import Params, Param, Title, Seperator
-from projektchecktools.base.layers import TileLayer
 from projektchecktools.base.inputs import Slider
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.tools import LineMapTool
-
-from settings import settings
+from projektchecktools.utils.utils import open_file
 
 
 class LandUse(Domain):
@@ -41,6 +41,10 @@ class LandUse(Domain):
         self.bordertool.drawn.connect(self.add_border)
 
         self.ui.remove_drawing_button.clicked.connect(self.remove_borders)
+
+        pdf_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Flaecheninanspruchnahme.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
         super().load_content()

@@ -3,6 +3,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
                                  QTableWidget, QTableWidgetItem)
 import numpy as np
+import os
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.layers import TileLayer
@@ -18,8 +19,7 @@ from projektchecktools.base.params import (Params, Param, SumDependency)
 from projektchecktools.base.dialogs import Dialog
 from projektchecktools.base.inputs import Slider
 from projektchecktools.utils.utils import clear_layout
-
-from settings import settings
+from projektchecktools.utils.utils import open_file
 
 
 class Ecology(Domain):
@@ -94,12 +94,25 @@ class Ecology(Domain):
         self.ui.power_lines_button.clicked.connect(self.add_power_lines)
         self.ui.power_lines_button.setCheckable(False)
 
+        pdf_manual_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Oekologie.pdf')
+        self.ui.manual_button.clicked.connect(
+            lambda: open_file(pdf_manual_path))
+
+        pdf_rating_path = os.path.join(
+            self.settings.HELP_PATH,
+            'Erlaeuterung_Kennwerte_Leistungsfaehigkeit_Boden.pdf'
+        )
+        self.ui.rating_help_button.clicked.connect(
+            lambda: open_file(pdf_rating_path))
+
     def add_power_lines(self):
         group = (f'{self.project.groupname}/{self.layer_group}')
         geoserver = ('https://geoserver.ggr-planung.de/geoserver/'
                      'projektcheck/wms?')
         layername = '51005_ax_leitung'
-        url = (f'url={geoserver}&layers={layername}&crs=EPSG:{settings.EPSG}'
+        url = (f'url={geoserver}&layers={layername}'
+               f'&crs=EPSG:{self.settings.EPSG}'
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw('Hochspannungsleitungen')
@@ -407,7 +420,7 @@ class Ecology(Domain):
         group = (f'{self.project.groupname}/{self.layer_group}')
         if parent_group:
             group += f'/{parent_group}'
-        url = (f'{url}&crs=EPSG:{settings.EPSG}'
+        url = (f'{url}&crs=EPSG:{self.settings.EPSG}'
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw(name)

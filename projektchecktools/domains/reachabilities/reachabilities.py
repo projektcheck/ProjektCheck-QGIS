@@ -1,4 +1,5 @@
 import webbrowser
+import os
 from qgis.PyQt.QtWidgets import QMessageBox
 
 from projektchecktools.base.domain import Domain
@@ -17,6 +18,7 @@ from projektchecktools.domains.reachabilities.routing_query import (
     Isochrones)
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.utils.utils import set_category_renderer
+from projektchecktools.utils.utils import open_file
 
 
 class Reachabilities(Domain):
@@ -54,6 +56,10 @@ class Reachabilities(Domain):
 
         self.ui.connector_combo.currentIndexChanged.connect(
             self.toggle_connector)
+
+        pdf_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Erreichbarkeit.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
         super().load_content()

@@ -80,7 +80,7 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-248</y>
          <width>508</width>
          <height>1049</height>
         </rect>
@@ -1285,7 +1285,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_8">
+              <widget class="QPushButton" name="rating_help_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1414,7 +1414,7 @@ padding: 2px;
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_32">
+       <widget class="QPushButton" name="manual_button">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

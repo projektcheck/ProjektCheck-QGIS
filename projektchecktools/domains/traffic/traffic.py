@@ -1,6 +1,6 @@
-from qgis.gui import QgsMapToolEmitPoint
-from qgis.PyQt.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
+import os
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.utils.utils import clear_layout
@@ -13,6 +13,7 @@ from projektchecktools.base.params import (Params, Param, Title,
                                            Seperator, SumDependency)
 from projektchecktools.base.inputs import (SpinBox, Slider)
 from projektchecktools.domains.constants import Nutzungsart
+from projektchecktools.utils.utils import open_file
 
 
 class Traffic(Domain):
@@ -34,6 +35,10 @@ class Traffic(Domain):
     def setupUi(self):
         self.ui.calculate_traffic_button.clicked.connect(
             self.calculate_traffic)
+
+        #pdf_path = os.path.join(
+            #self.settings.HELP_PATH, '.pdf')
+        #self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
         super().load_content()

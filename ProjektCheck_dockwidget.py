@@ -217,7 +217,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         # Overview
         icon_path = 'images/iconset_mob/20190619_iconset_mob_info_1.png'
         pdf_path = os.path.join(
-            help_path, 'ProjektCheck_QGIS_Anleitung_Gesamtueberblick.pdf')
+            help_path, 'Anleitung_Gesamtueberblick.pdf')
         action = menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)), 'Schnelleinstieg')
         action.triggered.connect(lambda b, p=pdf_path: open_file(p))
@@ -225,7 +225,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         # About
         icon_path = 'images/icon.png'
         pdf_path = os.path.join(
-            help_path, 'ProjektCheck_QGIS_About.pdf')
+            help_path, 'About.pdf')
         action = menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)), 'Über Projekt-Check')
         action.triggered.connect(lambda b, p=pdf_path: open_file(p))
@@ -233,7 +233,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         # Legal notes
         icon_path = 'images/iconset_mob/20190619_iconset_mob_legal_01.png'
         pdf_path = os.path.join(
-            help_path, 'ProjektCheck_QGIS_Haftungsausschluss.pdf')
+            help_path, 'Haftungsausschluss.pdf')
         action = menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)), 'Haftungssausschluss')
         action.triggered.connect(lambda b, p=pdf_path: open_file(p))
