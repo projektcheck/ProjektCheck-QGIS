@@ -433,6 +433,8 @@ class OTPRouter(object):
                       mode=mode,
                       maxPreTransitTime=1200)
         r = requests.get(self.url, params=params, verify=False)
+        if r.status_code != 200:
+            raise Exception(f'Server Fehler {r.status_code} - {r.reason}')
         return r.json()
 
     def decode_coords(self, json, route_id, source_id=0):
