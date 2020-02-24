@@ -734,6 +734,7 @@ class ProjectDefinitions(Domain):
             self.canvas.refreshAllLayers()
             Traffic.reset()
         self.params.changed.connect(type_changed)
+        self.params.show(title='Teilfläche definieren')
 
     def setup_type_params(self):
         tou_label = self.types[self.area.nutzungsart][0]
