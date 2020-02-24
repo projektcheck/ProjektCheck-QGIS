@@ -154,7 +154,8 @@ class Wohnen:
             )
 
         self.params.changed.connect(self.save)
-        self.params.show()
+        self.params.show(
+            title='Wohnen: Bezugszeitraum und Maß der baulichen Nutzung')
 
     def save(self):
         we_sum = 0
@@ -444,7 +445,8 @@ class Gewerbe:
             #self.set_industry_presets(self.DEFAULT_INDUSTRY_ID)
 
         self.params.changed.connect(self.save)
-        self.params.show()
+        self.params.show(
+            title='Gewerbe: Bezugszeitraum und Maß der baulichen Nutzung')
 
     def save(self):
         for branche in self.branchen:
@@ -550,6 +552,8 @@ class Einzelhandel:
         self.params = Params(self.layout,
                              help_file='definitionen_einzelhandel.txt')
 
+        self.params.add(Title('Verkaufsfläche'))
+
         for sortiment in self.sortimente_base.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
                                                 id_teilflaeche=self.area.id)
@@ -561,7 +565,8 @@ class Einzelhandel:
                 name=sortiment.param_vfl
             )
         self.params.changed.connect(self.save)
-        self.params.show()
+        self.params.show(
+            title='Einzelhandel: Bezugszeitraum und Maß der baulichen Nutzung')
 
     def save(self):
         vkfl_sum = 0
@@ -653,8 +658,8 @@ class ProjectDefinitions(Domain):
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:
-            tou_repr = self.types[area.nutzungsart][0]
-            self.ui.area_combo.addItem(f'{area.name} ({tou_repr})', area)
+            tou_label = self.types[area.nutzungsart][0]
+            self.ui.area_combo.addItem(f'{area.name} ({tou_label})', area)
         self.ui.area_combo.blockSignals(False)
         self.show_outputs()
         self.change_area()
@@ -691,7 +696,7 @@ class ProjectDefinitions(Domain):
         layout = self.ui.parameter_group.layout()
         clear_layout(layout)
         self.params = Params(layout,
-                             help_file='definitionen_flaechen.txt')
+                             help_file='definitionen_flaechen.txt', )
         self.params.name = Param(self.area.name, LineEdit(width=300),
                                  label='Name')
 
@@ -706,17 +711,16 @@ class ProjectDefinitions(Domain):
             ComboBox([t[0] for t in self.types], width=300),
             label='Nutzungsart'
         )
-        self.params.show()
 
         def type_changed():
             name = self.params.name.value
             type_labels = [t[0] for t in self.types]
             tou_id = type_labels.index(self.params.typ.value)
             self.area.nutzungsart = tou_id
-            tou_repr = self.types[tou_id][0]
+            tou_label = self.types[tou_id][0]
             self.ui.area_combo.setItemText(
                 self.ui.area_combo.currentIndex(),
-                f'{name} ({tou_repr})'
+                f'{name} ({tou_label})'
             )
             self.area.name = name
             self.area.save()
@@ -732,6 +736,10 @@ class ProjectDefinitions(Domain):
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
+        tou_label = self.types[self.area.nutzungsart][0]
+        title = f'Maß der baulichen Nutzung ({tou_label})'
+        self.ui.type_parameter_group.setTitle(title)
+
         clear_layout(self.ui.type_parameter_group.layout())
         self.typ = self.types[self.area.nutzungsart][1]
         if self.typ is None:
