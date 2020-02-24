@@ -80,9 +80,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-248</y>
+         <y>-170</y>
          <width>508</width>
-         <height>1049</height>
+         <height>1017</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -432,51 +432,463 @@ padding: 2px;
             </layout>
            </item>
            <item>
-            <widget class="QFrame" name="paint_tool_frame">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+            <widget class="QTabWidget" name="drawing_tab_widget">
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QWidget" name="widget" native="true">
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <property name="leftMargin">
-                  <number>0</number>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>Nullfall</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
                  </property>
+                 <property name="text">
+                  <string>Bodenbedeckungstypen</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_builtup_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>überbaute Flächen</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_water_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>natürliche Wasserfläche</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_plates_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Platten             </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_trees_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Bäume / Sträucher</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_trees_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_perennial_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Stauden      </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_meadow_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Wiese    </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_lawn_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Rasen    </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_cover_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Rasengittersteine / Wassergebundene Decke</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_concrete_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Asphalt / Beton</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_field_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>offener Boden / Acker</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_field_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_field_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_field_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="nullfall_draw_paving_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Kleinpflaster</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
                  <item>
-                  <widget class="QRadioButton" name="null_fall_radio">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>60</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="toolTip">
-                    <string/>
-                   </property>
+                  <widget class="QCheckBox" name="nullfall_in_area_only_check">
                    <property name="text">
-                    <string>Nullfall</string>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>16</width>
-                     <height>16</height>
-                    </size>
+                    <string> nur im Plangebiet zeichnen</string>
                    </property>
                    <property name="checked">
                     <bool>true</bool>
@@ -484,38 +896,44 @@ padding: 2px;
                   </widget>
                  </item>
                  <item>
-                  <widget class="QRadioButton" name="planfall_radio">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
                    </property>
-                   <property name="minimumSize">
+                   <property name="sizeHint" stdset="0">
                     <size>
-                     <width>60</width>
-                     <height>0</height>
+                     <width>40</width>
+                     <height>20</height>
                     </size>
                    </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="toolTip">
-                    <string/>
-                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <item>
+                  <widget class="QPushButton" name="nullfall_apply_type_button">
                    <property name="text">
-                    <string>Planfall</string>
+                    <string>Plangebiet auf gewählten Typ setzen</string>
                    </property>
                   </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>5</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                  <item>
                   <spacer name="horizontalSpacer">
@@ -530,648 +948,713 @@ padding: 2px;
                    </property>
                   </spacer>
                  </item>
+                 <item>
+                  <widget class="QPushButton" name="nullfall_remove_type_button">
+                   <property name="text">
+                    <string>Elemente des gewählten Typs löschen</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
+                    </iconset>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Bodenbedeckungstypen</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_builtup_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>überbaute Flächen</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_water_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>natürliche Wasserfläche</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_plates_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Platten             </string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_trees_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Bäume / Sträucher</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_trees_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_perennial_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Stauden      </string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_meadow_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Wiese    </string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_lawn_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Rasen    </string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_cover_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Rasengittersteine / Wassergebundene Decke</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_concrete_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Asphalt / Beton</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_field_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>offener Boden / Acker</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_field_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_field_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_field_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="draw_paving_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Kleinpflaster</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</normaloff>
-                  <normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>5</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <widget class="QCheckBox" name="in_area_only_check">
-                  <property name="text">
-                   <string> nur im Plangebiet zeichnen</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="import_nullfall_button">
-                  <property name="text">
-                   <string>Zeichnung aus Nullfall übernehmen</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <item>
-                 <widget class="QPushButton" name="apply_type_button">
-                  <property name="text">
-                   <string>Plangebiet auf gewählten Typ setzen</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_9">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>5</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="remove_type_button">
-                  <property name="text">
-                   <string>Elemente des gewählten Typs löschen</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
-                   </iconset>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>5</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QPushButton" name="analyse_drawing_button">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aus den eingezeichneten Flächen ableiten, welcher Anteil des Plangebiets &lt;span style=&quot; color:#ff0000;&quot;&gt;im Nullfall&lt;/span&gt; welche Bodenbedeckung aufweist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="text">
-                   <string>Zeichnung auswerten</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>16</width>
-                    <height>16</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_4">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="remove_drawing_button">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="text">
-                   <string>Zeichnung löschen</string>
-                  </property>
-                  <property name="icon">
-                   <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>16</width>
-                    <height>16</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="nullfall_analyse_drawing_button">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aus den eingezeichneten Flächen ableiten, welcher Anteil des Plangebiets &lt;span style=&quot; color:#ff0000;&quot;&gt;im Nullfall&lt;/span&gt; welche Bodenbedeckung aufweist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Zeichnung auswerten</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="nullfall_remove_drawing_button">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Zeichnung löschen</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_2">
+              <attribute name="title">
+               <string>Planfall</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Bodenbedeckungstypen</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_builtup_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>überbaute Flächen</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_sealed_surface_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_water_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>natürliche Wasserfläche</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_water_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_water_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_water_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_plates_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Platten             </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_flagstone_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_trees_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Bäume / Sträucher</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_trees_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_trees_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_perennial_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Stauden      </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_perennial_herb_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_meadow_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Wiese    </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_meadow_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_lawn_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Rasen    </string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_lawn_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_cover_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Rasengittersteine / Wassergebundene Decke</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_gravel_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_concrete_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Asphalt / Beton</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_asphalt_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_field_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>offener Boden / Acker</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_field_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_field_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_field_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="planfall_draw_paving_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Kleinpflaster</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</normaloff>
+                   <normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_pavement_1.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>false</bool>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <widget class="QCheckBox" name="planfall_in_area_only_check">
+                   <property name="text">
+                    <string> nur im Plangebiet zeichnen</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_7">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="import_nullfall_button">
+                   <property name="text">
+                    <string>Zeichnung aus Nullfall übernehmen</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QPushButton" name="planfall_apply_type_button">
+                   <property name="text">
+                    <string>Plangebiet auf gewählten Typ setzen</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_10">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>5</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="planfall_remove_type_button">
+                   <property name="text">
+                    <string>Elemente des gewählten Typs löschen</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
+                    </iconset>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="planfall_analyse_drawing_button">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aus den eingezeichneten Flächen ableiten, welcher Anteil des Plangebiets &lt;span style=&quot; color:#ff0000;&quot;&gt;im Nullfall&lt;/span&gt; welche Bodenbedeckung aufweist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Zeichnung auswerten</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_11">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="planfall_remove_drawing_button">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Zeichnung löschen</string>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
            <item>
@@ -1460,16 +1943,16 @@ padding: 2px;
   <connection>
    <sender>toggle_drawing_button</sender>
    <signal>toggled(bool)</signal>
-   <receiver>paint_tool_frame</receiver>
+   <receiver>drawing_tab_widget</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>100</y>
+     <x>62</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel">
-     <x>225</x>
-     <y>543</y>
+     <x>180</x>
+     <y>234</y>
     </hint>
    </hints>
   </connection>

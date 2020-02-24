@@ -66,31 +66,39 @@ class Ecology(Domain):
     def setupUi(self):
         self.setup_layers()
         self.setup_drawing_tools()
-        self.ui.paint_tool_frame.setVisible(False)
+        self.ui.drawing_tab_widget.setVisible(False)
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
         self.output_nullfall = None
         self.output_planfall = None
 
-        self.ui.planfall_radio.toggled.connect(self.toggle_planfall_nullfall)
-        self.ui.planfall_radio.toggled.connect(self.add_output)
-        self.toggle_planfall_nullfall()
+        def toggle():
+            for tool in self._tools:
+                tool.set_active(False)
+            self.add_output()
+        self.ui.drawing_tab_widget.currentChanged.connect(toggle)
 
-        self.ui.remove_drawing_button.clicked.connect(
-            lambda: self.clear_drawing(
-                planfall=self.ui.planfall_radio.isChecked()))
         self.ui.calculate_rating_button.clicked.connect(self.calculate_rating)
         self.ui.import_nullfall_button.clicked.connect(self.import_nullfall)
-        self.ui.apply_type_button.clicked.connect(
-            lambda: self.add_geom(
-                self.area, self.get_selected_type(),
-                planfall=self.ui.planfall_radio.isChecked()))
-        self.ui.remove_type_button.clicked.connect(
-            lambda: self.remove_type(
-                self.get_selected_type(),
-                planfall=self.ui.planfall_radio.isChecked()))
-        self.ui.analyse_drawing_button.clicked.connect(
-            lambda: self.show_drawing_analysis(
-                planfall=self.ui.planfall_radio.isChecked()))
+
+        for prefix in ['nullfall', 'planfall']:
+            is_planfall = prefix == 'planfall'
+            button = getattr(self.ui, f'{prefix}_remove_drawing_button')
+            button.clicked.connect(
+                lambda b, p=prefix: self.clear_drawing(planfall=p=='planfall'))
+            button = getattr(self.ui, f'{prefix}_apply_type_button')
+            button.clicked.connect(
+                lambda b, p=prefix: self.add_geom(
+                    self.area, self.get_selected_type(p),
+                    planfall=p=='planfall'))
+            button = getattr(self.ui, f'{prefix}_remove_type_button')
+            button.clicked.connect(
+                lambda b, p=prefix: self.remove_type(
+                    self.get_selected_type(p),
+                    planfall=p=='planfall'))
+            button = getattr(self.ui, f'{prefix}_analyse_drawing_button')
+            button.clicked.connect(
+                lambda b, p=prefix: self.show_drawing_analysis(
+                    planfall=p=='planfall'))
 
         self.ui.power_lines_button.clicked.connect(self.add_power_lines)
         self.ui.power_lines_button.setCheckable(False)
@@ -117,14 +125,6 @@ class Ecology(Domain):
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw('Hochspannungsleitungen')
-
-    def toggle_planfall_nullfall(self):
-        self.planfall = self.ui.planfall_radio.isChecked()
-        self.ui.import_nullfall_button.setVisible(self.planfall)
-        disabled_out = self.output_nullfall if self.planfall \
-            else self.output_planfall
-        if disabled_out:
-            disabled_out.set_visibility(False)
 
     def load_content(self):
         super().load_content()
@@ -242,29 +242,34 @@ class Ecology(Domain):
     def setup_drawing_tools(self):
         self._tools = []
         self.drawing_tools = {
-            self.ui.draw_builtup_button: 1,
-            self.ui.draw_water_button: 2,
-            self.ui.draw_plates_button: 3,
-            self.ui.draw_trees_button: 4,
-            self.ui.draw_perennial_button: 5,
-            self.ui.draw_meadow_button: 6,
-            self.ui.draw_lawn_button: 7,
-            self.ui.draw_cover_button: 8,
-            self.ui.draw_concrete_button: 9,
-            self.ui.draw_field_button: 10,
-            self.ui.draw_paving_button: 11
+            'draw_builtup_button': 1,
+            'draw_water_button': 2,
+            'draw_plates_button': 3,
+            'draw_trees_button': 4,
+            'draw_perennial_button': 5,
+            'draw_meadow_button': 6,
+            'draw_lawn_button': 7,
+            'draw_cover_button': 8,
+            'draw_concrete_button': 9,
+            'draw_field_button': 10,
+            'draw_paving_button': 11
         }
 
-        for button, floor_id in self.drawing_tools.items():
-            tool = PolygonMapTool(button, canvas=self.canvas, draw_markers=True,
-                                  line_style=Qt.DotLine)
-            tool.drawn.connect(
-                lambda geom, i=floor_id: self.add_geom(
-                    geom, i,
-                    in_area_only=self.ui.in_area_only_check.isChecked(),
-                    planfall=self.ui.planfall_radio.isChecked()
-                ))
-            self._tools.append(tool)
+        for prefix in ['nullfall', 'planfall']:
+            is_planfall = prefix == 'planfall'
+            for button_name, floor_id in self.drawing_tools.items():
+                button = getattr(self.ui, f'{prefix}_{button_name}')
+                check = getattr(self.ui, f'{prefix}_in_area_only_check')
+                tool = PolygonMapTool(button, canvas=self.canvas,
+                                      draw_markers=True,
+                                      line_style=Qt.DotLine)
+                tool.drawn.connect(
+                    lambda geom, i=floor_id, p=is_planfall, c=check:
+                    self.add_geom(
+                        geom, i, in_area_only=c.isChecked(), planfall=p
+                    )
+                )
+                self._tools.append(tool)
 
     def add_geom(self, geom, typ, unite=True, in_area_only=True,
                  difference=True, planfall=True):
@@ -287,14 +292,14 @@ class Ecology(Domain):
                 ex_feat.area = ex_feat.geom.area()
                 ex_feat.save()
         if difference:
-            # ToDo: fix filtering, works but messes up previous filtering
-            #others = features.filter(IDBodenbedeckung__ne=floor_id)
             for feature in features:
                 if feature.IDBodenbedeckung == typ:
                     continue
                 difference = feature.geom.difference(geom)
                 # ToDo: handle invalid and null geometries instead of ignoring
-                if not (difference.isNull() or difference.isEmpty()):
+                if difference.isNull() or difference.isEmpty():
+                    feature.delete()
+                else:
                     feature.geom = difference
                     feature.area = difference.area()
                     feature.save()
@@ -345,8 +350,9 @@ class Ecology(Domain):
                                     area=feature.geom.area())
         self.add_output()
 
-    def get_selected_type(self):
-        for button, typ in self.drawing_tools.items():
+    def get_selected_type(self, prefix):
+        for button_name, typ in self.drawing_tools.items():
+            button = getattr(self.ui, f'{prefix}_{button_name}')
             if button.isChecked():
                 return typ
         return None
@@ -407,7 +413,7 @@ class Ecology(Domain):
         if reply == QMessageBox.No:
             return
         features = self.boden_planfall if planfall else self.boden_nullfall
-        output = self.output_planfall if self.planfall \
+        output = self.output_planfall if planfall \
             else self.output_nullfall
         layer = output.layer
         # remove selection, so that qgis is free to remove them from canvas
@@ -416,16 +422,19 @@ class Ecology(Domain):
         self.canvas.refreshAllLayers()
 
     def add_output(self):
-        planfall = self.ui.planfall_radio.isChecked()
+        planfall = self.ui.drawing_tab_widget.currentIndex() == 1
         label = 'Bodenbedeckung '
         label += 'Planfall' if planfall else 'Nullfall'
         output = self.output_planfall if planfall else self.output_nullfall
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
         output.draw(label=label, style_file=style)
-        setattr(self, 'output_planfall' if self.planfall else 'output_nullfall',
+        setattr(self, 'output_planfall' if planfall else 'output_nullfall',
                 output)
-        self.toggle_planfall_nullfall()
+        disabled_out = self.output_nullfall if planfall \
+            else self.output_planfall
+        if disabled_out:
+            disabled_out.set_visibility(False)
 
     def add_wms_layer(self, name, url, parent_group=None):
         group = (f'{self.project.groupname}/{self.layer_group}')
