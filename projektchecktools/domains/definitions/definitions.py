@@ -636,12 +636,14 @@ class ProjectDefinitions(Domain):
         self.connector_setter = TrafficConnectors(
             self.ui, self.canvas, self.project)
         type_layout = self.ui.type_parameter_group.layout()
-        self.types = {
-            'Undefiniert': None,
-            'Wohnen': Wohnen(self.basedata, type_layout),
-            'Gewerbe': Gewerbe(self.basedata, type_layout),
-            'Einzelhandel': Einzelhandel(self.basedata, type_layout)
-        }
+        # ToDo: somehow generate this (resp. assign index) from the enum
+        #  preferably store labels and id in a base table
+        self.types = [
+            ('Nutzung noch nicht definiert', None),
+            ('Wohnen', Wohnen(self.basedata, type_layout)),
+            ('Gewerbe', Gewerbe(self.basedata, type_layout)),
+            ('Einzelhandel', Einzelhandel(self.basedata, type_layout))
+        ]
         self.typ = None
 
     def load_content(self):
@@ -651,10 +653,8 @@ class ProjectDefinitions(Domain):
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:
-            self.ui.area_combo.addItem(
-                f'{area.name} '
-                f'({Nutzungsart(area.nutzungsart).name.capitalize()})',
-                area)
+            tou_repr = self.types[area.nutzungsart][0]
+            self.ui.area_combo.addItem(f'{area.name} ({tou_repr})', area)
         self.ui.area_combo.blockSignals(False)
         self.show_outputs()
         self.change_area()
@@ -700,22 +700,24 @@ class ProjectDefinitions(Domain):
         ha = round(self.area.geom.area()) / 10000
         self.area.area = ha
         self.params.area = Param(ha, label='Größe', unit='ha')
-        type_names = [n.capitalize() for n in Nutzungsart._member_names_]
 
         self.params.typ = Param(
-            Nutzungsart(self.area.nutzungsart).name.capitalize(),
-            ComboBox(type_names, width=300),
+            self.types[self.area.nutzungsart][0],
+            ComboBox([t[0] for t in self.types], width=300),
             label='Nutzungsart'
         )
         self.params.show()
 
         def type_changed():
             name = self.params.name.value
-            nutzungsart = self.params.typ.value
-            self.area.nutzungsart = Nutzungsart[nutzungsart.upper()].value
+            type_labels = [t[0] for t in self.types]
+            tou_id = type_labels.index(self.params.typ.value)
+            self.area.nutzungsart = tou_id
+            tou_repr = self.types[tou_id][0]
             self.ui.area_combo.setItemText(
                 self.ui.area_combo.currentIndex(),
-                f'{name} ({nutzungsart.capitalize()})')
+                f'{name} ({tou_repr})'
+            )
             self.area.name = name
             self.area.save()
             # update connector names
@@ -730,11 +732,12 @@ class ProjectDefinitions(Domain):
         self.params.changed.connect(type_changed)
 
     def setup_type_params(self):
-        typ = self.params.typ.value
         clear_layout(self.ui.type_parameter_group.layout())
-        self.typ = self.types[typ]
+        self.typ = self.types[self.area.nutzungsart][1]
         if self.typ is None:
+            self.ui.type_parameter_group.setVisible(False)
             return
+        self.ui.type_parameter_group.setVisible(True)
         self.typ.setup_params(self.area)
         self.typ.params.changed.connect(lambda: self.canvas.refreshAllLayers())
 
