@@ -285,7 +285,9 @@ class Params(QObject):
         self.editable = editable
         self.layout = QVBoxLayout()
         self.layout.setSpacing(5)
-        self.help_dict = {}
+        self.help_dict = {
+            'tooltip': 'Parameter editieren'
+        }
         if help_file:
             self.help_file = help_file if os.path.exists(help_file) else \
                 os.path.join(self.HELP_PATH, help_file)
@@ -367,6 +369,8 @@ class Params(QObject):
         icon = QIcon(os.path.join(settings.IMAGE_PATH, 'iconset_mob',
                                   '20190619_iconset_mob_edit_1.png'))
         button.setIcon(icon)
+        tool_tip = self.help_dict.get('tooltip', None)
+        button.setToolTip(tool_tip)
         row.addItem(
             QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
         row.addWidget(button)

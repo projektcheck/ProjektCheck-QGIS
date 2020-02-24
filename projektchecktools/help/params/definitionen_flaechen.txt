@@ -1,4 +1,5 @@
 {
+    "tooltip": "<p><span style='font-weight:600;'>Flächenname und Art der baulichen Nutzung ändern</span></p><p>Klicken Sie hier, wenn Sie den Namen der (Teil-)Fläche oder die Art der baulichen Nutzung (Wohnen, Gewerbe oder Einzelhandel) ändern wollen.</p>",
     "beschreibung": "Sie können die gewählte Teilfläche bearbeiten (umbenennen und Nutzungsart festlegen). Ihre Eintragungen werden nach Bestätigung über den OK-Button, gespeichert.",
     "name": "In diesem Feld können Sie die Teilflächen (um)benennen. Den Teilflächen wurde ggf. beim Anlegen des Projekts ein automatischer Name zugewiesen (»Flaeche_1«, …)",
     "area": "",
