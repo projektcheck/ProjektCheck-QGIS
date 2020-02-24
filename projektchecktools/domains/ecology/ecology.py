@@ -268,6 +268,8 @@ class Ecology(Domain):
 
     def add_geom(self, geom, typ, unite=True, in_area_only=True,
                  difference=True, planfall=True):
+        if not geom.isGeosValid():
+            geom = geom.makeValid()
         if geom.isEmpty() or geom.isNull() or typ is None:
             return
         if in_area_only:
