@@ -80,9 +80,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-170</y>
-         <width>508</width>
-         <height>1017</height>
+         <y>0</y>
+         <width>498</width>
+         <height>975</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -174,7 +174,7 @@ padding: 2px;
            <string>Unzerschnittene Naturräume (100x100-Meter-Raster)</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
@@ -434,7 +434,7 @@ padding: 2px;
            <item>
             <widget class="QTabWidget" name="drawing_tab_widget">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab">
               <attribute name="title">
@@ -469,7 +469,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>überbaute Flächen</string>
+                  <string>Überbaute Flächen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -508,7 +508,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>natürliche Wasserfläche</string>
+                  <string>Natürliche Wasserflächen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -547,7 +547,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Platten             </string>
+                  <string>Platten</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -625,7 +625,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Stauden      </string>
+                  <string>Stauden</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -664,7 +664,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Wiese    </string>
+                  <string>Wiesen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -703,7 +703,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Rasen    </string>
+                  <string>Rasen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -742,7 +742,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Rasengittersteine / Wassergebundene Decke</string>
+                  <string>Wassergebundene Decke / Rasengittersteine</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -820,7 +820,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>offener Boden / Acker</string>
+                  <string>Äcker / offener Boden</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1075,7 +1075,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>überbaute Flächen</string>
+                  <string>Überbaute Flächen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1114,7 +1114,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>natürliche Wasserfläche</string>
+                  <string>Natürliche Wasserflächen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1153,7 +1153,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Platten             </string>
+                  <string>Platten</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1231,7 +1231,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Stauden      </string>
+                  <string>Stauden</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1270,7 +1270,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Wiese    </string>
+                  <string>Wiesen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1309,7 +1309,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Rasen    </string>
+                  <string>Rasen</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1348,7 +1348,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Rasengittersteine / Wassergebundene Decke</string>
+                  <string>Wassergebundene Decke / Rasengittersteine</string>
                  </property>
                  <property name="icon">
                   <iconset>
@@ -1426,7 +1426,7 @@ padding: 2px;
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>offener Boden / Acker</string>
+                  <string>Äcker / offener Boden</string>
                  </property>
                  <property name="icon">
                   <iconset>
