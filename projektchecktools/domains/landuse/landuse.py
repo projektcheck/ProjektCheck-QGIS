@@ -97,9 +97,9 @@ class LandUse(Domain):
 
         self.params.add(Title('Anteil Nettowohnbauland'))
         self.params.nettoflaeche = Param(
-            value, Slider(maximum=100),
+            int(value), Slider(maximum=100),
             label='Anteil des Nettowohnbaulandes (= Summe aller\n'
-            'Wohnbaugrundstücke) an der Gesamtfläche der \n'
+            'Wohnbaugrundstücke) an der Gesamtfläche der\n'
             'ausgewählten Teilfläche',
             unit='%'
         )
