@@ -2,6 +2,7 @@ try:
     from shapely import geometry, wkt
     from shapely.ops import nearest_points
     SHAPELY_LOADED = True
+# doesn't seem to load properly under MacOS
 except:
     SHAPELY_LOADED = False
 
@@ -151,13 +152,14 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
         self.reset()
 
     def set_snap_geometry(self, geom):
-        if not geom or not SHAPELY_LOADED:
+        if not geom:
             return
-        self.snap_geometry = wkt.loads(geom.asWkt()).boundary
-        #if not geom:
-            #return
-        #self.snap_geometry = QgsCurvePolygon()
-        #self.snap_geometry.fromWkt(geom.asWkt())
+        if SHAPELY_LOADED:
+            self.snap_geometry = wkt.loads(geom.asWkt()).boundary
+        # alternative for MacOS
+        else:
+            self.snap_geometry = QgsCurvePolygon()
+            self.snap_geometry.fromWkt(geom.asWkt())
 
     def reset(self):
         scene = self.canvas.scene()
@@ -176,13 +178,16 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
         self.reset()
 
     def _snap(self, x, y):
-        point = geometry.Point(x, y)
-        np = nearest_points(self.snap_geometry, point)[0]
-        point = QgsPointXY(np.x, np.y)
+        if SHAPELY_LOADED:
+            point = geometry.Point(x, y)
+            np = nearest_points(self.snap_geometry, point)[0]
+            point = QgsPointXY(np.x, np.y)
+        # alternative for MacOS
+        else:
+            closest = QgsGeometryUtils.closestPoint(
+                self.snap_geometry, QgsPoint(x, y))
+            point = QgsPointXY(closest.x(), closest.y())
         return point
-        #closest = QgsGeometryUtils.closestPoint(
-            #self.snap_geometry, QgsPoint(x, y))
-        #return QgsPointXY(closest.x(), closest.y())
 
     def canvasPressEvent(self, e):
         if(e.button() == Qt.RightButton):
