@@ -180,7 +180,7 @@ class Ecology(Domain):
                 value = feature.anteil if feature else 0
                 slider = Slider(maximum=100, width=200, lockable=True)
                 param = Param(
-                    value, slider, label=bb_typ.name,
+                    int(value), slider, label=bb_typ.name,
                     unit='%'
                 )
                 dependency.add(param)
@@ -373,7 +373,7 @@ class Ecology(Domain):
         prefix = 'planfall' if planfall else 'nullfall'
         for bb_typ in self.bb_types.features():
             bb_id = bb_typ.IDBodenbedeckung
-            params.get(f'{prefix}_{bb_id}').value = shares.get(bb_id) or 0
+            params.get(f'{prefix}_{bb_id}').value = int(shares.get(bb_id) or 0)
         self.save(prefix)
 
     def show_drawing_analysis(self, planfall=True):

@@ -73,7 +73,9 @@ class Param(QObject):
 
     def _v_repr(self, value):
         if isinstance(value, float):
-            v_repr = locale.str(value)
+            v_repr = locale.format("%.2f", value, grouping=True)
+        elif isinstance(value, int):
+            v_repr = f'{value:n}'
         elif value is None:
             v_repr = '-'
         elif isinstance(value, bool):

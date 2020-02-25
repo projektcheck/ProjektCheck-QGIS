@@ -467,7 +467,8 @@ class Kostentraeger:
             for j, field_name in enumerate(field_names):
                 label = labels[j]
                 slider = Slider(maximum=100, lockable=True)
-                param = Param(feature[field_name], slider, label=label)
+                param = Param(feature[field_name], slider,
+                              label=label, unit='%')
                 self.params.add(
                     param, name=f'{phase.Kostenphase}_{field_name}')
                 dependency.add(param)
