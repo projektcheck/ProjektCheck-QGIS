@@ -19,9 +19,18 @@ def horizontal_label_values(bars, ax):
             va='center'#, ha='left'
         )
 
+def u_categories(categories):
+    ret = []
+    prev = ''
+    for category in categories:
+        ret.append(category if category != prev else '')
+        prev = category
+    return ret
+
 
 class Leistungskennwerte(MatplotDiagram):
     def create(self, **kwargs):
+        categories = u_categories(kwargs['categories'])
         labels = kwargs['columns']
 
         y = np.arange(len(labels))
@@ -33,9 +42,14 @@ class Leistungskennwerte(MatplotDiagram):
         bars2 = ax.barh(y - width / 2 - 0.02, kwargs['planfall'],
                         width, label='Planfall', color='#036ffc')
 
+        ax.minorticks_on()
+        ax.set_yticks(y, minor=True)
+        ax.set_yticks(np.arange(len(categories)), minor=False)
+        ax.set_yticklabels(labels, minor=True)
+        ax.set_yticklabels(categories, minor=False)
+        ax.tick_params(axis='y', which='major', pad=150, labelsize=12)
+
         ax.set_title(kwargs['title'])
-        ax.set_yticks(y)
-        ax.set_yticklabels(labels)
         x_label = 'Bewertung'
         if 'max_rating' in kwargs:
             max_rating = kwargs['max_rating']
@@ -56,6 +70,7 @@ class Leistungskennwerte(MatplotDiagram):
 
 class LeistungskennwerteDelta(MatplotDiagram):
     def create(self, **kwargs):
+        categories = u_categories(kwargs['categories'])
         labels = kwargs['columns']
 
         y = np.arange(len(labels))
@@ -67,9 +82,16 @@ class LeistungskennwerteDelta(MatplotDiagram):
 
         bars = ax.barh(y, data, align='center', color=colors)
 
+        ax.set_yticks(y)
+        #ax.minorticks_on()
+        #ax.set_yticks(y, minor=True)
+        #ax.set_yticks(np.arange(len(categories)), minor=False)
+        #ax.set_yticklabels(labels, minor=True)
+        #ax.set_yticklabels(categories, minor=False)
+        #ax.tick_params(axis='y', which='major', pad=150, labelsize=12)
+
         ax.set_xlabel('Bewertung im Planfall minus Bewertung im Nullfall')
         ax.set_title(kwargs['title'])
-        ax.set_yticks(y)
         min_val = min(-3, min(data))
         max_val = max(3, max(data))
         ax.set_xlim(left=min_val, right=max_val)

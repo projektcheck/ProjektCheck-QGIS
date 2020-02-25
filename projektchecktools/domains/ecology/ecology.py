@@ -467,12 +467,15 @@ class Ecology(Domain):
         rating_nf = rating(df_merged_nf, columns)
         rating_pf = rating(df_merged_pf, columns)
         rating_delta = rating_pf - rating_nf
+        categories = [c.split('_')[0].capitalize() for c in columns]
+        columns = [c.split('_')[1] for c in columns]
         columns = [c.replace('ae', 'ä').replace('ue', 'ü').replace('oe', 'ö')
                    .capitalize() for c in columns]
 
         diagram = Leistungskennwerte(
             nullfall=rating_nf, planfall=rating_pf,
             columns=columns,
+            categories=categories,
             title='Leistungskennwerte im Nullfall und Planfall',
             max_rating=self.MAX_RATING
         )
@@ -480,7 +483,8 @@ class Ecology(Domain):
 
         diagram = LeistungskennwerteDelta(
             delta=rating_delta, columns=columns,
-            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der '
+            categories=categories,
+            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der\n'
             'Leistungskennwerte im Planfall gegenüber dem Nullfall)')
         diagram.draw(offset_x=100, offset_y=100)
 

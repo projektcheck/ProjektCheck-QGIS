@@ -87,8 +87,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>511</width>
-         <height>767</height>
+         <width>446</width>
+         <height>792</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -326,7 +326,7 @@ padding: 2px;
             <widget class="QLabel" name="stops_status_label">
              <property name="font">
               <font>
-               <pointsize>9</pointsize>
+               <pointsize>8</pointsize>
               </font>
              </property>
              <property name="text">
@@ -592,7 +592,7 @@ padding: 2px;
                <widget class="QLabel" name="stop_reach_status_label">
                 <property name="font">
                  <font>
-                  <pointsize>9</pointsize>
+                  <pointsize>8</pointsize>
                  </font>
                 </property>
                 <property name="text">
