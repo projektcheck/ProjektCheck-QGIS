@@ -42,6 +42,7 @@ class Leistungskennwerte(MatplotDiagram):
             ax.axes.set_xlim([0, max_rating])
             x_label += f' (in Punkten von 0 bis {max_rating})'
         ax.set_xlabel(x_label)
+        ax.set_xticks(range(0, max_rating, 2))
         ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: f'{x:n}'))
         ax.legend(loc='best')
@@ -69,8 +70,10 @@ class LeistungskennwerteDelta(MatplotDiagram):
         ax.set_xlabel('Bewertung im Planfall minus Bewertung im Nullfall')
         ax.set_title(kwargs['title'])
         ax.set_yticks(y)
-        ax.set_xlim(left=-3 if min(data) > -3  else None,
-                    right=3 if max(data) < 3 else None)
+        min_val = min(-3, min(data))
+        max_val = max(3, max(data))
+        ax.set_xlim(left=min_val, right=max_val)
+        ax.set_xticks(range(min_val, max_val, 2))
         ax.set_yticklabels(labels)
         ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: f'{x:n}'))
