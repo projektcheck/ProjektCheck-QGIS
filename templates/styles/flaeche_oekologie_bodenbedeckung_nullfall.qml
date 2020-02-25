@@ -3,15 +3,15 @@
   <renderer-v2 symbollevels="0" enableorderby="0" type="categorizedSymbol" forceraster="0" attr="IDBodenbedeckung">
     <categories>
       <category value="1" symbol="0" label="Überbaute Flächen" render="true"/>
-      <category value="2" symbol="1" label="Natürliche Wasserfläche" render="true"/>
+      <category value="2" symbol="1" label="Natürliche Wasserflächen" render="true"/>
       <category value="3" symbol="2" label="Platten" render="true"/>
       <category value="4" symbol="3" label="Bäume / Sträucher" render="true"/>
       <category value="5" symbol="4" label="Stauden" render="true"/>
-      <category value="6" symbol="5" label="Wiese" render="true"/>
+      <category value="6" symbol="5" label="Wiesen" render="true"/>
       <category value="7" symbol="6" label="Rasen" render="true"/>
-      <category value="8" symbol="7" label="Rasengittersteine / Wassergebundene Decke" render="true"/>
+      <category value="8" symbol="7" label="Wassergebundene Decke / Rasengittersteine" render="true"/>
       <category value="9" symbol="8" label="Asphalt / Beton" render="true"/>
-      <category value="10" symbol="9" label="offener Boden / Acker" render="true"/>
+      <category value="10" symbol="9" label="Äcker / offener Boden" render="true"/>
       <category value="11" symbol="10" label="Kleinpflaster" render="true"/>
       <category value="" symbol="11" label="" render="true"/>
     </categories>
