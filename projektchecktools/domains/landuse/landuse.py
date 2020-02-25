@@ -81,6 +81,8 @@ class LandUse(Domain):
         for area in self.areas:
             self.area_union = area.geom if not self.area_union \
                 else self.area_union.combine(area.geom)
+        # buffer to fill gaps
+        self.area_union = self.area_union.buffer(0.1, 6)
         self.bordertool.set_snap_geometry(self.area_union)
 
     def setup_params(self):
