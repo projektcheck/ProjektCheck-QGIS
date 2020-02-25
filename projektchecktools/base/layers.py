@@ -69,10 +69,13 @@ class Layer(ABC):
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None, expanded=True, prepend=False):
-        if not self.layer:
-            layers = Layer.find(label, groupname=self.groupname)
-            if layers:
-                self.layer = layers[0].layer()
+        try:
+            if not self.layer:
+                layers = Layer.find(label, groupname=self.groupname)
+                if layers:
+                    self.layer = layers[0].layer()
+        except:
+            self.layer = None
         if redraw:
             self.remove()
 
