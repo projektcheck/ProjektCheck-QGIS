@@ -45,7 +45,11 @@ class InputType(QObject):
         return False
 
     def registerFocusEvent(self, input):
+        # dirty but works, easier than subclassing all types of inputs just to
+        # emit the signal
+        focus_base = input.focusInEvent
         def focusInEvent(evt):
+            focus_base(evt)
             self.focus.emit()
         input.focusInEvent = focusInEvent
 

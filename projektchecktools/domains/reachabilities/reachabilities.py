@@ -190,7 +190,7 @@ class Reachabilities(Domain):
             self.haltestellen.table, groupname=self.layer_group)
         self.stops_layer = output.draw(
             label='Haltestellen',
-            style_file='erreichbarkeit_haltestellen_alt.qml',
+            style_file='erreichbarkeit_haltestellen.qml',
             filter='flaechenzugehoerig=1')
         self.feature_picker.set_layer(self.stops_layer)
         if zoom_to:
