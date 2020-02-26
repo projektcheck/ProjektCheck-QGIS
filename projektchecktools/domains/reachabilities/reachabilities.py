@@ -320,7 +320,7 @@ class Reachabilities(Domain):
 
     def close(self):
         self.feature_picker.set_active(False)
-        output = ProjectLayer.find('Umriss des Plangebiets')
+        output = ProjectLayer.find('Nutzungen des Plangebiets')
         if output:
             layer = output[0].layer()
             layer.removeSelection()
@@ -328,4 +328,7 @@ class Reachabilities(Domain):
         if output:
             layer = output[0].layer()
             layer.removeSelection()
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(False)
         super().close()

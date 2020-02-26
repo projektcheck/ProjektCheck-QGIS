@@ -1,4 +1,5 @@
 import os
+from qgis.PyQt.QtWidgets import QMessageBox
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.domains.constants import Nutzungsart
@@ -25,7 +26,15 @@ class JobsInhabitants(Domain):
 
     def inhabitants_diagram(self):
         areas = Teilflaechen.features().filter(
-            nutzungsart=Nutzungsart.WOHNEN.value)
+            nutzungsart=Nutzungsart.WOHNEN.value,
+            we_gesamt__gt=0
+        )
+        if len(areas) == 0:
+            QMessageBox.warning(
+                self.ui, 'Bewohner',
+                'Es wurden keine Teilflächen mit definierter '
+                'Wohnnutzung gefunden'
+            )
         for area in areas:
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Einwohnerentwicklung")
@@ -34,7 +43,15 @@ class JobsInhabitants(Domain):
 
     def jobs_diagram(self):
         areas = Teilflaechen.features().filter(
-            nutzungsart=Nutzungsart.GEWERBE.value)
+            nutzungsart=Nutzungsart.GEWERBE.value,
+            ap_gesamt__gt=0
+        )
+        if len(areas) == 0:
+            QMessageBox.warning(
+                self.ui, 'Arbeitsplätze',
+                'Es wurden keine Teilflächen mit definierter '
+                'Gewerbenutzung gefunden'
+            )
         for area in areas:
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Anzahl Arbeitsplätze (Orientierungswerte)")
