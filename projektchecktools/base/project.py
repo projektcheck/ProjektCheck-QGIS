@@ -241,10 +241,10 @@ class ProjectManager:
 
     def remove_project(self, project):
         #self.active_project = None
+        project.remove()
         if isinstance(project, str):
             project = self._projects[project]
         del self._projects[project.name]
-        project.remove()
 
     def _get_projects(self):
         base_path = settings.project_path

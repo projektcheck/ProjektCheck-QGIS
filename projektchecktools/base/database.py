@@ -205,6 +205,10 @@ class Workspace:
             if inst is not None:
                 yield inst
 
+    def close(self):
+        self.__refs__.remove(weakref.ref(self))
+        del(self)
+
 
 class Table(ABC):
     '''

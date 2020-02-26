@@ -40,14 +40,50 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.ui.settings_button.clicked.connect(
             lambda: set_project_path(settings_dialog.show()))
 
-        def create_project():
-            dialog = NewProjectDialog()
-            ok, name, layer = dialog.show()
+        self.ui.create_project_button.clicked.connect(self.create_project)
+        self.ui.remove_project_button.clicked.connect(self.remove_project)
+        self.ui.clone_project_button.clicked.connect(self.clone_project)
 
+        self.setup_help()
+        self.setup_projects()
+
+    def create_project(self):
+        dialog = NewProjectDialog()
+        ok, name, layer = dialog.show()
+
+        if ok:
+            job = ProjectInitialization(name, layer,
+                                        self.project_manager.settings.EPSG,
+                                        parent=self.ui)
+            def on_success(project):
+                self.ui.project_combo.addItem(project.name, project)
+                self.ui.project_combo.setCurrentIndex(
+                    self.ui.project_combo.count() - 1)
+                self.project_manager.active_project = project
+
+            dialog = ProgressDialog(job, parent=self.ui,
+                                    on_success=on_success)
+            dialog.show()
+
+    def clone_project(self):
+        project = self.project_manager.active_project
+        if not project:
+            return
+        name = f'{project.name}_kopie'
+        existing_names = [p.name for p in self.project_manager.projects]
+        while True:
+            name, ok = QInputDialog.getText(
+                self.ui, f'{project.name} kopieren',
+                'Name des neuen Projekts', text=name)
             if ok:
-                job = ProjectInitialization(name, layer,
-                                            self.project_manager.settings.EPSG,
-                                            parent=self.ui)
+                if name in existing_names:
+                    QMessageBox.warning(
+                        self.ui, 'Hinweis',
+                        'Ein Projekt mit diesem Namen ist '
+                        'bereits vorhanden')
+                    continue
+
+                job = CloneProject(name, project, parent=self.ui)
                 def on_success(project):
                     self.ui.project_combo.addItem(project.name, project)
                     self.ui.project_combo.setCurrentIndex(
@@ -57,78 +93,47 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 dialog = ProgressDialog(job, parent=self.ui,
                                         on_success=on_success)
                 dialog.show()
+            break
 
-        self.ui.create_project_button.clicked.connect(create_project)
-
-        def remove_project():
-            project = self.project_manager.active_project
-            if not project:
-                return
-            reply = QMessageBox.question(
-                self.ui, 'Projekt entfernen',
-                f'Soll das Projekt "{project.name}" entfernt werden?\n'
-                '(alle Projektdaten werden gelöscht)',
-                 QMessageBox.Yes, QMessageBox.No)
-            if reply == QMessageBox.Yes:
-                idx = self.ui.project_combo.currentIndex()
-                if self.active_dockwidget:
-                    self.active_dockwidget.close()
-                self.ui.project_combo.setCurrentIndex(0)
-                self.ui.project_combo.removeItem(idx)
-                self.project_manager.active_project = ''
-                for ws in Workspace.get_instances():
-                    # close all writable workspaces (read_only indicate the
-                    # base data)
-                    # ToDo: adress project workspaces somehow else
-                    if not ws.database.read_only:
-                        ws.close()
-                # close and remove layers in project group (in TOC)
-                qgisproject = QgsProject.instance()
-                root = qgisproject.layerTreeRoot()
-                project_group = root.findGroup(project.groupname)
-                if project_group:
-                    for layer in project_group.findLayers():
-                        qgisproject.removeMapLayer(layer.layerId())
-                    project_group.removeAllChildren()
-                    root.removeChildNode(project_group)
+    def remove_project(self):
+        project = self.project_manager.active_project
+        if not project:
+            return
+        reply = QMessageBox.question(
+            self.ui, 'Projekt entfernen',
+            f'Soll das Projekt "{project.name}" entfernt werden?\n'
+            '(alle Projektdaten werden gelöscht)',
+             QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            idx = self.ui.project_combo.currentIndex()
+            if self.active_dockwidget:
+                self.active_dockwidget.close()
+            self.ui.project_combo.setCurrentIndex(0)
+            self.ui.project_combo.removeItem(idx)
+            instances = list(Workspace.get_instances())
+            for ws in instances:
+                # close all writable workspaces (read_only indicate the
+                # base data)
+                # ToDo: adress project workspaces somehow else
+                if not ws.database.read_only:
+                    ws.close()
+            # close and remove layers in project group (in TOC)
+            qgisproject = QgsProject.instance()
+            root = qgisproject.layerTreeRoot()
+            project_group = root.findGroup(project.groupname)
+            if project_group:
+                for layer in project_group.findLayers():
+                    qgisproject.removeMapLayer(layer.layerId())
+                project_group.removeAllChildren()
+                root.removeChildNode(project_group)
+            # wait for canvas to refresh because it blocks the datasources for
+            # the layers as long they are visible
+            def on_refresh():
                 self.project_manager.remove_project(project)
-                self.canvas.refreshAllLayers()
-        self.ui.remove_project_button.clicked.connect(remove_project)
-
-        def clone_project():
-            project = self.project_manager.active_project
-            if not project:
-                return
-            name = f'{project.name}_kopie'
-            existing_names = [p.name for p in self.project_manager.projects]
-            while True:
-                name, ok = QInputDialog.getText(
-                    self.ui, f'{project.name} kopieren',
-                    'Name des neuen Projekts', text=name)
-                if ok:
-                    if name in existing_names:
-                        QMessageBox.warning(
-                            self.ui, 'Hinweis',
-                            'Ein Projekt mit diesem Namen ist '
-                            'bereits vorhanden')
-                        continue
-
-                    job = CloneProject(name, project, parent=self.ui)
-                    def on_success(project):
-                        self.ui.project_combo.addItem(project.name, project)
-                        self.ui.project_combo.setCurrentIndex(
-                            self.ui.project_combo.count() - 1)
-                        self.project_manager.active_project = project
-
-                    dialog = ProgressDialog(job, parent=self.ui,
-                                            on_success=on_success)
-                    dialog.show()
-                break
-
-        self.ui.clone_project_button.clicked.connect(clone_project)
-
-        self.setup_help()
-        self.setup_projects()
+                self.project_manager.active_project = ''
+                self.canvas.mapCanvasRefreshed.disconnect(on_refresh)
+            self.canvas.mapCanvasRefreshed.connect(on_refresh)
+            self.canvas.refreshAllLayers()
 
     def setup_projects(self):
         '''
@@ -268,6 +273,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def change_project(self, project):
         if not project:
+            self.ui.domain_button.setEnabled(False)
+            self.ui.definition_button.setEnabled(False)
             return
         try:
             #active_project = self.project_manager.active_project
@@ -284,14 +291,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             for ws in Workspace.get_instances():
                 if not ws.database.read_only:
                     ws.close()
-
-            if not project:
-                self.ui.domain_button.setEnabled(False)
-                self.ui.definition_button.setEnabled(False)
-                return
-            else:
-                self.ui.domain_button.setEnabled(True)
-                self.ui.definition_button.setEnabled(True)
 
             self.project_manager.active_project = project
 
@@ -312,13 +311,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 if name.startswith('Projekt'):
                     child.setItemVisibilityChecked(name==project.groupname)
 
-            self.project_definitions.show_outputs(zoom=True)
+            self.project_definitions.show_areas(zoom=True)
 
             backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
             backgroundOSM.draw(checked=False)
             backgroundGrey = TerrestrisBackgroundLayer(
                 groupname='Hintergrundkarten')
             backgroundGrey.draw()
+            self.ui.domain_button.setEnabled(True)
+            self.ui.definition_button.setEnabled(True)
             # ToDo: show last active widget
         except FileNotFoundError as e:
             message = QMessageBox()

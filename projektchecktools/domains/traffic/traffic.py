@@ -7,7 +7,7 @@ from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.domains.traffic.tables import (
-    Connectors, Links, Itineraries, TransferNodes, Ways)
+    Links, Itineraries, TransferNodes, Ways)
 from projektchecktools.domains.traffic.routing import Routing
 from projektchecktools.base.params import (Params, Param, Title,
                                            Seperator, SumDependency)

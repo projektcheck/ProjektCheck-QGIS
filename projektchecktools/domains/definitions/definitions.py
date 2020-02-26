@@ -63,9 +63,10 @@ class TrafficConnectors:
 
     def close(self):
         self.connector_tool.set_active(False)
-        layer = self.output.layer
-        if layer:
-            layer.removeSelection()
+        if hasattr(self, 'output'):
+            layer = self.output.layer
+            if layer:
+                layer.removeSelection()
 
 
 class Wohnen:
@@ -661,7 +662,8 @@ class ProjectDefinitions(Domain):
             tou_label = self.types[area.nutzungsart][0]
             self.ui.area_combo.addItem(f'{area.name} ({tou_label})', area)
         self.ui.area_combo.blockSignals(False)
-        self.show_outputs()
+        self.show_areas()
+        self.connector_setter.show_connectors()
         self.change_area()
 
     def change_area(self):
@@ -679,7 +681,7 @@ class ProjectDefinitions(Domain):
         self.setup_type()
         self.setup_type_params()
 
-    def show_outputs(self, zoom=False):
+    def show_areas(self, zoom=False):
         table = Teilflaechen.get_table()
         self.tou_output = ProjectLayer.from_table(
             table, groupname=self.layer_group)
@@ -690,7 +692,7 @@ class ProjectDefinitions(Domain):
         output = ProjectLayer.from_table(table, groupname='Hintergrund',
                                          prepend=False)
         output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
-        self.connector_setter.show_connectors()
+        #self.connector_setter.show_connectors()
 
     def setup_type(self):
         layout = self.ui.parameter_group.layout()
@@ -751,13 +753,10 @@ class ProjectDefinitions(Domain):
         self.typ.params.changed.connect(lambda: self.canvas.refreshAllLayers())
 
     def close(self):
-        # ToDo: implement this in project (collecting all used workscpaces)
         self.connector_setter.close()
         layer = self.tou_output.layer
         if layer:
             layer.removeSelection()
-        if hasattr(self, 'areas'):
-            self.areas.table.workspace.close()
         if hasattr(self, 'params'):
             self.params.close()
         super().close()
