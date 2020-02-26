@@ -123,7 +123,7 @@ class BahnQuery(object):
         # but do it again because you can
         stops_sorted = sorted(stops, key=lambda x: x.distance)
         if n < len(stops_sorted):
-            stops_sorted[:n]
+            stops = stops_sorted[:n]
 
         return stops
 
