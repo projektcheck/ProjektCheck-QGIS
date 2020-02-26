@@ -37,6 +37,21 @@ class Layer(ABC):
             return None
         return self.root.findLayer(self.layer)
 
+    @property
+    def layer(self):
+        try:
+            layer = self._layer
+            if layer is not None:
+                # call function on layer to check if it still exists
+                layer.id()
+        except RuntimeError:
+            return None
+        return layer
+
+    @layer.setter
+    def layer(self, layer):
+        self._layer = layer
+
     @classmethod
     def add_group(self, groupname, prepend=True):
         groupnames = groupname.split('/')
@@ -69,13 +84,10 @@ class Layer(ABC):
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None, expanded=True, prepend=False):
-        try:
-            if not self.layer:
-                layers = Layer.find(label, groupname=self.groupname)
-                if layers:
-                    self.layer = layers[0].layer()
-        except:
-            self.layer = None
+        if not self.layer:
+            layers = Layer.find(label, groupname=self.groupname)
+            if layers:
+                self.layer = layers[0].layer()
         if redraw:
             self.remove()
 
