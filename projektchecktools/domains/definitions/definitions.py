@@ -662,8 +662,7 @@ class ProjectDefinitions(Domain):
             tou_label = self.types[area.nutzungsart][0]
             self.ui.area_combo.addItem(f'{area.name} ({tou_label})', area)
         self.ui.area_combo.blockSignals(False)
-        self.show_areas()
-        self.connector_setter.show_connectors()
+        self.show_outputs()
         self.change_area()
 
     def change_area(self):
@@ -681,7 +680,7 @@ class ProjectDefinitions(Domain):
         self.setup_type()
         self.setup_type_params()
 
-    def show_areas(self, zoom=False):
+    def show_outputs(self, zoom=False):
         table = Teilflaechen.get_table()
         self.tou_output = ProjectLayer.from_table(
             table, groupname=self.layer_group)
@@ -692,7 +691,7 @@ class ProjectDefinitions(Domain):
         output = ProjectLayer.from_table(table, groupname='Hintergrund',
                                          prepend=False)
         output.draw(label='Umriss des Plangebiets', style_file='areas.qml')
-        #self.connector_setter.show_connectors()
+        self.connector_setter.show_connectors()
 
     def setup_type(self):
         layout = self.ui.parameter_group.layout()

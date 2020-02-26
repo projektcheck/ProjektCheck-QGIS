@@ -68,7 +68,7 @@ class Layer(ABC):
                 g = groupnames.pop(0)
                 root = root.findGroup(g)
                 if not root:
-                    return
+                    return []
 
         def deep_find(node, label):
             found = []

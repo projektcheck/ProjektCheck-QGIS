@@ -91,27 +91,29 @@ class Reachabilities(Domain):
 
     def toggle_connector(self):
         connector = self.ui.connector_combo.currentData()
+
+        area_output = ProjectLayer.find('Nutzungen des Plangebiets')
+        area_layer = None
+        connector_output = ProjectLayer.find('Anbindungspunkte')
+        connector_layer = None
+
+        if area_output:
+            area_layer = area_output[0].layer()
+            area_layer.removeSelection()
+        if connector_output:
+            tree_layer = connector_output[0]
+            tree_layer.setItemVisibilityCheckedParentRecursive(True)
+            connector_layer = tree_layer.layer()
+            connector_layer.removeSelection()
+
         if not connector:
             return
 
-        output = ProjectLayer.find('Umriss des Plangebiets')
-        if output:
-            layer = output[0].layer()
-            layer.removeSelection()
-            layer.select(connector.id_teilflaeche)
+        if area_layer:
+            area_layer.select(connector.id_teilflaeche)
 
-        output = ProjectLayer.find('Anbindungspunkte')
-        if output:
-            tree_layer = output[0]
-            tree_layer.setItemVisibilityCheckedParentRecursive(True)
-            layer = tree_layer.layer()
-            layer.removeSelection()
-            layer.select(connector.id)
-
-        output = ProjectLayer.find('Nutzungen des Plangebiets')
-        if output:
-            tree_layer = output[0]
-            tree_layer.setItemVisibilityChecked(False)
+        if connector_layer:
+            connector_layer.select(connector.id)
 
     def toggle_stop(self, stop=None):
         if not stop:
@@ -120,7 +122,7 @@ class Reachabilities(Domain):
             return
         already_calculated = (stop.berechnet not in ['', '""']
                               and stop.berechnet is not None)
-        label = f'Auswertung {stop.berechnet}' if already_calculated \
+        label = f'Stand der Auswertung: {stop.berechnet}' if already_calculated\
             else 'noch nicht berechnet'
         self.ui.stop_reach_status_label.setText(label)
         self.ui.recalculate_time_check.setChecked(not already_calculated)
@@ -155,7 +157,7 @@ class Reachabilities(Domain):
         last_calc = self.project_frame.haltestellen_berechnet
         already_calculated = (last_calc not in ['', '""']
                               and last_calc is not None)
-        label = f'Auswertung {last_calc}' if already_calculated\
+        label = f'Stand der Auswertung: {last_calc}' if already_calculated\
             else 'noch nicht berechnet'
         self.ui.stops_group.setVisible(already_calculated)
         self.ui.recalculatestops_check.setChecked(not already_calculated)
@@ -176,6 +178,7 @@ class Reachabilities(Domain):
     def fill_connectors(self):
         self.ui.connector_combo.blockSignals(True)
         self.ui.connector_combo.clear()
+        self.ui.connector_combo.addItem('nichts ausgewählt')
         for connector in self.connectors:
             self.ui.connector_combo.addItem(
                 f'Anbindungspunkt {connector.name_teilflaeche}', connector)

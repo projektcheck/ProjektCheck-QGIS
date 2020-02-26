@@ -311,7 +311,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 if name.startswith('Projekt'):
                     child.setItemVisibilityChecked(name==project.groupname)
 
-            self.project_definitions.show_areas(zoom=True)
+            self.project_definitions.show_outputs(zoom=True)
 
             backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
             backgroundOSM.draw(checked=False)
