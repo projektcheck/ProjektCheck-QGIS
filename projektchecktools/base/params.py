@@ -41,7 +41,7 @@ class Param(QObject):
     changed = pyqtSignal(object)
 
     def __init__(self, value, input: InputType = None, label: str = '',
-                 unit='', help_text=''):
+                 unit='', help_text='', repr_format=None):
         '''
         Parameters
         ----------
@@ -60,6 +60,7 @@ class Param(QObject):
         if self.input:
             self.input.value = value
         self.unit = unit
+        self.repr_format = repr_format
         self._value_label = QLabel(self._v_repr(value))
         self.help_text = help_text
 
@@ -72,6 +73,8 @@ class Param(QObject):
         return self._value
 
     def _v_repr(self, value):
+        if self.repr_format:
+            return locale.format(self.repr_format, value)
         if isinstance(value, float):
             v_repr = locale.format("%.2f", value, grouping=True)
         elif isinstance(value, int):

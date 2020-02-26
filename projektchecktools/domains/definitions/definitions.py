@@ -95,7 +95,7 @@ class Wohnen:
         self.params.add(Title('Bezugszeitraum'))
         self.params.beginn_nutzung = Param(
             area.beginn_nutzung, SpinBox(minimum=2000, maximum=2100),
-            label='Beginn des Bezuges'
+            label='Beginn des Bezuges', repr_format='%d'
         )
         self.params.aufsiedlungsdauer = Param(
             area.aufsiedlungsdauer, SpinBox(minimum=1, maximum=100),
@@ -360,7 +360,7 @@ class Gewerbe:
         self.params.add(Title('Bezugszeitraum'))
         self.params.beginn_nutzung = Param(
             area.beginn_nutzung, SpinBox(minimum=2000, maximum=2100),
-            label='Beginn des Bezuges'
+            label='Beginn des Bezuges', repr_format='%d'
         )
         self.params.aufsiedlungsdauer = Param(
             area.aufsiedlungsdauer, SpinBox(minimum=1, maximum=100),

@@ -100,7 +100,7 @@ class ProjectInitialization(Worker):
                 name=f'Flaeche_{i+1}',
                 validiert=0,
                 aufsiedlungsdauer=1,
-                nutzungsdauer=datetime.now().year,
+                beginn_nutzung=datetime.now().year,
                 ags_bkg=ags[i],
                 gemeinde_name=gem_names[i],
                 gemeinde_typ=gem_types[i],
