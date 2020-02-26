@@ -41,13 +41,14 @@ class Leistungskennwerte(MatplotDiagram):
                          width, label='Nullfall', color='#fc9403')
         bars2 = ax.barh(y - width / 2 - 0.02, kwargs['planfall'],
                         width, label='Planfall', color='#036ffc')
-
-        ax.minorticks_on()
-        ax.set_yticks(y, minor=True)
-        ax.set_yticks(np.arange(len(categories)), minor=False)
-        ax.set_yticklabels(labels, minor=True)
-        ax.set_yticklabels(categories, minor=False)
-        ax.tick_params(axis='y', which='major', pad=150, labelsize=12)
+        ax.set_yticks(y)
+        ax.set_yticklabels(labels)
+        #ax.minorticks_on()
+        #ax.set_yticks(y, minor=True)
+        #ax.set_yticks(np.arange(len(categories)), minor=False)
+        #ax.set_yticklabels(labels, minor=True)
+        #ax.set_yticklabels(categories, minor=False)
+        #ax.tick_params(axis='y', which='major', pad=150, labelsize=12)
 
         ax.set_title(kwargs['title'])
         x_label = 'Bewertung'
