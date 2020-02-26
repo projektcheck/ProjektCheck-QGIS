@@ -154,7 +154,7 @@ class ProgressDialog(Dialog):
         self.progress_bar.setValue(0)
         self.stop_button.setVisible(False)
         self.close_button.setVisible(False)
-        self.auto_close = auto_close
+        self.auto_close_check.setChecked(auto_close)
         self.auto_run = auto_run
         # ToDo: use signals instead of callbacks
         self.on_success = on_success
@@ -198,7 +198,7 @@ class ProgressDialog(Dialog):
         self.close_button.setVisible(True)
         self.close_button.setEnabled(True)
         self.stop_button.setVisible(False)
-        if self.auto_close:
+        if self.auto_close_check.isChecked():
             self.close()
 
     def close(self):

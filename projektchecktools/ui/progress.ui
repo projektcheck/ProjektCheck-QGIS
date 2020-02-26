@@ -75,6 +75,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QCheckBox" name="auto_close_check">
+       <property name="text">
+        <string>automatisch schließen</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="start_button">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
