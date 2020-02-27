@@ -206,7 +206,8 @@ class Workspace:
                 yield inst
 
     def close(self):
-        self.__refs__.remove(weakref.ref(self))
+        if weakref.ref(self) in self.__refs__:
+            self.__refs__.remove(weakref.ref(self))
         del(self)
 
 

@@ -167,7 +167,8 @@ class LandUse(Domain):
         # calculation for area
         anteil = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         netto_wb = (self.area.geom.area() / 10000) * (anteil.nettoflaeche / 100)
-        wohndichte = round(self.area.we_gesamt / netto_wb, 1)
+        wohndichte = round(self.area.we_gesamt / netto_wb, 1) \
+            if netto_wb > 0 else 0
 
         # get data to compare to
         kreis, kreisname, kreistyp, typname = self.get_kreis_data()
@@ -206,7 +207,8 @@ class LandUse(Domain):
         wohnflaeche_gesamt = (df_merged['mean_wohnflaeche'] *
                               df_merged['we']).sum()
         netto_wb = (self.area.geom.area() / 10000) * (anteil.nettoflaeche / 100)
-        wohnflaechendichte = round(wohnflaeche_gesamt / netto_wb)
+        wohnflaechendichte = round(wohnflaeche_gesamt / netto_wb)\
+            if netto_wb > 0 else 0
 
         # get data to compare to
         kreis, kreisname, kreistyp, typname = self.get_kreis_data()
