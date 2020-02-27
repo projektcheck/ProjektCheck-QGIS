@@ -236,7 +236,7 @@ class InfrastructureDrawing:
         self.params.add(Seperator(margin=0))
 
         self.params.lebensdauer = Param(
-            point.Lebensdauer, SpinBox(maximum=1000),
+            point.Lebensdauer, SpinBox(minimum=1, maximum=1000),
             label='Technische oder wirtschaftliche \n'
             'Lebensdauer bis zur Erneuerung',
             unit='Jahr(e)'
@@ -337,7 +337,7 @@ class Gesamtkosten:
             layout, help_file='infrastruktur_kostenkennwerte.txt')
 
         self.params.lebensdauer = Param(
-            net_element.Lebensdauer, SpinBox(maximum=1000),
+            net_element.Lebensdauer, SpinBox(minimum=1, maximum=1000),
             label='Lebensdauer: Jahre zwischen den Erneuerungszyklen',
             unit='Jahr(e)'
         )
