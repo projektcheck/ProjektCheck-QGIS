@@ -283,7 +283,8 @@ class Reachabilities(Domain):
         output = ProjectLayer.from_table(
             self.einrichtungen.table, groupname=self.layer_group)
         output.draw(label='Einrichtungen',
-                    style_file='erreichbarkeit_einrichtungen.qml')
+                    style_file='erreichbarkeit_einrichtungen.qml',
+                    prepend=True)
         output.zoom_to()
 
     def draw_isochrones(self, modus, connector):
