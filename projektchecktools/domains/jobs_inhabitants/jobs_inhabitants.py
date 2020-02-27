@@ -7,6 +7,7 @@ from projektchecktools.domains.jobs_inhabitants.diagrams import (
     BewohnerEntwicklung, ArbeitsplatzEntwicklung, BranchenAnteile)
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.utils.utils import open_file
+from projektchecktools.base.project import ProjectLayer
 
 
 class JobsInhabitants(Domain):
@@ -23,6 +24,12 @@ class JobsInhabitants(Domain):
         pdf_path = os.path.join(
             self.settings.HELP_PATH, 'Anleitung_Bewohner_und_Arbeitsplätze.pdf')
         self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
+
+    def load_content(self):
+        super().load_content()
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(True)
 
     def inhabitants_diagram(self):
         areas = Teilflaechen.features().filter(
@@ -62,3 +69,9 @@ class JobsInhabitants(Domain):
                      "Geschätzte Branchenanteile an den Arbeitsplätzen")
             diagram = BranchenAnteile(area=area, title=title)
             diagram.draw(offset_x=100, offset_y=100)
+
+    def close(self):
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(False)
+        super().close()

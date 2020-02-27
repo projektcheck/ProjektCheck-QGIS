@@ -111,5 +111,7 @@ class BranchenAnteile(MatplotDiagram):
             handle.set_color(color)
         box = ax.get_position()
         ax.set_position([box.x0, box.y0 + box.y0 * 0.5, box.width, box.height])
+        figure.tight_layout()
+        #figure.subplots_adjust(right=0.2)
 
         return figure

@@ -42,6 +42,9 @@ class Traffic(Domain):
 
     def load_content(self):
         super().load_content()
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(True)
         self.links = Links.features(project=self.project, create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
                                                      create=True)
@@ -165,6 +168,9 @@ class Traffic(Domain):
         output.zoom_to()
 
     def close(self):
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(False)
         if hasattr(self, 'params'):
             self.params.close()
         super().close()
