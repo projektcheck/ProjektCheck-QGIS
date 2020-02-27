@@ -280,11 +280,8 @@ class Reachabilities(Domain):
         dialog.show()
 
     def draw_einrichtungen(self):
-        sub_group = u'Erreichbarkeiten ÖPNV'
-
         output = ProjectLayer.from_table(
-            self.einrichtungen.table,
-            groupname=f'{self.layer_group}/{sub_group}')
+            self.einrichtungen.table, groupname=self.layer_group)
         output.draw(label='Einrichtungen',
                     style_file='erreichbarkeit_einrichtungen.qml')
         output.zoom_to()
