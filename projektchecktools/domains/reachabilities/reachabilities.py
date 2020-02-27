@@ -292,16 +292,19 @@ class Reachabilities(Domain):
         output = ProjectLayer.from_table(
             self.isochronen.table,
             groupname=f'{self.layer_group}/{sub_group}')
+        start_color = (233, 255, 233) if modus == 'zu Fuß' \
+            else (233, 233, 255) if modus == 'Fahrrad' \
+            else (233, 233, 233)
         end_color = (2, 120, 8) if modus == 'zu Fuß' \
             else (44, 96, 156) if modus == 'Fahrrad' \
-            else (64, 56, 56)
+            else (56, 56, 56)
         layer = output.draw(
             label=f'{modus} (Anbindungspunkt {connector.name_teilflaeche})',
             filter=f'modus="{modus}" AND id_connector={connector.id}'
         )
         output.zoom_to()
         set_category_renderer(layer, 'minuten',
-                              (255, 255, 255), end_color,
+                              start_color, end_color,
                               unit='Minuten')
         layer.setOpacity(0.8)
         layer.triggerRepaint()
