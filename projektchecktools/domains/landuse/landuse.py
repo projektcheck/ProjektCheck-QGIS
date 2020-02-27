@@ -273,10 +273,12 @@ class LandUse(Domain):
         shared_border = round(100 * drawn_borders / area_outer_border)
         shared_border = min(shared_border, 100)
         values = [shared_border, 100 - shared_border]
-        labels = ['Anteil der Plangebietsgrenze, die an\n'
-                  'bestehende Siedlungsflächen angrenzt',
-                  'Anteil der Plangebietsgrenze, die nicht an\n'
-                  'bestehende Siedlungsflächen angrenzt']
+        labels = ['Anteil der Plangebietsgrenze,\n'
+                  'die an bestehende Siedlungs-\n'
+                  'flächen angrenzt',
+                  'Anteil der Plangebietsgrenze,\n'
+                  'die nicht an bestehende\n'
+                  'Siedlungsflächen angrenzt',]
         chart = PieChart(values, labels=labels,
                          title=f'{self.project.name}: Lage zu bestehenden '
                          'Siedlungsflächen', decimals=0)

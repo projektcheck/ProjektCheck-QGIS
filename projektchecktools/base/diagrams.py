@@ -97,7 +97,9 @@ class BarChart(MatplotDiagram):
 
 
 class PieChart(MatplotDiagram):
-    def __init__(self, values, labels=None, colors=None, decimals=1, title=''):
+    def __init__(self, values, labels=None, colors=None, decimals=1, title='',
+                 margin_left=0.1, margin_top=0.1, margin_right=0.1,
+                 margin_bottom=0.2):
         super().__init__()
         self.values = values
         self.labels = labels or [''] * len(values)
@@ -105,6 +107,10 @@ class PieChart(MatplotDiagram):
         self.decimals = decimals
         self.colors = colors or plt.cm.Accent(
             np.linspace(0, 1, len(self.values)))
+        self.margin_left = margin_left
+        self.margin_top = margin_top
+        self.margin_right = margin_right
+        self.margin_bottom = margin_bottom
 
     def create(self):
         figure, ax = plt.subplots()
@@ -117,6 +123,8 @@ class PieChart(MatplotDiagram):
                     horizontalalignment='center',
                     fontsize=12)
 
-        ax.legend(self.labels, loc='best')
-
+        figure.subplots_adjust(bottom=self.margin_bottom, left=self.margin_left,
+                               right=1-self.margin_right, top=1-self.margin_top)
+        ax.legend(self.labels, loc='lower right', bbox_to_anchor=(1.1, -0.2))
+        #figure.tight_layout()
         return figure
