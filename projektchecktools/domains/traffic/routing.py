@@ -174,7 +174,8 @@ class Routing(Worker):
 
         o_trans_nodes = otp_router.transfer_nodes
         for transfer_node in self.transfer_nodes:
-            o_trans_nodes[transfer_node.node_id].weight = transfer_node.weight
+            new_weight = transfer_node.weight / 100
+            o_trans_nodes[transfer_node.node_id].weight = new_weight
 
         self.log("verteile Verkehrsaufkommen...")
         self.set_progress(50)

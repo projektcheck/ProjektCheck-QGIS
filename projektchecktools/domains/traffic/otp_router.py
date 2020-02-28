@@ -615,13 +615,12 @@ class OTPRouter(object):
         df = pd.DataFrame(columns=fields)
         counter = 1
         i = 0
-        equal_node_weight = round(100 / len(self.transfer_nodes), 1)
         for node in self.transfer_nodes.values():
             name = 'Herkunfts-/Zielpunkt ' + str(counter)
             counter += 1
             geom = node.geom
             if geom:
-                df.loc[i] = [node.node_id, equal_node_weight, geom, name]
+                df.loc[i] = [node.node_id, node.weight * 100, geom, name]
                 i += 1
         return df
 
