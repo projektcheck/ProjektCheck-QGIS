@@ -31,6 +31,7 @@ class Links(ProjectTable):
 
 class Itineraries(ProjectTable):
     transfer_node_id = Field(int, 0)
+    route_id = Field(int, 0)
 
     class Meta:
         workspace = 'traffic'

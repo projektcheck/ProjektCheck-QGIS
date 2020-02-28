@@ -93,7 +93,7 @@ class Routing(Worker):
 
             # calculate segments around centroid
             inner_dest = otp_router.create_circle(
-                source, dist=inner_circle,
+                source, dist=mid_circle,
                 n_segments=self.n_segments)
             outer_dest = otp_router.create_circle(source, dist=outer_circle,
                                                   n_segments=self.n_segments)
@@ -105,10 +105,8 @@ class Routing(Worker):
             transform = QgsCoordinateTransform(source_crs, target_crs,
                                                QgsProject.instance())
 
-            self.log(len(destinations))
             # calculate the routes to the segments
             for i, (x, y) in enumerate(destinations):
-                self.log(i)
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 json = otp_router.get_routing_request(source, destination)
@@ -119,7 +117,7 @@ class Routing(Worker):
                 points = [QgsPoint(y, x) for (x, y) in coords]
                 polyline = QgsGeometry.fromPolyline(points)
                 polyline.transform(transform)
-                self.itineraries.add(geom=polyline)
+                self.itineraries.add(geom=polyline, route_id=r_id)
                 r_id += 1
             self.set_progress(60 * (i + 1) / len(self.areas))
 
@@ -128,7 +126,8 @@ class Routing(Worker):
 
         self.log("berechne Zielknoten...")
         otp_router.nodes_to_graph(meters=inner_circle)
-        otp_router.remove_redundant_transfer_nodes()
+        redundant_routes = otp_router.remove_redundant_routes()
+        self.itineraries.delete(route_id__in=redundant_routes)
 
         otp_router.transfer_nodes.calc_initial_weight()
         self.set_progress(70)

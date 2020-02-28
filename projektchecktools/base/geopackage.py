@@ -203,8 +203,7 @@ class GeopackageTable(Table):
         filtering django style
         supported: __in, __gt, __lt, __ne
         '''
-        # ToDo: filter ids (geom maybe not)
-        #       more filters
+        # ToDo: more filters
         terms = []
         #field_names = [field.name for field in self.fields()]
         # ToDo: if there it is eventually possible to filter OR you can't just
