@@ -27,6 +27,7 @@ class Route(object):
         self.route_id = route_id
         self.source_id = source_id
         self.node_ids = np.array([], dtype='i4')
+        self.weight = 0
     @property
     def source_node(self):
         if not len(self.node_ids):
@@ -458,6 +459,7 @@ class OTPRouter(object):
         coord_list = PolylineCodec().decode(points)
         if len(coord_list) == 0:
             return
+        coord_list = coord_list[:-1]
         route = self.routes.get_route(route_id, source_id)
         self.nodes.add_points(coord_list, route)
         if source_id not in self.areas:
@@ -538,6 +540,41 @@ class OTPRouter(object):
         dist_vector[dist_vector > meters] = np.NINF
         self.get_max_nodes(dist_vector)
 
+    def remove_redundant_routes(self):
+        '''
+        remove routes outgoing from transfer nodes (incl. the transfer nodes)
+        that are part of another route
+        '''
+        redundant_nodes = []
+        transfer_nodes = self.transfer_nodes.values()
+        for transfer_node in transfer_nodes:
+            is_redundant = False
+            for tn in transfer_nodes:
+                if (tn.node_id == transfer_node.node_id
+                    or tn.node_id in redundant_nodes):
+                    continue
+                for route in tn.routes.values():
+                    # transfer node is part of the route of
+                    # another transfer node
+                    in_route = np.in1d(transfer_node.node_id,
+                                       route.node_ids[:-1]).sum() != 0
+                    if in_route:
+                        redundant_nodes.append(transfer_node)
+                        is_redundant = True
+                        break
+                if is_redundant:
+                    break
+        redundant_routes = []
+        for node in redundant_nodes:
+            self.transfer_nodes.pop(node.node_id, None)
+            redundant_routes.extend(list(node.routes))
+
+        redundant_routes = np.unique(redundant_routes)
+        for route_id in redundant_nodes:
+            self.routes.pop(route_id, None)
+
+        return redundant_routes
+
     def set_link_distance(self, dist_vector):
         """set distance to plangebiet for each link"""
         for link in self.nodes.links:
@@ -551,6 +588,8 @@ class OTPRouter(object):
             link.weight = 0.
             for route_id in link.routes:
                 route = self.routes[route_id]
+                if not route:
+                    continue
                 route_weight = route.weight
                 area = self.areas[route.source_id]
                 route_trips = route_weight * area.trips
@@ -576,13 +615,12 @@ class OTPRouter(object):
         df = pd.DataFrame(columns=fields)
         counter = 1
         i = 0
-        equal_node_weight = round(100 / len(self.transfer_nodes), 1)
         for node in self.transfer_nodes.values():
             name = 'Herkunfts-/Zielpunkt ' + str(counter)
             counter += 1
             geom = node.geom
             if geom:
-                df.loc[i] = [node.node_id, equal_node_weight, geom, name]
+                df.loc[i] = [node.node_id, node.weight * 100, geom, name]
                 i += 1
         return df
 

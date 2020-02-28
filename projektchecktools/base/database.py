@@ -78,8 +78,14 @@ class FeatureCollection:
     def __len__(self):
         return len(self.table)
 
-    def delete(self):
-        ids = [feat.id for feat in self]
+    def delete(self, **kwargs):
+        if len(kwargs) > 0:
+            ids = [feat.id for feat in self.filter(**kwargs)]
+            # reset filter
+            # ToDo: fix filter side effects
+            self.filter()
+        else:
+            ids = [feat.id for feat in self]
         for id in ids:
             self.table.delete(id)
 

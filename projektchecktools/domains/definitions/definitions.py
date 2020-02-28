@@ -530,7 +530,7 @@ class Gewerbe:
         cor_factor = preset / estimated_sum if estimated_sum > 0 else 0
         joined = df_anteile.merge(df_basedata, on='id_branche', how='left')
         n_ways = estimated * cor_factor * joined['Wege_je_Beschäftigten']
-        n_ways_miv = estimated * cor_factor * joined['Anteil_Pkw_Fahrer'] / 100
+        n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
 
         area.wege_gesamt = int(n_ways.sum())
         area.wege_miv = int(n_ways_miv.sum())
