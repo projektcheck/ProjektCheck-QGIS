@@ -4,6 +4,7 @@ from qgis.core import QgsGeometryUtils
 from qgis.core import (QgsGeometry, QgsPoint, QgsProject,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform)
 import math
+import numpy as np
 
 from projektchecktools.utils.spatial import Point
 from projektchecktools.domains.traffic.otp_router import OTPRouter
@@ -43,6 +44,7 @@ class Routing(Worker):
     def initial_calculation(self):
         # tbx settings
         inner_circle = self.distance
+        mid_circle = inner_circle + 500
         outer_circle = inner_circle + self.outer_circle
 
         # calculate routes
@@ -90,16 +92,23 @@ class Routing(Worker):
             source = Point(x=qpoint.x(), y=qpoint.y(), epsg=project_epsg)
 
             # calculate segments around centroid
-            destinations = otp_router.create_circle(source, dist=outer_circle,
-                                                    n_segments=self.n_segments)
+            inner_dest = otp_router.create_circle(
+                source, dist=inner_circle,
+                n_segments=self.n_segments)
+            outer_dest = otp_router.create_circle(source, dist=outer_circle,
+                                                  n_segments=self.n_segments)
+            destinations = np.concatenate([inner_dest, outer_dest])
             source.transform(otp_router.router_epsg)
 
             source_crs = QgsCoordinateReferenceSystem(otp_router.router_epsg)
             target_crs = QgsCoordinateReferenceSystem(project_epsg)
             transform = QgsCoordinateTransform(source_crs, target_crs,
                                                QgsProject.instance())
+
+            self.log(len(destinations))
             # calculate the routes to the segments
-            for (x, y) in destinations:
+            for i, (x, y) in enumerate(destinations):
+                self.log(i)
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 json = otp_router.get_routing_request(source, destination)
@@ -119,6 +128,8 @@ class Routing(Worker):
 
         self.log("berechne Zielknoten...")
         otp_router.nodes_to_graph(meters=inner_circle)
+        otp_router.remove_redundant_transfer_nodes()
+
         otp_router.transfer_nodes.calc_initial_weight()
         self.set_progress(70)
 

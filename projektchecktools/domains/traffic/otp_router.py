@@ -458,6 +458,7 @@ class OTPRouter(object):
         coord_list = PolylineCodec().decode(points)
         if len(coord_list) == 0:
             return
+        coord_list = coord_list[:-1]
         route = self.routes.get_route(route_id, source_id)
         self.nodes.add_points(coord_list, route)
         if source_id not in self.areas:
@@ -537,6 +538,29 @@ class OTPRouter(object):
         self.set_link_distance(dist_vector)
         dist_vector[dist_vector > meters] = np.NINF
         self.get_max_nodes(dist_vector)
+
+    def remove_redundant_transfer_nodes(self):
+        redundant_nodes = []
+        transfer_nodes = self.transfer_nodes.values()
+        for transfer_node in transfer_nodes:
+            is_redundant = False
+            for tn in transfer_nodes:
+                if (tn.node_id == transfer_node.node_id
+                    or tn.node_id in redundant_nodes):
+                    continue
+                for route in tn.routes.values():
+                    # transfer node is part of the route of another transfer node
+                    in_route = np.in1d(transfer_node.node_id,
+                                       route.node_ids[:-1]).sum() != 0
+                    if in_route:
+                        redundant_nodes.append(transfer_node)
+                        is_redundant = True
+                        break
+                if is_redundant:
+                    break
+        for node in redundant_nodes:
+            self.transfer_nodes.pop(node.node_id)
+        # ToDo: remove the routes
 
     def set_link_distance(self, dist_vector):
         """set distance to plangebiet for each link"""
