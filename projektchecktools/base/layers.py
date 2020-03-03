@@ -1,5 +1,6 @@
 from abc import ABC
-from qgis.core import QgsProject, QgsVectorLayer, QgsRasterLayer
+from qgis.core import (QgsProject, QgsVectorLayer, QgsRasterLayer,
+                       QgsCoordinateTransform)
 from qgis.utils import iface
 
 
@@ -117,7 +118,10 @@ class Layer(ABC):
             return
         canvas = iface.mapCanvas()
         self.layer.updateExtents()
-        canvas.setExtent(self.layer.extent())
+        transform = QgsCoordinateTransform(
+            self.layer.crs(), canvas.mapSettings().destinationCrs(),
+            QgsProject.instance())
+        canvas.setExtent(transform.transform(self.layer.extent()))
 
     def remove(self):
         if not self.layer:
