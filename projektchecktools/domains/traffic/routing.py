@@ -19,7 +19,7 @@ from settings import settings
 
 class Routing(Worker):
     outer_circle = 2000
-    n_segments = 2
+    n_segments = 24
 
     def __init__(self, project, distance=1000, recalculate=False, parent=None):
         super().__init__(parent=parent)

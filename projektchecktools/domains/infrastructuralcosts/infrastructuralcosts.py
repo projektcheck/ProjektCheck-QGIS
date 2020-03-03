@@ -1,6 +1,6 @@
 from qgis.PyQt.Qt import QRadioButton
 from qgis.PyQt.QtWidgets import QMessageBox
-import os
+import numpy as np
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.tools import LineMapTool
@@ -539,11 +539,8 @@ class InfrastructuralCosts(Domain):
 
     def kostenvergleich(self):
         types_of_use = [area.nutzungsart for area in self.areas
-                        if area.nutzungsart not in (
-                            Nutzungsart.UNDEFINIERT.value,
-                            Nutzungsart.EINZELHANDEL.value)
-                        ]
-        if len(types_of_use) != 1:
+                        if area.nutzungsart != Nutzungsart.UNDEFINIERT.value]
+        if len(np.unique(types_of_use)) != 1:
             QMessageBox.warning(
                 self.ui, 'Hinweis', 'Die Funktion steht nur für Projekte zur '
                 'Verfügung, bei denen alle Teilflächen '
