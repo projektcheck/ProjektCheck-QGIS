@@ -348,13 +348,7 @@ class Params(QObject):
             with open(self.help_file, 'w') as json_file:
                 json.dump(self.help_dict, json_file, indent=4)
 
-        #parent = self.parent.parent() if not isinstance(self.parent) \
-            #else self.parent
-        #if not isinstance(parent, QWidget):
-        parent = None
-        self.dialog = ParamsDialog(parent=parent,
-                                   help_text=self.help_dict['beschreibung'],
-                                   title=title)
+        self.title = title
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
@@ -362,7 +356,6 @@ class Params(QObject):
             # overview
             elif not getattr(element, 'hide_in_overview', None):
                 element.draw(self.layout)
-            self.dialog.draw(element)
 
         self.parent.addLayout(self.layout, *args)
 
@@ -401,7 +394,13 @@ class Params(QObject):
         '''
         show the dialog to edit parameters
         '''
-        confirmed = self.dialog.exec_()
+        dialog = ParamsDialog(parent=None,
+                              help_text=self.help_dict['beschreibung'],
+                              title=self.title)
+        dialog.setAttribute(Qt.WA_DeleteOnClose)
+        for element in self._elements:
+            dialog.draw(element)
+        confirmed = dialog.exec_()
         if confirmed:
             has_changed = False
             for param in self.params:
@@ -411,11 +410,6 @@ class Params(QObject):
                 has_changed = True
             if has_changed:
                 self.changed.emit()
-        else:
-            # reset inputs
-            for param in self.params:
-                if param.input:
-                    param.input.value = param.value
 
     def __getattr__(self, name):
         param = self._params.get(name, None)
@@ -460,6 +454,7 @@ class ParamsDialog(Dialog):
         self._grid = None
 
     def draw(self, element):
+        self.inputs = []
         # put param objects into grid, else added to the base layout
         if isinstance(element, Param):
             if not self._grid:
@@ -480,6 +475,7 @@ class ParamsDialog(Dialog):
                     lambda: self.show_help(element.help_text, expand=True))
                 element.input.focus.connect(
                     lambda: self.show_help(element.help_text))
+                self.inputs.append(element.input)
                 element.row.addWidget(help_button)
         else:
             self._grid = None
@@ -494,6 +490,11 @@ class ParamsDialog(Dialog):
         if expand:
             self.details_button.setChecked(True)
         self.back_button.setVisible(not hide_back)
+
+    def close(self):
+        for input in self.inputs:
+            input.remove()
+        super().close()
 
 
 class ParamCluster(Params):

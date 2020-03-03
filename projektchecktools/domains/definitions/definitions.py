@@ -430,16 +430,16 @@ class Gewerbe:
             'nach Vollbezug (Summe über alle Branchen)'
         )
 
-        def toggle_auto_check():
-            read_only = self.auto_check.value
-            for _input in [self.ap_slider.slider, self.ap_slider.spinbox]:
-                _input.setAttribute(Qt.WA_TransparentForMouseEvents, read_only)
-                _input.setFocusPolicy(Qt.NoFocus if read_only else Qt.StrongFocus)
-                _input.update()
-            values_changed()
+        #def toggle_auto_check():
+            #read_only = self.auto_check.value
+            #for _input in [self.ap_slider.slider, self.ap_slider.spinbox]:
+                #_input.setAttribute(Qt.WA_TransparentForMouseEvents, read_only)
+                #_input.setFocusPolicy(Qt.NoFocus if read_only else Qt.StrongFocus)
+                #_input.update()
+            #values_changed()
 
-        self.auto_check.changed.connect(toggle_auto_check)
-        toggle_auto_check()
+        #self.auto_check.changed.connect(toggle_auto_check)
+        #toggle_auto_check()
 
         ## set to default preset if assignment is new
         #if len(self.gewerbeanteile) == 0:
