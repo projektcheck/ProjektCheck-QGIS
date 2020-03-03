@@ -179,6 +179,7 @@ class Worker(QThread):
     progress = pyqtSignal(float)
 
     def __init__(self, parent=None):
+        #parent = parent or utils.iface.mainWindow()
         super().__init__(parent=parent)
 
     def run(self, on_success=None):

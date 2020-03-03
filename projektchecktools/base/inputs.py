@@ -18,43 +18,20 @@ class InputType(QObject):
 
     def __init__(self, hide_in_overview=True):
         self.hide_in_overview = hide_in_overview
-        self._input = None
-        self._value = None
         super().__init__()
 
     def draw(self, layout, unit=''):
-        self.layout = layout
         layout.addWidget(self.input)
         if unit:
             layout.addWidget(QLabel(unit))
 
-    def create(self):
-        raise NotImplementedError
-
-    @property
-    def input(self):
-        if self._input:
-            try:
-                self._input.parent()
-                return self._input
-            except RuntimeError:
-                pass
-        self._input = self.create()
-        self.registerFocusEvent(self._input)
-        self.set_value(self._value)
-        return self._input
-
     @property
     def value(self):
-        if self._input:
-            return self.get_value()
-        return self._value
+        return self.get_value()
 
     @value.setter
     def value(self, value):
-        self._value = value
-        if self._input:
-            self.set_value(value)
+        self.set_value(value)
 
     def set_value(self, value):
         raise NotImplementedError
@@ -76,19 +53,16 @@ class InputType(QObject):
             self.focus.emit()
         input.focusInEvent = focusInEvent
 
-    def remove(self):
-        self.layout.removeWidget(self.input)
-
 
 class Checkbox(InputType):
     '''
     checkbox input
     '''
-
-    def create(self):
-        checkbox = QCheckBox()
-        checkbox.stateChanged.connect(self.changed.emit)
-        return checkbox
+    def __init__(self, width=None, **kwargs):
+        super().__init__(**kwargs)
+        self.input = QCheckBox()
+        self.input.stateChanged.connect(self.changed.emit)
+        self.registerFocusEvent(self.input)
 
     def set_value(self, checked):
         self.input.setChecked(checked or False)
@@ -108,22 +82,20 @@ class Slider(InputType):
         self.minimum = minimum
         self.maximum = maximum
         self.lockable = lockable
-        self.width = width
         self.step = step
-
-    def create(self):
         self.slider = QSlider(Qt.Horizontal)
-        self.slider.setMinimum(self.minimum)
-        self.slider.setMaximum(self.maximum)
-        self.slider.setTickInterval(self.step)
-        self.slider.setFixedWidth(self.width)
+        self.slider.setMinimum(minimum)
+        self.slider.setMaximum(maximum)
+        self.slider.setTickInterval(step)
+        self.slider.setFixedWidth(width)
         self.spinbox = QSpinBox()
-        self.spinbox.setMinimum(self.minimum)
-        self.spinbox.setMaximum(self.maximum)
-        self.spinbox.setSingleStep(self.step)
+        self.spinbox.setMinimum(minimum)
+        self.spinbox.setMaximum(maximum)
+        self.spinbox.setSingleStep(step)
         self.registerFocusEvent(self.spinbox)
+        self.registerFocusEvent(self.slider)
 
-        if self.lockable:
+        if lockable:
             self.lock_button = QPushButton()
             self.lock_button.setCheckable(True)
             self.lock_button.setSizePolicy(
@@ -150,7 +122,6 @@ class Slider(InputType):
         self.spinbox.valueChanged.connect(
             lambda: self.changed.emit(self.get_value())
         )
-        return self.slider
 
     def set_value(self, value):
         for element in [self.slider, self.spinbox]:
@@ -166,7 +137,6 @@ class Slider(InputType):
         return self.lock_button.isChecked()
 
     def draw(self, layout, unit=''):
-        self._input = self.create()
         l = QHBoxLayout()
         l.addWidget(self.slider)
         l.addWidget(self.spinbox)
@@ -183,22 +153,21 @@ class Slider(InputType):
 class ComboBox(InputType):
     def __init__(self, values=[], data=[], width=None, **kwargs):
         super().__init__(**kwargs)
-        self.width = width
-        self.values = values
-        self.data = data
-
-    def create(self):
-        combobox = QComboBox()
-        if self.width is not None:
-            combobox.setFixedWidth(self.width)
-        for i, value in enumerate(self.values):
-            args = [value]
-            if self.data:
-                args.append(self.data[i])
-            combobox.addItem(*args)
-        combobox.currentIndexChanged.connect(
+        self.input = QComboBox()
+        self.registerFocusEvent(self.input)
+        if width is not None:
+            self.input.setFixedWidth(width)
+        self.input.currentIndexChanged.connect(
             lambda: self.changed.emit(self.get_value()))
-        return combobox
+        for i, value in enumerate(values):
+            args = [value]
+            if data:
+                args.append(data[i])
+            self.add_value(*args)
+        self.registerFocusEvent(self.input)
+
+    def add_value(self, value, data=None):
+        self.input.addItem(value, userData=data)
 
     def set_value(self, value):
         self.input.setCurrentText(str(value))
@@ -213,14 +182,11 @@ class ComboBox(InputType):
 class LineEdit(InputType):
     def __init__(self, width=None, **kwargs):
         super().__init__(**kwargs)
-        self.width = width
-
-    def create(self):
-        line_edit = QLineEdit()
-        if self.width is not None:
-            line_edit.setFixedWidth(self.width)
-        line_edit.textChanged.connect(self.changed.emit)
-        return line_edit
+        self.input = QLineEdit()
+        if width is not None:
+            self.input.setFixedWidth(width)
+        self.input.textChanged.connect(self.changed.emit)
+        self.registerFocusEvent(self.input)
 
     def set_value(self, value):
         self.input.setText(str(value or ''))
@@ -235,15 +201,12 @@ class SpinBox(InputType):
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
-        self.step = step
-
-    def create(self):
-        spinbox = self.InputClass()
-        spinbox.setMinimum(self.minimum)
-        spinbox.setMaximum(self.maximum)
-        spinbox.setSingleStep(self.step)
-        spinbox.valueChanged.connect(self.changed.emit)
-        return spinbox
+        self.input = self.InputClass()
+        self.input.setMinimum(minimum)
+        self.input.setMaximum(maximum)
+        self.input.setSingleStep(step)
+        self.input.valueChanged.connect(self.changed.emit)
+        self.registerFocusEvent(self.input)
 
     def set_value(self, value):
         self.input.setValue(value or 0)

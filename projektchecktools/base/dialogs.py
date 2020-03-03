@@ -9,7 +9,7 @@ from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
-from matplotlib.figure import Figure
+from PyQt5.QtCore import QCoreApplication
 import matplotlib.pyplot as plt
 
 import os
@@ -144,7 +144,7 @@ class ProgressDialog(Dialog):
     """
     ui_file = 'progress.ui'
 
-    def __init__(self, thread, on_success=None,
+    def __init__(self, worker, on_success=None,
                  parent=None, auto_close=False, auto_run=True,
                  on_close=None):
         super().__init__(self.ui_file, modal=True, parent=parent)
@@ -161,11 +161,11 @@ class ProgressDialog(Dialog):
         self.on_close = on_close
         self.success = False
 
-        self.thread = thread
-        self.thread.finished.connect(self._success)
-        self.thread.error.connect(self.on_error)
-        self.thread.message.connect(self.show_status)
-        self.thread.progress.connect(self.progress)
+        self.worker = worker
+        self.worker.finished.connect(self._success)
+        self.worker.error.connect(self.on_error)
+        self.worker.message.connect(self.show_status)
+        self.worker.progress.connect(self.progress)
 
         self.start_button.clicked.connect(self.run)
         self.stop_button.clicked.connect(self.stop)
@@ -190,10 +190,7 @@ class ProgressDialog(Dialog):
                 self.on_success(result)
 
     def _finished(self):
-        #self.thread.quit()
-        #self.thread.wait()
-        #self.thread.deleteLater()
-        self.thread.deleteLater()
+        #self.worker.deleteLater()
         self.timer.stop()
         self.close_button.setVisible(True)
         self.close_button.setEnabled(True)
@@ -236,11 +233,11 @@ class ProgressDialog(Dialog):
         self.start_button.setVisible(False)
         self.close_button.setVisible(True)
         self.close_button.setEnabled(False)
-        self.thread.start()
+        self.worker.start()
 
     def stop(self):
         self.timer.stop()
-        self.thread.terminate()
+        self.worker.terminate()
         self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
         self.log_edit.moveCursor(QTextCursor.End)
         self._finished()

@@ -1,7 +1,6 @@
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
-import os
-
+from qgis.PyQt.Qt import (QSpacerItem, QSizePolicy,
+                          QVBoxLayout, QWidget)
 from projektchecktools.base.domain import Domain
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
@@ -42,6 +41,7 @@ class Traffic(Domain):
 
     def load_content(self):
         super().load_content()
+        self.params = None
         output = ProjectLayer.find('Projektdefinition')
         if output:
             output[0].setItemVisibilityChecked(True)
@@ -61,8 +61,12 @@ class Traffic(Domain):
         self.setup_settings()
 
     def setup_settings(self):
+        if self.params:
+            self.params.close()
         layout = self.ui.settings_group.layout()
         clear_layout(layout)
+        #QWidget().setLayout(layout)
+        #layout = QVBoxLayout(self.ui.settings_group)
         self.params = Params(parent=layout, button_label='Annahmen verändern',
                              help_file='verkehr_wege_gewichtungen.txt')
 
@@ -85,13 +89,9 @@ class Traffic(Domain):
 
         self.params.add(Title('Gewichtung der Herkunfts-/Zielpunkte'))
 
-        sum_weights = 0
-        for node in self.transfer_nodes:
-            sum_weights += node.weight
-
         dependency = SumDependency(100)
         for node in self.transfer_nodes:
-            perc = round(100 * node.weight / sum_weights)
+            perc = round(node.weight)
             param = Param(
                 perc,
                 Slider(maximum=100, lockable=True),
@@ -118,7 +118,7 @@ class Traffic(Domain):
             way.wege_gesamt = self.params[f'{name}_gesamt'].value
             way.save()
 
-        job = Routing(self.project, parent=self.ui, recalculate=True)
+        job = Routing(self.project, recalculate=True)
         def on_success(res):
             self.draw_traffic()
             self.setup_settings()
@@ -126,14 +126,16 @@ class Traffic(Domain):
             job, parent=self.ui,
             on_success=on_success
         )
-        dialog.setAttribute(Qt.WA_DeleteOnClose)
         dialog.show()
 
     def calculate_traffic(self):
         distance = self.ui.distance_input.value()
         recalculate = self.ui.recalculate_check.isChecked()
         if recalculate:
-            job = Routing(self.project, # parent=self.ui,
+            tree_layer = ProjectLayer.find(self.layer_group)
+            if tree_layer:
+                tree_layer[0].removeAllChildren()
+            job = Routing(self.project,
                           distance=distance)
             def on_success(res):
                 self.ui.recalculate_check.setVisible(True)
@@ -142,10 +144,11 @@ class Traffic(Domain):
                 self.setup_settings()
             dialog = ProgressDialog(
                 job, parent=self.ui,
-                on_success=on_success
+                on_close=on_success
             )
-            dialog.setAttribute(Qt.WA_DeleteOnClose)
             dialog.show()
+            #job.finished.connect(on_success)
+            #job.start()
         else:
             self.draw_traffic()
 

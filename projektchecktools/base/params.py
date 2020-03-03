@@ -348,7 +348,14 @@ class Params(QObject):
             with open(self.help_file, 'w') as json_file:
                 json.dump(self.help_dict, json_file, indent=4)
 
-        self.title = title
+
+        #parent = self.parent.parent() if not isinstance(self.parent) \
+            #else self.parent
+        #if not isinstance(parent, QWidget):
+        parent = None
+        self.dialog = ParamsDialog(parent=parent,
+                                   help_text=self.help_dict['beschreibung'],
+                                   title=title)
 
         for element in self._elements:
             if isinstance(element, QLayoutItem):
@@ -356,6 +363,7 @@ class Params(QObject):
             # overview
             elif not getattr(element, 'hide_in_overview', None):
                 element.draw(self.layout)
+            self.dialog.draw(element)
 
         self.parent.addLayout(self.layout, *args)
 
@@ -394,13 +402,7 @@ class Params(QObject):
         '''
         show the dialog to edit parameters
         '''
-        dialog = ParamsDialog(parent=None,
-                              help_text=self.help_dict['beschreibung'],
-                              title=self.title)
-        dialog.setAttribute(Qt.WA_DeleteOnClose)
-        for element in self._elements:
-            dialog.draw(element)
-        confirmed = dialog.exec_()
+        confirmed = self.dialog.exec_()
         if confirmed:
             has_changed = False
             for param in self.params:
@@ -410,6 +412,11 @@ class Params(QObject):
                 has_changed = True
             if has_changed:
                 self.changed.emit()
+        else:
+            # reset inputs
+            for param in self.params:
+                if param.input:
+                    param.input.value = param.value
 
     def __getattr__(self, name):
         param = self._params.get(name, None)

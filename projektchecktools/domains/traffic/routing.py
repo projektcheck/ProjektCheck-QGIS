@@ -3,6 +3,7 @@ from qgis.core import QgsPoint, QgsLineString, QgsDistanceArea
 from qgis.core import QgsGeometryUtils
 from qgis.core import (QgsGeometry, QgsPoint, QgsProject,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform)
+from pyproj import Proj, transform
 import math
 import numpy as np
 
@@ -18,7 +19,7 @@ from settings import settings
 
 class Routing(Worker):
     outer_circle = 2000
-    n_segments = 24
+    n_segments = 2
 
     def __init__(self, project, distance=1000, recalculate=False, parent=None):
         super().__init__(parent=parent)
@@ -100,13 +101,16 @@ class Routing(Worker):
             destinations = np.concatenate([inner_dest, outer_dest])
             source.transform(otp_router.router_epsg)
 
+            #p2 = Proj(init=f'epsg:{otp_router.router_epsg}')
+            #p1 = Proj(init='epsg:{}'.format(project_epsg))
+
             source_crs = QgsCoordinateReferenceSystem(otp_router.router_epsg)
             target_crs = QgsCoordinateReferenceSystem(project_epsg)
             transform = QgsCoordinateTransform(source_crs, target_crs,
                                                QgsProject.instance())
 
             # calculate the routes to the segments
-            for i, (x, y) in enumerate(destinations):
+            for (x, y) in destinations:
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 json = otp_router.get_routing_request(source, destination)
