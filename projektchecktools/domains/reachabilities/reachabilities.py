@@ -191,7 +191,7 @@ class Reachabilities(Domain):
         self.stops_layer = output.draw(
             label='Haltestellen',
             style_file='erreichbarkeit_haltestellen.qml',
-            filter='flaechenzugehoerig=1')
+            filter='flaechenzugehoerig=1 AND abfahrten>0')
         self.feature_picker.set_layer(self.stops_layer)
         if zoom_to:
             output.zoom_to()
