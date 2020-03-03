@@ -154,6 +154,22 @@ class Wohnen:
                 name=param_name
             )
 
+        self.params.add(Seperator())
+
+        self.params.add(Title('Anteil an unter 18 Jährigen'))
+
+        for bt in self.gebaeudetypen_base:
+            param_name = bt.param_anteil_u18
+            feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
+                                             id_teilflaeche=self.area.id)
+            # set to default if no feature yet
+            value = feature.anteil_u18 if feature else bt.default_anteil_u18
+            self.params.add(Param(
+                value, Slider(maximum=60),
+                label=f'... in {bt.display_name}'),
+                name=param_name
+            )
+
         self.params.changed.connect(self.save)
         self.params.show(
             title='Wohnen: Bezugszeitraum und Maß der baulichen Nutzung')
@@ -171,6 +187,8 @@ class Wohnen:
             we_sum += we
             ew_je_we = getattr(self.params, bt.param_ew_je_we).value
             feature.ew_je_we = ew_je_we
+            anteil_u18 = getattr(self.params, bt.param_anteil_u18).value
+            feature.anteil_u18 = anteil_u18
             cor_factor = ew_je_we / bt.Ew_pro_WE_Referenz
             feature.korrekturfaktor = cor_factor
             feature.name_gebaeudetyp = bt.NameGebaeudetyp

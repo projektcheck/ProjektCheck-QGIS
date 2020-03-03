@@ -72,6 +72,7 @@ class Wohneinheiten(ProjectTable):
     we = Field(int, 0)
     ew_je_we = Field(float, 0)
     korrekturfaktor = Field(float, 0)
+    anteil_u18 = Field(int, 0)
 
     class Meta:
         workspace = 'definitions'
