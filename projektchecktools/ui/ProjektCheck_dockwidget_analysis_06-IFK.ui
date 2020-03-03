@@ -262,7 +262,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -301,7 +301,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -340,7 +340,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -379,7 +379,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -418,7 +418,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -457,7 +457,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -496,7 +496,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -535,7 +535,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -574,7 +574,7 @@ padding: 2px;
               <bool>true</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -631,7 +631,7 @@ padding: 2px;
                 <bool>true</bool>
                </property>
                <property name="autoExclusive">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="flat">
                 <bool>true</bool>
@@ -794,7 +794,7 @@ padding: 2px;
                 <bool>true</bool>
                </property>
                <property name="autoExclusive">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="flat">
                 <bool>true</bool>
@@ -870,7 +870,7 @@ padding: 2px;
                 <bool>true</bool>
                </property>
                <property name="autoExclusive">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="flat">
                 <bool>true</bool>
