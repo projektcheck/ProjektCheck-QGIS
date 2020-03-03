@@ -342,7 +342,7 @@ class GeopackageTable(Table):
                 feat = self._layer.GetNextFeature()
         if getattr(self, '_fields', None):
             self._fields.append(field)
-        self.field_names.append(name)
+        # self.field_names.append(name)
 
     def delete(self, id):
         self._layer.DeleteFeature(id)

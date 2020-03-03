@@ -241,9 +241,9 @@ class ProjectManager:
 
     def remove_project(self, project):
         #self.active_project = None
-        project.remove()
         if isinstance(project, str):
             project = self._projects[project]
+        project.remove()
         del self._projects[project.name]
 
     def _get_projects(self):

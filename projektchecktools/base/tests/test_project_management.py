@@ -62,7 +62,7 @@ class ProjectTest(unittest.TestCase):
         feat1.is_true = True
         feat1.name = 'new_name'
         feat1.save()
-        feature = features.get(feat1.id)
+        feature = features.get(id=feat1.id)
         feature.name == 'new_name'
         assert isinstance(feature.geom, QgsGeometry)
         feat2 = features.add(name='second', geom=None, is_true=True)
@@ -71,8 +71,18 @@ class ProjectTest(unittest.TestCase):
             assert feature.is_true
         feat2.delete()
         assert len(features) == 1
-        features.delete(feat1.id)
+        features.delete(id=feat1.id)
         assert len(features) == 0
+
+
+    def test_missing_fields(self):
+        features = TestProjectTable.features(create=True)
+        for i in range(5):
+            features.add(name=i)
+        TestProjectTable.missing = Field(int, default=50)
+        features = TestProjectTable.features(create=True)
+        df = features.to_pandas()
+        assert df['missing'].unique()[0] == 50
 
     def tearDown(self):
         if self.workspace:
