@@ -1,5 +1,6 @@
 import os
 from qgis.PyQt.QtWidgets import QMessageBox
+from qgis import utils
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.domains.constants import Nutzungsart
@@ -8,6 +9,9 @@ from projektchecktools.domains.jobs_inhabitants.diagrams import (
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.utils.utils import open_file
 from projektchecktools.base.project import ProjectLayer
+from projektchecktools.domains.definitions.tables import Gewerbeanteile
+from projektchecktools.domains.jobs_inhabitants.tables import (
+    WohnenProJahr, ApProJahr)
 
 
 class JobsInhabitants(Domain):
@@ -20,6 +24,8 @@ class JobsInhabitants(Domain):
     def setupUi(self):
         self.ui.inhabitants_button.clicked.connect(self.inhabitants_diagram)
         self.ui.jobs_button.clicked.connect(self.jobs_diagram)
+        self.ui.inhabitants_table_button.clicked.connect(self.inhabitants_table)
+        self.ui.jobs_table_button.clicked.connect(self.jobs_table)
 
         pdf_path = os.path.join(
             self.settings.HELP_PATH, 'Anleitung_Bewohner_und_Arbeitsplätze.pdf')
@@ -69,6 +75,23 @@ class JobsInhabitants(Domain):
                      "Geschätzte Branchenanteile an den Arbeitsplätzen")
             diagram = BranchenAnteile(area=area, title=title)
             diagram.draw(offset_x=100, offset_y=100)
+
+    def inhabitants_table(self):
+        output = ProjectLayer.from_table(
+            WohnenProJahr.get_table(), groupname=self.layer_group)
+        layer = output.draw(label='Wohnen pro Jahr Daten')
+        utils.iface.showAttributeTable(layer)
+
+    def jobs_table(self):
+        output = ProjectLayer.from_table(
+            ApProJahr.get_table(), groupname=self.layer_group)
+        layer = output.draw(label='Arbeitsplätze pro Jahr Daten')
+        utils.iface.showAttributeTable(layer)
+
+        output = ProjectLayer.from_table(
+            Gewerbeanteile.get_table(), groupname=self.layer_group)
+        layer = output.draw(label='Gewerbeanteile Daten')
+        utils.iface.showAttributeTable(layer)
 
     def close(self):
         output = ProjectLayer.find('Projektdefinition')

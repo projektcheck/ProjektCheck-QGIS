@@ -168,7 +168,7 @@ class Traffic(Domain):
         output = ProjectLayer.from_table(self.itineraries.table,
                                          groupname=self.layer_group)
         output.draw(label='kürzeste Wege',
-                    style_file='verkehr_kuerzeste_Wege.qml')
+                    style_file='verkehr_kuerzeste_Wege.qml', expanded=False)
 
         output.zoom_to()
 

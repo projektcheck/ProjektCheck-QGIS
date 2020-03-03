@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from projektchecktools.base.diagrams import MatplotDiagram
 from projektchecktools.domains.definitions.tables import Gewerbeanteile
 from projektchecktools.domains.jobs_inhabitants.tables import (WohnenProJahr,
-                                                          ApProJahr)
+                                                               ApProJahr)
 from settings import settings
 
 

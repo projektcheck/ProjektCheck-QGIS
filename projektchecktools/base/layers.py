@@ -137,7 +137,7 @@ class TileLayer(Layer):
         self.url = url
         self.prepend = prepend
 
-    def draw(self, label, checked=True):
+    def draw(self, label, checked=True, expanded=True):
         self.layer = None
         for child in self.root.children():
             if child.name() == label:
@@ -149,4 +149,4 @@ class TileLayer(Layer):
             l = self.root.insertLayer(0, self.layer) if self.prepend \
                 else self.root.addLayer(self.layer)
             l.setItemVisibilityChecked(checked)
-            l.setExpanded(False)
+            l.setExpanded(expanded)

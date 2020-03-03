@@ -131,7 +131,7 @@ padding: 2px;
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
-                <string>Bewohneranzahl schätzen</string>
+                <string>Diagramm anzeigen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -151,6 +151,13 @@ padding: 2px;
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="inhabitants_table_button">
+               <property name="text">
+                <string>Attributtabelle anzeigen</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -196,7 +203,7 @@ padding: 2px;
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
-                <string>Arbeitsplätze schätzen</string>
+                <string>Diagramm anzeigen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -219,6 +226,13 @@ padding: 2px;
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="jobs_table_button">
+               <property name="text">
+                <string>Attributtabelle anzeigen</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
