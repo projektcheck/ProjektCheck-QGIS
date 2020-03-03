@@ -15,7 +15,7 @@ from qgis.gui import (QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand,
 from qgis.PyQt.QtWidgets import QToolTip
 from qgis.core import (QgsFeature, QgsCoordinateTransform, QgsCurvePolygon,
                        QgsProject, QgsCoordinateReferenceSystem, QgsGeometry,
-                       QgsPointXY, QgsWkbTypes, QgsPoint)
+                       QgsPointXY, QgsWkbTypes)
 
 
 class MapTool:
@@ -24,7 +24,7 @@ class MapTool:
     '''
     cursor = QCursor(Qt.CrossCursor)
 
-    def __init__(self, ui_element, canvas=None, tip=''):
+    def __init__(self, ui_element, canvas=None, tip='', target_epsg=25832):
         self.ui_element = ui_element
         self.canvas = canvas or utils.iface.mapCanvas()
         # workaround: .clicked.connect(self.toggle) works only occasionally
@@ -35,6 +35,25 @@ class MapTool:
         if tip:
             self.map_timer = QTimer(self.canvas)
             self.map_timer.timeout.connect(self.show_tip)
+        self.target_crs = QgsCoordinateReferenceSystem(target_epsg)
+
+    def transform_from_map(self, geom):
+        source_crs = self.canvas.mapSettings().destinationCrs()
+        xform = QgsCoordinateTransform(
+            source_crs, self.target_crs, QgsProject.instance())
+        if isinstance(geom, QgsGeometry):
+            geom.transform(xform)
+            return geom
+        return xform.transform(geom)
+
+    def transform_to_map(self, geom):
+        target_crs = self.canvas.mapSettings().destinationCrs()
+        xform = QgsCoordinateTransform(
+            self.target_crs, target_crs, QgsProject.instance())
+        if isinstance(geom, QgsGeometry):
+            geom.transform(xform)
+            return geom
+        return xform.transform(geom)
 
     def set_active(self, active):
         if active:
@@ -66,21 +85,15 @@ class MapTool:
 class MapClickedTool(MapTool, QgsMapToolEmitPoint):
     map_clicked = pyqtSignal(QgsGeometry)
 
-    def __init__(self, ui_element, target_crs=None, canvas=None):
-        MapTool.__init__(self, ui_element, canvas=canvas)
+    def __init__(self, ui_element, target_epsg=25832, canvas=None):
+        MapTool.__init__(self, ui_element, target_epsg=target_epsg,
+                         canvas=canvas)
         QgsMapToolEmitPoint.__init__(self, canvas=self.canvas)
-        self.target_crs = target_crs
         self.canvasClicked.connect(self._map_clicked)
 
     def _map_clicked(self, point, e):
         geom = QgsGeometry.fromPointXY(point)
-        if self.target_crs:
-            source_crs = self.canvas.mapSettings().destinationCrs()
-            target_crs = QgsCoordinateReferenceSystem(self.target_crs)
-            tr = QgsCoordinateTransform(
-                source_crs, target_crs, QgsProject.instance())
-            geom.transform(tr)
-        self.map_clicked.emit(geom)
+        self.map_clicked.emit(self.transform_from_map(geom))
 
 
 class FeaturePicker(MapTool, QgsMapToolEmitPoint):
@@ -174,33 +187,37 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
     def canvasDoubleClickEvent(self, e):
         if self._moving:
             self.rubberband.removeLastPoint()
-        self.drawn.emit(self.rubberband.asGeometry())
+        geom = self.rubberband.asGeometry()
+        self.drawn.emit(self.transform_from_map(geom))
         self.reset()
 
-    def _snap(self, x, y):
+    def _snap(self, point):
+        point = self.transform_from_map(point)
         if SHAPELY_LOADED:
-            point = geometry.Point(x, y)
-            np = nearest_points(self.snap_geometry, point)[0]
-            point = QgsPointXY(np.x, np.y)
+            p = geometry.Point(point.x(), point.y())
+            np = nearest_points(self.snap_geometry, p)[0]
+            p = QgsPointXY(np.x, np.y)
         # alternative for MacOS
         else:
             closest = QgsGeometryUtils.closestPoint(
-                self.snap_geometry, QgsPoint(x, y))
-            point = QgsPointXY(closest.x(), closest.y())
-        return point
+                self.snap_geometry, point)
+            p = QgsPointXY(closest.x(), closest.y())
+        p = self.transform_to_map(p)
+        return p
 
     def canvasPressEvent(self, e):
         if(e.button() == Qt.RightButton):
             if self._moving:
                 self.rubberband.removeLastPoint()
-            self.drawn.emit(self.rubberband.asGeometry())
+            geom = self.rubberband.asGeometry()
+            self.drawn.emit(self.transform_from_map(geom))
             self.reset()
             return
         self._moving = False
         self._drawing = True
-        p = self.toMapCoordinates(e.pos())
-        point = self._snap(p.x(), p.y()) if self.snap_geometry \
-            else QgsPointXY(p.x(), p.y())
+        point = self.toMapCoordinates(e.pos())
+        if self.snap_geometry:
+            point = self._snap(point)
         self.rubberband.addPoint(point, True)
         if self.draw_markers:
             marker = QgsVertexMarker(self.canvas)
@@ -214,9 +231,9 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
     def canvasMoveEvent(self, e):
         if not self.snap_geometry and not self._drawing:
             return
-        p = self.toMapCoordinates(e.pos())
-        point = self._snap(p.x(), p.y()) if self.snap_geometry \
-            else QgsPointXY(p.x(), p.y())
+        point = self.toMapCoordinates(e.pos())
+        if self.snap_geometry:
+            point = self._snap(point)
         if self.snap_geometry:
             self._move_marker.setCenter(point)
         if self._drawing:

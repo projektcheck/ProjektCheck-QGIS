@@ -28,7 +28,7 @@ class TrafficConnectors:
         self.canvas = canvas
         self.connector_tool = MapClickedTool(ui.connector_button,
                                              canvas=canvas,
-                                             target_crs=project.settings.EPSG)
+                                             target_epsg=project.settings.EPSG)
         self.connector_tool.map_clicked.connect(self.map_clicked)
 
     def load_content(self, area):

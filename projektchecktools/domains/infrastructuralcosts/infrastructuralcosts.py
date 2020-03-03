@@ -114,7 +114,8 @@ class InfrastructureDrawing:
         self._tools.append(self.select_lines_tool)
 
         self.draw_point_tool = MapClickedTool(
-            self.ui.add_point_button, canvas=self.canvas)
+            self.ui.add_point_button, canvas=self.canvas,
+            target_epsg=self.project.settings.EPSG)
         self.draw_point_tool.map_clicked.connect(self.add_point)
         self.select_point_tool = FeaturePicker(
             self.ui.select_point_button, canvas=self.canvas)
