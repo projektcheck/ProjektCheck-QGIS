@@ -50,8 +50,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>528</width>
-         <height>823</height>
+         <width>522</width>
+         <height>799</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -177,7 +177,7 @@
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anbindung der Teilflächen an das Straßennetz&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Für die einzelnen Teilflächen festlegen, an welcher Stelle die Verkehre aus bzw. in das Plangebiet in das Bestandsnetz einmünden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anbindung der Teilflächen an das Straßennetz&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Für die einzelnen Teilflächen festlegen, an welcher Stelle die Verkehre aus dem Pangebiet in das Bestandsnetz, bzw. aus dem Bestandsnetz in das Plangebiet einmünden. &lt;br/&gt;Weitere Informationen in der Kurzanleitung.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Anbindungspunkt setzen</string>

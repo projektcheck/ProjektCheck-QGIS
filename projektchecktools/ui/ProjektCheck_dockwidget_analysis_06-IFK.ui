@@ -53,10 +53,24 @@ padding: 2px;
 }</string>
   </property>
   <property name="windowTitle">
-   <string>Projekt-Check Analyse-Tools // Infrastrukturfolgekosten</string>
+   <string>Projekt-Check / Wirkungsanalysen / Infrastrukturfolgekosten</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="label_10">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Infrastrukturfolgekosten</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
@@ -82,8 +96,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>506</width>
-         <height>918</height>
+         <width>500</width>
+         <height>876</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -113,7 +127,7 @@ padding: 2px;
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>16777215</height>
+            <height>22</height>
            </size>
           </property>
           <property name="title">
@@ -129,7 +143,7 @@ padding: 2px;
            <bool>false</bool>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -187,7 +201,7 @@ padding: 2px;
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erschließungsnetze anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Der aktuellen Kartendarstellung die Layer mit den Erschließungsnetzen hinzufügen und das Plangebiet halbtransparent darstellen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erschließungsnetze anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Der aktuellen Kartendarstellung die Layer mit den Erschließungsnetzen hinzufügen und anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::RightToLeft</enum>
@@ -306,7 +320,7 @@ padding: 2px;
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anliegerstraße hinzufügen (äußere Erschließung)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;eichnen Sie eine oder mehrere Anliegerstraßen der äußeren Erschließung in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anliegerstraße hinzufügen (äußere Erschließung)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeichnen Sie eine oder mehrere Anliegerstraßen der äußeren Erschließung in die Karte ein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Anliegerstraße hinzufügen (äußere Erschließung)</string>
@@ -596,6 +610,9 @@ padding: 2px;
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Element auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen sie ein einzelnes oder mehrere Elemente des Erschließungsnetzes aus, um sie anschließend löschen zu können.&lt;br/&gt;Sie können Elemente wieder deselektieren, indem Sie sie ein zweites Mal anklicken.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Element auswählen</string>
                </property>
@@ -639,6 +656,9 @@ padding: 2px;
              </item>
              <item>
               <widget class="QPushButton" name="remove_lines_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Elemente löschen&lt;/p&gt;&lt;p&gt;Löscht die gewählten Elemente.&lt;br&gt;Dieser Schritt kann nicht rückgängig gemacht werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Elemente löschen</string>
                </property>
@@ -710,6 +730,9 @@ padding: 2px;
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahmen anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Der aktuellen Kartendarstellung die Layer mit den punktuellen Maßnahmen der Erschließungsnetze hinzufügen und anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="layoutDirection">
                 <enum>Qt::RightToLeft</enum>
                </property>
@@ -749,6 +772,9 @@ padding: 2px;
                </property>
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Maßnahme hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Fügen Sie eine punktuelle Maßnahme (z. B. einen Kreuzungsumbau) in der Karte hinzu. &lt;br&gt;Sie können anschließend die Maßnahme auswählen und bearbeiten (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Maßnahme hinzufügen</string>
@@ -807,6 +833,9 @@ padding: 2px;
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über eine Liste aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
               </widget>
              </item>
              <item>
@@ -819,6 +848,9 @@ padding: 2px;
                </property>
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Maßnahme auswählen</string>
@@ -880,6 +912,9 @@ padding: 2px;
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
               <widget class="QPushButton" name="remove_point_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Maßnahme entfernen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht die aktuell gewählte Maßnahme. &lt;br/&gt;Dieser Schritt kann nicht rückgängig gemacht werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>Maßnahme entfernen</string>
                </property>
@@ -1136,7 +1171,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten pro WE bzw. AP vergleichen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die ermittelten Erschließungskosten pro Wohneinheit bzw. Arbeitsplatz bundesweiten Vergleichswerten gegenüberstellen. (Nur verfügbar, wenn alle Teilflächen die Nutzung “Wohnen” oder alle Teilflächen die Nutzung “Gewerbe” haben.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kosten pro WE bzw. AP vergleichen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die ermittelten Erschließungskosten pro Wohneinheit bzw. Arbeitsplatz bundesweiten Vergleichswerten gegenüberstellen. &lt;br&gt;(Nur verfügbar, wenn alle Teilflächen die Nutzung “Wohnen” oder alle Teilflächen die Nutzung “Gewerbe” haben.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Kosten vergleichen</string>
