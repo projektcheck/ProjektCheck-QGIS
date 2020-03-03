@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from qgis.PyQt.QtCore import Qt
+import os
 
 from projektchecktools.base.tools import MapClickedTool
 from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit,
@@ -10,7 +10,6 @@ from projektchecktools.base.params import (Params, Param, Title,
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.utils.utils import clear_layout
-from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.domains.traffic.traffic import Traffic
 from projektchecktools.domains.traffic.tables import Connectors
 from projektchecktools.domains.definitions.tables import (
@@ -18,6 +17,7 @@ from projektchecktools.domains.definitions.tables import (
     Gewerbeanteile, Projektrahmendaten)
 from projektchecktools.domains.jobs_inhabitants.tables import (
     ApProJahr, WohnenProJahr, WohnenStruktur)
+from projektchecktools.utils.utils import open_file
 
 
 class TrafficConnectors:
@@ -651,6 +651,10 @@ class ProjectDefinitions(Domain):
             ('Einzelhandel', Einzelhandel(self.basedata, type_layout))
         ]
         self.typ = None
+
+        pdf_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Projektdefinition.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
         super().load_content()

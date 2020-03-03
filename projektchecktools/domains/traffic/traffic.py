@@ -1,6 +1,8 @@
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.Qt import (QSpacerItem, QSizePolicy,
                           QVBoxLayout, QWidget)
+import os
+
 from projektchecktools.base.domain import Domain
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
@@ -35,9 +37,9 @@ class Traffic(Domain):
         self.ui.calculate_traffic_button.clicked.connect(
             self.calculate_traffic)
 
-        #pdf_path = os.path.join(
-            #self.settings.HELP_PATH, '.pdf')
-        #self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
+        pdf_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Verkehr_im_Umfeld.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
         super().load_content()

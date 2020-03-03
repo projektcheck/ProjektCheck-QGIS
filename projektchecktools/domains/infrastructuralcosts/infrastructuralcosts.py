@@ -1,6 +1,7 @@
 from qgis.PyQt.Qt import QRadioButton
 from qgis.PyQt.QtWidgets import QMessageBox
 import numpy as np
+import os
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.tools import LineMapTool
@@ -527,9 +528,9 @@ class InfrastructuralCosts(Domain):
         self.gesamtkosten = Gesamtkosten(self.ui, project=self.project)
         self.ui.kostenvergleich_button.clicked.connect(self.kostenvergleich)
 
-        #pdf_path = os.path.join(
-            #self.settings.HELP_PATH, '.pdf')
-        #self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
+        pdf_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Infrastrukturfolgekosten.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
         super().load_content()
