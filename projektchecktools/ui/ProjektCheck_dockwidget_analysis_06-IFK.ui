@@ -127,7 +127,7 @@ padding: 2px;
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>22</height>
+            <height>16777215</height>
            </size>
           </property>
           <property name="title">
@@ -143,7 +143,7 @@ padding: 2px;
            <bool>false</bool>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -657,7 +657,7 @@ padding: 2px;
              <item>
               <widget class="QPushButton" name="remove_lines_button">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Elemente löschen&lt;/p&gt;&lt;p&gt;Löscht die gewählten Elemente.&lt;br&gt;Dieser Schritt kann nicht rückgängig gemacht werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Elemente löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht die gewählten Elemente.&lt;br/&gt;Dieser Schritt kann nicht rückgängig gemacht werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Elemente löschen</string>
@@ -952,7 +952,7 @@ padding: 2px;
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <property name="spacing">
