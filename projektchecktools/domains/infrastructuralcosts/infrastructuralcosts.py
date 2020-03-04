@@ -1,4 +1,4 @@
-from qgis.PyQt.Qt import QRadioButton
+from qgis.PyQt.Qt import QRadioButton, QPushButton
 from qgis.PyQt.QtWidgets import QMessageBox
 import numpy as np
 import os
@@ -295,7 +295,7 @@ class InfrastructureDrawing:
         self.line_params = Params(
             layout, help_file='infrastruktur_linienelemente.txt')
         for element in self.line_elements:
-            param = Param(element.length, Slider(maximum=10000),
+            param = Param(int(element.length), Slider(maximum=10000),
                           label=element.Netzelement, unit='m')
             self.line_params.add(
                 param, name=f'netzelement_{element.IDNetzelement}')
@@ -309,6 +309,23 @@ class InfrastructureDrawing:
         self.line_params.show(title=self.ui.mengen_params_group.title())
         self.line_params.changed.connect(save)
 
+        last_row = self.line_params.layout.children()[-1]
+        button = QPushButton()
+        button.setText('aus Zeichnung übernehmen')
+        last_row.insertWidget(0, button)
+        button.clicked.connect(self.apply_drawing)
+
+    def apply_drawing(self):
+        df_drawing = self.drawn_lines.to_pandas()
+        for element in self.line_elements:
+            param = self.line_params[f'netzelement_{element.IDNetzelement}']
+            drawn_elements = df_drawing[
+                df_drawing['IDNetzelement']==element.IDNetzelement]
+            length = int(drawn_elements['length'].sum())
+            param.value = length
+            element.length = length
+            element.save()
+
     def infrastrukturmengen(self):
         diagram = NetzlaengenDiagramm(project=self.project)
         diagram.draw()
@@ -319,9 +336,9 @@ class InfrastructureDrawing:
     def close(self):
         for tool in self._tools:
             tool.set_active(False)
-        if getattr(self, 'point_params'):
+        if hasattr(self, 'point_params'):
             self.point_params.close()
-        if getattr(self, 'line_params'):
+        if hasattr(self, 'line_params'):
             self.line_params.close()
 
 

@@ -2,7 +2,7 @@ from projektchecktools.base.domain import Worker
 from projektchecktools.utils.utils import round_df_to
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
-from .tables import (KostenkennwerteLinienelemente, ErschliessungsnetzLinienZeichnung,
+from .tables import (KostenkennwerteLinienelemente, ErschliessungsnetzLinien,
                      ErschliessungsnetzPunkte, Kostenaufteilung,
                      Gesamtkosten, GesamtkostenTraeger)
 
@@ -70,7 +70,7 @@ class GesamtkostenErmitteln(Worker):
             apply_kostenkennwerte(self.project)
         self.df_costs = kk_features.to_pandas()
         del self.df_costs['IDNetz']
-        self.df_lines = ErschliessungsnetzLinienZeichnung.features(
+        self.df_lines = ErschliessungsnetzLinien.features(
             project=self.project).to_pandas()
         self.df_points = ErschliessungsnetzPunkte.features(
             project=self.project).to_pandas()
