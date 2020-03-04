@@ -9,7 +9,7 @@ from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.base.diagrams import MatplotDiagram
 from projektchecktools.base.project import ProjectManager
 from projektchecktools.domains.infrastructuralcosts.tables import (
-    Gesamtkosten, GesamtkostenTraeger, ErschliessungsnetzLinien,
+    Gesamtkosten, GesamtkostenTraeger, ErschliessungsnetzLinienZeichnung,
     ErschliessungsnetzPunkte)
 from projektchecktools.domains.definitions.tables import Teilflaechen
 
@@ -22,7 +22,7 @@ class NetzlaengenDiagramm(MatplotDiagram):
                       'Infrastrukturnetze (ohne punktuelle Maßnahmen)')
         x_label = u"Meter zusätzliche Netzlänge (ohne punktuelle Maßnahmen)"
 
-        linien_df = ErschliessungsnetzLinien.features(create=True).to_pandas()
+        linien_df = ErschliessungsnetzLinienZeichnung.features(create=True).to_pandas()
 
         base_df = project.basedata.get_table(
             'Netze_und_Netzelemente', 'Kosten',

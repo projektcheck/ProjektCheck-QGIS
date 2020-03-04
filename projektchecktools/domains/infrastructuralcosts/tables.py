@@ -2,9 +2,19 @@ from projektchecktools.base.project import ProjectTable
 from projektchecktools.base.database import Field
 
 
+class ErschliessungsnetzLinienZeichnung(ProjectTable):
+    IDNetz = Field(int, 0)
+    IDNetzelement = Field(int, 0)
+    length = Field(float, 0)
+
+    class Meta:
+        workspace = 'infrastukturfolgekosten'
+
+
 class ErschliessungsnetzLinien(ProjectTable):
     IDNetz = Field(int, 0)
     IDNetzelement = Field(int, 0)
+    Netzelement = Field(str, '')
     length = Field(float, 0)
 
     class Meta:

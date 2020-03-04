@@ -19,7 +19,8 @@ from .diagrams import (GesamtkostenDiagramm, KostentraegerDiagramm,
                        VergleichAPDiagramm, MassnahmenKostenDiagramm)
 from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
                            apply_kostenkennwerte)
-from .tables import (ErschliessungsnetzLinien, ErschliessungsnetzPunkte,
+from .tables import (ErschliessungsnetzLinienZeichnung,
+                     ErschliessungsnetzPunkte, ErschliessungsnetzLinien,
                      Kostenaufteilung, KostenkennwerteLinienelemente)
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.constants import Nutzungsart
@@ -54,15 +55,19 @@ class InfrastructureDrawing:
         self.netzelemente = self.project.basedata.get_table(
             'Netze_und_Netzelemente', 'Kosten'
         ).features()
-        self.lines = ErschliessungsnetzLinien.features(create=True)
+        self.drawn_lines = ErschliessungsnetzLinienZeichnung.features(
+            create=True)
+        self.line_elements = ErschliessungsnetzLinien.features(
+            create=True)
         self.points = ErschliessungsnetzPunkte.features(create=True)
         self.output_lines = ProjectLayer.from_table(
-            self.lines.table, groupname=self.layer_group,
+            self.drawn_lines.table, groupname=self.layer_group,
             prepend=True)
         self.output_points = ProjectLayer.from_table(
             self.points.table, groupname=self.layer_group,
             prepend=True)
         self.fill_points_combo()
+        self.setup_line_params()
 
     def fill_points_combo(self, select=None):
         self.ui.points_combo.blockSignals(True)
@@ -128,7 +133,7 @@ class InfrastructureDrawing:
         self._tools.append(self.draw_point_tool)
 
     def add_geom(self, geom, net_id, geom_typ='line'):
-        features = self.lines if geom_typ == 'line' \
+        features = self.drawn_lines if geom_typ == 'line' \
             else self.points
         typ = self.netzelemente.get(IDNetzelement=net_id)
         feature = features.add(IDNetzelement=net_id,
@@ -168,7 +173,7 @@ class InfrastructureDrawing:
         if not layer:
             return
         for qf in layer.selectedFeatures():
-            feat = self.lines.get(id=qf.id())
+            feat = self.drawn_lines.get(id=qf.id())
             feat.delete()
         self.canvas.refreshAllLayers()
 
@@ -219,9 +224,9 @@ class InfrastructureDrawing:
         clear_layout(layout)
         if not point:
             return
-        self.params = Params(
+        self.point_params = Params(
             layout, help_file='infrastruktur_punktmassnahme.txt')
-        self.params.bezeichnung = Param(point.bezeichnung, LineEdit(width=300),
+        self.point_params.bezeichnung = Param(point.bezeichnung, LineEdit(width=300),
                                         label='Bezeichnung')
 
 
@@ -232,47 +237,77 @@ class InfrastructureDrawing:
         type_combo = ComboBox( ['nicht gesetzt'] + type_names,
                                data=[None] + list(punktelemente), width=300)
 
-        self.params.typ = Param(
+        self.point_params.typ = Param(
             typ.Netzelement if typ else 'nicht gesetzt', type_combo,
             label='Erschließungsnetz'
         )
 
-        self.params.add(Seperator(margin=0))
+        self.point_params.add(Seperator(margin=0))
 
-        self.params.lebensdauer = Param(
+        self.point_params.lebensdauer = Param(
             point.Lebensdauer, SpinBox(minimum=1, maximum=1000),
             label='Technische oder wirtschaftliche \n'
             'Lebensdauer bis zur Erneuerung',
             unit='Jahr(e)'
         )
-        self.params.euro_EH = Param(
+        self.point_params.euro_EH = Param(
             point.Euro_EH, DoubleSpinBox(),
             unit='€', label='Kosten der erstmaligen Herstellung'
         )
-        self.params.euro_EN = Param(
+        self.point_params.euro_EN = Param(
             point.Euro_EN, DoubleSpinBox(),
             unit='€', label='Erneuerungskosten nach Ablauf der Lebensdauer'
         )
-        self.params.euro_BU = Param(
+        self.point_params.euro_BU = Param(
             point.Cent_BU / 100, DoubleSpinBox(),
             unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung'
         )
 
         def save():
-            point.bezeichnung = self.params.bezeichnung.value
+            point.bezeichnung = self.point_params.bezeichnung.value
             typ = type_combo.get_data()
             point.IDNetzelement = typ.IDNetzelement if typ else 0
             point.IDNetz = typ.IDNetz if typ else 0
-            point.Lebensdauer = self.params.lebensdauer.value
-            point.Euro_EH = self.params.euro_EH.value
-            point.Euro_EN = self.params.euro_EN.value
-            point.Cent_BU = self.params.euro_BU.value * 100
+            point.Lebensdauer = self.point_params.lebensdauer.value
+            point.Euro_EH = self.point_params.euro_EH.value
+            point.Euro_EN = self.point_params.euro_EN.value
+            point.Cent_BU = self.point_params.euro_BU.value * 100
             point.save()
             # lazy way to update the combo box
             self.fill_points_combo(select=point)
 
-        self.params.show()
-        self.params.changed.connect(save)
+        self.point_params.show()
+        self.point_params.changed.connect(save)
+
+    def init_lines(self):
+        line_elements = self.netzelemente.filter(Typ='Linie')
+        df_line_elements = line_elements.to_pandas()
+        del(df_line_elements['fid'])
+        self.line_elements.update_pandas(df_line_elements)
+        # reset filter ToDo: fix filtering
+        self.netzelemente.filter()
+
+    def setup_line_params(self):
+        layout = self.ui.mengen_params_group.layout()
+        clear_layout(layout)
+        if len(self.line_elements) == 0:
+            self.init_lines()
+        self.line_params = Params(
+            layout, help_file='infrastruktur_linienelemente.txt')
+        for element in self.line_elements:
+            param = Param(element.length, Slider(maximum=10000),
+                          label=element.Netzelement, unit='m')
+            self.line_params.add(
+                param, name=f'netzelement_{element.IDNetzelement}')
+
+        def save():
+            for element in self.line_elements:
+                param = self.line_params[f'netzelement_{element.IDNetzelement}']
+                element.length = param.value
+                element.save()
+
+        self.line_params.show(title=self.ui.mengen_params_group.title())
+        self.line_params.changed.connect(save)
 
     def infrastrukturmengen(self):
         diagram = NetzlaengenDiagramm(project=self.project)
@@ -284,6 +319,10 @@ class InfrastructureDrawing:
     def close(self):
         for tool in self._tools:
             tool.set_active(False)
+        if getattr(self, 'point_params'):
+            self.point_params.close()
+        if getattr(self, 'line_params'):
+            self.line_params.close()
 
 
 class Gesamtkosten:

@@ -1,0 +1,13 @@
+{
+    "tooltip": "Parameter editieren",
+    "beschreibung": "",
+    "netzelement_11": "",
+    "netzelement_12": "",
+    "netzelement_21": "",
+    "netzelement_22": "",
+    "netzelement_31": "",
+    "netzelement_32": "",
+    "netzelement_33": "",
+    "netzelement_41": "",
+    "netzelement_51": ""
+}
