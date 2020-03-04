@@ -7,7 +7,7 @@ from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit,
                                            Checkbox, Slider, DoubleSpinBox)
 from projektchecktools.base.params import (Params, Param, Title,
                                            Seperator, SumDependency)
-from projektchecktools.base.domain import Domain
+from projektchecktools.base.domain import Domain, Worker
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.domains.traffic.traffic import Traffic
@@ -18,6 +18,7 @@ from projektchecktools.domains.definitions.tables import (
 from projektchecktools.domains.jobs_inhabitants.tables import (
     ApProJahr, WohnenProJahr, WohnenStruktur)
 from projektchecktools.utils.utils import open_file
+from projektchecktools.base.dialogs import ProgressDialog
 
 
 class TrafficConnectors:
@@ -69,22 +70,149 @@ class TrafficConnectors:
                 layer.removeSelection()
 
 
-class Wohnen:
+class WohnenDevelopment(Worker):
     BETRACHTUNGSZEITRAUM_JAHRE = 25
 
-    def __init__(self, basedata, layout):
+    def __init__(self, basedata, area, parent=None):
+        super().__init__(parent=parent)
+        self.area = area
+        self.wohnen_struktur = WohnenStruktur.features(create=True)
+        self.wohnen_pro_jahr = WohnenProJahr.features(create=True)
+        self.wohneinheiten = Wohneinheiten.features()
         self.gebaeudetypen_base = basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         ).features()
         self.einwohner_base = basedata.get_table(
             'Einwohner_pro_WE', 'Bewohner_Arbeitsplaetze'
         )
+
+    def work(self):
+        self.log('Berechne Bevölkerungsentwicklung...')
+        self.set_development()
+        self.set_progress(80)
+        self.log('Berechne Anzahl der Wege...')
+        self.set_ways()
+
+    def set_development(self):
+        begin = self.area.beginn_nutzung
+        duration = self.area.aufsiedlungsdauer
+        end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
+
+        df_einwohner_base = self.einwohner_base.to_pandas()
+        df_wohneinheiten_tfl = self.wohneinheiten.filter(
+            id_teilflaeche=self.area.id).to_pandas()
+
+        wohnen_struktur_tfl = self.wohnen_struktur.filter(
+            id_teilflaeche=self.area.id)
+        wohnen_struktur_tfl.delete()
+        wohnen_pro_jahr_tfl = self.wohnen_pro_jahr.filter(
+            id_teilflaeche=self.area.id)
+        wohnen_pro_jahr_tfl.delete()
+
+        df_wohnen_struktur = wohnen_struktur_tfl.to_pandas()
+
+        flaechen_template = pd.DataFrame()
+        geb_types = df_wohneinheiten_tfl['id_gebaeudetyp'].values
+        flaechen_template['id_gebaeudetyp'] = geb_types
+        flaechen_template['id_teilflaeche'] = self.area.id
+        flaechen_template['wohnungen'] = list(
+                df_wohneinheiten_tfl['we'].values.astype(float) *
+                df_wohneinheiten_tfl['ew_je_we'] /
+                duration)
+        for j in range(begin, end + 1):
+            for i in range(1, duration + 1):
+                if j - begin + i - duration + 1 > 0:
+                    df = flaechen_template.copy()
+                    df['jahr'] = j
+                    df['alter_we'] = j - begin + i - duration + 1
+                    df_wohnen_struktur = df_wohnen_struktur.append(df)
+
+        self.wohnen_struktur.update_pandas(df_wohnen_struktur)
+
+        # Apply weight factor based on user-defined proportion of persons < 18
+        for bt in self.gebaeudetypen_base:
+            base_factor_u18 = float(bt.default_anteil_u18)
+            user_factor_u18 = df_wohneinheiten_tfl[
+                    df_wohneinheiten_tfl['id_gebaeudetyp']==bt.IDGebaeudetyp]
+            user_factor_u18 = user_factor_u18['anteil_u18'].values[0]
+            weight_u18 = user_factor_u18 / base_factor_u18
+            weight_o18 = (100 - user_factor_u18) / (100 - base_factor_u18)
+            df_einwohner_base.loc[
+                (df_einwohner_base['IDAltersklasse'] == 1) &
+                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
+                ["Einwohner"]] *= weight_u18
+            df_einwohner_base.loc[
+                (df_einwohner_base['IDAltersklasse'] > 1) &
+                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
+                ["Einwohner"]] *= weight_o18
+
+        # prepare the base table, take duration as age reference for development
+        # over years
+        df_einwohner_base['reference'] = 1
+        for geb_typ, group in df_einwohner_base.groupby('IDGebaeudetyp'):
+            reference = group[group['AlterWE'] == 3]['Einwohner'].sum()
+            df_einwohner_base.loc[df_einwohner_base['IDGebaeudetyp'] == geb_typ,
+                                  'reference'] = reference
+
+        # fun with great column names in base data
+        df_einwohner_base.rename(columns={'Jahr': 'jahr',
+                                          'IDGebaeudetyp': 'id_gebaeudetyp',
+                                          'AlterWE': 'alter_we',
+                                          'Altersklasse': 'altersklasse',
+                                          'IDAltersklasse': 'id_altersklasse',},
+                                 inplace=True)
+
+        joined = df_wohnen_struktur.merge(df_einwohner_base, how='left',
+                                          on=['id_gebaeudetyp', 'alter_we'])
+        grouped = joined.groupby(['jahr', 'id_altersklasse'])
+        # make an appendable copy of the (empty) bewohner dataframe
+        df_wohnen_pro_jahr = wohnen_pro_jahr_tfl.to_pandas()
+        group_template = df_wohnen_pro_jahr.copy()
+
+        for idx, group in grouped:
+            entry = group_template.copy()
+            # corresponding SQL:  Sum([Einwohner]*[Wohnungen])
+            n_bewohner = (group['wohnungen'] * group['Einwohner']
+                          / group['reference']).sum()
+            entry['bewohner'] = [n_bewohner]
+            entry['id_altersklasse'] = group['id_altersklasse'].unique()
+            entry['altersklasse'] = group['altersklasse'].unique()
+            entry['jahr'] = group['jahr'].unique()
+            entry['id_teilflaeche'] = self.area.id
+            df_wohnen_pro_jahr = df_wohnen_pro_jahr.append(entry)
+
+        self.wohnen_pro_jahr.update_pandas(df_wohnen_pro_jahr)
+
+
+    def set_ways(self):
+        df_wohneinheiten = self.wohneinheiten.filter(
+            id_teilflaeche=self.area.id).to_pandas()
+        df_gebaeudetypen = self.gebaeudetypen_base.to_pandas()
+        df_gebaeudetypen.rename(columns={'IDGebaeudetyp': 'id_gebaeudetyp'},
+                                inplace=True)
+        joined = df_wohneinheiten.merge(df_gebaeudetypen, on='id_gebaeudetyp')
+
+        n_ew = joined['ew_je_we'] * joined['we']
+        n_ways = n_ew * joined['Wege_je_Einwohner']
+        n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
+
+        self.area.wege_gesamt = int(n_ways.sum())
+        self.area.wege_miv = int(n_ways_miv.sum())
+
+        self.area.save()
+
+
+class Wohnen:
+
+    def __init__(self, basedata, layout):
+        self.basedata = basedata
+        self.gebaeudetypen_base = basedata.get_table(
+            'Wohnen_Gebaeudetypen', 'Definition_Projekt'
+        ).features()
         self.df_presets = basedata.get_table(
             'WE_nach_Gebietstyp', 'Definition_Projekt'
         ).to_pandas()
         self.wohneinheiten = Wohneinheiten.features(create=True)
-        self.wohnen_struktur = WohnenStruktur.features(create=True)
-        self.wohnen_pro_jahr = WohnenProJahr.features(create=True)
         self.layout = layout
 
     def setup_params(self, area):
@@ -202,115 +330,12 @@ class Wohnen:
 
         self.area.save()
 
-        self.set_development(self.area)
-        self.set_ways(self.area)
+        job = WohnenDevelopment(self.basedata, self.area)
 
-    def set_development(self, area):
-        begin = area.beginn_nutzung
-        duration = area.aufsiedlungsdauer
-        end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
-
-        df_einwohner_base = self.einwohner_base.to_pandas()
-        df_wohneinheiten_tfl = self.wohneinheiten.filter(
-            id_teilflaeche=area.id).to_pandas()
-
-        wohnen_struktur_tfl = self.wohnen_struktur.filter(
-            id_teilflaeche=area.id)
-        wohnen_struktur_tfl.delete()
-        wohnen_pro_jahr_tfl = self.wohnen_pro_jahr.filter(
-            id_teilflaeche=area.id)
-        wohnen_pro_jahr_tfl.delete()
-
-        df_wohnen_struktur = wohnen_struktur_tfl.to_pandas()
-
-        flaechen_template = pd.DataFrame()
-        geb_types = df_wohneinheiten_tfl['id_gebaeudetyp'].values
-        flaechen_template['id_gebaeudetyp'] = geb_types
-        flaechen_template['id_teilflaeche'] = area.id
-        flaechen_template['wohnungen'] = list(
-                df_wohneinheiten_tfl['we'].values.astype(float) *
-                df_wohneinheiten_tfl['ew_je_we'] /
-                duration)
-        for j in range(begin, end + 1):
-            for i in range(1, duration + 1):
-                if j - begin + i - duration + 1 > 0:
-                    df = flaechen_template.copy()
-                    df['jahr'] = j
-                    df['alter_we'] = j - begin + i - duration + 1
-                    df_wohnen_struktur = df_wohnen_struktur.append(df)
-
-        self.wohnen_struktur.update_pandas(df_wohnen_struktur)
-
-        # Apply weight factor based on user-defined proportion of persons < 18
-        for bt in self.gebaeudetypen_base:
-            base_factor_u18 = float(bt.default_anteil_u18)
-            user_factor_u18 = df_wohneinheiten_tfl[
-                    df_wohneinheiten_tfl['id_gebaeudetyp']==bt.IDGebaeudetyp]
-            user_factor_u18 = user_factor_u18['anteil_u18'].values[0]
-            weight_u18 = user_factor_u18 / base_factor_u18
-            weight_o18 = (100 - user_factor_u18) / (100 - base_factor_u18)
-            df_einwohner_base.loc[
-                (df_einwohner_base['IDAltersklasse'] == 1) &
-                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
-                ["Einwohner"]] *= weight_u18
-            df_einwohner_base.loc[
-                (df_einwohner_base['IDAltersklasse'] > 1) &
-                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
-                ["Einwohner"]] *= weight_o18
-
-        # prepare the base table, take duration as age reference for development
-        # over years
-        df_einwohner_base['reference'] = 1
-        for geb_typ, group in df_einwohner_base.groupby('IDGebaeudetyp'):
-            reference = group[group['AlterWE'] == 3]['Einwohner'].sum()
-            df_einwohner_base.loc[df_einwohner_base['IDGebaeudetyp'] == geb_typ,
-                                  'reference'] = reference
-
-        # fun with great column names in base data
-        df_einwohner_base.rename(columns={'Jahr': 'jahr',
-                                          'IDGebaeudetyp': 'id_gebaeudetyp',
-                                          'AlterWE': 'alter_we',
-                                          'Altersklasse': 'altersklasse',
-                                          'IDAltersklasse': 'id_altersklasse',},
-                                 inplace=True)
-
-        joined = df_wohnen_struktur.merge(df_einwohner_base, how='left',
-                                          on=['id_gebaeudetyp', 'alter_we'])
-        grouped = joined.groupby(['jahr', 'id_altersklasse'])
-        # make an appendable copy of the (empty) bewohner dataframe
-        df_wohnen_pro_jahr = wohnen_pro_jahr_tfl.to_pandas()
-        group_template = df_wohnen_pro_jahr.copy()
-
-        for idx, group in grouped:
-            entry = group_template.copy()
-            # corresponding SQL:  Sum([Einwohner]*[Wohnungen])
-            n_bewohner = (group['wohnungen'] * group['Einwohner']
-                          / group['reference']).sum()
-            entry['bewohner'] = [n_bewohner]
-            entry['id_altersklasse'] = group['id_altersklasse'].unique()
-            entry['altersklasse'] = group['altersklasse'].unique()
-            entry['jahr'] = group['jahr'].unique()
-            entry['id_teilflaeche'] = area.id
-            df_wohnen_pro_jahr = df_wohnen_pro_jahr.append(entry)
-
-        self.wohnen_pro_jahr.update_pandas(df_wohnen_pro_jahr)
-
-    def set_ways(self, area):
-        df_wohneinheiten = self.wohneinheiten.filter(
-            id_teilflaeche=area.id).to_pandas()
-        df_gebaeudetypen = self.gebaeudetypen_base.to_pandas()
-        df_gebaeudetypen.rename(columns={'IDGebaeudetyp': 'id_gebaeudetyp'},
-                                inplace=True)
-        joined = df_wohneinheiten.merge(df_gebaeudetypen, on='id_gebaeudetyp')
-
-        n_ew = joined['ew_je_we'] * joined['we']
-        n_ways = n_ew * joined['Wege_je_Einwohner']
-        n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
-
-        area.wege_gesamt = int(n_ways.sum())
-        area.wege_miv = int(n_ways_miv.sum())
-
-        area.save()
+        dialog = ProgressDialog(
+            job, auto_close=True,
+            parent=self.layout.parentWidget())
+        dialog.show()
 
     def clear(self, area):
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()

@@ -9,7 +9,7 @@ from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
-from PyQt5.QtCore import QCoreApplication
+from qgis.utils import iface
 import matplotlib.pyplot as plt
 
 import os
@@ -147,6 +147,7 @@ class ProgressDialog(Dialog):
     def __init__(self, worker, on_success=None,
                  parent=None, auto_close=False, auto_run=True,
                  on_close=None):
+        # parent = parent or iface.mainWindow()
         super().__init__(self.ui_file, modal=True, parent=parent)
         self.parent = parent
         self.setupUi()
@@ -195,7 +196,7 @@ class ProgressDialog(Dialog):
         self.close_button.setVisible(True)
         self.close_button.setEnabled(True)
         self.stop_button.setVisible(False)
-        if self.auto_close_check.isChecked():
+        if self.auto_close_check.isChecked() and not self.error:
             self.close()
 
     def close(self):
