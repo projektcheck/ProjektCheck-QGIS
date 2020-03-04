@@ -53,11 +53,63 @@ padding: 2px;
 }</string>
   </property>
   <property name="windowTitle">
-   <string>Projekt-Check Analyse-Tools // Verkehr im Umfeld</string>
+   <string>Projekt-Check / Wirkungsanalysen / Verkehr im Umfeld</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="12" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="manual_button">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Verkehr im Umfeld“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Kurzanleitung</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
        <bool>true</bool>
@@ -67,8 +119,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>469</width>
-         <height>636</height>
+         <width>461</width>
+         <height>594</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -82,7 +134,7 @@ padding: 2px;
            </font>
           </property>
           <property name="text">
-           <string>Straßenverkehrsbelastung</string>
+           <string>Schritt 1: Routensuche und vorläufige Belastungsschätzung</string>
           </property>
          </widget>
         </item>
@@ -97,7 +149,7 @@ padding: 2px;
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Straßenverkehrsbelastung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzliche Straßenverkehrsbelastung aufgrund der neuen Nutzungen schätzen/anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Routensuche und erste Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Routen der Fahrten zum Plangebiet suchen und eine vorläufige Schätzung der Verkehrsbelastung durchführen. &lt;br/&gt;Wenn Funktion für aktuelles Projekt bereits ausgeführt, wird vorliegendes Ergebnis erneut angezeigt, falls nicht &lt;span style=&quot; font-style:italic;&quot;&gt;Neuberechnung&lt;/span&gt; gewählt wurde. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
@@ -227,7 +279,7 @@ padding: 2px;
         <item>
          <widget class="QGroupBox" name="settings_group">
           <property name="title">
-           <string>Wege und Gewichtungen (Annahmen)</string>
+           <string>Anpassung der Annahmen</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout"/>
          </widget>
@@ -249,57 +301,19 @@ padding: 2px;
       </widget>
      </widget>
     </item>
-    <item row="11" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
-      <property name="topMargin">
-       <number>0</number>
+      <property name="text">
+       <string>Verkehr im Umfeld</string>
       </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="manual_button">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Verkehr im Umfeld“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Kurzanleitung</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     </widget>
     </item>
    </layout>
   </widget>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>535</width>
-    <height>877</height>
+    <height>876</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -433,6 +433,9 @@ padding: 2px;
            </item>
            <item>
             <widget class="QTabWidget" name="drawing_tab_widget">
+             <property name="toolTip">
+              <string/>
+             </property>
              <property name="currentIndex">
               <number>1</number>
              </property>
@@ -466,7 +469,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Überbaute Flächen</string>
@@ -505,7 +508,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Natürliche Wasserflächen</string>
@@ -544,7 +547,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Platten</string>
@@ -583,7 +586,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Bäume / Sträucher</string>
@@ -622,7 +625,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stauden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Stauden im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Stauden</string>
@@ -661,7 +664,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiesen im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Wiesen</string>
@@ -700,7 +703,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Rasen</string>
@@ -739,7 +742,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Wassergebundene Decke / Rasengittersteine</string>
@@ -778,7 +781,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Asphalt / Beton</string>
@@ -817,7 +820,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Äcker / offener Boden</string>
@@ -856,7 +859,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Kleinpflaster</string>
@@ -887,6 +890,9 @@ padding: 2px;
                 <layout class="QHBoxLayout" name="horizontalLayout_7">
                  <item>
                   <widget class="QCheckBox" name="nullfall_in_area_only_check">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Nur im Plangebiet zeichnen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Beschränkt die Zeichnung auf die Grenzen des Plangebietes. Wird ausserhalb gezeichnet, werden die entsprechenden Stellen an den Grenzen des Plangebietes abgeschnitten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string> nur im Plangebiet zeichnen</string>
                    </property>
@@ -914,6 +920,9 @@ padding: 2px;
                 <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
                   <widget class="QPushButton" name="nullfall_apply_type_button">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Plangebiet auf gewählten Typ setzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Setzt das gesamten Plangebiet auf den Typ des gewählten Zeichenwerkzeuges im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt;. &lt;br/&gt;Erfordert ein ausgewähltes Zeichenwerkzeug.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Plangebiet auf gewählten Typ setzen</string>
                    </property>
@@ -950,6 +959,9 @@ padding: 2px;
                  </item>
                  <item>
                   <widget class="QPushButton" name="nullfall_remove_type_button">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Elemente des gewählten Typs löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt; eingezeichneten Flächen des gewählten Typs.&lt;br&gt;Erfordert ein ausgewähltes Zeichenwerkzeug.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Elemente des gewählten Typs löschen</string>
                    </property>
@@ -976,7 +988,7 @@ padding: 2px;
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aus den eingezeichneten Flächen ableiten, welcher Anteil des Plangebiets &lt;span style=&quot; color:#ff0000;&quot;&gt;im Nullfall&lt;/span&gt; welche Bodenbedeckung aufweist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Tabelle mit den aktuellen Anteilen der Bodenbedeckungstypen in der Zeichnung für den &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt; anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="layoutDirection">
                     <enum>Qt::LeftToRight</enum>
@@ -1018,7 +1030,7 @@ padding: 2px;
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher im &lt;span style=&quot; font-style:italic;&quot;&gt;Nullfall&lt;/span&gt; eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="layoutDirection">
                     <enum>Qt::LeftToRight</enum>
@@ -1072,7 +1084,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Überbaute Flächen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen überbauter Flächen im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Überbaute Flächen</string>
@@ -1111,7 +1123,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Natürliche Wasserfläche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen natürlicher Wasserflächen im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Natürliche Wasserflächen</string>
@@ -1150,7 +1162,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Platten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von mit Platten belegten Flächen im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Platten</string>
@@ -1189,7 +1201,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bäume oder Sträucher&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Bäumen oder Sträuchern im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Bäume / Sträucher</string>
@@ -1267,7 +1279,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiese. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wiese&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Wiesen im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Wiesen</string>
@@ -1306,7 +1318,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rasen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Rasen im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Rasen</string>
@@ -1345,7 +1357,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wassergebundene Decke oder Rasengittersteine&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit wassergebundener Decke oder Rasengittersteinen im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Wassergebundene Decke / Rasengittersteine</string>
@@ -1384,7 +1396,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Asphalt oder Beton&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Asphalt oder Beton im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Asphalt / Beton</string>
@@ -1423,7 +1435,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Offener Boden, Acker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit offenem Boden oder Acker im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Äcker / offener Boden</string>
@@ -1462,7 +1474,7 @@ padding: 2px;
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster. Umriss abschließen mit Doppelklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinpflaster&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Startet das Zeichenwerkzeug zum Einzeichnen von Flächen mit Kleinpflaster im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. Umriss abschließen mit Doppel- oder Rechtsklick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Kleinpflaster</string>
@@ -1493,6 +1505,9 @@ padding: 2px;
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
                  <item>
                   <widget class="QCheckBox" name="planfall_in_area_only_check">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Nur im Plangebiet zeichnen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Beschränkt die Zeichnung auf die Grenzen des Plangebietes. Wird ausserhalb gezeichnet, werden die entsprechenden Stellen an den Grenzen des Plangebietes abgeschnitten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string> nur im Plangebiet zeichnen</string>
                    </property>
@@ -1516,6 +1531,9 @@ padding: 2px;
                  </item>
                  <item>
                   <widget class="QPushButton" name="import_nullfall_button">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung aus Nullfall übernehmen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Überträgt die kompletten Zeichnung des Nullfalls in den Planfall. &lt;br&gt;Bereits im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt; gezeichnete Flächen werden hierbei überschrieben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Zeichnung aus Nullfall übernehmen</string>
                    </property>
@@ -1527,6 +1545,9 @@ padding: 2px;
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
                   <widget class="QPushButton" name="planfall_apply_type_button">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Plangebiet auf gewählten Typ setzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Setzt das gesamten Plangebiet auf den Typ des gewählten Zeichenwerkzeuges im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt;. &lt;br/&gt;Erfordert ein ausgewähltes Zeichenwerkzeug.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Plangebiet auf gewählten Typ setzen</string>
                    </property>
@@ -1563,6 +1584,9 @@ padding: 2px;
                  </item>
                  <item>
                   <widget class="QPushButton" name="planfall_remove_type_button">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Elemente des gewählten Typs löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt; eingezeichneten Flächen des gewählten Typs.&lt;br&gt;Erfordert ein ausgewähltes Zeichenwerkzeug.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Elemente des gewählten Typs löschen</string>
                    </property>
@@ -1589,7 +1613,7 @@ padding: 2px;
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aus den eingezeichneten Flächen ableiten, welcher Anteil des Plangebiets &lt;span style=&quot; color:#ff0000;&quot;&gt;im Nullfall&lt;/span&gt; welche Bodenbedeckung aufweist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung auswerten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Tabelle mit den aktuellen Anteilen der Bodenbedeckungstypen in der Zeichnung für den &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt; anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="layoutDirection">
                     <enum>Qt::LeftToRight</enum>
@@ -1631,7 +1655,7 @@ padding: 2px;
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zeichnung löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle bisher im &lt;span style=&quot; font-style:italic;&quot;&gt;Planfall&lt;/span&gt; eingezeichneten Bodenbedeckungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="layoutDirection">
                     <enum>Qt::LeftToRight</enum>

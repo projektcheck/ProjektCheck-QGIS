@@ -87,8 +87,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>452</width>
-         <height>816</height>
+         <width>446</width>
+         <height>792</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
