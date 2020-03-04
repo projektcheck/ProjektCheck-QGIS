@@ -66,7 +66,6 @@ class Ecology(Domain):
     def setupUi(self):
         self.setup_layers()
         self.setup_drawing_tools()
-        self.ui.drawing_tab_widget.setVisible(False)
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
         self.output_nullfall = None
         self.output_planfall = None
@@ -114,6 +113,13 @@ class Ecology(Domain):
         )
         self.ui.rating_help_button.clicked.connect(
             lambda: open_file(pdf_rating_path))
+
+        def hide_widgets():
+            self.ui.toggle_drawing_button.setChecked(False)
+            self.ui.drawing_tab_widget.setVisible(False)
+        self.ui.rating_groupbox.collapsedStateChanged.connect(
+            hide_widgets)
+        hide_widgets()
 
     def add_power_lines(self):
         group = (f'{self.project.groupname}/{self.layer_group}')

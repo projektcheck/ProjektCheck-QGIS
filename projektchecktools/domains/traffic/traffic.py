@@ -146,11 +146,9 @@ class Traffic(Domain):
                 self.setup_settings()
             dialog = ProgressDialog(
                 job, parent=self.ui,
-                on_close=on_success
+                on_success=on_success
             )
             dialog.show()
-            #job.finished.connect(on_success)
-            #job.start()
         else:
             self.draw_traffic()
 

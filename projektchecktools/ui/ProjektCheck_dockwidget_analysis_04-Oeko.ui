@@ -80,9 +80,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>498</width>
-         <height>975</height>
+         <y>-217</y>
+         <width>508</width>
+         <height>1017</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -174,7 +174,7 @@ padding: 2px;
            <string>Unzerschnittene Naturräume (100x100-Meter-Raster)</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
@@ -363,7 +363,7 @@ padding: 2px;
          </widget>
         </item>
         <item>
-         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
+         <widget class="QgsCollapsibleGroupBox" name="rating_groupbox">
           <property name="title">
            <string>Beeinträchtigung der Leistungsfähigkeit des Bodens</string>
           </property>

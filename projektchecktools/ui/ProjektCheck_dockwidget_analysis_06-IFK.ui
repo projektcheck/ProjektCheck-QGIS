@@ -12,19 +12,19 @@
   </property>
   <property name="styleSheet">
    <string notr="true">	QgsCollapsibleGroupBox{
-	font: bold 10pt ;
+    font: bold 10pt ;
 }
 QToolBox:tab {
-	font: bold 10pt ;
-    color: Grey;
+ font: bold 10pt ;
+color: Grey;
 }
 QToolBox:tab:selected {
-	font: bold 10pt ;
-    color: black;
+ font: bold 10pt ;
+color: black;
 }
 QGroupBox::title {
-	font: bold italic 8pt ;
-    color: black;
+ font: bold italic 8pt ;
+color: black;
 }
 QPushButton::flat{
 background-color: none;
@@ -96,8 +96,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>500</width>
-         <height>876</height>
+         <width>506</width>
+         <height>900</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -117,7 +117,7 @@ padding: 2px;
          <number>3</number>
         </property>
         <item>
-         <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
+         <widget class="QgsCollapsibleGroupBox" name="drawing_groupbox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -944,7 +944,7 @@ padding: 2px;
          </widget>
         </item>
         <item>
-         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_3">
+         <widget class="QgsCollapsibleGroupBox" name="evaluation_groupbox">
           <property name="title">
            <string>Auswertung der Zeichnung</string>
           </property>
@@ -952,7 +952,7 @@ padding: 2px;
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <property name="spacing">
@@ -991,7 +991,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_25">
+            <widget class="QPushButton" name="kostenkennwerte_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1077,7 +1077,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_27">
+            <widget class="QPushButton" name="kostenaufteilung_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1268,7 +1268,7 @@ padding: 2px;
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton_27</sender>
+   <sender>kostenaufteilung_button</sender>
    <signal>toggled(bool)</signal>
    <receiver>kostenaufteilung_widget</receiver>
    <slot>setVisible(bool)</slot>
@@ -1284,7 +1284,7 @@ padding: 2px;
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_25</sender>
+   <sender>kostenkennwerte_button</sender>
    <signal>toggled(bool)</signal>
    <receiver>kostenkennwerte_widget</receiver>
    <slot>setVisible(bool)</slot>

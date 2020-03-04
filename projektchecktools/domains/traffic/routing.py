@@ -74,8 +74,8 @@ class Routing(Worker):
                           miv_anteil=miv_anteil)
         if len(ways_tou) == 0:
             self.error.emit(
-                'Die Zahl der MIV-Wege ausgehend von den Flächen beträgt 0, '
-                'bitte prüfen Sie die Definition der Nutzungen '
+                'Die Zahl der ermittelten Wege beträgt 0. <br>'
+                'Bitte prüfen Sie die Definition der Nutzungen '
                 'auf den Teilflächen.')
             return
 

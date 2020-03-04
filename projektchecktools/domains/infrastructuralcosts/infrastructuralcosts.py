@@ -204,8 +204,10 @@ class InfrastructureDrawing:
             point = self.ui.points_combo.currentData()
         self.setup_point_params(point)
         if not point:
+            self.ui.point_parameter_group.setVisible(False)
             self.ui.remove_point_button.setVisible(False)
             return
+        self.ui.point_parameter_group.setVisible(True)
         self.ui.remove_point_button.setVisible(True)
         self.draw_output('point')
         self.output_points.layer.select(point.id)
@@ -291,7 +293,6 @@ class Gesamtkosten:
         self.project = project
         self.ui.gesamtkosten_button.clicked.connect(self.calculate_gesamtkosten)
 
-        self.ui.kostenkennwerte_widget.setVisible(False)
         self.netzelemente = self.project.basedata.get_table(
             'Netze_und_Netzelemente', 'Kosten'
         ).features().filter(Typ='Linie')
@@ -379,7 +380,6 @@ class Kostentraeger:
         self.project = project
         self.ui.kostentraeger_button.clicked.connect(
             self.calculate_kostentraeger)
-        self.ui.kostenaufteilung_widget.setVisible(False)
 
         self.default_kostenaufteilung = self.project.basedata.get_table(
             'Kostenaufteilung_Startwerte', 'Kosten')
@@ -396,7 +396,6 @@ class Kostentraeger:
         df_netzelemente = self.netzelemente.to_pandas()
         del df_netzelemente['fid']
         df_netzelemente.drop_duplicates(inplace=True)
-
 
         for i, (index, row) in enumerate(df_netzelemente.iterrows()):
             net_id = row['IDNetz']
@@ -531,6 +530,17 @@ class InfrastructuralCosts(Domain):
         pdf_path = os.path.join(
             self.settings.HELP_PATH, 'Anleitung_Infrastrukturfolgekosten.pdf')
         self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
+
+        # quite dumb, but expanding a groupbox sets all children to visible
+        # but we don't want to see the collapsed widgets
+        def hide_widgets():
+            self.ui.kostenaufteilung_button.setChecked(False)
+            self.ui.kostenkennwerte_button.setChecked(False)
+            self.ui.kostenaufteilung_widget.setVisible(False)
+            self.ui.kostenkennwerte_widget.setVisible(False)
+        self.ui.evaluation_groupbox.collapsedStateChanged.connect(
+            hide_widgets)
+        hide_widgets()
 
     def load_content(self):
         super().load_content()
