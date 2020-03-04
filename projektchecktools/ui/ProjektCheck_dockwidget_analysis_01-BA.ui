@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
+    <width>499</width>
     <height>686</height>
    </rect>
   </property>
@@ -87,8 +87,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>475</width>
-         <height>612</height>
+         <width>479</width>
+         <height>588</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -156,6 +156,10 @@ padding: 2px;
               <widget class="QPushButton" name="inhabitants_table_button">
                <property name="text">
                 <string>Attributtabelle anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</iconset>
                </property>
               </widget>
              </item>
@@ -231,6 +235,10 @@ padding: 2px;
               <widget class="QPushButton" name="jobs_table_button">
                <property name="text">
                 <string>Attributtabelle anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</iconset>
                </property>
               </widget>
              </item>
