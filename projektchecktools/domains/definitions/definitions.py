@@ -241,6 +241,23 @@ class Wohnen:
 
         self.wohnen_struktur.update_pandas(df_wohnen_struktur)
 
+        # Apply weight factor based on user-defined proportion of persons < 18
+        for bt in self.gebaeudetypen_base:
+            base_factor_u18 = float(bt.default_anteil_u18)
+            user_factor_u18 = df_wohneinheiten_tfl[
+                    df_wohneinheiten_tfl['id_gebaeudetyp']==bt.IDGebaeudetyp]
+            user_factor_u18 = user_factor_u18['anteil_u18'].values[0]
+            weight_u18 = user_factor_u18 / base_factor_u18
+            weight_o18 = (100 - user_factor_u18) / (100 - base_factor_u18)
+            df_einwohner_base.loc[
+                (df_einwohner_base['IDAltersklasse'] == 1) &
+                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
+                ["Einwohner"]] *= weight_u18
+            df_einwohner_base.loc[
+                (df_einwohner_base['IDAltersklasse'] > 1) &
+                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
+                ["Einwohner"]] *= weight_o18
+
         # prepare the base table, take duration as age reference for development
         # over years
         df_einwohner_base['reference'] = 1
