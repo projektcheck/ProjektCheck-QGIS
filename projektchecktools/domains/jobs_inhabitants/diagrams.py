@@ -40,6 +40,7 @@ class BewohnerEntwicklung(MatplotDiagram):
         ax.set_ylabel(u'Anzahl Personen')
         ax.set_xlabel(u'Jahr')
         ax.set_ylim(bottom=0)
+        figure.subplots_adjust(right=0.8)
         figure.add_axes(ax)
         return figure
 
@@ -112,6 +113,6 @@ class BranchenAnteile(MatplotDiagram):
         box = ax.get_position()
         ax.set_position([box.x0, box.y0 + box.y0 * 0.5, box.width, box.height])
         figure.tight_layout()
-        #figure.subplots_adjust(right=0.2)
+        figure.subplots_adjust(bottom=0.2)
 
         return figure

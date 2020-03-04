@@ -48,11 +48,11 @@ class JobsInhabitants(Domain):
                 'Es wurden keine Teilflächen mit definierter '
                 'Wohnnutzung gefunden'
             )
-        for area in areas:
+        for i, area in enumerate(areas):
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Einwohnerentwicklung")
             diagram = BewohnerEntwicklung(area=area, title=title)
-            diagram.draw()
+            diagram.draw(offset_x=i*100, offset_y=i*100)
 
     def jobs_diagram(self):
         areas = Teilflaechen.features().filter(
@@ -65,16 +65,16 @@ class JobsInhabitants(Domain):
                 'Es wurden keine Teilflächen mit definierter '
                 'Gewerbenutzung gefunden'
             )
-        for area in areas:
+        for i, area in enumerate(areas):
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Anzahl Arbeitsplätze (Orientierungswerte)")
             diagram = ArbeitsplatzEntwicklung(area=area, title=title)
-            diagram.draw()
+            diagram.draw(offset_x=i*100, offset_y=i*100)
 
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Branchenanteile an den Arbeitsplätzen")
             diagram = BranchenAnteile(area=area, title=title)
-            diagram.draw(offset_x=100, offset_y=100)
+            diagram.draw(offset_x=i*100+50, offset_y=i*100+50)
 
     def inhabitants_table(self):
         output = ProjectLayer.from_table(
