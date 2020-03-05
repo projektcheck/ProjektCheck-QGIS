@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>468</width>
-         <height>866</height>
+         <width>462</width>
+         <height>848</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -78,7 +78,7 @@ padding: 2px;
            <string>Wanderungssalden</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -594,7 +594,7 @@ padding: 2px;
            <string>fiskalische Finanzen</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -682,8 +682,8 @@ padding: 2px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>440</width>
-                <height>52</height>
+                <width>407</width>
+                <height>69</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -857,8 +857,8 @@ padding: 2px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>428</width>
-                   <height>52</height>
+                   <width>389</width>
+                   <height>69</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_8">

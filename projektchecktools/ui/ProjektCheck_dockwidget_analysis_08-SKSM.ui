@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>554</width>
-         <height>939</height>
+         <width>548</width>
+         <height>921</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -78,7 +78,7 @@ padding: 2px;
            <string>Betrachtungsraum</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -180,7 +180,7 @@ padding: 2px;
            <string>Lebensmitteleinzelhandel im Bestand</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
@@ -749,7 +749,7 @@ padding: 2px;
            <string>Zentren</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
@@ -878,7 +878,7 @@ padding: 2px;
            <string>Projektwirkung</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>

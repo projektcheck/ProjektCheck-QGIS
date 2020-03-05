@@ -98,7 +98,7 @@ padding: 2px;
            <string>Bewohner</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
@@ -174,7 +174,7 @@ padding: 2px;
            <string>Arbeitsplätze</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>

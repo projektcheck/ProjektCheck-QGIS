@@ -80,9 +80,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-217</y>
-         <width>508</width>
-         <height>1017</height>
+         <y>0</y>
+         <width>515</width>
+         <height>778</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -92,7 +92,7 @@ padding: 2px;
            <string>Schutzgebiete</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
@@ -174,7 +174,7 @@ padding: 2px;
            <string>Unzerschnittene Naturräume (100x100-Meter-Raster)</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
@@ -368,7 +368,7 @@ padding: 2px;
            <string>Beeinträchtigung der Leistungsfähigkeit des Bodens</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -1828,7 +1828,7 @@ padding: 2px;
            <string>Lage des Plangebiets zu Hochspannungsleitungen</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>

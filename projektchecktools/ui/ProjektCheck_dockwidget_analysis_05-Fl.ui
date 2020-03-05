@@ -81,8 +81,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>441</width>
-         <height>822</height>
+         <width>435</width>
+         <height>798</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -92,7 +92,7 @@ padding: 2px;
            <string>Effiziente Flächennutzung bei Wohnbauflächen</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
@@ -212,7 +212,7 @@ padding: 2px;
            <string>Integrierte Lage des Plangebiets insgesamt</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
