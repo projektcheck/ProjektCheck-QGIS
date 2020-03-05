@@ -189,8 +189,14 @@ class InfrastructureDrawing:
         point = self.ui.points_combo.currentData()
         if not point:
             return
-        point.delete()
-        self.fill_points_combo()
+        reply = QMessageBox.question(
+            self.ui, 'Maßnahme entfernen',
+            f'Soll die punktuelle Maßnahme "{point.bezeichnung}" '
+            'entfernt werden?\n',
+             QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            point.delete()
+            self.fill_points_combo()
 
     def point_selected(self, feature):
         if not self.output_points.layer:
