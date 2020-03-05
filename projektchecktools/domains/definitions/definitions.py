@@ -297,7 +297,7 @@ class Wohnen:
             # set to default if no feature yet
             value = feature.anteil_u18 if feature else bt.default_anteil_u18
             self.params.add(Param(
-                value, Slider(maximum=60),
+                value, Slider(maximum=60), unit='%',
                 label=f'... in {bt.display_name}'),
                 name=param_name
             )

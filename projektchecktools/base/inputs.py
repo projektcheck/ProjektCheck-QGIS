@@ -104,7 +104,7 @@ class Slider(InputType):
             def toggle_icon():
                 is_locked = self.lock_button.isChecked()
                 fn = '20190619_iconset_mob_lock_locked_02.png' if is_locked \
-                    else '20190619_iconset_mob_lock_unlocked_02.png'
+                    else '20190619_iconset_mob_lock_unlocked_03.png'
                 self.slider.setEnabled(not is_locked)
                 self.spinbox.setEnabled(not is_locked)
                 icon_path = os.path.join(settings.IMAGE_PATH, 'iconset_mob', fn)

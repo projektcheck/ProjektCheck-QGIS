@@ -416,4 +416,4 @@ class TerrestrisBackgroundLayer(TileLayer):
         super().__init__(url, groupname=groupname, prepend=prepend)
 
     def draw(self, checked=True):
-        super().draw('Terrestris', checked=checked)
+        super().draw('Terrestris', checked=checked, expanded=False)
