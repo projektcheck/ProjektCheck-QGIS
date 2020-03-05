@@ -352,8 +352,8 @@ class Params(QObject):
         #parent = self.parent.parent() if not isinstance(self.parent) \
             #else self.parent
         #if not isinstance(parent, QWidget):
-        parent = None
-        self.dialog = ParamsDialog(parent=parent,
+            #parent = None
+        self.dialog = ParamsDialog(parent=None,
                                    help_text=self.help_dict['beschreibung'],
                                    title=title)
 

@@ -1,4 +1,5 @@
 from qgis.PyQt.Qt import QRadioButton, QPushButton
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMessageBox
 import numpy as np
 import os
@@ -47,9 +48,10 @@ class InfrastructureDrawing:
         self.ui.infrastrukturmengen_button.clicked.connect(
             self.infrastrukturmengen)
 
-        self.ui.remove_point_button.clicked.connect(self.remove_point)
-
         self.setup_tools()
+
+        self.point_params = None
+        self.line_params = None
 
     def load_content(self):
         self.netzelemente = self.project.basedata.get_table(
@@ -210,15 +212,15 @@ class InfrastructureDrawing:
         self.setup_point_params(point)
         if not point:
             self.ui.point_parameter_group.setVisible(False)
-            self.ui.remove_point_button.setVisible(False)
             return
         self.ui.point_parameter_group.setVisible(True)
-        self.ui.remove_point_button.setVisible(True)
         self.draw_output('point')
         self.output_points.layer.select(point.id)
         self.setup_point_params(point)
 
     def setup_point_params(self, point):
+        if self.point_params:
+            self.point_params.close()
         ui_group = self.ui.point_parameter_group
         layout = ui_group.layout()
         clear_layout(layout)
@@ -226,9 +228,9 @@ class InfrastructureDrawing:
             return
         self.point_params = Params(
             layout, help_file='infrastruktur_punktmassnahme.txt')
-        self.point_params.bezeichnung = Param(point.bezeichnung, LineEdit(width=300),
-                                        label='Bezeichnung')
-
+        self.point_params.bezeichnung = Param(
+            point.bezeichnung, LineEdit(width=300),
+            label='Bezeichnung')
 
         punktelemente = list(self.netzelemente.filter(Typ='Punkt'))
         type_names = [p.Netzelement for p in punktelemente]
@@ -278,6 +280,19 @@ class InfrastructureDrawing:
 
         self.point_params.show()
         self.point_params.changed.connect(save)
+
+        last_row = self.point_params.layout.children()[-1]
+        button = QPushButton()
+        icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
+        icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH, icon_path))
+        button.setText('Maßnahme entfernen')
+        button.setIcon(icon)
+        button.setToolTip(
+            '<p><span style=" font-weight:600;">Maßnahme entfernen</span>'
+            '</p><p>Löscht die aktuell gewählte Maßnahme. '
+            '<br/>Dieser Schritt kann nicht rückgängig gemacht werden. </p>')
+        last_row.insertWidget(0, button)
+        button.clicked.connect(self.remove_point)
 
     def init_lines(self):
         line_elements = self.netzelemente.filter(Typ='Linie')
@@ -336,9 +351,9 @@ class InfrastructureDrawing:
     def close(self):
         for tool in self._tools:
             tool.set_active(False)
-        if hasattr(self, 'point_params'):
+        if self.point_params:
             self.point_params.close()
-        if hasattr(self, 'line_params'):
+        if self.line_params:
             self.line_params.close()
 
 

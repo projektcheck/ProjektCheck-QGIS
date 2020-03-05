@@ -97,7 +97,7 @@ padding: 2px;
          <x>0</x>
          <y>0</y>
          <width>493</width>
-         <height>945</height>
+         <height>917</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -908,38 +908,6 @@ padding: 2px;
              <layout class="QVBoxLayout" name="verticalLayout_9"/>
             </widget>
            </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QPushButton" name="remove_point_button">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Maßnahme entfernen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht die aktuell gewählte Maßnahme. &lt;br/&gt;Dieser Schritt kann nicht rückgängig gemacht werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Maßnahme entfernen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
-                </iconset>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
           </layout>
          </widget>
         </item>
@@ -973,7 +941,7 @@ padding: 2px;
            <item>
             <widget class="QGroupBox" name="mengen_params_group">
              <property name="title">
-              <string>Infrastrukturmengen Linienelemente</string>
+              <string>Infrastrukturmengen</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_7"/>
             </widget>
@@ -987,7 +955,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Infrastrukturmengen bilanzieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Länge der bisher in der Karte eingezeichneten Erschließungsnetze sowie Gesamtkosten der punktuellen Maßnahmen aufsummieren und in zwei Diagrammen anzeigen lassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Infrastrukturmengen bilanzieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Länge der Erschließungsnetze sowie Gesamtkosten der punktuellen Maßnahmen aufsummieren und in zwei Diagrammen anzeigen lassen.&lt;/p&gt;</string>
              </property>
              <property name="text">
               <string>Infrastrukturmengen bilanzieren</string>
