@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import os
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QSpacerItem, QSizePolicy
 
 from projektchecktools.base.tools import MapClickedTool
 from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit,
@@ -232,14 +234,16 @@ class Wohnen:
 
         self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
-        preset_names = np.unique(self.df_presets[
-            'Gebietstyp'].values)
-        self.preset_combo = ComboBox(['Benutzerdefiniert'] + list(preset_names))
+        preset_names = np.unique(self.df_presets['Gebietstyp'].values)
+        options = ['Gebietstyp wählen'] + list(preset_names)
+        self.preset_combo = ComboBox(options)
+        self.preset_combo.input.model().item(0).setEnabled(False)
 
-        param = Param(0, self.preset_combo,
-                      label='Vorschlagswerte nach Gebietstyp')
+        param = Param(0, self.preset_combo, label='Vorschlagswerte')
         param.hide_in_overview = True
         self.params.add(param, name='gebietstyp')
+        self.params.add(
+            QSpacerItem(0, 3, QSizePolicy.Fixed, QSizePolicy.Minimum))
 
         def preset_changed(gebietstyp):
             presets = self.df_presets[self.df_presets['Gebietstyp']==gebietstyp]
@@ -263,7 +267,7 @@ class Wohnen:
                 name=param_name
             )
             slider.changed.connect(
-                lambda: self.preset_combo.set_value('Benutzerdefiniert'))
+                lambda: self.preset_combo.set_value(options[0]))
 
         self.params.add(Seperator())
 
@@ -436,12 +440,15 @@ class Gewerbe:
         preset_names = self.df_industry_types_base[
             'Name_Gewerbegebietstyp'].values
         preset_ids = self.df_industry_types_base['IDGewerbegebietstyp'].values
-        self.preset_combo = ComboBox(
-            ['Benutzerdefiniert'] + list(preset_names), [-1] + list(preset_ids))
-        param = Param(0, self.preset_combo,
-                      label='Vorschlagswerte nach Gebietstyp')
+        options = ['Gebietstyp wählen'] + list(preset_names)
+        self.preset_combo = ComboBox(options, [-1] + list(preset_ids))
+        self.preset_combo.input.model().item(0).setEnabled(False)
+        param = Param(0, self.preset_combo, label='Vorschlagswerte')
         param.hide_in_overview = True
         self.params.add(param, name='gebietstyp')
+        # break grid layout
+        self.params.add(
+            QSpacerItem(0, 3, QSizePolicy.Fixed, QSizePolicy.Minimum))
 
         def values_changed():
             if self.auto_check.value:
@@ -449,14 +456,13 @@ class Gewerbe:
                 self.ap_slider.set_value(n_jobs)
 
         def slider_changed():
-            self.preset_combo.set_value('Benutzerdefiniert')
+            self.preset_combo.set_value(options[0])
             values_changed()
 
         def preset_changed():
             self.set_industry_presets(self.preset_combo.input.currentData())
             values_changed()
 
-        self.params.add(self.preset_combo)
         self.preset_combo.changed.connect(preset_changed)
 
         dependency = SumDependency(100)
@@ -490,20 +496,23 @@ class Gewerbe:
             'nach Vollbezug (Summe über alle Branchen)'
         )
 
-        #def toggle_auto_check():
-            #read_only = self.auto_check.value
-            #for _input in [self.ap_slider.slider, self.ap_slider.spinbox]:
-                #_input.setAttribute(Qt.WA_TransparentForMouseEvents, read_only)
-                #_input.setFocusPolicy(Qt.NoFocus if read_only else Qt.StrongFocus)
-                #_input.update()
-            #values_changed()
+        def toggle_auto_check():
+            # disable input for manual setting of jobs
+            # when auto check is enabled
+            read_only = self.auto_check.value
+            for _input in [self.ap_slider.slider, self.ap_slider.spinbox]:
+                _input.setAttribute(Qt.WA_TransparentForMouseEvents, read_only)
+                _input.setFocusPolicy(Qt.NoFocus if read_only
+                                      else Qt.StrongFocus)
+                _input.update()
+            values_changed()
 
-        #self.auto_check.changed.connect(toggle_auto_check)
-        #toggle_auto_check()
+        self.auto_check.changed.connect(toggle_auto_check)
+        toggle_auto_check()
 
-        ## set to default preset if assignment is new
-        #if len(self.gewerbeanteile) == 0:
-            #self.set_industry_presets(self.DEFAULT_INDUSTRY_ID)
+        # set to default preset if assignment is new
+        if len(self.gewerbeanteile) == 0:
+            self.set_industry_presets(self.DEFAULT_INDUSTRY_ID)
 
         self.params.changed.connect(self.save)
         self.params.show(

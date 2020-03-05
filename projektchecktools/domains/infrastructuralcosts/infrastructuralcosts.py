@@ -537,7 +537,8 @@ class Kostentraeger:
             feature = self.kostenaufteilung.get(
                 IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
 
-            preset_combo = self.create_presets(net_id, phase.IDKostenphase)
+            preset_combo, options = self.create_presets(
+                net_id, phase.IDKostenphase)
             param = Param(0, preset_combo, label='Vorschlagswerte')
             param.hide_in_overview = True
             self.params.add(param, name=f'{phase.Kostenphase}_presets')
@@ -551,7 +552,8 @@ class Kostentraeger:
                     param, name=f'{phase.Kostenphase}_{field_name}')
                 dependency.add(param)
                 slider.changed.connect(
-                    lambda b, c=preset_combo: c.set_value('Benutzerdefiniert'))
+                    lambda b,
+                    c=preset_combo, o=options: c.set_value(o[0]))
 
             if i != len(self.kostenphasen) - 1:
                 self.params.add(Seperator(margin=0))
@@ -571,11 +573,11 @@ class Kostentraeger:
             rule = self.aufteilungsregeln.get(IDAufteilungsregel=rule_id)
             rules.append(rule)
 
-        preset_combo = ComboBox(
-            ['Benutzerdefiniert'] + [rule.Aufteilungsregel for rule in rules],
-            [None] + rules
-        )
-        return preset_combo
+        options = (['Aufteilungsregel wählen'] +
+                   [rule.Aufteilungsregel for rule in rules])
+        preset_combo = ComboBox(options, [None] + rules)
+        preset_combo.input.model().item(0).setEnabled(False)
+        return preset_combo, options
 
     def save(self, net_id):
         for phase in self.kostenphasen:

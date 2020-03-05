@@ -10,7 +10,7 @@
 name=Projekt-Check
 qgisMinimumVersion=3.0
 description=Projekt-Check Profi
-version=0.4.2
+version=0.4.5
 author=GGR
 email=franke@ggr-planung.de
 
