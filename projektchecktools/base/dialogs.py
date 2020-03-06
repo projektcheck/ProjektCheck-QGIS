@@ -289,9 +289,6 @@ class SettingsDialog(Dialog):
                     # ToDo: show warning that it could not be created
                     return
             self.project_path = project_path
-            return self.project_path
-        else:
-            self.project_path_edit.setText(self.project_path)
         return confirmed
 
 

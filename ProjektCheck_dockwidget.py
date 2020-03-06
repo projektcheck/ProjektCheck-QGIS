@@ -247,6 +247,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
+        self.project_manager.check_basedata()
         if not project:
             self.ui.domain_button.setEnabled(False)
             self.ui.definition_button.setEnabled(False)

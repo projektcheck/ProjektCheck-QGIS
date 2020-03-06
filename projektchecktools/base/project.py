@@ -4,6 +4,9 @@ import json
 import shutil
 import sys
 from collections import OrderedDict
+from qgis.core import QgsNetworkAccessManager
+from qgis.PyQt.QtNetwork import QNetworkRequest
+from qgis.PyQt.QtCore import QUrl
 
 from projektchecktools.utils.singleton import Singleton
 from projektchecktools.base.database import Field
@@ -192,6 +195,7 @@ class ProjectManager:
     _projects = {}
     settings = settings
     _required_settings = ['BASEDATA_URL', 'EPSG']
+    network_manager = QgsNetworkAccessManager.instance()
 
     def __init__(self):
         # check settings
@@ -208,7 +212,7 @@ class ProjectManager:
         '''
         load settings and projects
         '''
-        self.load_basedata(self.settings.basedata_path)
+        self.load_basedata()
         if self.settings.project_path:
             project_path = self.settings.project_path
             if project_path and not os.path.exists(project_path):
@@ -223,14 +227,23 @@ class ProjectManager:
             self._projects[project.name] = project
 
     def check_basedata(self):
-        # ToDo: query url
-        pass
+        request = QNetworkRequest()
+        request.setUrl(QUrl(f'{settings.BASEDATA_URL}/basedata.json'))
+        self.reply = self.network_manager.get(request)
+        def on_error(reply):
+            pass
+        self.reply.finished.connect(self.check_version)
+        self.reply.error.connect(on_error)
 
-    def load_basedata(self, path):
+    def check_version(self):
+        res = json.loads(self.reply.readAll().data())
+        self.reply
+
+    def load_basedata(self):
         # ToDo: load from settings path
-        # settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
-                               #read_only=True)
-        pass
+        base_path = self.settings.BASE_PATH
+        settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
+                                       read_only=True)
 
     def create_project(self, name, create_folder=True):
         '''
