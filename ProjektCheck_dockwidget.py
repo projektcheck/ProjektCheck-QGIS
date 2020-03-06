@@ -245,22 +245,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         self.ui.help_button.setMenu(menu)
 
-    def install_pandas(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        process = subprocess.Popen(os.path.join(dir_path, 'install-pandas.bat'),
-                                   shell=True, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-        #process = subprocess.Popen(
-            #['runas', '/user:Administrator', '/noprofile',
-             #os.path.join(dir_path, 'install-pandas.bat')],
-            #shell=True, stdout=subprocess.PIPE,
-            #stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-        ##os.path.join(dir_path, 'install-pandas.bat')])
-        ##process.stdin.write(b'')
-        stdout, stderr = process.communicate()
-        print('STDOUT:{}'.format(stdout))
-        print('STDERR:{}'.format(stderr))
-
     def show_dockwidget(self, widget):
         if self.active_dockwidget:
             self.active_dockwidget.close()
@@ -282,10 +266,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 #active_project.close()
             if getattr(self, 'project_definitions', None):
                 self.project_definitions.unload()
-                del self.project_definitions
+                del(self.project_definitions)
             for domain in self.domains:
                 domain.unload()
-                del domain
+                del(domain)
             # ToDo: put that in project.close() and get
             # workspaces of this project only
             for ws in Workspace.get_instances():
@@ -332,18 +316,22 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             message.exec_()
 
     def close(self):
-        if getattr(self, 'project_definitions', None):
+        if hasattr(self, 'project_definitions'):
             self.project_definitions.close()
         for domain in self.domains:
             domain.close()
         super().close()
 
     def unload(self):
+        print('unloading Projekt-Check')
         self.close()
-        if self.project_definitions:
+        if hasattr(self, 'project_definitions'):
             self.project_definitions.unload()
-            del self.project_definitions
+            del(self.project_definitions)
         for domain in self.domains:
             domain.unload()
-            del domain
+            del(domain)
+        for ws in Workspace.get_instances():
+            if not ws.database.read_only:
+                ws.close()
         super().unload()
