@@ -153,12 +153,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             lambda index: self.change_project(
                 self.ui.project_combo.itemData(index))
         )
-        #active_project = self.project_manager.active_project
-        #if active_project:
-            #index = self.ui.project_combo.findText(active_project.name)
-            #self.ui.project_combo.setCurrentIndex(index)
-        # load active project
-        #self.change_project(self.project_manager.active_project)
 
     def setup_definitions(self):
         '''setup project definitions widget'''
@@ -261,9 +255,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.ui.definition_button.setEnabled(False)
             return
         try:
-            #active_project = self.project_manager.active_project
-            #if active_project:
-                #active_project.close()
             if getattr(self, 'project_definitions', None):
                 self.project_definitions.unload()
                 del(self.project_definitions)
@@ -289,12 +280,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                                                prepend=False)
                 group.setItemVisibilityChecked(False)
 
+            # check active project, uncheck other projects
             layer_root = QgsProject.instance().layerTreeRoot()
-            for child in layer_root.children():
-                name = child.name()
-                if name.startswith('Projekt'):
-                    child.setItemVisibilityChecked(name==project.groupname)
+            for p in self.project_manager.projects:
+                group = layer_root.findGroup(p.groupname)
+                if group:
+                    group.setItemVisibilityChecked(
+                        p.groupname==project.groupname)
 
+            # show area layers
             self.project_definitions.show_outputs(zoom=True)
 
             backgroundOSM = OSMBackgroundLayer(groupname='Hintergrundkarten')
@@ -316,21 +310,33 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             message.exec_()
 
     def close(self):
-        if hasattr(self, 'project_definitions'):
+        if getattr(self, 'project_definitions', None):
             self.project_definitions.close()
-        for domain in self.domains:
-            domain.close()
+        if getattr(self, 'domains', None):
+            for domain in self.domains:
+                domain.close()
         super().close()
 
     def unload(self):
         print('unloading Projekt-Check')
         self.close()
-        if hasattr(self, 'project_definitions'):
+        if getattr(self, 'project_definitions', None):
             self.project_definitions.unload()
             del(self.project_definitions)
-        for domain in self.domains:
-            domain.unload()
-            del(domain)
+        if getattr(self, 'domains', None):
+            for domain in self.domains:
+                domain.unload()
+                del(domain)
+        qgisproject = QgsProject.instance()
+        layer_root = qgisproject.layerTreeRoot()
+        # remove all project layers from layer tree
+        for project in self.project_manager.projects:
+            group = layer_root.findGroup(project.groupname)
+            if group:
+                for layer in group.findLayers():
+                    qgisproject.removeMapLayer(layer.layerId())
+                group.removeAllChildren()
+                layer_root.removeChildNode(group)
         for ws in Workspace.get_instances():
             if not ws.database.read_only:
                 ws.close()
