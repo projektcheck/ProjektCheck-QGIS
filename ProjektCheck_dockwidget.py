@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import subprocess
 from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProject
@@ -31,12 +30,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.active_dockwidget = None
         self.project_definitions = None
 
-        settings_dialog = SettingsDialog(self.settings.project_path)
-        def set_project_path(path):
-            if not path:
-                return
-            self.settings.project_path = path
-            self.setup_projects()
+        settings_dialog = SettingsDialog(self.settings)
+        def set_project_path(confirmed):
+            if confirmed:
+                self.setup_projects()
         self.ui.settings_button.clicked.connect(
             lambda: set_project_path(settings_dialog.show()))
 

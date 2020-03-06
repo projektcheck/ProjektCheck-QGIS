@@ -19,7 +19,9 @@ APPDATA_PATH = os.path.join(p, 'Projekt-Check-QGIS')
 
 DEFAULT_SETTINGS = {
     'active_project': u'',
-    'project_path': os.path.join(APPDATA_PATH, 'Projekte')
+    'project_path': os.path.join(APPDATA_PATH, 'Projekte'),
+    'basedata_path': os.path.join(APPDATA_PATH, 'Basisdaten'),
+    'check_data_on_start': True
 }
 
 
@@ -189,7 +191,7 @@ class ProjectManager:
     __metaclass__ = Singleton
     _projects = {}
     settings = settings
-    _required_settings = ['BASEDATA', 'EPSG']
+    _required_settings = ['BASEDATA_URL', 'EPSG']
 
     def __init__(self):
         # check settings
@@ -206,18 +208,29 @@ class ProjectManager:
         '''
         load settings and projects
         '''
-        if settings.project_path:
-            project_path = settings.project_path
+        self.load_basedata(self.settings.basedata_path)
+        if self.settings.project_path:
+            project_path = self.settings.project_path
             if project_path and not os.path.exists(project_path):
                 try:
                     os.makedirs(project_path)
                 except:
                     pass
             if not os.path.exists(project_path):
-                settings.project_path = project_path = ''
+                self.settings.project_path = project_path = ''
         for name in self._get_projects():
             project = Project(name)
             self._projects[project.name] = project
+
+    def check_basedata(self):
+        # ToDo: query url
+        pass
+
+    def load_basedata(self, path):
+        # ToDo: load from settings path
+        # settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
+                               #read_only=True)
+        pass
 
     def create_project(self, name, create_folder=True):
         '''
@@ -228,9 +241,9 @@ class ProjectManager:
         name : str
             name of the project
         '''
-        if not settings.project_path:
+        if not self.settings.project_path:
             return
-        target_folder = os.path.join(settings.project_path, name)
+        target_folder = os.path.join(self.settings.project_path, name)
         project = Project(name)
         self._projects[project.name] = project
         #shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
@@ -247,7 +260,7 @@ class ProjectManager:
         del self._projects[project.name]
 
     def _get_projects(self):
-        base_path = settings.project_path
+        base_path = self.settings.project_path
         if not os.path.exists(base_path):
             return []
         project_folders = [f for f in os.listdir(base_path)

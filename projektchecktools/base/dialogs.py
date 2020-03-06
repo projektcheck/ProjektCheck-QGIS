@@ -252,27 +252,33 @@ class ProgressDialog(Dialog):
 
 
 class SettingsDialog(Dialog):
+    '''changes settings in place'''
     ui_file = 'settings.ui'
 
-    def __init__(self, project_path):
+    def __init__(self, settings):
         super().__init__(self.ui_file, modal=True)
-        self.project_path = project_path
-        self.browse_button.clicked.connect(self.browse_path)
+        self.settings = settings
+        self.project_browse_button.clicked.connect(
+            lambda: self.browse_path(self.project_path_edit))
+        self.basedata_browse_button.clicked.connect(
+            lambda: self.browse_path(self.basedata_path_edit))
 
-    def browse_path(self):
+    def browse_path(self, line_edit):
         path = str(
             QFileDialog.getExistingDirectory(
                 self,
                 u'Verzeichnis wählen',
-                self.project_path_edit.text()
+                line_edit.text()
             )
         )
         if not path:
             return
-        self.project_path_edit.setText(path)
+        line_edit.setText(path)
 
     def show(self):
-        self.project_path_edit.setText(self.project_path)
+        self.project_path_edit.setText(self.settings.project_path)
+        self.basedata_path_edit.setText(self.settings.basedata_path)
+        self.check_on_start.setChecked(self.settings.check_data_on_start)
         confirmed = self.exec_()
         if confirmed:
             project_path = self.project_path_edit.text()
@@ -286,6 +292,7 @@ class SettingsDialog(Dialog):
             return self.project_path
         else:
             self.project_path_edit.setText(self.project_path)
+        return confirmed
 
 
 class DiagramDialog(Dialog):
