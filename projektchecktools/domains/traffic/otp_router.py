@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-import requests
 from pickle import dump, load
 from osgeo import ogr
 from collections import OrderedDict
@@ -9,10 +7,12 @@ from pyproj import Proj, transform
 from scipy.sparse.csgraph import dijkstra
 import numpy as np
 import pandas as pd
-import os
 
 from projektchecktools.utils.polyline import PolylineCodec
 from projektchecktools.utils.spatial import Point
+from projektchecktools.utils.connection import Request
+
+requests = Request()
 
 
 class Route(object):
@@ -433,9 +433,8 @@ class OTPRouter(object):
                       toPlace=f'{destination.y},{destination.x}',
                       mode=mode,
                       maxPreTransitTime=1200)
-        r = requests.get(self.url, params=params, verify=False)
-        if r.status_code != 200:
-            raise Exception(f'Server Fehler {r.status_code} - {r.reason}')
+        r = requests.get(self.url, params=params, timeout=60000)
+        r.raise_for_status()
         return r.json()
 
     def decode_coords(self, json, route_id, source_id=0):

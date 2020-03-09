@@ -1,12 +1,11 @@
-import requests
-import json
-
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 from projektchecktools.domains.reachabilities.tables import Einrichtungen
 from projektchecktools.base.domain import Worker
 from settings import settings
-
 from projektchecktools.utils.spatial import Point
+from projektchecktools.utils.connection import Request
+
+requests = Request()
 
 
 class Feature(Point):

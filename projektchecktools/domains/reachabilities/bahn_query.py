@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 
 from projektchecktools.utils.spatial import Point
 from projektchecktools.base.domain import Worker
-from projektchecktools.base.connection import Request, ConnectionError
+from projektchecktools.utils.connection import Request, ConnectionError
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 from projektchecktools.domains.reachabilities.tables import (Haltestellen,
                                                         ZentraleOrte,
@@ -29,9 +29,9 @@ class Stop(Point):
 
 
 class BahnQuery(object):
-    reiseauskunft_url = 'http://reiseauskunft.bahn.de/bin/query.exe/dn'
-    mobile_url = 'http://mobile.bahn.de/bin/mobil/query.exe/dox'
-    timetable_url = u'http://reiseauskunft.bahn.de/bin/bhftafel.exe/dn'
+    reiseauskunft_url = 'https://reiseauskunft.bahn.de/bin/query.exe/dn'
+    mobile_url = 'https://mobile.bahn.de/bin/mobil/query.exe/dox'
+    timetable_url = 'https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn'
 
     reiseauskunft_params = {
         'start': 1,
@@ -245,7 +245,7 @@ class StopScraper(Worker):
         try:
             self.write_centers_stops()
         except ConnectionError as e:
-            self.log('Die Website der Bahn ist nicht erreichbar')
+            self.error.emit('Die Website der Bahn ist nicht erreichbar')
         self.set_progress(50)
         self.log('Ermittle die Anzahl der Abfahrten je Haltestelle...')
         self.update_departures(projectarea_only=True)
