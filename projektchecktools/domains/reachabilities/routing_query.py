@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-import requests
 import json
 from pyproj import Proj, transform
 import numpy as np
@@ -11,7 +9,9 @@ from projektchecktools.base.domain import Worker
 from projektchecktools.domains.reachabilities.tables import Isochronen
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 from settings import settings
-from projektchecktools.domains.traffic.tables import Connectors
+from projektchecktools.utils.connection import Request
+
+requests = Request()
 
 
 class RoutingQuery:
@@ -40,7 +40,7 @@ class RoutingQuery:
         if point.epsg != self.epsg:
             point.transform(self.epsg)
         params['fromPlace'] = '{y},{x}'.format(y = point.y, x = point.x)
-        r = requests.get(self.isochrone_url, params=params, verify=False)
+        r = requests.get(self.isochrone_url, params=params)
         r.raise_for_status()
         geojson = r.json()
         geom_json = geojson['features'][0]['geometry']

@@ -1,9 +1,7 @@
-#import requests
 from qgis.core import QgsNetworkAccessManager
-from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkAccessManager
-from qgis.PyQt import QtGui
-from qgis.PyQt.QtCore import (QUrl, QEventLoop, QTimer, QUrlQuery,
-                              QCoreApplication)
+from qgis.PyQt.QtNetwork import QNetworkRequest
+from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer, QUrlQuery
+import json
 
 
 class ConnectionError(Exception):
@@ -16,14 +14,22 @@ class Reply:
         self.content = content
         self.url = url
 
+    def raise_for_status(self):
+        if self.status_code != 200:
+            raise ConnectionError(self.status_code)
+
+    def json(self):
+        return json.loads(self.content)
+
 
 class Request:
 
     def __init__(self):
         pass
 
-    def get(self, url, params=None, timeout=5000, verify=False):
+    def get(self, url, params=None, timeout=10000, verify=False):
         '''
+        synchronous
         verify actually doesn't do anything, just to match requests api
         '''
         manager = QgsNetworkAccessManager.instance()
@@ -38,17 +44,18 @@ class Request:
             qurl.setQuery(query.query())
 
         request = QNetworkRequest(qurl)
-
         timer.setSingleShot(True)
+        # reply or timeout break event loop, whoever comes first
         timer.timeout.connect(loop.quit)
         reply = manager.get(request)
         reply.finished.connect(loop.quit)
 
         timer.start(timeout)
+
+        # start blocking loop
         loop.exec()
-        #QCoreApplication.processEvents()
+
         loop.deleteLater()
-        #manager.finished.disconnect(loop.quit)
         if not timer.isActive():
             reply.deleteLater()
             raise ConnectionError('Timeout ')
