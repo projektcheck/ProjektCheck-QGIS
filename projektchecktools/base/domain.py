@@ -1,4 +1,4 @@
-from qgis.PyQt import QtGui, QtWidgets, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject, QThread
 from qgis import utils
 import os

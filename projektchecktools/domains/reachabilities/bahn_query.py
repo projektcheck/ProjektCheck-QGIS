@@ -18,7 +18,7 @@ from projektchecktools.domains.reachabilities.tables import (Haltestellen,
 from projektchecktools.utils.spatial import points_within, Point
 from settings import settings
 
-requests = Request()
+requests = Request(synchronous=True)
 
 
 class Stop(Point):

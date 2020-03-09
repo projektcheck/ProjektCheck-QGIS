@@ -4,14 +4,12 @@ import json
 import shutil
 import sys
 from collections import OrderedDict
-from qgis.core import QgsNetworkAccessManager
-from qgis.PyQt.QtNetwork import QNetworkRequest
-from qgis.PyQt.QtCore import QUrl
 
 from projektchecktools.utils.singleton import Singleton
 from projektchecktools.base.database import Field
 from projektchecktools.base.geopackage import Geopackage
 from projektchecktools.base.layers import Layer, TileLayer
+from projektchecktools.utils.connection import Request
 
 if sys.platform in ['win32', 'win64']:
     p = os.getenv('LOCALAPPDATA')
@@ -136,6 +134,7 @@ class Settings:
     def __repr__(self):
         ret = ['{} - {}'.format(k, str(v)) for k, v in self.__dict__.items()
                if not callable(v) and not k.startswith('_')]
+        ret.extend([f'{v} - {k}' for k, v in self._settings.items()])
         return '\n'.join(ret)
 
     def __contains__(self, item):
@@ -195,7 +194,6 @@ class ProjectManager:
     _projects = {}
     settings = settings
     _required_settings = ['BASEDATA_URL', 'EPSG']
-    network_manager = QgsNetworkAccessManager.instance()
 
     def __init__(self):
         # check settings
@@ -227,17 +225,39 @@ class ProjectManager:
             self._projects[project.name] = project
 
     def check_basedata(self):
-        request = QNetworkRequest()
-        request.setUrl(QUrl(f'{settings.BASEDATA_URL}/basedata.json'))
-        self.reply = self.network_manager.get(request)
-        def on_error(reply):
-            pass
-        self.reply.finished.connect(self.check_version)
-        self.reply.error.connect(on_error)
+        request = Request(synchronous=True)
+        try:
+            res = request.get(f'{settings.BASEDATA_URL}/basedata.json')
+        except ConnectionError:
+            # ToDo: handle error
+            return
+        if res.status_code != 200:
+            return
+        j = res.json()
+        current_v = self._v_basedata
+        if not current_v:
+            return False, 'Es wurden keine lokalen Basisdaten gefunden'
+        if current_v['version'] < j['version']:
+            return False, f"Eine neuere Version (v{j['version']}) ist verfügbar"
+        return True, 'Die Version ist auf dem neuesten Stand'
+        # ToDo: check if all files are there
 
-    def check_version(self):
-        res = json.loads(self.reply.readAll().data())
-        self.reply
+    @property
+    def _v_basedata(self):
+        # return date and version from file
+        if not os.path.exists(self.settings.basedata_path):
+            return
+        fp = os.path.join(self.settings.basedata_pat, 'basedata.json')
+        if not os.path.exists(fp):
+            return
+        with open(fp, 'r') as f:
+            ret = json.load(f)
+        return ret
+
+    @_v_basedata.setter
+    def _v_basedata(self, attr):
+        # ToDo: set version in file
+        pass
 
     def load_basedata(self):
         # ToDo: load from settings path
