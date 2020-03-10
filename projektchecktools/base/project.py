@@ -166,7 +166,7 @@ class Project:
 
     @property
     def basedata(self):
-        return self.settings.BASEDATA
+        return ProjectManager().basedata
 
     def remove(self):
         self.close()
@@ -203,14 +203,16 @@ class ProjectManager:
                 missing.append(required)
         if missing:
             raise Exception(f'{missing} have to be set')
-
+        self.basedata = None
         self.load()
 
     def load(self):
         '''
         load settings and projects
         '''
-        self.load_basedata()
+        success = self.load_basedata()
+        if not success:
+            raise FileNotFoundError('basedata not found')
         if self.settings.project_path:
             project_path = self.settings.project_path
             if project_path and not os.path.exists(project_path):
@@ -224,7 +226,39 @@ class ProjectManager:
             project = Project(name)
             self._projects[project.name] = project
 
-    def check_basedata(self):
+    def check_basedata(self, path=None):
+        # ToDo: check if all files are there
+        version_server = self.server_version()
+        current_v = self.local_version(path or self.settings.basedata_path)
+        if not current_v:
+            return False, 'Es wurden keine lokalen Basisdaten gefunden'
+        if current_v['version'] < version_server['version']:
+            return False, (f'Eine neuere Version (v{version_server["version"]} '
+                           'ist verfügbar')
+        return True, 'Die Version ist auf dem neuesten Stand'
+
+    def set_local_version(self, version, path=None):
+        path = path or self.settings.basedata_path
+        if not os.path.exists(path):
+            os.makedirs(path)
+        fp = os.path.join(path, 'basedata.json')
+        with open(fp, 'w') as f:
+            json.dump(version, f, indent=4, separators=(',', ': '))
+
+    def local_version(self, path):
+        if not os.path.exists(path):
+            return
+        fp = os.path.join(path, 'basedata.json')
+        if not os.path.exists(fp):
+            return
+        try:
+            with open(fp, 'r') as f:
+                ret = json.load(f)
+        except:
+            return None
+        return ret
+
+    def server_version(self):
         request = Request(synchronous=True)
         try:
             res = request.get(f'{settings.BASEDATA_URL}/basedata.json')
@@ -233,26 +267,12 @@ class ProjectManager:
             return
         if res.status_code != 200:
             return
-        j = res.json()
-        current_v = self._v_basedata
-        if not current_v:
-            return False, 'Es wurden keine lokalen Basisdaten gefunden'
-        if current_v['version'] < j['version']:
-            return False, f"Eine neuere Version (v{j['version']}) ist verfügbar"
-        return True, 'Die Version ist auf dem neuesten Stand'
-        # ToDo: check if all files are there
+        return res.json()
 
     @property
     def _v_basedata(self):
         # return date and version from file
-        if not os.path.exists(self.settings.basedata_path):
-            return
-        fp = os.path.join(self.settings.basedata_pat, 'basedata.json')
-        if not os.path.exists(fp):
-            return
-        with open(fp, 'r') as f:
-            ret = json.load(f)
-        return ret
+        return self._local_version(self.settings.basedata_path)
 
     @_v_basedata.setter
     def _v_basedata(self, attr):
@@ -260,10 +280,14 @@ class ProjectManager:
         pass
 
     def load_basedata(self):
-        # ToDo: load from settings path
-        base_path = self.settings.BASE_PATH
-        settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
-                                       read_only=True)
+        self.basedata = None
+        base_path = self.settings.basedata_path
+        if not os.path.exists:
+            return False
+        self.basedata = Geopackage(
+            base_path=os.path.join(base_path, 'data'),
+            read_only=True)
+        return True
 
     def create_project(self, name, create_folder=True):
         '''
@@ -303,10 +327,6 @@ class ProjectManager:
     @property
     def projects(self):
         return list(self._projects.values())
-
-    @property
-    def basedata(self):
-        return self.settings.BASEDATA
 
     @property
     def active_project(self):

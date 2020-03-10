@@ -10,10 +10,24 @@ class ConnectionError(Exception):
 
 
 class Reply:
-    def __init__(self, content='', status_code=200, url=''):
-        self.status_code = status_code
-        self.content = content
-        self.url = url
+    def __init__(self, reply):
+        '''
+        reply - qnetworkreply
+        '''
+        self.reply = reply
+        self.raw_data = reply.readAll()
+
+    @property
+    def url(self):
+        return self.reply.url().url()
+
+    @property
+    def status_code(self):
+        return self.reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+
+    @property
+    def content(self):
+        return self.raw_data.data()
 
     def raise_for_status(self):
         if self.status_code != 200:
@@ -22,10 +36,21 @@ class Reply:
     def json(self):
         return json.loads(self.content)
 
+    @property
+    def headers(self):
+        headers = {}
+        for h in ['ContentDispositionHeader', 'ContentTypeHeader',
+                  'LastModifiedHeader', 'ContentLengthHeader',
+                  'CookieHeader', 'LocationHeader',
+                  'UserAgentHeader', 'LocationHeader']:
+            headers[h] = self.reply.header(getattr(QNetworkRequest, h))
+        return headers
+
 
 class Request(QObject):
     finished = pyqtSignal(Reply)
     error = pyqtSignal(str)
+    progress = pyqtSignal(int)
 
     def __init__(self, synchronous=False):
         super().__init__()
@@ -75,28 +100,26 @@ class Request(QObject):
         if reply.error():
             self.error.emit(reply.errorString())
             raise ConnectionError(reply.errorString())
-        content = reply.readAll().data()
-        status_code = reply.attribute(
-            QNetworkRequest.HttpStatusCodeAttribute)
         reply.deleteLater()
-        res = Reply(content=content, status_code=status_code,
-                    url=reply.url().url())
+        res = Reply(reply)
         self.finished.emit(res)
         return res
 
     def _get_async(self, qurl: QUrl):
+
         request = QNetworkRequest(qurl)
-        reply = self.manager.get(request)
 
-        def finished(reply):
-            content = reply.readAll().data()
-            status_code = reply.attribute(
-                QNetworkRequest.HttpStatusCodeAttribute)
-            res = Reply(content=content, status_code=status_code,
-                        url=reply.url().url())
-            self.finished.emit(res)
+        def progress(b, total):
+            print(f'{b}/{total}')
+            if total > 0:
+                self.progress.emit(int(100*b/total))
 
-        reply.error.connect(lambda r: self.error.emit(r.errorString()))
-        reply.finished.connect(finished)
+        self.reply = self.manager.get(request)
+        self.reply.error.connect(
+            lambda: self.error.emit(self.reply.errorString()))
+        self.reply.downloadProgress.connect(progress)
+        self.reply.finished.connect(
+            lambda: self.finished.emit(Reply(self.reply)))
+        #self.reply.readyRead.connect(ready_read)
         return 0
 
