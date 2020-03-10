@@ -186,6 +186,7 @@ class Worker(QThread):
         '''
         runs code defined in self.work
         emits self.finished on success and self.error on exception
+        override this function if you make asynchronous calls
 
         Parameters
         ----------

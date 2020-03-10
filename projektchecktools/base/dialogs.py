@@ -1,22 +1,22 @@
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QThread
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
-from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
-from qgis.utils import iface
 import matplotlib.pyplot as plt
-
+from zipfile import ZipFile
 import os
 import datetime
+from io import BytesIO
+import shutil
 
 from projektchecktools.base.domain import UI_PATH
 from projektchecktools.base.project import ProjectManager
+from projektchecktools.utils.connection import Request
 
 
 class Dialog(QDialog):
@@ -161,12 +161,14 @@ class ProgressDialog(Dialog):
         self.on_success = on_success
         self.on_close = on_close
         self.success = False
+        self.error = False
 
         self.worker = worker
-        self.worker.finished.connect(self._success)
-        self.worker.error.connect(self.on_error)
-        self.worker.message.connect(self.show_status)
-        self.worker.progress.connect(self.progress)
+        if self.worker:
+            self.worker.finished.connect(self._success)
+            self.worker.error.connect(self.on_error)
+            self.worker.message.connect(self.show_status)
+            self.worker.progress.connect(self.progress)
 
         self.start_button.clicked.connect(self.run)
         self.stop_button.clicked.connect(self.stop)
@@ -181,7 +183,7 @@ class ProgressDialog(Dialog):
         if self.auto_run:
             self.run()
 
-    def _success(self, result):
+    def _success(self, result=None):
         self._finished()
         self.progress(100)
         self.show_status('<br><b>fertig</b>')
@@ -202,7 +204,7 @@ class ProgressDialog(Dialog):
     def close(self):
         super().close()
         if self.on_close:
-            self.on_close(self.on_close)
+            self.on_close()
 
     def on_error(self, message):
         self.show_status( f'<span style="color:red;">Fehler: {message}</span>')
@@ -220,6 +222,7 @@ class ProgressDialog(Dialog):
     def progress(self, progress, obj=None):
         if isinstance(progress, QVariant):
             progress = progress.toInt()[0]
+        print(progress)
         self.progress_bar.setValue(progress)
 
     def start_timer(self):
@@ -234,11 +237,13 @@ class ProgressDialog(Dialog):
         self.start_button.setVisible(False)
         self.close_button.setVisible(True)
         self.close_button.setEnabled(False)
-        self.worker.start()
+        if self.worker:
+            self.worker.start()
 
     def stop(self):
         self.timer.stop()
-        self.worker.terminate()
+        if self.worker:
+            self.worker.terminate()
         self.log_edit.appendHtml('<b> Vorgang abgebrochen </b> <br>')
         self.log_edit.moveCursor(QTextCursor.End)
         self._finished()
@@ -255,13 +260,40 @@ class SettingsDialog(Dialog):
     '''changes settings in place'''
     ui_file = 'settings.ui'
 
-    def __init__(self, settings):
+    def __init__(self):
         super().__init__(self.ui_file, modal=True)
-        self.settings = settings
+        self.project_manager = ProjectManager()
+        self.settings = self.project_manager.settings
+
         self.project_browse_button.clicked.connect(
             lambda: self.browse_path(self.project_path_edit))
-        self.basedata_browse_button.clicked.connect(
-            lambda: self.browse_path(self.basedata_path_edit))
+        def set_basedata_path():
+            self.browse_path(self.basedata_path_edit)
+            self.check_basedata_path()
+        self.basedata_browse_button.clicked.connect(set_basedata_path)
+        self.basedata_path_edit.editingFinished.connect(
+            self.check_basedata_path)
+
+        self.download_button.clicked.connect(self.download_basedata)
+
+    def download_basedata(self):
+        path = self.basedata_path_edit.text()
+        url = f'{self.settings.BASEDATA_URL}/basedata.zip'
+
+        def on_success(a):
+            self.project_manager.set_local_version(
+                self.project_manager.server_version())
+
+        dialog = DownloadDialog(url, path, parent=self, on_success=on_success,
+                                on_close=self.check_basedata_path)
+        #dialog = ProgressDialog(job, auto_close=True, parent=self, auto_run=False)
+        dialog.show()
+
+    def check_basedata_path(self):
+        valid, status_text = self.project_manager.check_basedata()
+        color = 'green' if valid else 'red'
+        self.status_label.setStyleSheet(f'color: {color};')
+        self.status_label.setText(status_text)
 
     def browse_path(self, line_edit):
         path = str(
@@ -279,6 +311,7 @@ class SettingsDialog(Dialog):
         self.project_path_edit.setText(self.settings.project_path)
         self.basedata_path_edit.setText(self.settings.basedata_path)
         self.check_on_start.setChecked(self.settings.check_data_on_start)
+        self.check_basedata_path()
         confirmed = self.exec_()
         if confirmed:
             project_path = self.project_path_edit.text()
@@ -318,3 +351,41 @@ class DiagramDialog(Dialog):
             geometry = self.geometry()
             self.setGeometry(geometry.x() + offset_x, geometry.y() + offset_y,
                              geometry.width(), geometry.height())
+
+
+class DownloadDialog(ProgressDialog):
+    def __init__(self, url, path, **kwargs):
+        super().__init__(None, **kwargs)
+        self.url = url
+        self.path = path
+
+    def run(self):
+        self.stop_button.setVisible(False)
+        self.start_button.setVisible(False)
+        self.close_button.setVisible(True)
+        self.close_button.setEnabled(False)
+
+        self.show_status('Starte Download von')
+        self.show_status(self.url)
+        try:
+            request = Request(synchronous=False)
+            request.progress.connect(self.progress)
+            request.finished.connect(self._save)
+            request.error.connect(self.on_error)
+            request.get(self.url)
+        except Exception as e:
+            self.on_error(str(e))
+
+    def _save(self, reply):
+        self.show_status(f'-> {self.path}')
+        # ToDo: catch errors (file permission->message to restart)
+        if os.path.exists(self.path):
+            shutil.rmtree(self.path, ignore_errors=False, onerror=None)
+        os.makedirs(self.path)
+        with ZipFile(BytesIO(reply.raw_data)) as zf:
+            zf.extractall(self.path)
+        self._success()
+
+
+
+

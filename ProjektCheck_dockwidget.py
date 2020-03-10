@@ -30,7 +30,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.active_dockwidget = None
         self.project_definitions = None
 
-        settings_dialog = SettingsDialog(self.settings)
+        settings_dialog = SettingsDialog()
         def set_project_path(confirmed):
             if confirmed:
                 self.setup_projects()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>417</width>
-    <height>204</height>
+    <height>211</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -134,9 +134,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QCheckBox" name="check_on_start">
+      <widget class="QLabel" name="status_label">
        <property name="text">
-        <string>Verfügbarkeit neuer Basisdaten beim Öffnen von Projekten prüfen</string>
+        <string>Status</string>
        </property>
       </widget>
      </item>
@@ -154,13 +154,20 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="download_basedata_button">
+      <widget class="QPushButton" name="download_button">
        <property name="text">
         <string>jetzt herunterladen</string>
        </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="check_on_start">
+     <property name="text">
+      <string>Verfügbarkeit neuer Basisdaten beim Öffnen von Projekten prüfen</string>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer_3">
