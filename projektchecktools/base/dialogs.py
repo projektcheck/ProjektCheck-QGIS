@@ -314,7 +314,7 @@ class SettingsDialog(Dialog):
     def check_basedata_path(self):
         path = self.basedata_path_edit.text()
         valid, status_text = self.project_manager.check_basedata(path)
-        color = 'green' if valid else 'red'
+        color = 'green' if valid == 2 else 'black' if valid == 1 else 'red'
         self.status_label.setStyleSheet(f'color: {color};')
         self.status_label.setText(status_text)
 
