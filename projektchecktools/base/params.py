@@ -480,10 +480,11 @@ class ParamsDialog(Dialog):
                 help_button.setFont(font)
                 help_button.clicked.connect(
                     lambda: self.show_help(element.help_text, expand=True))
+                element.row.addWidget(help_button)
+            if element.input:
                 element.input.focus.connect(
                     lambda: self.show_help(element.help_text))
                 self.inputs.append(element.input)
-                element.row.addWidget(help_button)
         else:
             self._grid = None
             if isinstance(element, QLayoutItem):
