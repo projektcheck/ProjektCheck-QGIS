@@ -170,7 +170,8 @@ class Project:
 
     def remove(self):
         self.close()
-        shutil.rmtree(self.path)
+        if os.path.exists(self.path):
+            shutil.rmtree(self.path)
 
     def close(self):
         pass
@@ -288,6 +289,8 @@ class ProjectManager:
         self.basedata = Geopackage(
             base_path=base_path,
             read_only=True)
+        # ToDo: remove basedata from settings (still there out of convenience)
+        self.settings.BASEDATA = self.basedata
         return True
 
     def create_project(self, name, create_folder=True):
@@ -315,7 +318,8 @@ class ProjectManager:
         if isinstance(project, str):
             project = self._projects[project]
         project.remove()
-        del self._projects[project.name]
+        if project.name in self._projects:
+            del(self._projects[project.name])
 
     def _get_projects(self):
         base_path = self.settings.project_path
@@ -343,6 +347,8 @@ class ProjectManager:
 
     @active_project.setter
     def active_project(self, project):
+        if project and project.name not in self._projects:
+            self._projects[project.name] = project
         self.settings.active_project = project.name if project else ''
 
 

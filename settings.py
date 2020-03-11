@@ -13,10 +13,7 @@ settings.MAX_AREA_DISTANCE = 1000
 settings.BASE_PATH = base_path
 settings.TEMPLATE_PATH = os.path.join(base_path, 'templates')
 settings.IMAGE_PATH = os.path.join(base_path, 'images')
-settings.TEMP_PATH = os.path.join(base_path, 'data', 'temp')
 settings.HELP_PATH = os.path.join(base_path, 'projektchecktools', 'help')
-#settings.BASEDATA = Geopackage(base_path=os.path.join(base_path, 'data'),
-                               #read_only=True)
 settings.BASEDATA_URL = 'https://gis.ggr-planung.de/repos/projektcheck'
 settings.DEBUG = True
 settings.PROJECT_RADIUS = 20000

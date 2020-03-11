@@ -40,27 +40,37 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         def change_project(index):
             project = self.ui.project_combo.itemData(index)
-            if not project:
-                return
-            if self.settings.check_data_on_start:
-                valid, msg = self.project_manager.check_basedata()
-                if valid != 2:
-                    reply = QMessageBox.question(
-                        self.ui, 'Basisdaten aktualisieren',
-                        f'{msg}\n\n'
-                        'Sie können die aktuellen Basisdaten in den Projekt-'
-                        'Check-Einstellungen herunterladen. \n'
-                        'Wollen Sie jetzt zu den Einstellungen wechseln?',
-                         QMessageBox.Yes, QMessageBox.No)
-                    if reply == QMessageBox.Yes:
-                        self.ui.project_combo.setCurrentIndex(0)
-                        self.show_settings()
-                        return
+            if project and self.settings.check_data_on_start:
+                # invalid basedata (or user request for opening settings) ->
+                # deselect project
+                if not self.check_basedata():
+                    # triggers change project again with no project
+                    self.ui.project_combo.setCurrentIndex(0)
+                    return
             self.change_project(project)
 
         self.ui.project_combo.currentIndexChanged.connect(change_project)
 
         self.setup_projects()
+
+    def check_basedata(self):
+        valid, msg = self.project_manager.check_basedata()
+        # base data not up to date
+        if valid != 2:
+            reply = QMessageBox.question(
+                self.ui, 'Basisdaten aktualisieren',
+                f'{msg}\n\n'
+                'Sie können die aktuellen Basisdaten in den Projekt-'
+                'Check-Einstellungen herunterladen. \n'
+                'Wollen Sie jetzt zu den Einstellungen wechseln?',
+                 QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.show_settings()
+                return False
+        # no base data
+        if not valid:
+            return False
+        return True
 
     def show_settings(self):
         settings_dialog = SettingsDialog(self)
@@ -70,6 +80,13 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.setup_projects()
 
     def create_project(self):
+        if self.settings.check_data_on_start and not self.check_basedata():
+            return
+        status, msg = self.project_manager.check_basedata()
+        if status == 0:
+            QMessageBox.warning(self.ui, 'Hinweis', msg)
+            self.ui.project_combo.setCurrentIndex(0)
+            return
         dialog = NewProjectDialog()
         ok, name, layer = dialog.show()
 
@@ -152,7 +169,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             # the layers as long they are visible
             def on_refresh():
                 self.project_manager.remove_project(project)
-                self.project_manager.active_project = ''
+                self.project_manager.active_project = None
                 self.canvas.mapCanvasRefreshed.disconnect(on_refresh)
             self.canvas.mapCanvasRefreshed.connect(on_refresh)
             self.canvas.refreshAllLayers()
@@ -271,14 +288,14 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
+        if not project:
+            self.ui.domain_button.setEnabled(False)
+            self.ui.definition_button.setEnabled(False)
+            return
         status, msg = self.project_manager.check_basedata()
         if status == 0:
             QMessageBox.warning(self.ui, 'Hinweis', msg)
             self.ui.project_combo.setCurrentIndex(0)
-            return
-        if not project:
-            self.ui.domain_button.setEnabled(False)
-            self.ui.definition_button.setEnabled(False)
             return
         try:
             if getattr(self, 'project_definitions', None):

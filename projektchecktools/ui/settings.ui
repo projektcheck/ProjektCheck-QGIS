@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>417</width>
-    <height>211</height>
+    <height>216</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -100,7 +100,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Basisdaten (Internetverbindung benötigt)</string>
+      <string>Basisdaten</string>
      </property>
     </widget>
    </item>
@@ -171,7 +171,7 @@
    <item>
     <widget class="QCheckBox" name="check_on_start">
      <property name="text">
-      <string>Verfügbarkeit neuer Basisdaten beim Öffnen von Projekten prüfen</string>
+      <string>Verfügbarkeit neuer Basisdaten beim Erstellen und Öffnen von Projekten prüfen</string>
      </property>
     </widget>
    </item>
