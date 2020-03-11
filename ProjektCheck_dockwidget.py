@@ -166,6 +166,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.ui.project_combo.model().item(0).setEnabled(False)
         self.ui.domain_button.setEnabled(False)
         self.ui.definition_button.setEnabled(False)
+        self.project_manager.reset_projects()
         for project in self.project_manager.projects:
             if project.name == '__test__':
                 continue
@@ -332,23 +333,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             message.exec_()
 
     def close(self):
+        self.close_all_projects()
+        super().close()
+
+    def close_all_projects(self):
         if getattr(self, 'project_definitions', None):
             self.project_definitions.close()
         if getattr(self, 'domains', None):
             for domain in self.domains:
                 domain.close()
-        super().close()
-
-    def unload(self):
-        print('unloading Projekt-Check')
-        self.close()
-        if getattr(self, 'project_definitions', None):
-            self.project_definitions.unload()
-            del(self.project_definitions)
-        if getattr(self, 'domains', None):
-            for domain in self.domains:
-                domain.unload()
-                del(domain)
         qgisproject = QgsProject.instance()
         layer_root = qgisproject.layerTreeRoot()
         # remove all project layers from layer tree
@@ -362,4 +355,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         for ws in Workspace.get_instances():
             if not ws.database.read_only:
                 ws.close()
+
+    def unload(self):
+        print('unloading Projekt-Check')
+        self.close()
+        if getattr(self, 'project_definitions', None):
+            self.project_definitions.unload()
+            del(self.project_definitions)
+        if getattr(self, 'domains', None):
+            for domain in self.domains:
+                domain.unload()
+                del(domain)
         super().unload()

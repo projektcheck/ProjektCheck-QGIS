@@ -222,9 +222,7 @@ class ProjectManager:
                     pass
             if not os.path.exists(project_path):
                 self.settings.project_path = project_path = ''
-        for name in self._get_projects():
-            project = Project(name)
-            self._projects[project.name] = project
+        self.reset_projects()
 
     def check_basedata(self, path=None):
         # ToDo: check if all files are there
@@ -330,6 +328,12 @@ class ProjectManager:
     @property
     def projects(self):
         return list(self._projects.values())
+
+    def reset_projects(self):
+        self._projects = {}
+        for name in self._get_projects():
+            project = Project(name)
+            self._projects[project.name] = project
 
     @property
     def active_project(self):

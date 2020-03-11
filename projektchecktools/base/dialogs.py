@@ -13,6 +13,7 @@ import os
 import datetime
 from io import BytesIO
 import shutil
+from time import sleep
 
 from projektchecktools.base.domain import UI_PATH
 from projektchecktools.base.project import ProjectManager
@@ -290,9 +291,9 @@ class SettingsDialog(Dialog):
         def on_success(a):
             self.project_manager.set_local_version(
                 self.project_manager.server_version())
+            self.check_basedata_path()
 
         dialog = DownloadDialog(url, path, parent=self, on_success=on_success,
-                                on_close=self.check_basedata_path,
                                 auto_close=True)
         dialog.show()
 
@@ -322,6 +323,7 @@ class SettingsDialog(Dialog):
             try:
                 if not os.path.exists(path):
                     os.makedirs(path)
+                # ToDo: might not work for paths? always returns True for me
                 if not os.access(path, os.X_OK | os.W_OK):
                     raise PermissionError()
             except PermissionError:
@@ -393,6 +395,7 @@ class DownloadDialog(ProgressDialog):
         # ToDo: catch errors (file permission->message to restart)
         if os.path.exists(self.path):
             shutil.rmtree(self.path, ignore_errors=False, onerror=None)
+            sleep(1)
         os.makedirs(self.path)
         with ZipFile(BytesIO(reply.raw_data)) as zf:
             zf.extractall(self.path)
