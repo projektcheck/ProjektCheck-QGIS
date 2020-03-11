@@ -2,7 +2,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
@@ -275,6 +275,13 @@ class SettingsDialog(Dialog):
             self.check_basedata_path)
 
         self.download_button.clicked.connect(self.download_basedata)
+        self.ok_button.clicked.connect(self.save)
+        self.cancel_button.clicked.connect(self.reject)
+
+        self.project_path_edit.setText(self.settings.project_path)
+        self.basedata_path_edit.setText(self.settings.basedata_path)
+        self.check_on_start.setChecked(self.settings.check_data_on_start)
+        self.check_basedata_path()
 
     def download_basedata(self):
         path = self.basedata_path_edit.text()
@@ -285,12 +292,13 @@ class SettingsDialog(Dialog):
                 self.project_manager.server_version())
 
         dialog = DownloadDialog(url, path, parent=self, on_success=on_success,
-                                on_close=self.check_basedata_path)
-        #dialog = ProgressDialog(job, auto_close=True, parent=self, auto_run=False)
+                                on_close=self.check_basedata_path,
+                                auto_close=True)
         dialog.show()
 
     def check_basedata_path(self):
-        valid, status_text = self.project_manager.check_basedata()
+        path = self.basedata_path_edit.text()
+        valid, status_text = self.project_manager.check_basedata(path)
         color = 'green' if valid else 'red'
         self.status_label.setStyleSheet(f'color: {color};')
         self.status_label.setText(status_text)
@@ -307,22 +315,26 @@ class SettingsDialog(Dialog):
             return
         line_edit.setText(path)
 
-    def show(self):
-        self.project_path_edit.setText(self.settings.project_path)
-        self.basedata_path_edit.setText(self.settings.basedata_path)
-        self.check_on_start.setChecked(self.settings.check_data_on_start)
-        self.check_basedata_path()
-        confirmed = self.exec_()
-        if confirmed:
-            project_path = self.project_path_edit.text()
-            if not os.path.exists(project_path):
-                try:
-                    os.makedirs(project_path)
-                except:
-                    # ToDo: show warning that it could not be created
-                    return
-            self.project_path = project_path
-        return confirmed
+    def save(self):
+        project_path = self.project_path_edit.text()
+        basedata_path = self.basedata_path_edit.text()
+        for path in [project_path, basedata_path]:
+            try:
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                if not os.access(path, os.X_OK | os.W_OK):
+                    raise PermissionError()
+            except PermissionError:
+                QMessageBox.warning(
+                    self, 'Warnung',
+                    f'Sie haben keine Zugriffsrechte auf den Pfad \n{path}\n'
+                    'Bitte wählen Sie einen anderen Pfad.'
+                )
+                return
+        self.settings.project_path = project_path
+        self.settings.basedata_path = basedata_path
+        self.settings.check_data_on_start = self.check_on_start.isChecked()
+        self.accept()
 
 
 class DiagramDialog(Dialog):

@@ -30,19 +30,42 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.active_dockwidget = None
         self.project_definitions = None
 
-        settings_dialog = SettingsDialog()
-        def set_project_path(confirmed):
-            if confirmed:
-                self.setup_projects()
-        self.ui.settings_button.clicked.connect(
-            lambda: set_project_path(settings_dialog.show()))
+        self.ui.settings_button.clicked.connect(self.show_settings)
 
         self.ui.create_project_button.clicked.connect(self.create_project)
         self.ui.remove_project_button.clicked.connect(self.remove_project)
         self.ui.clone_project_button.clicked.connect(self.clone_project)
 
         self.setup_help()
+
+        def change_project(index):
+            project = self.ui.project_combo.itemData(index)
+            if not project:
+                return
+            if self.settings.check_data_on_start:
+                valid, msg = self.project_manager.check_basedata()
+                if valid != 2:
+                    reply = QMessageBox.question(
+                        self.ui, 'Basisdaten aktualisieren',
+                        f'{msg}\n\n'
+                        'Sie können die aktuellen Basisdaten in den Projekt-'
+                        'Check-Einstellungen herunterladen. \n'
+                        'Wollen Sie jetzt zu den Einstellungen wechseln?',
+                         QMessageBox.Yes, QMessageBox.No)
+                    if reply == QMessageBox.Yes:
+                        self.show_settings()
+                        return
+            self.change_project(project)
+
+        self.ui.project_combo.currentIndexChanged.connect(change_project)
+
         self.setup_projects()
+
+    def show_settings(self):
+        settings_dialog = SettingsDialog()
+        confirmed = settings_dialog.exec()
+        if confirmed:
+            self.setup_projects()
 
     def create_project(self):
         dialog = NewProjectDialog()
@@ -137,6 +160,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
+        self.ui.project_combo.blockSignals(True)
         self.ui.project_combo.clear()
         self.ui.project_combo.addItem('Projekt wählen')
         self.ui.project_combo.model().item(0).setEnabled(False)
@@ -146,10 +170,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             if project.name == '__test__':
                 continue
             self.ui.project_combo.addItem(project.name, project)
-        self.ui.project_combo.currentIndexChanged.connect(
-            lambda index: self.change_project(
-                self.ui.project_combo.itemData(index))
-        )
+        self.ui.project_combo.blockSignals(False)
 
     def setup_definitions(self):
         '''setup project definitions widget'''
@@ -247,7 +268,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
-        self.project_manager.check_basedata()
+        status, msg = self.project_manager.check_basedata()
+        if status == 0:
+            QMessageBox.warning(self.ui, 'Hinweis', msg)
+            return
         if not project:
             self.ui.domain_button.setEnabled(False)
             self.ui.definition_button.setEnabled(False)

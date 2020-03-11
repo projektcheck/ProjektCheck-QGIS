@@ -231,11 +231,14 @@ class ProjectManager:
         version_server = self.server_version()
         current_v = self.local_version(path or self.settings.basedata_path)
         if not current_v:
-            return False, 'Es wurden keine lokalen Basisdaten gefunden'
+            return 0, 'Es wurden keine lokalen Basisdaten gefunden'
         if current_v['version'] < version_server['version']:
-            return False, (f'Eine neuere Version (v{version_server["version"]} '
-                           'ist verfügbar')
-        return True, 'Die Version ist auf dem neuesten Stand'
+            return 1, (f'Eine neuere Version (v{version_server["version"]}, '
+                       f'Stand: {version_server["date"]}) '
+                       f'ist verfügbar (lokal: v{current_v["version"]}, '
+                       f'{current_v["date"]})')
+        return 2, ('Die Basisdaten sind auf dem neuesten Stand '
+                   f'(v{current_v["version"]}, {current_v["date"]})')
 
     def set_local_version(self, version, path=None):
         path = path or self.settings.basedata_path
@@ -285,7 +288,7 @@ class ProjectManager:
         if not os.path.exists:
             return False
         self.basedata = Geopackage(
-            base_path=os.path.join(base_path, 'data'),
+            base_path=base_path,
             read_only=True)
         return True
 
