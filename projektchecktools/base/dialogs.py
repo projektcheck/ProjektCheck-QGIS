@@ -261,8 +261,9 @@ class SettingsDialog(Dialog):
     '''changes settings in place'''
     ui_file = 'settings.ui'
 
-    def __init__(self):
+    def __init__(self, parent_domain):
         super().__init__(self.ui_file, modal=True)
+        self.parent_domain = parent_domain
         self.project_manager = ProjectManager()
         self.settings = self.project_manager.settings
 
@@ -270,9 +271,8 @@ class SettingsDialog(Dialog):
             lambda: self.browse_path(self.project_path_edit))
         def set_basedata_path():
             self.browse_path(self.basedata_path_edit)
-            self.check_basedata_path()
         self.basedata_browse_button.clicked.connect(set_basedata_path)
-        self.basedata_path_edit.editingFinished.connect(
+        self.basedata_path_edit.textChanged.connect(
             self.check_basedata_path)
 
         self.download_button.clicked.connect(self.download_basedata)
@@ -286,6 +286,9 @@ class SettingsDialog(Dialog):
 
     def download_basedata(self):
         path = self.basedata_path_edit.text()
+        if not self.check_permission(path):
+            return
+        self.parent_domain.close_all_projects()
         url = f'{self.settings.BASEDATA_URL}/basedata.zip'
 
         def on_success(a):
@@ -293,9 +296,20 @@ class SettingsDialog(Dialog):
                 self.project_manager.server_version())
             self.check_basedata_path()
 
-        dialog = DownloadDialog(url, path, parent=self, on_success=on_success,
-                                auto_close=True)
-        dialog.show()
+        def on_close():
+            if self.download_dialog.error:
+                QMessageBox.warning(
+                    self, 'Hinweis',
+                    'Beim Speichern der Basisdaten ist ein Fehler aufgetreten.'
+                    '\n\nMöglicherweise konnten die alten Daten nicht restlos '
+                    'entfernt werden. Bitte starten Sie QGIS neu und versuchen '
+                    'Sie den Download erneut (ohne geöffnete Projekte).')
+                self.check_basedata_path()
+
+        self.download_dialog = DownloadDialog(
+            url, path, parent=self, on_success=on_success,
+            auto_close=True, on_close=on_close)
+        self.download_dialog.show()
 
     def check_basedata_path(self):
         path = self.basedata_path_edit.text()
@@ -316,22 +330,27 @@ class SettingsDialog(Dialog):
             return
         line_edit.setText(path)
 
+    def check_permission(self, path):
+        try:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            # ToDo: might not work for paths? always returns True for me
+            if not os.access(path, os.X_OK | os.W_OK):
+                raise PermissionError()
+            return True
+        except PermissionError:
+            QMessageBox.warning(
+                self, 'Warnung',
+                f'Sie haben keine Zugriffsrechte auf den Pfad \n{path}\n'
+                'Bitte wählen Sie einen anderen Pfad.'
+            )
+            return False
+
     def save(self):
         project_path = self.project_path_edit.text()
         basedata_path = self.basedata_path_edit.text()
         for path in [project_path, basedata_path]:
-            try:
-                if not os.path.exists(path):
-                    os.makedirs(path)
-                # ToDo: might not work for paths? always returns True for me
-                if not os.access(path, os.X_OK | os.W_OK):
-                    raise PermissionError()
-            except PermissionError:
-                QMessageBox.warning(
-                    self, 'Warnung',
-                    f'Sie haben keine Zugriffsrechte auf den Pfad \n{path}\n'
-                    'Bitte wählen Sie einen anderen Pfad.'
-                )
+            if not self.check_permission(path):
                 return
         self.settings.project_path = project_path
         self.settings.basedata_path = basedata_path
@@ -393,13 +412,16 @@ class DownloadDialog(ProgressDialog):
     def _save(self, reply):
         self.show_status(f'-> {self.path}')
         # ToDo: catch errors (file permission->message to restart)
-        if os.path.exists(self.path):
-            shutil.rmtree(self.path, ignore_errors=False, onerror=None)
-            sleep(1)
-        os.makedirs(self.path)
-        with ZipFile(BytesIO(reply.raw_data)) as zf:
-            zf.extractall(self.path)
-        self._success()
+        try:
+            if os.path.exists(self.path):
+                shutil.rmtree(self.path, ignore_errors=False, onerror=None)
+                sleep(1)
+            os.makedirs(self.path)
+            with ZipFile(BytesIO(reply.raw_data)) as zf:
+                zf.extractall(self.path)
+            self._success()
+        except PermissionError as e:
+            self.on_error(str(e))
 
 
 

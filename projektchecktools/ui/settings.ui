@@ -158,6 +158,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="download_button">
+       <property name="toolTip">
+        <string>Ersetzt (falls vorhanden) die alten Basisdaten im angegebenen Ordner durch die neuesten verfügbaren. &lt;br&gt;&lt;b&gt; Es wird empfohlen diese Funktion ohne geöffnete Projekt-Check-Projekte durchzuführen.&lt;/b&gt;</string>
+       </property>
        <property name="text">
         <string>jetzt herunterladen</string>
        </property>

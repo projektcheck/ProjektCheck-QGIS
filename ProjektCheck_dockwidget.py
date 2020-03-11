@@ -53,6 +53,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                         'Wollen Sie jetzt zu den Einstellungen wechseln?',
                          QMessageBox.Yes, QMessageBox.No)
                     if reply == QMessageBox.Yes:
+                        self.ui.project_combo.setCurrentIndex(0)
                         self.show_settings()
                         return
             self.change_project(project)
@@ -62,9 +63,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.setup_projects()
 
     def show_settings(self):
-        settings_dialog = SettingsDialog()
+        settings_dialog = SettingsDialog(self)
         confirmed = settings_dialog.exec()
         if confirmed:
+            self.project_manager.load_basedata()
             self.setup_projects()
 
     def create_project(self):
@@ -272,6 +274,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         status, msg = self.project_manager.check_basedata()
         if status == 0:
             QMessageBox.warning(self.ui, 'Hinweis', msg)
+            self.ui.project_combo.setCurrentIndex(0)
             return
         if not project:
             self.ui.domain_button.setEnabled(False)
@@ -355,6 +358,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         for ws in Workspace.get_instances():
             if not ws.database.read_only:
                 ws.close()
+        self.canvas.refreshAllLayers()
 
     def unload(self):
         print('unloading Projekt-Check')
