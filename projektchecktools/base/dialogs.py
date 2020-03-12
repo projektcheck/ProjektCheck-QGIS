@@ -400,6 +400,7 @@ class DownloadDialog(ProgressDialog):
 
         self.show_status('Starte Download von')
         self.show_status(self.url)
+        self.start_timer()
         try:
             request = Request(synchronous=False)
             request.progress.connect(self.progress)

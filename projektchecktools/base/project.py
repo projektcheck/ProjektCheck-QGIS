@@ -232,12 +232,10 @@ class ProjectManager:
         if not current_v:
             return 0, 'Es wurden keine lokalen Basisdaten gefunden'
         if current_v['version'] < version_server['version']:
-            return 1, (f'Eine neuere Version (v{version_server["version"]}, '
-                       f'Stand: {version_server["date"]}) '
-                       f'ist verfügbar (lokal: v{current_v["version"]}, '
-                       f'{current_v["date"]})')
+            return 1, (f'Neue Basisdaten (Stand: {version_server["date"]}) '
+                       f'sind verfügbar (lokaler Stand: {current_v["date"]})')
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
-                   f'(v{current_v["version"]}, {current_v["date"]})')
+                   f'({current_v["date"]})')
 
     def set_local_version(self, version, path=None):
         path = path or self.settings.basedata_path
