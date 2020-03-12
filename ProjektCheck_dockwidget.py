@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import subprocess
 from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProject
@@ -31,23 +30,49 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.active_dockwidget = None
         self.project_definitions = None
 
-        settings_dialog = SettingsDialog(self.settings.project_path)
-        def set_project_path(path):
-            if not path:
-                return
-            self.settings.project_path = path
-            self.setup_projects()
-        self.ui.settings_button.clicked.connect(
-            lambda: set_project_path(settings_dialog.show()))
+        self.ui.settings_button.clicked.connect(self.show_settings)
 
         self.ui.create_project_button.clicked.connect(self.create_project)
         self.ui.remove_project_button.clicked.connect(self.remove_project)
         self.ui.clone_project_button.clicked.connect(self.clone_project)
 
         self.setup_help()
+
+        self.ui.project_combo.currentIndexChanged.connect(
+            lambda index: self.change_project(
+                self.ui.project_combo.itemData(index)))
+
         self.setup_projects()
 
+    def show(self):
+        super().show()
+        valid, msg = self.project_manager.check_basedata()
+        # base data not up to date
+        if valid != 2:
+            reply = QMessageBox.question(
+                self.ui, 'Basisdaten aktualisieren',
+                f'{msg}\n\n'
+                'Möchten Sie die Basisdaten jetzt herunterladen? '
+                '(Alternativ können Sie sie auch in den Projekt-'
+                'Check-Einstellungen herunterladen.)',
+                 QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                settings = SettingsDialog(self)
+                settings.download_basedata()
+
+    def show_settings(self):
+        settings_dialog = SettingsDialog(self)
+        confirmed = settings_dialog.exec()
+        if confirmed:
+            self.project_manager.load_basedata()
+            self.setup_projects()
+
     def create_project(self):
+        status, msg = self.project_manager.check_basedata()
+        if status == 0:
+            QMessageBox.warning(self.ui, 'Hinweis', msg)
+            self.ui.project_combo.setCurrentIndex(0)
+            return
         dialog = NewProjectDialog()
         ok, name, layer = dialog.show()
 
@@ -130,7 +155,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             # the layers as long they are visible
             def on_refresh():
                 self.project_manager.remove_project(project)
-                self.project_manager.active_project = ''
+                self.project_manager.active_project = None
                 self.canvas.mapCanvasRefreshed.disconnect(on_refresh)
             self.canvas.mapCanvasRefreshed.connect(on_refresh)
             self.canvas.refreshAllLayers()
@@ -140,19 +165,18 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
+        self.ui.project_combo.blockSignals(True)
         self.ui.project_combo.clear()
         self.ui.project_combo.addItem('Projekt wählen')
         self.ui.project_combo.model().item(0).setEnabled(False)
         self.ui.domain_button.setEnabled(False)
         self.ui.definition_button.setEnabled(False)
+        self.project_manager.reset_projects()
         for project in self.project_manager.projects:
             if project.name == '__test__':
                 continue
             self.ui.project_combo.addItem(project.name, project)
-        self.ui.project_combo.currentIndexChanged.connect(
-            lambda index: self.change_project(
-                self.ui.project_combo.itemData(index))
-        )
+        self.ui.project_combo.blockSignals(False)
 
     def setup_definitions(self):
         '''setup project definitions widget'''
@@ -254,6 +278,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.ui.domain_button.setEnabled(False)
             self.ui.definition_button.setEnabled(False)
             return
+        status, msg = self.project_manager.check_basedata()
+        if status == 0:
+            QMessageBox.warning(self.ui, 'Hinweis', msg)
+            self.ui.project_combo.setCurrentIndex(0)
+            return
         try:
             if getattr(self, 'project_definitions', None):
                 self.project_definitions.unload()
@@ -310,23 +339,15 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             message.exec_()
 
     def close(self):
+        self.close_all_projects()
+        super().close()
+
+    def close_all_projects(self):
         if getattr(self, 'project_definitions', None):
             self.project_definitions.close()
         if getattr(self, 'domains', None):
             for domain in self.domains:
                 domain.close()
-        super().close()
-
-    def unload(self):
-        print('unloading Projekt-Check')
-        self.close()
-        if getattr(self, 'project_definitions', None):
-            self.project_definitions.unload()
-            del(self.project_definitions)
-        if getattr(self, 'domains', None):
-            for domain in self.domains:
-                domain.unload()
-                del(domain)
         qgisproject = QgsProject.instance()
         layer_root = qgisproject.layerTreeRoot()
         # remove all project layers from layer tree
@@ -340,4 +361,16 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         for ws in Workspace.get_instances():
             if not ws.database.read_only:
                 ws.close()
+        self.canvas.refreshAllLayers()
+
+    def unload(self):
+        print('unloading Projekt-Check')
+        self.close()
+        if getattr(self, 'project_definitions', None):
+            self.project_definitions.unload()
+            del(self.project_definitions)
+        if getattr(self, 'domains', None):
+            for domain in self.domains:
+                domain.unload()
+                del(domain)
         super().unload()

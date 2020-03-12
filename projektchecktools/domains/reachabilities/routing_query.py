@@ -11,7 +11,7 @@ from projektchecktools.domains.definitions.tables import Projektrahmendaten
 from settings import settings
 from projektchecktools.utils.connection import Request
 
-requests = Request()
+requests = Request(synchronous=True)
 
 
 class RoutingQuery:

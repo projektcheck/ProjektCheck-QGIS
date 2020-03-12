@@ -18,7 +18,7 @@ from projektchecktools.domains.reachabilities.tables import (Haltestellen,
 from projektchecktools.utils.spatial import points_within, Point
 from settings import settings
 
-requests = Request()
+requests = Request(synchronous=True)
 
 
 class Stop(Point):
@@ -234,6 +234,7 @@ class StopScraper(Worker):
 
     def __init__(self, project, date=None, parent=None):
         super().__init__(parent=parent)
+        self.project = project
         self.haltestellen = Haltestellen.features(create=True, project=project)
         self.zentrale_orte = ZentraleOrte.features(create=True, project=project)
         self.project_frame = Projektrahmendaten.features(project=project)[0]
@@ -259,7 +260,7 @@ class StopScraper(Worker):
         self.zentrale_orte.delete()
 
         centroid = self.project_frame.geom.asPoint()
-        df_central = settings.BASEDATA.get_table(
+        df_central = self.project.basedata.get_table(
             'Zentrale_Orte', 'Basisdaten_deutschland').to_pandas()
         df_oz = df_central[df_central['OZ'] == 1]
         df_mz = df_central[df_central['OZ'] == 0]

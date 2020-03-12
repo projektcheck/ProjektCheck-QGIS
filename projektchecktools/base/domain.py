@@ -1,4 +1,4 @@
-from qgis.PyQt import QtGui, QtWidgets, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject, QThread
 from qgis import utils
 import os
@@ -186,6 +186,7 @@ class Worker(QThread):
         '''
         runs code defined in self.work
         emits self.finished on success and self.error on exception
+        override this function if you make asynchronous calls
 
         Parameters
         ----------

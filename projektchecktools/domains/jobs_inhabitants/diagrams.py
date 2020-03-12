@@ -2,15 +2,14 @@
 import numpy as np
 import matplotlib
 matplotlib.use('agg')
-import matplotlib.ticker as mticker
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from projektchecktools.base.diagrams import MatplotDiagram
+from projektchecktools.base.project import ProjectManager
 from projektchecktools.domains.definitions.tables import Gewerbeanteile
 from projektchecktools.domains.jobs_inhabitants.tables import (WohnenProJahr,
                                                                ApProJahr)
-from settings import settings
 
 
 class BewohnerEntwicklung(MatplotDiagram):
@@ -73,7 +72,7 @@ class BranchenAnteile(MatplotDiagram):
         features = Gewerbeanteile.features().filter(id_teilflaeche=area.id)
         df = features.to_pandas()
 
-        basedata = settings.BASEDATA
+        basedata = ProjectManager().basedata
         df_branchen = basedata.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt'
         ).to_pandas()

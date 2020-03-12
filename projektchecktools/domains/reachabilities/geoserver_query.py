@@ -5,7 +5,7 @@ from settings import settings
 from projektchecktools.utils.spatial import Point
 from projektchecktools.utils.connection import Request
 
-requests = Request()
+requests = Request(synchronous=True)
 
 
 class Feature(Point):

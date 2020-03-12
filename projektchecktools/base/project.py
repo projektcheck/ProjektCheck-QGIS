@@ -9,6 +9,7 @@ from projektchecktools.utils.singleton import Singleton
 from projektchecktools.base.database import Field
 from projektchecktools.base.geopackage import Geopackage
 from projektchecktools.base.layers import Layer, TileLayer
+from projektchecktools.utils.connection import Request
 
 if sys.platform in ['win32', 'win64']:
     p = os.getenv('LOCALAPPDATA')
@@ -19,7 +20,9 @@ APPDATA_PATH = os.path.join(p, 'Projekt-Check-QGIS')
 
 DEFAULT_SETTINGS = {
     'active_project': u'',
-    'project_path': os.path.join(APPDATA_PATH, 'Projekte')
+    'project_path': os.path.join(APPDATA_PATH, 'Projekte'),
+    'basedata_path': os.path.join(APPDATA_PATH, 'Basisdaten'),
+    'check_data_on_start': True
 }
 
 
@@ -131,6 +134,7 @@ class Settings:
     def __repr__(self):
         ret = ['{} - {}'.format(k, str(v)) for k, v in self.__dict__.items()
                if not callable(v) and not k.startswith('_')]
+        ret.extend([f'{v} - {k}' for k, v in self._settings.items()])
         return '\n'.join(ret)
 
     def __contains__(self, item):
@@ -162,11 +166,12 @@ class Project:
 
     @property
     def basedata(self):
-        return self.settings.BASEDATA
+        return ProjectManager().basedata
 
     def remove(self):
         self.close()
-        shutil.rmtree(self.path)
+        if os.path.exists(self.path):
+            shutil.rmtree(self.path)
 
     def close(self):
         pass
@@ -189,7 +194,7 @@ class ProjectManager:
     __metaclass__ = Singleton
     _projects = {}
     settings = settings
-    _required_settings = ['BASEDATA', 'EPSG']
+    _required_settings = ['BASEDATA_URL', 'EPSG']
 
     def __init__(self):
         # check settings
@@ -199,25 +204,92 @@ class ProjectManager:
                 missing.append(required)
         if missing:
             raise Exception(f'{missing} have to be set')
-
+        self.basedata = None
         self.load()
 
     def load(self):
         '''
         load settings and projects
         '''
-        if settings.project_path:
-            project_path = settings.project_path
+        success = self.load_basedata()
+        if not success:
+            raise FileNotFoundError('basedata not found')
+        if self.settings.project_path:
+            project_path = self.settings.project_path
             if project_path and not os.path.exists(project_path):
                 try:
                     os.makedirs(project_path)
                 except:
                     pass
             if not os.path.exists(project_path):
-                settings.project_path = project_path = ''
-        for name in self._get_projects():
-            project = Project(name)
-            self._projects[project.name] = project
+                self.settings.project_path = project_path = ''
+        self.reset_projects()
+
+    def check_basedata(self, path=None):
+        # ToDo: check if all files are there
+        version_server = self.server_version()
+        current_v = self.local_version(path or self.settings.basedata_path)
+        if not current_v:
+            return 0, 'Es wurden keine lokalen Basisdaten gefunden'
+        if current_v['version'] < version_server['version']:
+            return 1, (f'Neue Basisdaten (Stand: {version_server["date"]}) '
+                       f'sind verfügbar (lokaler Stand: {current_v["date"]})')
+        return 2, ('Die Basisdaten sind auf dem neuesten Stand '
+                   f'({current_v["date"]})')
+
+    def set_local_version(self, version, path=None):
+        path = path or self.settings.basedata_path
+        if not os.path.exists(path):
+            os.makedirs(path)
+        fp = os.path.join(path, 'basedata.json')
+        with open(fp, 'w') as f:
+            json.dump(version, f, indent=4, separators=(',', ': '))
+
+    def local_version(self, path):
+        if not os.path.exists(path):
+            return
+        fp = os.path.join(path, 'basedata.json')
+        if not os.path.exists(fp):
+            return
+        try:
+            with open(fp, 'r') as f:
+                ret = json.load(f)
+        except:
+            return None
+        return ret
+
+    def server_version(self):
+        request = Request(synchronous=True)
+        try:
+            res = request.get(f'{settings.BASEDATA_URL}/basedata.json')
+        except ConnectionError:
+            # ToDo: handle error
+            return
+        if res.status_code != 200:
+            return
+        return res.json()
+
+    @property
+    def _v_basedata(self):
+        # return date and version from file
+        return self._local_version(self.settings.basedata_path)
+
+    @_v_basedata.setter
+    def _v_basedata(self, attr):
+        # ToDo: set version in file
+        pass
+
+    def load_basedata(self):
+        self.basedata = None
+        base_path = self.settings.basedata_path
+        if not os.path.exists:
+            return False
+        self.basedata = Geopackage(
+            base_path=base_path,
+            read_only=True)
+        # ToDo: remove basedata from settings (still there out of convenience)
+        self.settings.BASEDATA = self.basedata
+        return True
 
     def create_project(self, name, create_folder=True):
         '''
@@ -228,9 +300,9 @@ class ProjectManager:
         name : str
             name of the project
         '''
-        if not settings.project_path:
+        if not self.settings.project_path:
             return
-        target_folder = os.path.join(settings.project_path, name)
+        target_folder = os.path.join(self.settings.project_path, name)
         project = Project(name)
         self._projects[project.name] = project
         #shutil.copytree(os.path.join(settings.TEMPLATE_PATH, 'project'),
@@ -244,10 +316,11 @@ class ProjectManager:
         if isinstance(project, str):
             project = self._projects[project]
         project.remove()
-        del self._projects[project.name]
+        if project.name in self._projects:
+            del(self._projects[project.name])
 
     def _get_projects(self):
-        base_path = settings.project_path
+        base_path = self.settings.project_path
         if not os.path.exists(base_path):
             return []
         project_folders = [f for f in os.listdir(base_path)
@@ -258,9 +331,11 @@ class ProjectManager:
     def projects(self):
         return list(self._projects.values())
 
-    @property
-    def basedata(self):
-        return self.settings.BASEDATA
+    def reset_projects(self):
+        self._projects = {}
+        for name in self._get_projects():
+            project = Project(name)
+            self._projects[project.name] = project
 
     @property
     def active_project(self):
@@ -270,6 +345,8 @@ class ProjectManager:
 
     @active_project.setter
     def active_project(self, project):
+        if project and project.name not in self._projects:
+            self._projects[project.name] = project
         self.settings.active_project = project.name if project else ''
 
 
