@@ -62,10 +62,14 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
     def show_settings(self):
         settings_dialog = SettingsDialog(self)
+        prev_path = self.settings.project_path
         confirmed = settings_dialog.exec()
         if confirmed:
             self.project_manager.load_basedata()
-            self.setup_projects()
+            if prev_path != self.settings.project_path:
+                if self.active_dockwidget:
+                    self.active_dockwidget.close()
+                self.setup_projects()
 
     def create_project(self):
         status, msg = self.project_manager.check_basedata()
