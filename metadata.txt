@@ -11,7 +11,7 @@ name=Projekt-Check
 qgisMinimumVersion=3.0
 description=Projekt-Check Profi
 version=0.5
-author=GGR
+author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
 email=franke@ggr-planung.de
 
 about=Mit Projekt-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.

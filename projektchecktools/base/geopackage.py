@@ -1,18 +1,43 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    geopackage.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+'''
+
+'''
+geopackage database implementing the database interface
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import os
 from osgeo import ogr, osr
 from qgis.core import QgsGeometry
 import pandas as pd
 from typing import Union
 from collections import OrderedDict
-import shutil
 import numpy as np
 import datetime
 
-from projektchecktools.base.database import (Database, Table, Workspace, Feature,
-                                        Field, FeatureCollection)
+from projektchecktools.base.database import Database, Table, Workspace, Field
 
 driver = ogr.GetDriverByName('GPKG')
 
+# available datatypes (<python base type> : <ogr data type>)
 DATATYPES = {
     int: ogr.OFTInteger64,
     bool: ogr.OFTInteger,
@@ -23,7 +48,29 @@ DATATYPES = {
 
 
 class GeopackageWorkspace(Workspace):
-    def __init__(self, name, database):
+    '''
+    manages the connection to a tables in a geopackage file
+
+    Attributes
+    ----------
+    conn : DataSource
+        ogr connection to geopackage file
+    tables : list
+        names of available tables in workspace
+    wkb_types : list
+        names of available ogr geometry types
+    '''
+    def __init__(self, name: str, database):
+        '''
+        Parameters
+        ----------
+        name : str
+            name of workspace, equals geopackage file name without
+            ".gpkg" extension
+        database : Geopackage
+            the database the workspace is in, base path of database allocates
+            path of geopackage file
+        '''
         super().__init__(name, database)
         self.path = self._fn(database, name)
         if not name:
@@ -34,6 +81,7 @@ class GeopackageWorkspace(Workspace):
 
     @property
     def conn(self):
+        ''' ogr connection '''
         if not(self._conn):
             self._conn = ogr.Open(
                 self.path, 0 if self.database.read_only else 1)
@@ -41,6 +89,9 @@ class GeopackageWorkspace(Workspace):
 
     @staticmethod
     def _fn(database, name):
+        '''
+        path to geopackage file (incl. file name and ".gpkg" extension)
+        '''
         fn = os.path.join(database.base_path, name).rstrip('\\')
         if not fn.endswith('.gpkg'):
             fn += '.gpkg'
@@ -48,6 +99,19 @@ class GeopackageWorkspace(Workspace):
 
     @classmethod
     def get_or_create(cls, name, database):
+        '''
+        get workspace in database, create it if not existing (creates also the
+        geopackage file with same name + "gpkg" extension)
+
+        Parameters
+        ----------
+        name : str
+            name of workspace
+
+        Returns
+        -------
+        GeopackageWorkspace
+        '''
         path = cls._fn(database, name)
         if not os.path.exists(path):
             if database.read_only:
@@ -57,6 +121,21 @@ class GeopackageWorkspace(Workspace):
 
     @classmethod
     def create(cls, name, database, overwrite=False):
+        '''
+        create workspace in database, creates the geopackage file name +
+        "gpkg" extension in base path of database
+
+        Parameters
+        ----------
+        name : str
+            name of workspace
+        database : Geopackage
+            the database to put the workspace in
+
+        Returns
+        -------
+        GeopackageWorkspace
+        '''
         path = cls._fn(database, name)
         if overwrite and os.path.exists(path):
             os.remove(path)
@@ -65,10 +144,26 @@ class GeopackageWorkspace(Workspace):
 
     @property
     def tables(self):
+        ''' available tables '''
         tables = [l.GetName() for l in self.conn]
         return tables
 
     def get_table(self, name: str, field_names: list=None):
+        '''
+        get table from workspace
+
+        Parameters
+        ----------
+        name : str
+            name of table
+        field_names : list, optional
+            names of fields to show in table, others will be hidden,
+            defaults to show all fields
+
+        Returns
+        -------
+        GeopackageTable
+        '''
         if name not in self.tables:
             raise FileNotFoundError(f'layer {name} not found')
         return GeopackageTable(name, self, field_names=field_names)
@@ -76,8 +171,29 @@ class GeopackageWorkspace(Workspace):
     def create_table(self, name: str, fields: dict, geometry_type: str=None,
                      overwrite: bool=False, defaults={}, epsg=None):
         '''
+        creates table in workspace (geopackage)
+
+        Parameters
+        ----------
+        name : str
+            table name
+        fields : dict
+            dictionary of Fields in table with field names as keys and basic
+            data types as values
+        defaults : dict, optional
+            default values for given fields with field names as keys and
+            default values as values
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
+        epsg : int, optional
+            epsg code, defaults to None
+            sets srs of geometry field in geopackage table
+        overwrite : bool
+            True - overwrites file if already exists
+
+        Returns
+        -------
+        GeopackageTable
         '''
         if overwrite and name in self.tables:
             self.conn.DeleteLayer(name)
@@ -111,12 +227,16 @@ class GeopackageWorkspace(Workspace):
 
     @property
     def wkb_types(self):
+        ''' ogr geometry types '''
         return [a for a in ogr.__dict__.keys() if a.startswith('wkb')]
 
     def __repr__(self):
         return f"GeopackageWorkspace {self.name} {self.path}"
 
     def close(self):
+        '''
+        close ogr connection to geopackage file
+        '''
         #self._conn.Destroy()
         del(self._conn)
         self._conn = None
@@ -124,18 +244,42 @@ class GeopackageWorkspace(Workspace):
 
 
 class GeopackageTable(Table):
-    id_field = 'fid'
-    geom_field = 'geom'
+    '''
+    iterable table connected to a geopackage table
+
+    Attributes
+    ----------
+    filters : dict
+        active field filters
+    where : str
+        active ogr filter string
+    '''
+    id_field = 'fid' # ogr default feature id field name
+    geom_field = 'geom' # ogr default geometry field name
 
     def __init__(self, name, workspace: GeopackageWorkspace,
                  field_names: list=None, filters: dict={}):
+        '''
+        Parameters
+        ----------
+        name : str
+            name of table
+        workspace : GeopackageWorkspace
+            workspace (=geopackage file) the table is in
+        field_names : list, optional
+            names of fields to show in table, others will be hidden,
+            defaults to show all fields
+        filters : dict, optional
+            field filters, field name as key and value to match or
+            field filter names as key (Django-style) and values to match
+        '''
         self.workspace = workspace
         self.name = name
         self._where = ''
         self._layer = self.workspace.conn.GetLayerByName(self.name)
         if self._layer is None:
             raise ConnectionError(f'layer {self.name} not found')
-        # reset filters (ogr remembers it even on new connecion)
+        # reset filters (ogr remembers them even on new connecion)
         self.reset()
         if field_names:
             self.field_names = list(field_names)
@@ -147,11 +291,20 @@ class GeopackageTable(Table):
         self.filter(**filters)
 
     def copy(self):
+        '''
+        copies this table, uses same ogr connection (via workspace)
+
+        Returns
+        -------
+        GeopackageTable
+        '''
         return GeopackageTable(self.name, self.workspace,
                                field_names=self.field_names,
                                filters=self._filters)
 
     def _ogr_feat_to_row(self, feat):
+        ''' ogr feature to table row (dict with field names as keys and field
+        values as values) '''
         if self.field_names is not None:
             items = OrderedDict([(f, feat[f]) for f in self.field_names
                                  if hasattr(feat, f)])
@@ -190,18 +343,51 @@ class GeopackageTable(Table):
                 return self._ogr_feat_to_row(feat)
 
     def reset(self):
+        '''
+        reset the filters (-> no filters)
+        '''
         self._filters = {}
         self.where = ''
         self.spatial_filter()
 
     def reset_cursor(self):
+        '''
+        reset the iterating cursor
+        '''
         self._layer.ResetReading()
         self._cursor = None
 
     def filter(self, **kwargs):
         '''
-        filtering django style
-        supported: __in, __gt, __lt, __ne
+        filter this table with given filters. If this table is
+        already filtered, the filters are applied on top (AND-linked)
+
+        Parameters
+        ----------
+        **kwargs
+            field filters, field name as key and value to match or
+            field filter names as key (Django-style) and values to match;
+            if multiple filters are passed every single one has to match
+            (AND-linked);
+
+            available filters:
+                <field-name>__in : list
+                    values of field have to match any value in the list
+                <field-name>__gt : object
+                    values of field have to be greater than value
+                <field-name>__lt : object
+                    values of field have to be less than value
+                <field-name>__ne : object
+                    values of field has to be not equal to value
+
+            e.g. table.filter(name='Thomas Müller')
+            table.filter(name__in=['Thomas Müller', 'Hans Müller'])
+            table.filter(income__gt=60000, age__lt=65)
+
+        Returns
+        -------
+        GeopackageTable
+            filtered table
         '''
         # ToDo: more filters
         terms = []
@@ -249,16 +435,29 @@ class GeopackageTable(Table):
         self.where = where
 
     def spatial_filter(self, wkt=None):
+        '''
+        sets spatial filter, features that do not geometrically intersect
+        the filter geometry will be filtered out
+
+        Parameters
+        ----------
+        wkt : str, optional
+            geometry as well known text, the features intersecting the geometry
+            remain, defaults to None (-> no spatial filtering)
+
+        '''
         if wkt is not None:
             wkt = ogr.CreateGeometryFromWkt(wkt)
         self._layer.SetSpatialFilter(wkt)
 
     @property
     def filters(self):
+        ''' active filters '''
         return self._filters
 
     @property
     def where(self):
+        ''' active ogr filter string '''
         return self._where
 
     @where.setter
@@ -269,6 +468,21 @@ class GeopackageTable(Table):
         self._layer.SetAttributeFilter(value)
 
     def fields(self, cached=True):
+        '''
+        all table fields with their types and defaults
+
+        Parameters
+        ----------
+        cached : bool, optional
+            defaults to True
+            True - cached fields if queried before (may not be up to date)
+            False - up to date fields
+
+        Returns
+        -------
+        list
+            list of Field objects
+        '''
         if cached and getattr(self, '_fields', None):
             return self._fields
         definition = self._layer.GetLayerDefn()
@@ -293,6 +507,25 @@ class GeopackageTable(Table):
         return fields
 
     def add(self, **kwargs):
+        '''
+        add a new row to the table, sets id if "fid" is passed
+
+        Parameters
+        ----------
+        **kwargs
+            field values, field name as key and value of field as value
+            e.g. table.add(name='Thomas Müller')
+
+        Returns
+        -------
+        dict
+            added row with field names as keys, field values as values
+
+        Raises
+        ------
+        Exception
+            ogr error code while creating
+        '''
         geom = kwargs.pop(self.geom_field, None)
         id = kwargs.pop(self.id_field, None)
         feature = ogr.Feature(self._layer.GetLayerDefn())
@@ -318,8 +551,12 @@ class GeopackageTable(Table):
 
     def add_field(self, field):
         '''
-        add field to table
-        creates if not existing
+        add a field to the table, will be created if not existing
+
+        Parameters
+        ----------
+        field : Field
+            the field to add
         '''
         dt = DATATYPES[field.datatype]
         name = field.name
@@ -345,9 +582,21 @@ class GeopackageTable(Table):
         # self.field_names.append(name)
 
     def delete(self, id):
+        '''
+        delete row with given id
+        '''
         self._layer.DeleteFeature(id)
 
     def set(self, id, **kwargs):
+        '''
+        sets given values to fields of row with given id
+
+        Returns
+        -------
+        bool
+            True - successful set
+            False - row with id not found
+        '''
         feature = self._layer.GetFeature(id)
         if not feature:
             return False
@@ -361,11 +610,34 @@ class GeopackageTable(Table):
         return True
 
     def get(self, id):
+        '''
+        get row by id
+
+        Returns
+        -------
+        dict
+            field names as keys, field values as values
+        '''
+
         feat = self._layer.GetFeature(id)
         return self._ogr_feat_to_row(feat)
 
     def delete_rows(self, **kwargs):
-        '''warning: resets cursor'''
+        '''
+        deletes rows matching given filters (in addition to already existing
+        filters)
+
+        Parameters
+        ----------
+        **kwargs
+             field filters, field name as key and value to match or
+            field filter names as key (Django-style) and values to match
+
+        Returns
+        -------
+        int
+            number of deleted rows
+        '''
         prev_where = self.where
         self.filter(**kwargs)
         i = 0
@@ -376,6 +648,14 @@ class GeopackageTable(Table):
         return i
 
     def update_cursor(self, row: Union[dict, list]):
+        '''
+        update field values of current cursor position (while iterating)
+
+        Parameters
+        ----------
+        row : dict or list
+            dict - field names as keys and new values as values
+        '''
         if isinstance(row, list):
             row = dict(zip(self.field_names, row))
         for field_name, value in row.items():
@@ -390,6 +670,15 @@ class GeopackageTable(Table):
         self._layer.SetFeature(self._cursor)
 
     def to_pandas(self):
+        '''
+        pandas representation of this (filtered) table
+
+        Returns
+        -------
+        Dataframe
+            pandas dataframe containing the (filtered) table rows and
+            fields as columns
+        '''
         rows = []
         for row in self:
             rows.append(row)
@@ -399,13 +688,18 @@ class GeopackageTable(Table):
 
     def update_pandas(self, dataframe, pkeys=None):
         '''
-        pkeys passed: looks for existing entry
-        defaults to id if no pkeys given (id field is 'fid' by default)
+        updates table with data in given dataframe. columns of dataframe
+        should match the field names, otherwise they will be ignored.
+        Rows matching existing rows in the database (identified by the passed
+        pkeys or the column named like the database id field by default)
+        will be updated
 
-        rows with no match will be added to table
-        rows with matching pkeys (or id) will be updated (all fields overwritten
-        with column values)
-
+        Parameters
+        ----------
+        dataframe : Dataframe
+            pandas dataframe to add to the database
+        pkeys : list, optional
+            list of strings with column names used as primary keys
         '''
         def isnan(v):
             if isinstance(v, (np.integer, np.floating, float)):
@@ -456,22 +750,74 @@ class GeopackageTable(Table):
 
 class Geopackage(Database):
     '''
-    manages the connection to a geopackage db (file)
+    manages the connection to geopackage files in a specific folder (base path)
+
+    Attributes
+    ----------
+    read_only : bool
+        flag for write access to the database and its workspaces
+        (write access only if False)
+    base_path : str
+        path to geopackage file(s)
+    workspaces : list
+        names of available workspaces (=geopackages) in base path
     '''
     def __init__(self, base_path: str = '.', read_only: bool = False):
-        super().__init__()
+        '''
+        Parameters
+        ----------
+        read_only : bool
+            flag for write access to the database and its workspaces
+            (write access only if False)
+        base_path : str
+            path to geopackage file(s)
+        '''
         self.base_path = base_path
         self.read_only = read_only
         self._workspaces = {}
 
     def create_workspace(self, name, overwrite=False):
+        '''
+        create a workspace, creates a file with the given name
+        (file extension ".gpkg" will be added) in the configured base path
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace (file name without ".gpkg" extension)
+        overwrite : bool
+            True - overwrites file if already exists
+
+        Returns
+        -------
+        GeopackageWorkspace
+            the new workspace linking to the created file
+
+        Raises
+        ------
+        PermissionError
+            if database is flagged as read only
+        '''
         if self.read_only:
-            raise ('database is read-only')
+            raise PermissionError('database is read-only')
         workspace = GeopackageWorkspace.create(name, self, overwrite=overwrite)
         self._workspaces[name] = workspace
         return workspace
 
     def remove_workspace(self, name):
+        '''
+        remove the workspace and the file it links to
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace (file name without ".gpkg" extension)
+
+        Raises
+        ------
+        PermissionError
+            if database is flagged as read only
+        '''
         if self.read_only:
             raise PermissionError('database is read-only')
         if not name.endswith('.gpkg'):
@@ -481,12 +827,48 @@ class Geopackage(Database):
         os.remove(os.path.join(self.base_path, name))
 
     def get_table(self, name: str, workspace: str = '', fields=None):
+        '''
+        get table from database
+
+        Parameters
+        ----------
+        name : str
+            table name
+        workspace : str, optional
+            name of workspace (file name without extension),
+            by default no workspace
+
+        Returns
+        -------
+        GeopackageTable
+            the table
+        '''
         if not workspace:
             raise Exception('Geopackage backend does not support '
                             'tables without workspaces')
         return self.get_workspace(workspace).get_table(name, field_names=fields)
 
     def get_or_create_workspace(self, name):
+        '''
+        get workspace by name, if it not exists it will be created (including
+        file with same name with ".gpkg" extension in the base path)
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace
+
+        Returns
+        -------
+        Workspace
+            the workspace with given name
+
+        Raises
+        ------
+        PermissionError
+            if database is flagged as read only and workspace is not existing
+            yet
+        '''
         if name in self._workspaces:
             return self._workspaces[name]
         workspace = GeopackageWorkspace.get_or_create(name, self)
@@ -494,6 +876,20 @@ class Geopackage(Database):
         return workspace
 
     def get_workspace(self, name):
+        '''
+        get workspace by name, workspace links to geopackage file with same
+        name (".gpkg" file extension)
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace (file name without extension)
+
+        Returns
+        -------
+        GeopackageWorkspace
+            workspace with given name
+        '''
         if name in self._workspaces:
             workspace = self._workspaces[name]
         else:
@@ -503,6 +899,7 @@ class Geopackage(Database):
 
     @property
     def workspaces(self):
+        ''' names of available workspaces'''
         workspaces = [f.rstrip('.gpkg') for f in os.listdir(self.base_path)
                       if os.path.isfile(os.path.join(self.base_path, f)) and
                       f.endswith('.gpkg')]
@@ -512,5 +909,8 @@ class Geopackage(Database):
         return f"Geopackage {self.base_path}"
 
     def close(self):
+        '''
+        closes all open workspaces
+        '''
         for workspace in self._workspaces:
             workspace.close()

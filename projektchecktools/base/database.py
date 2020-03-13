@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+'''
 ***************************************************************************
     database.py
     ---------------------
@@ -8,20 +8,21 @@
     Email                : franke at ggr-planung dot de
 ***************************************************************************
 *                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
+*   This program is free software: you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
 *   the Free Software Foundation; either version 3 of the License, or     *
 *   (at your option) any later version.                                   *
 *                                                                         *
 ***************************************************************************
-"""
+'''
 
-"""
+'''
 generic database interface and features using this interface
-"""
+'''
+
 __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
-__copyright__ = 'Copyright 2019, Projekt-Check'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 from abc import ABC
 from typing import Union
@@ -282,6 +283,11 @@ class FeatureCollection:
     def fields(self):
         '''
         available fields for each feature
+
+        Returns
+        -------
+        list
+            list of Field objects
         '''
         return self.table.fields()
 
@@ -386,51 +392,150 @@ class Database(ABC):
     abstract class for managing connection to a database
     '''
 
-    def __init__(self):
-        pass
+    def __init__(self, read_only: bool = False):
+        '''
+        Parameters
+        ----------
+        read_only : bool
+            flag for write access to the database and its workspaces
+            (write access only if False)
+        '''
+        self.read_only = read_only
+        self._workspaces = {}
+
+    def create_workspace(self, name):
+        '''
+        create a workspace (physically)
+
+        Parameters
+        ----------
+        name : str
+
+            name of the workspace
+
+        Returns
+        -------
+        Workspace
+            the created workspace
+        '''
+        raise NotImplementedError
+
+    def remove_workspace(self, name):
+        '''
+        remove a workspace (physically)
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace
+        '''
+        raise NotImplementedError
 
     def get_table(self, name: str, workspace: str = ''):
         '''
+        get table from database
+
         Parameters
         ----------
         name : str
             table name
-        workspace : str
+        workspace : str, optional
             name of workspace (scheme or file), by default no workspace
 
         Returns
         -------
-        table : Table
-
+        Table
+            the table
         '''
         raise NotImplementedError
 
     @property
     def workspaces(self):
+        '''
+        Returns
+        -------
+        list
+            names of all available workspaces in this database
+        '''
         raise NotImplementedError
 
     def get_workspace(self, name):
+        '''
+        get workspace by name
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace
+
+        Returns
+        -------
+        Workspace
+            workspace with given name
+        '''
         raise NotImplementedError
 
-    #def __repr__(self):
-        #table_repr = '\n'.join(['   ' + str(v) for k, v in
-                                #self.workspaces.items()])
-        #return '{} {{\n{}\n}}'.format(type(self).__name__, table_repr)
+    def get_or_create_workspace(self, name):
+        '''
+        get workspace by name, if it not exists it will be created (physically)
+
+        Parameters
+        ----------
+        name : str
+            name of the workspace
+
+        Returns
+        -------
+        Workspace
+            the workspace with given name
+        '''
+
+    def close(self):
+        '''
+        close database connection
+        '''
+        raise NotImplementedError
 
 
 class Workspace:
     '''
-    abstract class for a workspace (e.g. file for file based dbs or
-    scheme in sql)
+    abstract class for a workspace (e.g. file for file based databases or
+    a scheme in a SQL database)
+
+    Attributes
+    ----------
+    tables : list
+        names of available tables in workspace
     '''
-    __refs__ = []
+    __refs__ = [] # references to all open workspaces
 
     def __init__(self, name: str, database: Database):
+        '''
+        Parameters
+        ----------
+        name : str
+            name of workspace
+        database : Database
+            the database the workspace is in
+        '''
         self.name = name
         self.database = database
+        # add reference to this workspace
         self.__refs__.append(weakref.ref(self))
 
     def get_table(self, name):
+        '''
+        get table from workspace
+
+        Parameters
+        ----------
+        name : str
+            table name
+
+        Returns
+        -------
+        Table
+        '''
         return self.database.get_table(name, self)
 
     @property
@@ -445,6 +550,7 @@ class Workspace:
                 yield inst
 
     def close(self):
+        # remove this workspace from collected workspace references
         if weakref.ref(self) in self.__refs__:
             self.__refs__.remove(weakref.ref(self))
         del(self)
@@ -453,6 +559,13 @@ class Workspace:
 class Table(ABC):
     '''
     abstract class for an iterable database table
+
+    Attributes
+    ----------
+    filters : dict
+        active field filters
+    where : str
+        active filter string (depending on database)
     '''
     # override: has to match the name of the id column
     id_field = '__id__'
@@ -489,15 +602,14 @@ class Table(ABC):
         '''
         raise NotImplementedError
 
-    @property
-    def fields(self):
+    def fields(self, cached=True):
         '''
-        override
+        all table fields with their types and defaults
 
         Returns
         -------
-        row : list of str
-            ordered field names (column names)
+        list
+            list of Field objects
         '''
         raise NotImplementedError
 
