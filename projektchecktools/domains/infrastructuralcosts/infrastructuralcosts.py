@@ -119,6 +119,8 @@ class InfrastructureDrawing:
         self.select_lines_tool.feature_picked.connect(self.line_selected)
         self.ui.remove_lines_button.clicked.connect(
             self.remove_selected_lines)
+        self.ui.remove_drawing_button.clicked.connect(
+            self.remove_drawing)
         self._tools.append(self.select_lines_tool)
 
         self.draw_point_tool = MapClickedTool(
@@ -176,7 +178,19 @@ class InfrastructureDrawing:
             return
         for qf in layer.selectedFeatures():
             feat = self.drawn_lines.get(id=qf.id())
-            feat.delete()
+            if feat:
+                feat.delete()
+        self.canvas.refreshAllLayers()
+
+    def remove_drawing(self):
+        reply = QMessageBox.question(
+            self.ui, 'Zeichnung löschen',
+            f'Sollen alle gezeichneten Linienelemente gelöscht werden?',
+            QMessageBox.Yes, QMessageBox.No
+        )
+        if reply == QMessageBox.No:
+            return
+        self.drawn_lines.delete()
         self.canvas.refreshAllLayers()
 
     def add_point(self, geom):
