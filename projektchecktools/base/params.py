@@ -77,12 +77,12 @@ class Param(QObject):
             return locale.format(self.repr_format, value)
         if isinstance(value, float):
             v_repr = locale.format("%.2f", value, grouping=True)
+        elif isinstance(value, bool):
+            v_repr = 'ja' if value == True else 'nein'
         elif isinstance(value, int):
             v_repr = f'{value:n}'
         elif value is None:
             v_repr = '-'
-        elif isinstance(value, bool):
-            v_repr = 'ja' if value == True else 'nein'
         else:
             v_repr = str(value)
         return v_repr

@@ -1,4 +1,3 @@
-from projektchecktools.base.geopackage import Geopackage
 from projektchecktools.base.project import settings
 
 import os

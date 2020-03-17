@@ -346,6 +346,10 @@ class Wohnen:
         area.we_gesamt = None
         area.save()
 
+    def close(self):
+        if hasattr(self, 'params'):
+            self.params.close()
+
 
 class Gewerbe:
     # Default Gewerbegebietstyp
@@ -606,6 +610,10 @@ class Gewerbe:
 
         area.save()
 
+    def close(self):
+        if hasattr(self, 'params'):
+            self.params.close()
+
 
 class Einzelhandel:
     def __init__(self, basedata, layout):
@@ -696,6 +704,10 @@ class Einzelhandel:
         area.wege_miv = int(n_ways_miv.sum() + n_job_miv.sum())
 
         area.save()
+
+    def close(self):
+        if hasattr(self, 'params'):
+            self.params.close()
 
 
 class ProjectDefinitions(Domain):
@@ -816,6 +828,8 @@ class ProjectDefinitions(Domain):
         self.ui.type_parameter_group.setTitle(title)
 
         clear_layout(self.ui.type_parameter_group.layout())
+        if self.typ:
+            self.typ.close()
         self.typ = self.types[self.area.nutzungsart][1]
         if self.typ is None:
             self.ui.type_parameter_group.setVisible(False)
@@ -831,4 +845,6 @@ class ProjectDefinitions(Domain):
             layer.removeSelection()
         if hasattr(self, 'params'):
             self.params.close()
+        if self.typ:
+            self.typ.close()
         super().close()
