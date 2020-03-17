@@ -409,13 +409,15 @@ class Gesamtkosten:
     def calculate_gesamtkosten(self):
         job = GesamtkostenErmitteln(self.project)
 
-        def on_close(success):
+        def on_close():
+            if not self.dialog.success:
+                return
             diagram = GesamtkostenDiagramm(project=self.project,
                                            years=GesamtkostenErmitteln.years)
             diagram.draw()
 
-        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
-        dialog.show()
+        self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
+        self.dialog.show()
 
     def setup_net_element(self, net_element_id):
         self.net_element_id = net_element_id
@@ -513,14 +515,16 @@ class Kostentraeger:
     def calculate_kostentraeger(self):
         job = KostentraegerAuswerten(self.project)
 
-        def on_close(success):
+        def on_close():
+            if not self.dialog.success:
+                return
             # the years originate from gesamtkosten calculation
             diagram = KostentraegerDiagramm(project=self.project,
                                            years=GesamtkostenErmitteln.years)
             diagram.draw()
 
-        dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
-        dialog.show()
+        self.dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
+        self.dialog.show()
 
     def setup_kostenaufteilung(self, net_id):
         self.net_id = net_id
@@ -655,8 +659,8 @@ class InfrastructuralCosts(Domain):
 
         job = GesamtkostenErmitteln(self.project)
 
-        def on_close(success):
-            if not success:
+        def on_close():
+            if not self.dialog.success:
                 return
             if types_of_use[0] == Nutzungsart.WOHNEN.value:
                 diagram = VergleichWEDiagramm(project=self.project)
@@ -664,9 +668,9 @@ class InfrastructuralCosts(Domain):
                 diagram = VergleichAPDiagramm(project=self.project)
             diagram.draw()
 
-        dialog = ProgressDialog(job, parent=self.ui, on_close=on_close,
-                                auto_close=True)
-        dialog.show()
+        self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close,
+                                     auto_close=True)
+        self.dialog.show()
 
 
     def close(self):

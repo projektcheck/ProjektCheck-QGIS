@@ -185,13 +185,13 @@ class ProgressDialog(Dialog):
             self.run()
 
     def _success(self, result=None):
-        self._finished()
         self.progress(100)
         self.show_status('<br><b>fertig</b>')
         if not self.error:
             self.success = True
             if self.on_success:
                 self.on_success(result)
+        self._finished()
 
     def _finished(self):
         #self.worker.deleteLater()
