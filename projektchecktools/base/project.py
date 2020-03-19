@@ -226,8 +226,22 @@ class ProjectManager:
         self.reset_projects()
 
     def check_basedata(self, path=None):
+        '''
+        -1 - connection error
+        0 - no local data
+        1 - local data outdated
+        2 - local data up to date
+        '''
         # ToDo: check if all files are there
-        version_server = self.server_version()
+        try:
+            version_server = self.server_version()
+        except ConnectionError:
+            return -1, ('Der Server mit den Basisdaten ist nicht verfügbar.\n\n'
+                        'Möglicherweise hat sich die URL des Servers geändert. '
+                        'Bitte prüfen Sie, ob eine neue Projekt-Check-Version '
+                        'im QGIS-Pluginmanager verfügbar ist.'
+        #'Ist dies nicht der Fall, wenden Sie sich bitte an das ILS (oder so)'
+                        )
         current_v = self.local_version(path or self.settings.basedata_path)
         if not current_v:
             return 0, 'Es wurden keine lokalen Basisdaten gefunden'
@@ -259,12 +273,11 @@ class ProjectManager:
         return ret
 
     def server_version(self):
+        '''
+        raises ConnectionError
+        '''
         request = Request(synchronous=True)
-        try:
-            res = request.get(f'{settings.BASEDATA_URL}/basedata.json')
-        except ConnectionError:
-            # ToDo: handle error
-            return
+        res = request.get(f'{settings.BASEDATA_URL}/basedata.json')
         if res.status_code != 200:
             return
         return res.json()

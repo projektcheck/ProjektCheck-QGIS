@@ -136,9 +136,9 @@ class WohnenDevelopment(Worker):
             bt_idx = df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp
             df_einwohner_bt = df_einwohner_base[bt_idx]
             base_factor_u18 = float(bt.default_anteil_u18)
-            user_factor_u18 = df_wohneinheiten_tfl[
-                    df_wohneinheiten_tfl['id_gebaeudetyp']==bt.IDGebaeudetyp]
-            user_factor_u18 = user_factor_u18['anteil_u18'].values[0]
+            user_bt_settings = df_wohneinheiten_tfl[
+                    df_wohneinheiten_tfl['id_gebaeudetyp'] == bt.IDGebaeudetyp]
+            user_factor_u18 = user_bt_settings['anteil_u18'].values[0]
             weight_u18 = user_factor_u18 / base_factor_u18
             for age_we, group in df_einwohner_bt.groupby('AlterWE'):
                 # just one value, but easier to write the sum

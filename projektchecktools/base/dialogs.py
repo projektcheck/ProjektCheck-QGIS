@@ -315,6 +315,7 @@ class SettingsDialog(Dialog):
         path = self.basedata_path_edit.text()
         valid, status_text = self.project_manager.check_basedata(path)
         color = 'green' if valid == 2 else 'black' if valid == 1 else 'red'
+        self.download_button.setEnabled(False if valid == -1 else True)
         self.status_label.setStyleSheet(f'color: {color};')
         self.status_label.setText(status_text)
 

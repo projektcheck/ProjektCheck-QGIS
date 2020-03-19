@@ -5,10 +5,6 @@ from qgis.PyQt.QtCore import pyqtSignal
 import json
 
 
-class ConnectionError(Exception):
-    pass
-
-
 class Reply:
     def __init__(self, reply):
         '''

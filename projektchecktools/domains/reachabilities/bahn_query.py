@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 
 from projektchecktools.utils.spatial import Point
 from projektchecktools.base.domain import Worker
-from projektchecktools.utils.connection import Request, ConnectionError
+from projektchecktools.utils.connection import Request
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 from projektchecktools.domains.reachabilities.tables import (Haltestellen,
                                                         ZentraleOrte,

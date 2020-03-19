@@ -47,8 +47,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
     def show(self):
         super().show()
         valid, msg = self.project_manager.check_basedata()
+        if valid == -1:
+            QMessageBox.warning(self.ui, 'Warnung', msg)
+
         # base data not up to date
-        if valid != 2:
+        elif valid != 2:
             reply = QMessageBox.question(
                 self.ui, 'Basisdaten aktualisieren',
                 f'{msg}\n\n'
