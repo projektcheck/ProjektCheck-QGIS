@@ -57,7 +57,7 @@ def apply_kostenkennwerte(project):
 
 
 class GesamtkostenErmitteln(Worker):
-    years = 20
+    years = 25
 
     def __init__(self, project, parent=None):
         super().__init__(parent=parent)

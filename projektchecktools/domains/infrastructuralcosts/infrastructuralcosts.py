@@ -537,9 +537,9 @@ class Kostentraeger:
         self.params = Params(
             layout, help_file='infrastruktur_kostenaufteilung.txt')
         field_names = ['Anteil_GSB', 'Anteil_GEM', 'Anteil_ALL']
-        labels = ['Kostenanteil der Grunstücksbesitzer*Innen',
+        labels = ['Kostenanteil der Grunstücksbesitzer/innen',
                   'Kostenanteil der Gemeinde',
-                  'Netznutzer*innen und Tarifkundschaft']
+                  'Netznutzer/innen und Tarifkundschaft']
 
         def preset_changed(c, p):
             preset = c.get_data()
@@ -579,7 +579,7 @@ class Kostentraeger:
             preset_combo.changed.connect(
                 lambda b, c=preset_combo, p=phase: preset_changed(c, p))
 
-        self.params.show()
+        self.params.show(title='Kostenaufteilung festlegen')
         self.params.changed.connect(lambda: self.save(net_id))
 
     def create_presets(self, net_id, phase_id):
