@@ -416,7 +416,8 @@ class Gesamtkosten:
                                            years=GesamtkostenErmitteln.years)
             diagram.draw()
 
-        self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
+        self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close,
+                                     auto_close=True)
         self.dialog.show()
 
     def setup_net_element(self, net_element_id):
@@ -523,7 +524,8 @@ class Kostentraeger:
                                            years=GesamtkostenErmitteln.years)
             diagram.draw()
 
-        self.dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close)
+        self.dialog = ProgressDialog(job, parent=self.ui,  on_close=on_close,
+                                     auto_close=True)
         self.dialog.show()
 
     def setup_kostenaufteilung(self, net_id):

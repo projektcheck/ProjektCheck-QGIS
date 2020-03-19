@@ -4,6 +4,8 @@ import matplotlib
 matplotlib.use('agg')
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
+import locale
 
 from projektchecktools.base.diagrams import MatplotDiagram
 from projektchecktools.base.project import ProjectManager
@@ -34,6 +36,8 @@ class BewohnerEntwicklung(MatplotDiagram):
                               color=colors, title=self.title, grid=False,
                               ax=subplot)
         ax.yaxis.grid(True, which='major')
+        ax.get_yaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda y, p: locale.format_string("%d", y, grouping=True)))
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         ax.set_xticklabels(xticks, rotation=45)
         ax.set_ylabel(u'Anzahl Personen')
@@ -58,6 +62,8 @@ class ArbeitsplatzEntwicklung(MatplotDiagram):
                      title=self.title, color='r', legend=False, figsize=(10, 5),
                      grid=False, ax=subplot)
         ax.set_ylabel(u'Arbeitsplätze (Orientierungswerte)')
+        ax.get_yaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda y, p: locale.format_string("%d", y, grouping=True)))
         ax.set_xlabel(u'Jahr')
         ax.set_ylim(bottom=0)
         ax.yaxis.grid(True, which='major')

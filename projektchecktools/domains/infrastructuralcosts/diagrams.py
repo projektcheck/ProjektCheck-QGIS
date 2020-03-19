@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import locale
 from textwrap import wrap
 
 from projektchecktools.domains.constants import Nutzungsart
@@ -52,10 +53,9 @@ class NetzlaengenDiagramm(MatplotDiagram):
                     width = patch.get_x() + patch.get_width()
                     y = patch.get_y()
                     ax.text(width + text_offset, y + bar_width/2,
-                            str(int(round(width, 0))) + u' m',
+                            locale.format_string("%d", width, grouping=True)
+                            + ' m',
                             color='black',ha='left', va='center')
-                    #bbox=dict(facecolor='white',
-                    # edgecolor='white', boxstyle="round"))
         x_min, x_max = ax.get_xlim()
         ax.set_xlim(x_min, x_max * 1.2)
         # Ende Barlabels
@@ -64,6 +64,8 @@ class NetzlaengenDiagramm(MatplotDiagram):
         ax.set_title(self.title)
         ax.set_xlabel(x_label)
         ax.xaxis.grid(True, which='major')
+        ax.get_xaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda x, p: locale.format_string("%d", x, grouping=True) + ' m'))
         box = ax.get_position()
         ax.set_position([box.x0 + box.width * 0.12, box.y0,
                          box.width * 0.88, box.height])
@@ -107,9 +109,9 @@ class MassnahmenKostenDiagramm(MatplotDiagram):
         for i, patch in enumerate(patches.get_children()):
             width = patch.get_x() + patch.get_width()
             y = patch.get_y() + bar_width / 2
-            ax.text(width + text_offset, y, str(int(round(width, 0))) + u' €',
+            ax.text(width + text_offset, y,
+                    locale.format_string("%d", width, grouping=True) + ' €',
                     color='black',ha='left', va='center')
-            #bbox=dict(facecolor='white', edgecolor='white', boxstyle="round"))
         x_min, x_max = ax.get_xlim()
         ax.set_xlim(x_min, x_max * 1.2)
 
@@ -118,7 +120,8 @@ class MassnahmenKostenDiagramm(MatplotDiagram):
         ax.set_yticklabels(categories)
         ax.set_title(self.title)
         ax.set_xlabel(x_label)
-        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
+        ax.get_xaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda x, p: locale.format_string("%d", x, grouping=True) + ' €'))
         ax.xaxis.grid(True, which='major')
         box = ax.get_position()
         ax.set_position([box.x0 + box.width * 0.12, box.y0,
@@ -167,22 +170,20 @@ class GesamtkostenDiagramm(MatplotDiagram):
                 width = patch.get_width()
                 ax.text(width + text_offset,
                         pos_idx[index] + i * bar_width * spacing,
-                        '%d' % int(width) + u' €', ha='center', va='center')
-                        # bbox=dict(facecolor='white',
-                        # edgecolor='white', boxstyle="round"))
+                        locale.format_string("%d", width, grouping=True) + ' €',
+                        ha='center', va='center')
 
         ax.tick_params(axis='both', which='major', labelsize=9)
         ax.set_yticks(pos_idx + bar_width*spacing)
         ax.set_yticklabels(categories)
         ax.set_title(self.title)
         ax.set_xlabel(x_label)
-        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
+        ax.get_xaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda x, p: locale.format_string("%d", x, grouping=True) + ' €'))
         ax.xaxis.grid(True, which='major')
         xmin, xmax = ax.get_xlim()
         ax.set_xlim(left=None, right=xmax*1.1, emit=True, auto=False)
 
-
-        #ax.legend(phase_names, loc='upper right')
         box = ax.get_position()
 
         ax.set_position([box.x0 + box.width * 0.12, box.y0 + box.height * 0.2,
@@ -232,7 +233,9 @@ class KostentraegerDiagramm(MatplotDiagram):
                     color = 'black'
                     if j in [1, 2]:
                         color = 'white'
-                    ax.text(i, bottom + value/2., u"{0:,} €".format(int(value)),
+                    ax.text(i, bottom + value/2.,
+                            locale.format_string("%d", value, grouping=True)
+                            + ' €',
                             ha='center', va='center', color=color)
 
             summed += data
@@ -241,9 +244,8 @@ class KostentraegerDiagramm(MatplotDiagram):
         ax.set_xticklabels(categories)
         ax.set_title(self.title)
         ax.set_ylabel(y_label, rotation=90, labelpad=15)
-        fmt = u'{x:,.0f} €'
-        tick = mticker.StrMethodFormatter(fmt)
-        ax.yaxis.set_major_formatter(tick)
+        ax.get_yaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda y, p: locale.format_string("%d", y, grouping=True) + ' €'))
         ax.yaxis.grid(True, which='major')
 
         box = ax.get_position()
@@ -307,10 +309,9 @@ class VergleichsDiagramm(MatplotDiagram):
                     width = patch.get_x() + patch.get_width()
                     y = patch.get_y()
                     ax.text(width + text_offset, y + bar_width/2,
-                            str(int(round(width, 0))) + u' €',
+                            locale.format_string("%d", width, grouping=True)
+                            + ' €',
                             color='black',ha='left', va='center')
-                            # bbox=dict(facecolor='white',
-                            # edgecolor='white', boxstyle="round"))
         x_min, x_max = ax.get_xlim()
         ax.set_xlim(x_min, x_max * 1.2)
         # Ende Barlabels
@@ -319,7 +320,8 @@ class VergleichsDiagramm(MatplotDiagram):
         ax.set_yticklabels(categories)
         ax.set_title(self.title)
         ax.set_xlabel(x_label)
-        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter(u'%d €'))
+        ax.get_xaxis().set_major_formatter(mticker.FuncFormatter(
+            lambda x, p: locale.format_string("%d", x, grouping=True) + ' €'))
         ax.xaxis.grid(True, which='major')
         box = ax.get_position()
         ax.set_position([box.x0 + box.width * 0.2, box.y0,
