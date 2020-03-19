@@ -133,20 +133,31 @@ class WohnenDevelopment(Worker):
 
         # Apply weight factor based on user-defined proportion of persons < 18
         for bt in self.gebaeudetypen_base:
+            bt_idx = df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp
+            df_einwohner_bt = df_einwohner_base[bt_idx]
             base_factor_u18 = float(bt.default_anteil_u18)
             user_factor_u18 = df_wohneinheiten_tfl[
                     df_wohneinheiten_tfl['id_gebaeudetyp']==bt.IDGebaeudetyp]
             user_factor_u18 = user_factor_u18['anteil_u18'].values[0]
             weight_u18 = user_factor_u18 / base_factor_u18
-            weight_o18 = (100 - user_factor_u18) / (100 - base_factor_u18)
+            for age_we, group in df_einwohner_bt.groupby('AlterWE'):
+                # just one value, but easier to write the sum
+                u18 = group[group['IDAltersklasse'] == 1]['Einwohner'].sum()
+                # weight over 18 as relation of number of inhabitants of age
+                # groups under 18 and over 18 in specific year of housing
+                sum_o18 = group[group['IDAltersklasse'] > 1]['Einwohner'].sum()
+                weight_o18 = (u18 * (1 - weight_u18) + sum_o18) / sum_o18
+                # apply correction factor to age groups over 18 for year of
+                # housing
+                df_einwohner_base.loc[
+                    (df_einwohner_base['IDAltersklasse'] > 1) & bt_idx &
+                    (df_einwohner_base['AlterWE'] == age_we), ["Einwohner"]
+                    ] *= weight_o18
+            # apply correction factor of age group under 18, stays the same
+            # for every year of housing
             df_einwohner_base.loc[
-                (df_einwohner_base['IDAltersklasse'] == 1) &
-                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
+                (df_einwohner_base['IDAltersklasse'] == 1) & bt_idx,
                 ["Einwohner"]] *= weight_u18
-            df_einwohner_base.loc[
-                (df_einwohner_base['IDAltersklasse'] > 1) &
-                (df_einwohner_base['IDGebaeudetyp'] == bt.IDGebaeudetyp),
-                ["Einwohner"]] *= weight_o18
 
         # prepare the base table, take duration as age reference for development
         # over years
