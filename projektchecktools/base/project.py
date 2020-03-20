@@ -1,4 +1,5 @@
 import os
+from glob import glob
 import sys
 import json
 import shutil
@@ -234,7 +235,7 @@ class ProjectManager:
         '''
         # ToDo: check if all files are there
         try:
-            version_server = self.server_version()
+            server_versions = self.server_versions()
         except ConnectionError:
             return -1, ('Der Server mit den Basisdaten ist nicht verfügbar.\n\n'
                         'Möglicherweise hat sich die URL des Servers geändert. '
@@ -242,10 +243,13 @@ class ProjectManager:
                         'im QGIS-Pluginmanager verfügbar ist.'
         #'Ist dies nicht der Fall, wenden Sie sich bitte an das ILS (oder so)'
                         )
-        current_v = self.local_version(path or self.settings.basedata_path)
-        if not current_v:
+        newest_server = max(v['version'] for v in server_versions)
+        local_versions = self.local_versions(
+            path or self.settings.basedata_path)
+        if not local_versions:
             return 0, 'Es wurden keine lokalen Basisdaten gefunden'
-        if current_v['version'] < version_server['version']:
+        newest_local = max(v['version'] for v in local_versions)
+        if newest_local < newest_server:
             return 1, (f'Neue Basisdaten (Stand: {version_server["date"]}) '
                        f'sind verfügbar (lokaler Stand: {current_v["date"]})')
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
@@ -259,38 +263,35 @@ class ProjectManager:
         with open(fp, 'w') as f:
             json.dump(version, f, indent=4, separators=(',', ': '))
 
-    def local_version(self, path):
+    def local_versions(self, path):
+        '''
+        returns list of tuples (folder, dict)
+        '''
         if not os.path.exists(path):
             return
-        fp = os.path.join(path, 'basedata.json')
-        if not os.path.exists(fp):
-            return
-        try:
-            with open(fp, 'r') as f:
-                ret = json.load(f)
-        except:
-            return None
-        return ret
+        versions = []
+        subfolders = glob(f'{path}/*/')
+        for folder in subfolders:
+            fp = os.path.join(folder, 'basedata.json')
+            if os.path.exists(fp):
+                try:
+                    with open(fp, 'r') as f:
+                        v = json.load(f)
+                    v['path'] = folder
+                    versions.append(v)
+                except:
+                    pass
+        return versions
 
-    def server_version(self):
+    def server_versions(self):
         '''
         raises ConnectionError
         '''
         request = Request(synchronous=True)
-        res = request.get(f'{settings.BASEDATA_URL}/basedata.json')
+        res = request.get(f'{settings.BASEDATA_URL}/v_basedata.json')
         if res.status_code != 200:
             return
         return res.json()
-
-    @property
-    def _v_basedata(self):
-        # return date and version from file
-        return self._local_version(self.settings.basedata_path)
-
-    @_v_basedata.setter
-    def _v_basedata(self, attr):
-        # ToDo: set version in file
-        pass
 
     def load_basedata(self):
         self.basedata = None
