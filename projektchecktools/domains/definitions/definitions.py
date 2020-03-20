@@ -752,6 +752,13 @@ class ProjectDefinitions(Domain):
         super().load_content()
         self.areas = Teilflaechen.features()
         self.connectors = Connectors.features()
+        self.projektrahmendaten = Projektrahmendaten.features()[0]
+
+        self.ui.date_label.setText(self.projektrahmendaten.datum)
+        self.ui.basedata_label.setText(
+            f'v{self.projektrahmendaten.basisdaten_version} '
+            f'(Stand: {self.projektrahmendaten.basisdaten_datum})')
+
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:

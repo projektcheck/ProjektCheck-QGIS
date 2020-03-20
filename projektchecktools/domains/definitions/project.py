@@ -8,7 +8,7 @@ import shutil
 from projektchecktools.base.project import ProjectManager
 from projektchecktools.base.domain import Worker
 from projektchecktools.domains.definitions.tables import (Teilflaechen,
-                                                     Projektrahmendaten)
+                                                          Projektrahmendaten)
 from projektchecktools.domains.traffic.tables import Connectors
 from projektchecktools.domains.marketcompetition.tables import Centers
 from projektchecktools.domains.constants import Nutzungsart
@@ -51,6 +51,8 @@ class ProjectInitialization(Worker):
         self.log(f'Füge {len(layer_features)} Flächen hinzu...')
         tr = QgsCoordinateTransform(
             source_crs, target_crs, QgsProject.instance())
+        if not layer_features:
+            raise Exception('Es wurden keine Flächen im Eingangslayer gefunden')
         for area in layer_features:
             geom = area.geometry()
             geom.transform(tr)
@@ -94,13 +96,14 @@ class ProjectInitialization(Worker):
 
         self.log(f'Berechne Projektrahmendaten...')
         # create areas and connections to roads
+        now = datetime.now()
         for i, feature in enumerate(layer_features):
             area = self.project_areas.add(
                 nutzungsart=Nutzungsart.UNDEFINIERT.value,
                 name=f'Flaeche_{i+1}',
                 validiert=0,
                 aufsiedlungsdauer=1,
-                beginn_nutzung=datetime.now().year,
+                beginn_nutzung=now.year,
                 ags_bkg=ags[i],
                 gemeinde_name=gem_names[i],
                 gemeinde_typ=gem_types[i],
@@ -116,12 +119,17 @@ class ProjectInitialization(Worker):
         # general project data
         project_frame = Projektrahmendaten.features(project=self.project,
                                                     create=True)
+        basedata_version = self.project_manager.local_version(
+            settings.basedata_path)
         project_frame.add(
             ags=ags[0],
             gemeinde_name=gem_names[0],
             gemeinde_typ=gem_types[0],
             projekt_name=self.project.name,
-            geom=project_centroid
+            geom=project_centroid,
+            datum=now.strftime("%d.%m.%Y"),
+            basisdaten_version=basedata_version['version'],
+            basisdaten_datum=basedata_version['date']
         )
         self.set_progress(80)
 

@@ -88,10 +88,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                                         self.project_manager.settings.EPSG,
                                         parent=self.ui)
             def on_success(project):
+                self.project_manager.active_project = project
                 self.ui.project_combo.addItem(project.name, project)
                 self.ui.project_combo.setCurrentIndex(
                     self.ui.project_combo.count() - 1)
-                self.project_manager.active_project = project
 
             dialog = ProgressDialog(job, parent=self.ui,
                                     on_success=on_success)
