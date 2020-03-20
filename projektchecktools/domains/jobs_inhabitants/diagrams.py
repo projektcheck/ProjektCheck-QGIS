@@ -90,7 +90,6 @@ class BranchenAnteile(MatplotDiagram):
         df_branchen.rename(
             columns={'ID_Branche_ProjektCheck': 'id_branche'}, inplace=True)
         joined = df.merge(df_branchen, on='id_branche')
-        joined['anteil_branche'] *= 100
 
         figure = plt.figure()
         subplot = figure.add_subplot(111)

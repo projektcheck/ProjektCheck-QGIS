@@ -53,10 +53,11 @@ class Verkaufsflaechen(ProjectTable):
 class Gewerbeanteile(ProjectTable):
 
     id_teilflaeche = Field(int, 0)
+    name_teilflaeche = Field(str, '')
     id_branche = Field(int, 0)
     name_branche = Field(str, '')
     anteil_definition = Field(int, 0)
-    anteil_branche = Field(float, 0)
+    anteil_branche = Field(int, 0)
     anzahl_jobs_schaetzung = Field(int, 0)
     dichtekennwert = Field(int, 0)
 

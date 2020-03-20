@@ -79,18 +79,28 @@ class JobsInhabitants(Domain):
     def inhabitants_table(self):
         output = ProjectLayer.from_table(
             WohnenProJahr.get_table(), groupname=self.layer_group)
-        layer = output.draw(label='Wohnen pro Jahr Daten')
+        layer = output.draw(label='Bewohnerschätzung nach Alter und Jahr')
+        table_config = layer.attributeTableConfig()
+        table_config.setSortExpression(
+            '"id_teilflaeche" || "jahr" || "id_altersklasse"')
+        layer.setAttributeTableConfig(table_config)
         utils.iface.showAttributeTable(layer)
 
     def jobs_table(self):
         output = ProjectLayer.from_table(
             ApProJahr.get_table(), groupname=self.layer_group)
-        layer = output.draw(label='Arbeitsplätze pro Jahr Daten')
+        layer = output.draw(label='Arbeitsplätze insgesamt nach Jahr')
+        table_config = layer.attributeTableConfig()
+        table_config.setSortExpression('"id_teilflaeche" || "jahr"')
+        layer.setAttributeTableConfig(table_config)
         utils.iface.showAttributeTable(layer)
 
         output = ProjectLayer.from_table(
             Gewerbeanteile.get_table(), groupname=self.layer_group)
-        layer = output.draw(label='Gewerbeanteile Daten')
+        layer = output.draw(label='Branchenanteile')
+        table_config = layer.attributeTableConfig()
+        table_config.setSortExpression('"id_teilflaeche" || "id_branche"')
+        layer.setAttributeTableConfig(table_config)
         utils.iface.showAttributeTable(layer)
 
     def close(self):

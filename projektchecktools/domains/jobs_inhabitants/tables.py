@@ -1,11 +1,11 @@
 from projektchecktools.base.project import ProjectTable
 from projektchecktools.base.database import Field
-from settings import settings
 
 
 class ApProJahr(ProjectTable):
 
     id_teilflaeche = Field(int, 0)
+    name_teilflaeche = Field(str, '')
     jahr = Field(int, 0)
     arbeitsplaetze = Field(int, 0)
 
@@ -28,6 +28,7 @@ class WohnenStruktur(ProjectTable):
 class WohnenProJahr(ProjectTable):
 
     id_teilflaeche = Field(int, 0)
+    name_teilflaeche = Field(str, '')
     jahr = Field(int, 0)
     id_altersklasse = Field(int, 0)
     altersklasse = Field(str, '')

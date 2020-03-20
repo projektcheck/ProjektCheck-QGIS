@@ -117,6 +117,7 @@ class WohnenDevelopment(Worker):
         geb_types = df_wohneinheiten_tfl['id_gebaeudetyp'].values
         flaechen_template['id_gebaeudetyp'] = geb_types
         flaechen_template['id_teilflaeche'] = self.area.id
+        flaechen_template['name_teilflaeche'] = self.area.name
         flaechen_template['wohnungen'] = list(
                 df_wohneinheiten_tfl['we'].values.astype(float) *
                 df_wohneinheiten_tfl['ew_je_we'] /
@@ -192,8 +193,9 @@ class WohnenDevelopment(Worker):
             entry['altersklasse'] = group['altersklasse'].unique()
             entry['jahr'] = group['jahr'].unique()
             entry['id_teilflaeche'] = self.area.id
+            entry['name_teilflaeche'] = self.area.name
             df_wohnen_pro_jahr = df_wohnen_pro_jahr.append(entry)
-
+        df_wohnen_pro_jahr = df_wohnen_pro_jahr.round({'bewohner': 1})
         self.wohnen_pro_jahr.update_pandas(df_wohnen_pro_jahr)
 
 
@@ -482,8 +484,10 @@ class Gewerbe:
 
         dependency = SumDependency(100)
         for branche in self.branchen:
-            feature = self.gewerbeanteile.get(id_branche=branche.id,
-                                              id_teilflaeche=self.area.id)
+            feature = self.gewerbeanteile.get(
+                id_branche=branche.id,
+                id_teilflaeche=self.area.id
+            )
             value = feature.anteil_definition if feature else 0
             slider = Slider(maximum=100, width=200, lockable=True)
             param = Param(
@@ -528,6 +532,9 @@ class Gewerbe:
         # set to default preset if assignment is new
         if len(self.gewerbeanteile) == 0:
             self.set_industry_presets(self.DEFAULT_INDUSTRY_ID)
+            ap_gesamt = self.estimate_jobs()
+            self.params.arbeitsplaetze_insgesamt.value = ap_gesamt
+            self.save()
 
         self.params.changed.connect(self.save)
         self.params.show(
@@ -539,7 +546,10 @@ class Gewerbe:
                                               id_teilflaeche=self.area.id)
             if not feature:
                 feature = self.gewerbeanteile.add(
-                    id_branche=branche.id, id_teilflaeche=self.area.id)
+                    id_branche=branche.id,
+                    id_teilflaeche=self.area.id
+                )
+            feature.name_teilflaeche = self.area.name
             feature.anteil_definition = getattr(
                 self.params, branche.param_gewerbenutzung).value
             feature.name_branche = branche.Name_Branche_ProjektCheck
@@ -588,7 +598,9 @@ class Gewerbe:
             year = begin + progress
 
             self.ap_nach_jahr.add(
-                id_teilflaeche=self.area.id, jahr=year,
+                id_teilflaeche=self.area.id,
+                name_teilflaeche=self.area.name,
+                jahr=year,
                 arbeitsplaetze=n_jobs * proc_factor
             )
 
@@ -598,6 +610,8 @@ class Gewerbe:
         df = self.gewerbeanteile.filter(id_teilflaeche=area.id).to_pandas()
         df['anteil_branche'] = df['anteil_definition'] * df['dichtekennwert']
         df['anteil_branche'] /= df['anteil_branche'].sum()
+        df['anteil_branche'] *= 100
+        df = df.round({'anteil_branche': 0})
         self.gewerbeanteile.update_pandas(df)
 
     def set_ways(self, area):
