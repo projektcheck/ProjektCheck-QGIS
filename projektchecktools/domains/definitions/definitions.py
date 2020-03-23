@@ -247,7 +247,10 @@ class Wohnen:
 
         self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
-        preset_names = np.unique(self.df_presets['Gebietstyp'].values)
+        preset_names, idx = np.unique(self.df_presets['Gebietstyp'].values,
+                                     return_index=True)
+        idx.sort()
+        preset_names = self.df_presets['Gebietstyp'].values[idx]
         options = ['Gebietstyp wählen'] + list(preset_names)
         self.preset_combo = ComboBox(options)
         self.preset_combo.input.model().item(0).setEnabled(False)
@@ -284,7 +287,7 @@ class Wohnen:
 
         self.params.add(Seperator())
 
-        self.params.add(Title('Mittlere Anzahl Einwohner pro Wohneinheit\n'
+        self.params.add(Title('Mittlere Anzahl Bewohner pro Wohneinheit\n'
                               '(3 Jahre nach Bezug)'))
 
         for bt in self.gebaeudetypen_base:
@@ -301,7 +304,7 @@ class Wohnen:
 
         self.params.add(Seperator())
 
-        self.params.add(Title('Anteil an unter 18 Jährigen'))
+        self.params.add(Title('Anteil der Bewohner unter 18 Jahre'))
 
         for bt in self.gebaeudetypen_base:
             param_name = bt.param_anteil_u18

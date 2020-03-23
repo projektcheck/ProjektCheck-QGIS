@@ -282,16 +282,6 @@ class ProjectManager:
             return
         return res.json()
 
-    @property
-    def _v_basedata(self):
-        # return date and version from file
-        return self._local_version(self.settings.basedata_path)
-
-    @_v_basedata.setter
-    def _v_basedata(self, attr):
-        # ToDo: set version in file
-        pass
-
     def load_basedata(self):
         self.basedata = None
         base_path = self.settings.basedata_path
