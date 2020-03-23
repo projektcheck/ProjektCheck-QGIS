@@ -28,7 +28,7 @@ DEFAULT_SETTINGS = {
 }
 
 
-class Settings:
+class Settings(metaclass=Singleton):
     '''
     singleton for accessing and storing global settings in files
 
@@ -39,7 +39,6 @@ class Settings:
     project_path : str
         path to project folders
     '''
-    __metaclass__ = Singleton
     _settings = {}
     # write changed config instantly to file
     _write_instantly = True
@@ -182,7 +181,7 @@ class Project:
         return f'Project {self.name}'
 
 
-class ProjectManager:
+class ProjectManager(metaclass=Singleton):
     '''
     singleton for accessing/changing projects and their data
 
@@ -193,7 +192,6 @@ class ProjectManager:
     active_project: Project
         active project
     '''
-    __metaclass__ = Singleton
     _projects = {}
     settings = settings
     _required_settings = ['BASEDATA_URL', 'EPSG']
@@ -207,15 +205,14 @@ class ProjectManager:
         if missing:
             raise Exception(f'{missing} have to be set')
         self.basedata = None
+        self.basedata_version = None
+        self._server_versions = None
         self.load()
 
     def load(self):
         '''
         load settings and projects
         '''
-        success = self.load_basedata()
-        if not success:
-            raise FileNotFoundError('basedata not found')
         if self.settings.project_path:
             project_path = self.settings.project_path
             if project_path and not os.path.exists(project_path):
@@ -235,17 +232,16 @@ class ProjectManager:
         2 - local data up to date
         '''
         # ToDo: check if all files are there
-        try:
-            server_versions = self.server_versions()
-        except ConnectionError:
+        if not self.server_versions:
             return -1, ('Der Server mit den Basisdaten ist nicht verfügbar.\n\n'
                         'Möglicherweise hat sich die URL des Servers geändert. '
                         'Bitte prüfen Sie, ob eine neue Projekt-Check-Version '
                         'im QGIS-Pluginmanager verfügbar ist.'
         #'Ist dies nicht der Fall, wenden Sie sich bitte an das ILS (oder so)'
                         )
-        newest_server_v = server_versions[0]
-        local_versions = self.local_versions(path)
+        newest_server_v = self.server_versions[0]
+        local_versions = self.local_versions(
+            path or self.settings.basedata_path)
         if not local_versions:
             return 0, 'Es wurden keine lokalen Basisdaten gefunden'
         newest_local_v = local_versions[0]
@@ -256,8 +252,9 @@ class ProjectManager:
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
                    f'({newest_local_v["date"]})')
 
-    def set_local_version(self, version, path=None):
+    def add_local_version(self, version, path=None):
         path = path or self.settings.basedata_path
+        p = os.path.join(path, version)
         if not os.path.exists(path):
             os.makedirs(path)
         fp = os.path.join(path, 'basedata.json')
@@ -284,26 +281,46 @@ class ProjectManager:
                     pass
         return sorted(versions, key=itemgetter('version'), reverse=True)
 
+    @property
     def server_versions(self):
         '''
         raises ConnectionError
         '''
-        request = Request(synchronous=True)
-        res = request.get(f'{settings.BASEDATA_URL}/v_basedata.json')
+        if self._server_versions:
+            return self._server_versions
+        try:
+            request = Request(synchronous=True)
+            res = request.get(f'{settings.BASEDATA_URL}/v_basedata.json')
+        except ConnectionError:
+            return
         if res.status_code != 200:
             return
         return sorted(res.json(), key=itemgetter('version'), reverse=True)
 
-    def load_basedata(self):
+
+    def load_basedata(self, version=None):
+        if version is not None and version == self.basedata_version:
+            return True
         self.basedata = None
         base_path = self.settings.basedata_path
-        if not os.path.exists:
+        local_versions = self.local_versions(base_path)
+        if not local_versions:
             return False
-        self.basedata = Geopackage(
-            base_path=base_path,
-            read_only=True)
+        if not version:
+            # take newest version available locally
+            local_version = local_versions[0]
+        else:
+            lv = [v['version'] for v in local_versions]
+            if version not in lv:
+                return False
+            local_version = local_versions[lv.index(version)]
+        path = local_version['path']
+        if not os.path.exists(path):
+            return False
+        self.basedata = Geopackage(base_path=path, read_only=True)
         # ToDo: remove basedata from settings (still there out of convenience)
         self.settings.BASEDATA = self.basedata
+        self.basedata_version = local_version['version']
         return True
 
     def create_project(self, name, create_folder=True):

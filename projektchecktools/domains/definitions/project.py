@@ -121,6 +121,7 @@ class ProjectInitialization(Worker):
                                                     create=True)
         local_versions = self.project_manager.local_versions(
             settings.basedata_path)
+        # newest local version
         basedata_version = local_versions[0]
         project_frame.add(
             ags=ags[0],

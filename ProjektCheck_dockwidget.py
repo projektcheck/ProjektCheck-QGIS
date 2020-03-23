@@ -18,6 +18,7 @@ from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
                                        LandUse, InfrastructuralCosts,
                                        MunicipalTaxRevenue,
                                        SupermarketsCompetition)
+from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -290,6 +291,9 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             QMessageBox.warning(self.ui, 'Hinweis', msg)
             self.ui.project_combo.setCurrentIndex(0)
             return
+        projektrahmendaten = Projektrahmendaten.features(project=project)[0]
+        self.project_manager.load_basedata(
+            version=projektrahmendaten.basisdaten_version)
         try:
             if getattr(self, 'project_definitions', None):
                 self.project_definitions.unload()
