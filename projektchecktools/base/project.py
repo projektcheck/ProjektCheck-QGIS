@@ -5,6 +5,7 @@ import json
 import shutil
 import sys
 from collections import OrderedDict
+from operator import itemgetter
 
 from projektchecktools.utils.singleton import Singleton
 from projektchecktools.base.database import Field
@@ -243,17 +244,17 @@ class ProjectManager:
                         'im QGIS-Pluginmanager verfügbar ist.'
         #'Ist dies nicht der Fall, wenden Sie sich bitte an das ILS (oder so)'
                         )
-        newest_server = max(v['version'] for v in server_versions)
-        local_versions = self.local_versions(
-            path or self.settings.basedata_path)
+        newest_server_v = server_versions[0]
+        local_versions = self.local_versions(path)
         if not local_versions:
             return 0, 'Es wurden keine lokalen Basisdaten gefunden'
-        newest_local = max(v['version'] for v in local_versions)
-        if newest_local < newest_server:
-            return 1, (f'Neue Basisdaten (Stand: {version_server["date"]}) '
-                       f'sind verfügbar (lokaler Stand: {current_v["date"]})')
+        newest_local_v = local_versions[0]
+        if newest_server_v['version'] < newest_local_v['version']:
+            return 1, (f'Neue Basisdaten (Stand: {newest_server_v["date"]}) '
+                       'sind verfügbar (lokaler Stand: '
+                       f'{newest_local_v["date"]})')
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
-                   f'({current_v["date"]})')
+                   f'({newest_local_v["date"]})')
 
     def set_local_version(self, version, path=None):
         path = path or self.settings.basedata_path
@@ -265,7 +266,7 @@ class ProjectManager:
 
     def local_versions(self, path):
         '''
-        returns list of tuples (folder, dict)
+        returns list of dicts
         '''
         if not os.path.exists(path):
             return
@@ -281,7 +282,7 @@ class ProjectManager:
                     versions.append(v)
                 except:
                     pass
-        return versions
+        return sorted(versions, key=itemgetter('version'), reverse=True)
 
     def server_versions(self):
         '''
@@ -291,7 +292,7 @@ class ProjectManager:
         res = request.get(f'{settings.BASEDATA_URL}/v_basedata.json')
         if res.status_code != 200:
             return
-        return res.json()
+        return sorted(res.json(), key=itemgetter('version'), reverse=True)
 
     def load_basedata(self):
         self.basedata = None

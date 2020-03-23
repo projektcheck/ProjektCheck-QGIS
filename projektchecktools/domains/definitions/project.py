@@ -119,8 +119,9 @@ class ProjectInitialization(Worker):
         # general project data
         project_frame = Projektrahmendaten.features(project=self.project,
                                                     create=True)
-        basedata_version = self.project_manager.local_version(
+        local_versions = self.project_manager.local_versions(
             settings.basedata_path)
+        basedata_version = local_versions[0]
         project_frame.add(
             ags=ags[0],
             gemeinde_name=gem_names[0],
