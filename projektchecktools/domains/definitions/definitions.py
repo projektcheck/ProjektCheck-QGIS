@@ -320,7 +320,8 @@ class Wohnen:
 
         self.params.changed.connect(self.save)
         self.params.show(
-            title='Wohnen: Bezugszeitraum und Maß der baulichen Nutzung')
+            title='Wohnen: Bezugszeitraum, Maß der baulichen Nutzung, '
+            'Haushaltsstrukturen')
 
     def save(self):
         we_sum = 0
