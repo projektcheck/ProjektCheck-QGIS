@@ -11,7 +11,12 @@ class Reply:
         reply - qnetworkreply
         '''
         self.reply = reply
-        self.raw_data = reply.readAll()
+        # streamed
+        if hasattr(reply, 'readAll'):
+            self.raw_data = reply.readAll()
+        # reply received with blocking call
+        else:
+            self.raw_data = reply.content()
 
     @property
     def url(self):
@@ -72,31 +77,12 @@ class Request(QObject):
         return self._get_async(qurl)
 
     def _get_sync(self, qurl: QUrl, timeout=10000):
-        loop = QEventLoop()
-        timer = QTimer()
-
         request = QNetworkRequest(qurl)
-        timer.setSingleShot(True)
-        # reply or timeout break event loop, whoever comes first
-        timer.timeout.connect(loop.quit)
-        reply = self.manager.get(request)
-        reply.finished.connect(loop.quit)
-
-        timer.start(timeout)
-
-        # start blocking loop
-        loop.exec()
-
-        loop.deleteLater()
-        if not timer.isActive():
-            reply.deleteLater()
-            raise ConnectionError('Timeout ')
-
-        timer.stop()
+        reply = self.manager.blockingGet(request, forceRefresh=True)
         if reply.error():
             self.error.emit(reply.errorString())
             raise ConnectionError(reply.errorString())
-        reply.deleteLater()
+        #reply.deleteLater()
         res = Reply(reply)
         self.finished.emit(res)
         return res
