@@ -290,9 +290,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         version = projektrahmendaten.basisdaten_version
         success = self.project_manager.load_basedata(version=version)
         if not success:
+            v_repr = f' (v{version})' if version else ''
             reply = QMessageBox.question(
                 self.ui, 'Basisdaten herunterladen',
-                f'Die Basisdaten (v{version}), mit denen das Projekt erstellt '
+                f'Die Basisdaten{v_repr}, mit denen das Projekt erstellt '
                 'wurde, wurden lokal nicht gefunden.\n\n'
                 'Möchten Sie diese Daten jetzt herunterladen? ',
                  QMessageBox.Yes, QMessageBox.No)
