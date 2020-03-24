@@ -106,7 +106,6 @@ class Request(QObject):
         request = QNetworkRequest(qurl)
 
         def progress(b, total):
-            print(f'{b}/{total}')
             if total > 0:
                 self.progress.emit(int(100*b/total))
 

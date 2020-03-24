@@ -18,6 +18,7 @@ from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
                                        LandUse, InfrastructuralCosts,
                                        MunicipalTaxRevenue,
                                        SupermarketsCompetition)
+from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
 
 class ProjektCheckMainDockWidget(PCDockWidget):
@@ -88,10 +89,10 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                                         self.project_manager.settings.EPSG,
                                         parent=self.ui)
             def on_success(project):
+                self.project_manager.active_project = project
                 self.ui.project_combo.addItem(project.name, project)
                 self.ui.project_combo.setCurrentIndex(
                     self.ui.project_combo.count() - 1)
-                self.project_manager.active_project = project
 
             dialog = ProgressDialog(job, parent=self.ui,
                                     on_success=on_success)
@@ -285,9 +286,20 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.ui.domain_button.setEnabled(False)
             self.ui.definition_button.setEnabled(False)
             return
-        status, msg = self.project_manager.check_basedata()
-        if status == 0:
-            QMessageBox.warning(self.ui, 'Hinweis', msg)
+        projektrahmendaten = Projektrahmendaten.features(project=project)[0]
+        version = projektrahmendaten.basisdaten_version
+        success = self.project_manager.load_basedata(version=version)
+        if not success:
+            v_repr = f' (v{version})' if version else ''
+            reply = QMessageBox.question(
+                self.ui, 'Basisdaten herunterladen',
+                f'Die Basisdaten{v_repr}, mit denen das Projekt erstellt '
+                'wurde, wurden lokal nicht gefunden.\n\n'
+                'Möchten Sie diese Daten jetzt herunterladen? ',
+                 QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                settings = SettingsDialog(self)
+                settings.download_basedata(version=version)
             self.ui.project_combo.setCurrentIndex(0)
             return
         try:

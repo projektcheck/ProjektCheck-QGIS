@@ -8,7 +8,7 @@ from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
 import matplotlib.pyplot as plt
-from zipfile import ZipFile
+from zipfile import ZipFile, BadZipFile
 import os
 import datetime
 from io import BytesIO
@@ -284,16 +284,25 @@ class SettingsDialog(Dialog):
         self.check_on_start.setChecked(self.settings.check_data_on_start)
         self.check_basedata_path()
 
-    def download_basedata(self):
-        path = self.basedata_path_edit.text()
-        if not self.check_permission(path):
+    def download_basedata(self, version=None):
+        base_path = self.basedata_path_edit.text()
+        if not self.check_permission(base_path):
             return
         self.parent_domain.close_all_projects()
-        url = f'{self.settings.BASEDATA_URL}/basedata.zip'
+        server_versions = self.project_manager.server_versions
+        sv = [v['version'] for v in server_versions]
+        if not version:
+            # newest version
+            version = sv[0]
+        idx = sv.index(version)
+        # ToDo: version not on server
+        v = server_versions[idx]
+        url = f'{self.settings.BASEDATA_URL}/{v["file"]}'
+        # put data in subfolder (named after version)
+        path = os.path.join(base_path, str(version))
 
         def on_success(a):
-            self.project_manager.set_local_version(
-                self.project_manager.server_version())
+            self.project_manager.add_local_version(v)
             self.check_basedata_path()
 
         def on_close():
@@ -412,6 +421,9 @@ class DownloadDialog(ProgressDialog):
             self.on_error(str(e))
 
     def _save(self, reply):
+        if reply.status_code != 200:
+            self.on_error(reply.status_code)
+            return
         self.show_status(f'-> {self.path}')
         # ToDo: catch errors (file permission->message to restart)
         try:
@@ -422,7 +434,7 @@ class DownloadDialog(ProgressDialog):
             with ZipFile(BytesIO(reply.raw_data)) as zf:
                 zf.extractall(self.path)
             self._success()
-        except PermissionError as e:
+        except (PermissionError, BadZipFile) as e:
             self.on_error(str(e))
 
 

@@ -770,6 +770,13 @@ class ProjectDefinitions(Domain):
         super().load_content()
         self.areas = Teilflaechen.features()
         self.connectors = Connectors.features()
+        self.projektrahmendaten = Projektrahmendaten.features()[0]
+        created = self.projektrahmendaten.datum.replace('"', '')
+        self.ui.date_label.setText(created or '-')
+        version = self.projektrahmendaten.basisdaten_version
+        version_date = self.projektrahmendaten.basisdaten_datum
+        self.ui.basedata_label.setText(
+            f'v{version} (Stand: {version_date})' if version else '-')
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
         for area in self.areas:
