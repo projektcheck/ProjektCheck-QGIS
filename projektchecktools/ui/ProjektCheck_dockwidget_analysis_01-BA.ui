@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
+    <width>487</width>
     <height>686</height>
    </rect>
   </property>
@@ -87,7 +87,7 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>479</width>
+         <width>467</width>
          <height>588</height>
         </rect>
        </property>
@@ -125,7 +125,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bewohneranzahl schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl und Altersstruktur der zukünftigen Bewohner der Teilflächen mit Wohnnutzung schätzen. Methodische Erläuterungen finden Sie in der Kurzanleitung (Schaltfläche unten rechts).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bewohneranzahl schätzen (Diagramm)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl und Altersstruktur der zukünftigen Bewohner der Teilflächen mit Wohnnutzung schätzen und in einem Diagramm darstellen. Methodische Erläuterungen finden Sie in der Kurzanleitung (Schaltfläche unten rechts).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -154,8 +154,11 @@ padding: 2px;
              </item>
              <item>
               <widget class="QPushButton" name="inhabitants_table_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wertetabelle der Schätzung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Werte der Schätzung von Anzahl und Altersstruktur der zukünftigen Bewohner der Teilflächen mit Wohnnutzung in einer Wertetabelle anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
-                <string>Attributtabelle anzeigen</string>
+                <string>Wertetabelle anzeigen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -201,13 +204,13 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Arbeitsplätze schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl der zukünftigen Arbeitsplätze und Branchenstruktur auf den Teilflächen mit Gewerbenutzung schätzen. Methodische Erläuterungen finden Sie in der Kurzanleitung (Schaltfläche unten rechts).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Arbeitsplätze schätzen (Diagramm)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Anzahl der zukünftigen Arbeitsplätze und Branchenstruktur auf den Teilflächen mit Gewerbenutzung schätzen und in einem Diagramm darstellen. Methodische Erläuterungen finden Sie in der Kurzanleitung (Schaltfläche unten rechts).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
-                <string>Diagramm anzeigen</string>
+                <string>Diagramme anzeigen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -233,8 +236,11 @@ padding: 2px;
              </item>
              <item>
               <widget class="QPushButton" name="jobs_table_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wertetabellen der Schätzung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Werte der Schätzung von Anzahl und Branchenstruktur der zukünftigen Arbeitsplätze auf den Teilflächen mit Gewerbenutzung in zwei Wertetabellen anzeigen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
-                <string>Attributtabelle anzeigen</string>
+                <string>Wertetabellen anzeigen</string>
                </property>
                <property name="icon">
                 <iconset>
