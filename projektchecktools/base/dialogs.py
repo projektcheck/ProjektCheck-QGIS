@@ -306,7 +306,7 @@ class SettingsDialog(Dialog):
             self.check_basedata_path()
 
         def on_close():
-            if self.download_dialog.error:
+            if self.download_dialog.permission_error:
                 QMessageBox.warning(
                     self, 'Hinweis',
                     'Beim Speichern der Basisdaten ist ein Fehler aufgetreten.'
@@ -403,6 +403,8 @@ class DownloadDialog(ProgressDialog):
         self.path = path
 
     def run(self):
+        self.permission_error = False
+        self.status_code = 0
         self.stop_button.setVisible(False)
         self.start_button.setVisible(False)
         self.close_button.setVisible(True)
@@ -421,6 +423,7 @@ class DownloadDialog(ProgressDialog):
             self.on_error(str(e))
 
     def _save(self, reply):
+        self.status_code = reply.status_code
         if reply.status_code != 200:
             self.on_error(reply.status_code)
             return
@@ -434,7 +437,11 @@ class DownloadDialog(ProgressDialog):
             with ZipFile(BytesIO(reply.raw_data)) as zf:
                 zf.extractall(self.path)
             self._success()
-        except (PermissionError, BadZipFile) as e:
+        except PermissionError as e:
+            self.permission_error = True
+            self.on_error('Zugriffsfehler: Alte Daten konnten nicht restlos '
+                          'entfernt werden.')
+        except BadZipFile as e:
             self.on_error(str(e))
 
 
