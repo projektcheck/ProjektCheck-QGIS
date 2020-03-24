@@ -286,14 +286,21 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             self.ui.domain_button.setEnabled(False)
             self.ui.definition_button.setEnabled(False)
             return
-        status, msg = self.project_manager.check_basedata()
-        if status == 0:
-            QMessageBox.warning(self.ui, 'Hinweis', msg)
+        projektrahmendaten = Projektrahmendaten.features(project=project)[0]
+        version = projektrahmendaten.basisdaten_version
+        success = self.project_manager.load_basedata(version=version)
+        if not success:
+            reply = QMessageBox.question(
+                self.ui, 'Basisdaten herunterladen',
+                f'Die Basisdaten (v{version}), mit denen das Projekt erstellt '
+                'wurde, wurden lokal nicht gefunden.\n\n'
+                'Möchten Sie diese Daten jetzt herunterladen? ',
+                 QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                settings = SettingsDialog(self)
+                settings.download_basedata(version=version)
             self.ui.project_combo.setCurrentIndex(0)
             return
-        projektrahmendaten = Projektrahmendaten.features(project=project)[0]
-        self.project_manager.load_basedata(
-            version=projektrahmendaten.basisdaten_version)
         try:
             if getattr(self, 'project_definitions', None):
                 self.project_definitions.unload()

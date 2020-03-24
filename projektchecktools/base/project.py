@@ -250,14 +250,14 @@ class ProjectManager(metaclass=Singleton):
                        'sind verfügbar (lokaler Stand: '
                        f'{newest_local_v["date"]})')
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
-                   f'({newest_local_v["date"]})')
+                   f'(v{newest_local_v["version"]} {newest_local_v["date"]})')
 
     def add_local_version(self, version, path=None):
         path = path or self.settings.basedata_path
-        p = os.path.join(path, version)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        fp = os.path.join(path, 'basedata.json')
+        p = os.path.join(path, str(version['version']))
+        if not os.path.exists(p):
+            os.makedirs(p)
+        fp = os.path.join(p, 'basedata.json')
         with open(fp, 'w') as f:
             json.dump(version, f, indent=4, separators=(',', ': '))
 
@@ -296,7 +296,6 @@ class ProjectManager(metaclass=Singleton):
         if res.status_code != 200:
             return
         return sorted(res.json(), key=itemgetter('version'), reverse=True)
-
 
     def load_basedata(self, version=None):
         if version is not None and version == self.basedata_version:
