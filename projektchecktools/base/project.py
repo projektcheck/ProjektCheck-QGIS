@@ -245,9 +245,10 @@ class ProjectManager(metaclass=Singleton):
         if not local_versions:
             return 0, 'Es wurden keine lokalen Basisdaten gefunden'
         newest_local_v = local_versions[0]
-        if newest_server_v['version'] < newest_local_v['version']:
-            return 1, (f'Neue Basisdaten (Stand: {newest_server_v["date"]}) '
-                       'sind verfügbar (lokaler Stand: '
+        if newest_server_v['version'] > newest_local_v['version']:
+            return 1, (f'Neue Basisdaten (v{newest_server_v["version"]} '
+                       f'{newest_server_v["date"]}) '
+                       f'sind verfügbar (lokal: v{newest_local_v["version"]} '
                        f'{newest_local_v["date"]})')
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
                    f'(v{newest_local_v["version"]} {newest_local_v["date"]})')
