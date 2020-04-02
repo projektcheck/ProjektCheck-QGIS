@@ -78,11 +78,32 @@ class Request(QObject):
 
     def _get_sync(self, qurl: QUrl, timeout=10000):
         request = QNetworkRequest(qurl)
-        reply = self.manager.blockingGet(request, forceRefresh=True)
+        # newer versions of QGIS (3.6+) support synchronous requests
+        if hasattr(self.manager, 'blockingGet'):
+            reply = self.manager.blockingGet(request, forceRefresh=True)
+        # use blocking event loop for older versions
+        else:
+            loop = QEventLoop()
+            timer = QTimer()
+            timer.setSingleShot(True)
+            # reply or timeout break event loop, whoever comes first
+            timer.timeout.connect(loop.quit)
+            reply = self.manager.get(request)
+            reply.finished.connect(loop.quit)
+
+            timer.start(timeout)
+
+            # start blocking loop
+            loop.exec()
+            loop.deleteLater()
+            if not timer.isActive():
+                reply.deleteLater()
+                raise ConnectionError('Timeout ')
+
+            timer.stop()
         if reply.error():
             self.error.emit(reply.errorString())
             raise ConnectionError(reply.errorString())
-        #reply.deleteLater()
         res = Reply(reply)
         self.finished.emit(res)
         return res
