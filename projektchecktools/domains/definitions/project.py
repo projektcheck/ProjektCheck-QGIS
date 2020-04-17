@@ -60,7 +60,8 @@ class ProjectInitialization(Worker):
 
         # gather additional information about areas
 
-        ags_feats = get_ags(layer_features, source_crs=source_crs)
+        basedata = self.project_manager.basedata
+        ags_feats = get_ags(layer_features, basedata, source_crs=source_crs)
         ags = [f.AGS_0 for f in ags_feats]
         gem_names = [f.GEN for f in ags_feats]
         gem_types = [f.Gemeindetyp for f in ags_feats]
@@ -141,8 +142,8 @@ class ProjectInitialization(Worker):
         sk_radius = getattr(settings, 'PROJECT_RADIUS', 20000)
         self.log(f'Ermittle Gemeinden im Umkreis von {sk_radius/1000} km...')
 
-        basedata = settings.BASEDATA.get_workspace('Basisdaten_deutschland')
-        vg_table = basedata.get_table('Verwaltungsgemeinschaften')
+        workspace = basedata.get_workspace('Basisdaten_deutschland')
+        vg_table = workspace.get_table('Verwaltungsgemeinschaften')
         buffer = QgsGeometry.fromPointXY(
             QgsPointXY(*project_centroid)).buffer(sk_radius, 20)
         vg_table.spatial_filter(buffer.asWkt())

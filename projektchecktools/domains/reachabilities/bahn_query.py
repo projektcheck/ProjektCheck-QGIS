@@ -16,6 +16,7 @@ from projektchecktools.domains.reachabilities.tables import (Haltestellen,
                                                         ZentraleOrte,
                                                         ErreichbarkeitenOEPNV)
 from projektchecktools.utils.spatial import points_within, Point
+from projektchecktools.base.project import ProjectManager
 from settings import settings
 
 requests = Request(synchronous=True)
@@ -430,7 +431,7 @@ def next_working_day(min_days_infront=2):
 
     today = np.datetime64(date.today())
 
-    basedata = settings.BASEDATA
+    basedata = ProjectManager().basedata
 
     day = today + np.timedelta64(min_days_infront,'D')
     # get working days (excl. holidays)

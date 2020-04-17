@@ -68,7 +68,7 @@ def add_selection_icons(toolbox):
     toolbox.currentChanged.connect(on_select)
     on_select(toolbox.currentIndex())
 
-def get_ags(features, source_crs=None):
+def get_ags(features, basedata, source_crs=None):
     """
     get the ags entry of the geometries of the given QGIS Features
 
@@ -83,15 +83,8 @@ def get_ags(features, source_crs=None):
     -------
     ags : list of Feature
     """
-    basedata = settings.BASEDATA.get_workspace('Basisdaten_deutschland')
-    ags_table = basedata.get_table('bkg_gemeinden')
-    #gem_layer = QgsVectorLayer(basedata.path, 'bkg_gemeinden', 'ogr')
-
-    #index = QgsSpatialIndex()
-    #for feat in features:
-        #index.insertFeature(feat)
-    #for gem_feat in gem_layer.getFeatures():
-        #ids = index.intersects(gem_feat.geometry().centroid())
+    workspace = basedata.get_workspace('Basisdaten_deutschland')
+    ags_table = workspace.get_table('bkg_gemeinden')
 
     target_crs = QgsCoordinateReferenceSystem(settings.EPSG)
 

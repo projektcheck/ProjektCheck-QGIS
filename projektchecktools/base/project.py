@@ -318,8 +318,6 @@ class ProjectManager(metaclass=Singleton):
         if not os.path.exists(path):
             return False
         self.basedata = Geopackage(base_path=path, read_only=True)
-        # ToDo: remove basedata from settings (still there out of convenience)
-        self.settings.BASEDATA = self.basedata
         self.basedata_version = local_version['version']
         return True
 

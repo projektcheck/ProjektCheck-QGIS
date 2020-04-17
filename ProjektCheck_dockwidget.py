@@ -88,6 +88,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             job = ProjectInitialization(name, layer,
                                         self.project_manager.settings.EPSG,
                                         parent=self.ui)
+            self.project_manager.load_basedata()
             def on_success(project):
                 self.project_manager.active_project = project
                 self.ui.project_combo.addItem(project.name, project)

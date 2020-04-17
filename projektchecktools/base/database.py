@@ -149,7 +149,7 @@ class FeatureCollection:
     workspace : Workspace
         the workspace the features are in
     '''
-    def __init__(self, table):
+    def __init__(self, table: "Table"):
         '''
         Parameters
         ----------
@@ -431,7 +431,7 @@ class Database(ABC):
         '''
         raise NotImplementedError
 
-    def get_table(self, name: str, workspace: str = ''):
+    def get_table(self, name: str, workspace: str = '') -> 'Table':
         '''
         get table from database
 
