@@ -1,6 +1,7 @@
 import numpy as np
 from pyproj import Proj, transform
 from qgis.core import QgsPointXY
+import requests
 
 def points_within(center_point, points, radius):
     """get the points within a radius around a given center_point,
@@ -32,6 +33,22 @@ def _get_distances(point, points):
     diff = np.array(points) - np.array(point)
     distances = np.apply_along_axis(np.linalg.norm, 1, diff)
     return distances
+
+def google_geocode(address, api_key=''):
+    url = 'https://maps.googleapis.com/maps/api/geocode/json'
+    params = {'sensor': 'false', 'address': address}
+    if api_key:
+        params['key'] = api_key
+    r = requests.get(url, params=params)
+    json = r.json()
+    results = json['results']
+    msg = json['status'] if json.has_key('status') else ''
+    if not results:
+        if json.has_key('error_message'):
+            msg = json['error_message']
+        return None, msg
+    location = results[0]['geometry']['location']
+    return (location['lat'], location['lng']), msg
 
 
 class Point(object):

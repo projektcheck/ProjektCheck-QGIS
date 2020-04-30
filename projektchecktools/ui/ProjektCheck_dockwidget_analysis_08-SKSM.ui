@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
-    <height>995</height>
+    <width>505</width>
+    <height>810</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>554</width>
-         <height>940</height>
+         <width>478</width>
+         <height>758</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -197,7 +197,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_45">
+            <widget class="QPushButton" name="create_template_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -218,7 +218,7 @@ padding: 2px;
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</iconset>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -244,7 +244,7 @@ padding: 2px;
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -297,22 +297,6 @@ padding: 2px;
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer_8">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>6</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
               <widget class="QCheckBox" name="checkBox_22">
                <property name="text">
                 <string>vorhandene OSM-Märkte entfernen</string>
@@ -332,62 +316,6 @@ padding: 2px;
                </property>
               </spacer>
              </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_3">
-               <property name="text">
-                <string>OSM-Märkte löschen</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>268</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_9">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>12</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBox_23">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>zusätzlicher Buffer für Umkreissuche (m)</string>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
            <item>
@@ -399,36 +327,14 @@ padding: 2px;
               <number>0</number>
              </property>
              <item>
-              <spacer name="horizontalSpacer_10">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+              <widget class="QCheckBox" name="checkBox_23">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
+               <property name="text">
+                <string>zusätzlicher Buffer für Umkreissuche (m)</string>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>268</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>12</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+              </widget>
              </item>
              <item>
               <widget class="QSpinBox" name="spinBox">
@@ -450,6 +356,36 @@ padding: 2px;
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_14">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="text">
+                <string>OSM-Märkte löschen</string>
                </property>
               </widget>
              </item>
@@ -601,7 +537,7 @@ padding: 2px;
            <string>Veränderungen durch Planung</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
@@ -902,7 +838,7 @@ padding: 2px;
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -927,29 +863,33 @@ padding: 2px;
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer_6">
+              <widget class="QCheckBox" name="checkBox">
+               <property name="text">
+                <string>Neuberechnung der Distanzen und Siedlungszellen erzwingen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_13">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>6</width>
+                 <width>40</width>
                  <height>20</height>
                 </size>
                </property>
               </spacer>
              </item>
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Pufferzone für Siedlungszellen um gewählte Gemeinden (in m):</string>
-               </property>
-              </widget>
-             </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Pufferzone für Siedlungszellen um gewählte Gemeinden (in m):</string>
+             </property>
+            </widget>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -959,38 +899,6 @@ padding: 2px;
              <property name="topMargin">
               <number>0</number>
              </property>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>145</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>12</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
              <item>
               <widget class="QSpinBox" name="spinBox_2">
                <property name="maximum">
@@ -1005,52 +913,6 @@ padding: 2px;
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>145</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>12</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBox">
-               <property name="text">
-                <string>Neuberechnung der Distanzen und Siedlungszellen erzwingen</string>
                </property>
               </widget>
              </item>
@@ -1142,6 +1004,38 @@ padding: 2px;
  <resources/>
  <connections>
   <connection>
+   <sender>horizontalSlider_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>117</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>117</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>checkBox_23</sender>
    <signal>toggled(bool)</signal>
    <receiver>spinBox</receiver>
@@ -1202,38 +1096,6 @@ padding: 2px;
     <hint type="destinationlabel">
      <x>414</x>
      <y>390</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>horizontalSlider_2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinBox_2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinBox_2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>69</y>
     </hint>
    </hints>
   </connection>
