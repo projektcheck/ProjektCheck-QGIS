@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>548</width>
-         <height>921</height>
+         <width>554</width>
+         <height>940</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -78,11 +78,11 @@ padding: 2px;
            <string>Betrachtungsraum</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
-            <widget class="QPushButton" name="pushButton_39">
+            <widget class="QPushButton" name="select_centers_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -180,7 +180,7 @@ padding: 2px;
            <string>Lebensmitteleinzelhandel im Bestand</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
@@ -316,6 +316,26 @@ padding: 2px;
               <widget class="QCheckBox" name="checkBox_22">
                <property name="text">
                 <string>vorhandene OSM-Märkte entfernen</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_12">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="text">
+                <string>OSM-Märkte löschen</string>
                </property>
               </widget>
              </item>
@@ -749,7 +769,7 @@ padding: 2px;
            <string>Zentren</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
@@ -878,7 +898,7 @@ padding: 2px;
            <string>Projektwirkung</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>

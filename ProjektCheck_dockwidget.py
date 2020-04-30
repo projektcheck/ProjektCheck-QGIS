@@ -223,7 +223,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         inactive.append(municipaltaxrevenue)
 
         supermarkets = SupermarketsCompetition()
-        inactive.append(supermarkets)
+        self.domains.append(supermarkets)
 
         # fill the analysis menu with available domains
         menu = QMenu()
