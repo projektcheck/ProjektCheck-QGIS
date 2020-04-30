@@ -61,7 +61,8 @@ class ProjectInitialization(Worker):
         # gather additional information about areas
 
         basedata = self.project_manager.basedata
-        ags_feats = get_ags(layer_features, basedata, source_crs=source_crs)
+        ags_feats = get_ags(layer_features, basedata, source_crs=source_crs,
+                            use_centroid=True)
         ags = [f.AGS_0 for f in ags_feats]
         gem_names = [f.GEN for f in ags_feats]
         gem_types = [f.Gemeindetyp for f in ags_feats]

@@ -68,7 +68,7 @@ def add_selection_icons(toolbox):
     toolbox.currentChanged.connect(on_select)
     on_select(toolbox.currentIndex())
 
-def get_ags(features, basedata, source_crs=None):
+def get_ags(features, basedata, source_crs=None, use_centroid=False):
     """
     get the ags entry of the geometries of the given QGIS Features
 
@@ -76,12 +76,22 @@ def get_ags(features, basedata, source_crs=None):
     ----------
     feature : QgsFeature
         a feature table
+    basedata : Database
+        the database containing the wokspace 'Basisdaten_deutschland' with
+        the table 'bkg_gemeinden'
     source_crs : int
         epsg code of the feature geometries
+    use_centroid : bool, optional
+        if True - use centroid of features to get area with ags
+        if False - use whole geometry of features
+        defaults to False
 
     Returns
     -------
     ags : list of Feature
+
+    Raises
+    ------
     """
     workspace = basedata.get_workspace('Basisdaten_deutschland')
     ags_table = workspace.get_table('bkg_gemeinden')
@@ -96,7 +106,8 @@ def get_ags(features, basedata, source_crs=None):
             tr = QgsCoordinateTransform(
                 source_crs, target_crs, QgsProject.instance())
             geom.transform(tr)
-        ags_table.spatial_filter(geom.asWkt())
+        wkt = geom.centroid().asWkt() if use_centroid else geom.asWkt()
+        ags_table.spatial_filter(wkt)
         if len(ags_table) < 1:
             raise Exception(f'Feature {feat.id()} liegt nicht in Deutschland.')
         if len(ags_table) > 1:
