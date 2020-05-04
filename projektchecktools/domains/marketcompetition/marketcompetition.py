@@ -2,7 +2,7 @@ from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.domains.marketcompetition.tables import Centers
 from projektchecktools.domains.marketcompetition.market_templates import (
-    MarketTemplateDialog)
+    MarketTemplateCreateDialog)
 from projektchecktools.base.tools import FeaturePicker
 
 
@@ -21,7 +21,9 @@ class SupermarketsCompetition(Domain):
         self.center_picker.feature_picked.connect(self.center_picked)
 
         self.ui.create_template_button.clicked.connect(
-            lambda: MarketTemplateDialog().show())
+            lambda: MarketTemplateCreateDialog().show())
+        self.ui.read_template_button.clicked.connect(
+            lambda: MarketTemplateCreateDialog().show())
         self.ui.select_centers_button.clicked.connect(
             lambda: self.draw_gem(zoom_to=True))
 

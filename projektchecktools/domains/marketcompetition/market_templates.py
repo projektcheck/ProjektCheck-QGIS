@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-from csv import DictWriter, DictReader
 import subprocess
 import os
 import sys
-import xlwt
-import xlrd
 from collections import OrderedDict
 import pandas as pd
 import numpy as np
-import string
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
+from qgis.PyQt.Qt import QVariant
+from qgis.core import (QgsField, QgsVectorLayer, QgsVectorFileWriter,
+                       QgsFeature, QgsProject)
 
 from projektchecktools.utils.spatial import google_geocode
 from projektchecktools.base.dialogs import Dialog
@@ -20,11 +19,11 @@ from settings import settings
 DEFAULT_NAME = 'maerkte_vorlage'
 
 
-class MarketTemplateDialog(Dialog):
+class MarketTemplateCreateDialog(Dialog):
     ui_file = 'create_template.ui'
 
     def __init__(self):
-        super().__init__(self.ui_file, modal=True)
+        super().__init__(self.ui_file, modal=False)
 
     def setupUi(self):
         self.template_type_combo.addItems(MarketTemplate.template_types.keys())
@@ -37,7 +36,15 @@ class MarketTemplateDialog(Dialog):
         typ = self.template_type_combo.currentText()
         template = MarketTemplate(typ, self.path_edit.text(),
                                   epsg=settings.EPSG)
-        template.create()
+        success = template.create()
+        if success:
+            template.open()
+            self.close()
+        else:
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Beim Schreiben des Templates ist ein Fehler aufgetreten.\n'
+                'Bitte prüfen Sie die Schreibrechte im gewählten Ordner')
 
     def browse_path(self):
         typ = self.template_type_combo.currentText()
@@ -91,7 +98,7 @@ class MarketTemplate(object):
     _option_1 = {u'Vkfl_m²': int}
     _option_2 = {u'BTyp': int}
 
-    _delimiter = ';'
+    _seperator = 'SEMICOLON'
 
     def __init__(self, template_type, file_path, filename=None, epsg=4326):
         self.template_type = template_type
@@ -110,17 +117,20 @@ class MarketTemplate(object):
 
     def create(self):
         '''create the template file, overwrites if already exists'''
+        layer = self._create_template_layer(self.fields, epsg=self.epsg)
+        try:
+            if self.template_type == 'CSV-Datei':
+                self._export_to_csv(layer, self.file_path, self._seperator)
+            elif self.template_type == 'Exceldatei':
+                self._export_to_xlsx(layer, self.file_path)
+            elif self.template_type == 'Shapefile':
+                self._export_to_shape_file(layer, self.file_path)
+        # actually never seems to happen, QgsVectorFileWriter always seems
+        # to return 0 (on success and failure) not throwing anything
+        except QgsVectorFileWriter.WriterError:
+            return False
 
-        if self.template_type == 'CSV-Datei':
-            self._create_csv_template(self.file_path, self.fields.keys(),
-                                      self._delimiter)
-
-        elif self.template_type == 'Exceldatei':
-            self._create_excel_template(self.file_path, self.fields)
-
-        elif self.template_type == 'Shapefile':
-            self._create_shape_template(self.file_path, self.fields,
-                                        spatial_reference=self.epsg)
+        return True
 
     def open(self):
         '''open the file (externally with default app if not a shape file)'''
@@ -133,54 +143,41 @@ class MarketTemplate(object):
                 subprocess.call(('xdg-open', self.file_path))
         elif self.template_type == 'CSV-Datei':
             subprocess.Popen(r'explorer /select,"{}"'
-                             .format(self.file_path))
+                             .format(os.path.normpath(self.file_path)))
         elif self.template_type == 'Shapefile':
-            layer = arcpy.mapping.Layer(self.file_path)
-            mxd = arcpy.mapping.MapDocument("CURRENT")
-            df = arcpy.mapping.ListDataFrames(mxd,"*")[0]
-            arcpy.mapping.AddLayer(df, layer, "TOP")
-            del(mxd)
-            del(df)
+            name = os.path.splitext(os.path.split(self.file_path)[1])[0]
+            layer = QgsVectorLayer(self.file_path, name, 'ogr')
+            QgsProject.instance().addMapLayer(layer)
 
     @staticmethod
-    def _create_csv_template(file_path, fields, delimiter=';'):
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        with open(file_path, mode='w+') as csv_file:
-            csv_file.write(u'\ufeff'.encode('utf8'))
-            writer = DictWriter(csv_file,
-                                [f.encode('utf8') for f in fields],
-                                delimiter=delimiter)
-            writer.writeheader()
+    def _create_template_layer(fields, epsg=4326):
+        layer = QgsVectorLayer(f'Point?crs=EPSG:{epsg}', 'template', 'memory')
+        pr = layer.dataProvider()
+        for field_name, typ in fields.items():
+            qtyp = QVariant.Int if typ == int else QVariant.String
+            qfield = QgsField(field_name, qtyp)
+            pr.addAttributes([qfield])
+        layer.updateFields()
+        return layer
 
     @staticmethod
-    def _create_excel_template(file_path, fields):
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        workbook = xlwt.Workbook()
-        sheet = book.add_sheet('Supermärkte')
-        #alphabet = string.ascii_uppercase
-        for i, (field, dtype) in enumerate(fields.items()):
-            #form = book.add_form()
-            #if dtype == str:
-                #form.set_num_format('@')
-            #sheet.set_column('{l}:{l}'.format(l=alphabet[i]), 50, form)
-            sheet.write(0, i, field)
-        workbook.save(file_path)
-        #book.close()
+    def _export_to_csv(layer, file_path, seperator='SEMICOLON'):
+        QgsVectorFileWriter.writeAsVectorFormat(
+            layer, file_path, 'utf-8', layer.crs(), 'CSV',
+            layerOptions=[f'SEPARATOR={seperator}'])
+            # , layerOptions='GEOMETRY=AS_XYZ')
 
     @staticmethod
-    def _create_shape_template(file_path, fields, spatial_reference):
-        if arcpy.Exists(file_path):
-            arcpy.Delete_management(file_path)
-        out_path, out_name = os.path.split(os.path.splitext(file_path)[0])
-        arcpy.CreateFeatureclass_management(out_path, out_name,
-                                            geometry_type='POINT',
-                                            spatial_reference=spatial_reference)
-        for field, dtype in fields.iteritems():
-            field_type = 'LONG' if dtype == int else 'TEXT'
-            arcpy.AddField_management(file_path, field, field_type)
-        arcpy.DeleteField_management(file_path, 'Id')
+    def _export_to_xlsx(layer, file_path):
+        # needs at least one feature to write the header (empty one is fine)
+        layer.dataProvider().addFeature(QgsFeature())
+        QgsVectorFileWriter.writeAsVectorFormat(
+            layer, file_path, 'utf-8', layer.crs(), 'xlsx')
+
+    @staticmethod
+    def _export_to_shape_file(layer, file_path):
+        QgsVectorFileWriter.writeAsVectorFormat(
+            layer, file_path, 'utf-8', layer.crs(), 'ESRI Shapefile')
 
     def get_markets(self):
         '''read and return the markets from file'''
