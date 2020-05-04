@@ -12,11 +12,38 @@ from qgis.core import (QgsField, QgsVectorLayer, QgsVectorFileWriter,
 
 from projektchecktools.utils.spatial import google_geocode
 from projektchecktools.base.dialogs import Dialog
-from projektchecktools.domains.marketcompetition.osm_einlesen import Supermarket
+from projektchecktools.domains.marketcompetition.markets import (
+    Supermarket, ReadMarketsWorker)
 from settings import settings
 
 
 DEFAULT_NAME = 'maerkte_vorlage'
+
+
+class MarketTemplateImportWorker(ReadMarketsWorker):
+
+    def __init__(self, file_path, project, epsg=4326, truncate=False,
+                 parent=None):
+        super().__init__(project=project, parent=parent)
+        self.project = project
+        self.file_path = file_path
+        self.truncate = truncate
+
+    def work(self):
+        name, ext = os.path.splitext(os.path.split(self.file_path)[1])
+        extensions = [v[0] for v in MarketTemplate.template_types.values()]
+        idx = extensions.index(ext)
+        template_type = MarketTemplate.template_types.keys()[idx]
+        template = MarketTemplate(template_type, self.file_path,
+                                  epsg=self.epsg)
+        self.log('Lese Datei ein...')
+        markets = template.get_markets()
+        markets = self.parse_meta(markets, field='kette')
+        markets = self.vkfl_to_betriebstyp(markets)
+        self.log(f'Schreibe {len(markets)} Märkte in die Datenbank...')
+        self.markets_to_db(markets, truncate=self.truncate)
+        self.log('Aktualisiere die AGS der Märkte...')
+        self.set_ags()
 
 
 class MarketTemplateCreateDialog(Dialog):
@@ -100,7 +127,7 @@ class MarketTemplate(object):
 
     _seperator = 'SEMICOLON'
 
-    def __init__(self, template_type, file_path, filename=None, epsg=4326):
+    def __init__(self, template_type, file_path, epsg=4326):
         self.template_type = template_type
 
         if template_type not in self.template_types.keys():

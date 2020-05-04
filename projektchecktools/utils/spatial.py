@@ -1,6 +1,6 @@
 import numpy as np
 from pyproj import Proj, transform
-from qgis.core import QgsPointXY
+from qgis.core import QgsPointXY, QgsGeometry
 import requests
 
 def points_within(center_point, points, radius):
@@ -49,6 +49,20 @@ def google_geocode(address, api_key=''):
         return None, msg
     location = results[0]['geometry']['location']
     return (location['lat'], location['lng']), msg
+
+def minimal_bounding_poly(geometries):
+    hulls = []
+    for geom in geometries:
+        if geom.isMultipart():
+            for part in geom.asGeometryCollection():
+                hulls.append(part.convexHull())
+        else:
+            hulls.append(geom.convexHull())
+
+    multi_poly = hulls[0]
+    for hull in hulls[1:]:
+        multi_poly = multi_poly.combine(hull)
+    return multi_poly
 
 
 class Point(object):

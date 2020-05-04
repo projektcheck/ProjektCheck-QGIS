@@ -1,8 +1,11 @@
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
+
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.domains.marketcompetition.tables import Centers
+from projektchecktools.domains.marketcompetition.read_osm import ReadOSMWorker
 from projektchecktools.domains.marketcompetition.market_templates import (
-    MarketTemplateCreateDialog)
+    MarketTemplateCreateDialog, MarketTemplate)
 from projektchecktools.base.tools import FeaturePicker
 
 
@@ -22,10 +25,10 @@ class SupermarketsCompetition(Domain):
 
         self.ui.create_template_button.clicked.connect(
             lambda: MarketTemplateCreateDialog().show())
-        self.ui.read_template_button.clicked.connect(
-            lambda: MarketTemplateCreateDialog().show())
+        self.ui.read_template_button.clicked.connect(self.read_template)
         self.ui.select_centers_button.clicked.connect(
             lambda: self.draw_gem(zoom_to=True))
+        self.ui.add_osm_button.clicked.connect(self.add_osm)
 
     def load_content(self):
         self.centers = Centers.features()
@@ -56,6 +59,22 @@ class SupermarketsCompetition(Domain):
         center.auswahl = not center.auswahl
         center.save()
         self.canvas.refreshAllLayers()
+
+    def read_template(self):
+        filters = [f'*{ext[0]}' for ext
+                   in MarketTemplate.template_types.values()]
+        path, f = QFileDialog.getOpenFileName(
+            self.ui, 'Templatedatei öffnen', None,
+            f'Templatedatei ({",".join(filters)})'
+        )
+
+    def add_osm(self):
+        job = ReadOSMWorker(self.project)
+        job.work()
+        #dialog = ProgressDialog(
+            #job, parent=self.ui,
+            #on_success=lambda project: on_success(project, date))
+        #dialog.show()
 
     def close(self):
         self.center_picker.set_active(False)
