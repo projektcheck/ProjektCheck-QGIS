@@ -2,7 +2,7 @@ from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
-from projektchecktools.domains.marketcompetition.tables import Centers
+from projektchecktools.domains.marketcompetition.tables import Centers, Markets
 from projektchecktools.domains.marketcompetition.read_osm import ReadOSMWorker
 from projektchecktools.domains.marketcompetition.market_templates import (
     MarketTemplateCreateDialog, MarketTemplate)
@@ -32,6 +32,7 @@ class SupermarketsCompetition(Domain):
 
     def load_content(self):
         self.centers = Centers.features()
+        self.markets = Markets.features(create=True)
 
     def draw_gem(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -69,7 +70,7 @@ class SupermarketsCompetition(Domain):
         )
 
     def add_osm(self):
-        job = ReadOSMWorker(self.project)
+        job = ReadOSMWorker(self.project, epsg=self.settings.EPSG)
         job.work()
         #dialog = ProgressDialog(
             #job, parent=self.ui,

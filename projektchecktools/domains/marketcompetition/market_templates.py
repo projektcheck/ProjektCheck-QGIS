@@ -25,7 +25,6 @@ class MarketTemplateImportWorker(ReadMarketsWorker):
     def __init__(self, file_path, project, epsg=4326, truncate=False,
                  parent=None):
         super().__init__(project=project, parent=parent)
-        self.project = project
         self.file_path = file_path
         self.truncate = truncate
 

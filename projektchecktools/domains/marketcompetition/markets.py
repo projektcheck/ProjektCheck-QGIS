@@ -1,4 +1,4 @@
-import sys
+import re
 
 from projektchecktools.utils.spatial import Point
 from projektchecktools.base.domain import Worker
@@ -12,7 +12,7 @@ class Supermarket(Point):
     def __init__(self, id, x, y, name, kette, betriebstyp='', shop=None,
                  typ=None, vkfl=None, id_betriebstyp=1, epsg=4326,
                  id_teilflaeche=-1, id_kette=0, adresse='', **kwargs):
-        super(Supermarket, self).__init__(x, y, id=id, epsg=epsg)
+        super().__init__(x, y, id=id, epsg=epsg)
         self.id_betriebstyp = id_betriebstyp
         self.betriebstyp = betriebstyp
         self.name = name
@@ -21,7 +21,6 @@ class Supermarket(Point):
         self.shop = shop
         self.typ = typ
         self.vkfl = vkfl
-        self.geom = None
         self.id_teilflaeche = id_teilflaeche
         self.adresse = adresse
 
@@ -216,13 +215,12 @@ class ReadMarketsWorker(Worker):
                 except:
                     pass
             if not name:
-                arcpy.AddMessage(u'  - Markt mit fehlendem Attribut "{}" wird '
-                                 u'übersprungen'.format(field))
+                self.log(f'  - Markt mit fehlendem Attribut "{field}" wird '
+                         'übersprungen')
                 continue
             match_found = False
             for idx, chain_alloc in self.df_chains_alloc.iterrows():
-                match_result = re.match(chain_alloc['regex'],
-                                        name)
+                match_result = re.match(chain_alloc['regex'], name)
                 if not match_result:
                     continue
                 match_found = True
@@ -234,9 +232,9 @@ class ReadMarketsWorker(Worker):
                     market.id_kette = id_kette
                     ret_markets.append(market)
                 else:
-                    arcpy.AddMessage(
-                        u'  - Markt "{}" ist kein Lebensmitteleinzelhandel, '
-                        u'wird übersprungen'.format(market.name))
+                    self.log(
+                        f'  - Markt "{market.name}" ist kein '
+                        'Lebensmitteleinzelhandel, wird übersprungen')
                 break
             # markets that didn't match (keep defaults)
             if not match_found:
