@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-import os
-from collections import OrderedDict
-import urllib
-import re
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry
+from qgis.PyQt.Qt import QVariant
 
 from projektchecktools.domains.marketcompetition.markets import (
     Supermarket, ReadMarketsWorker)
-from projektchecktools.utils.spatial import Point, minimal_bounding_poly
+from projektchecktools.utils.spatial import (Point, minimal_bounding_poly,
+                                             remove_duplicates)
 from projektchecktools.domains.marketcompetition.tables import Centers, Markets
 from projektchecktools.utils.connection import Request
 
@@ -52,7 +51,6 @@ class ReadOSMWorker(ReadMarketsWorker):
             polygon = [Point(p.x(), p.y(), epsg=self.epsg)
                        for p in poly.asPolygon()[0]]
             m = reader.get_shops(polygon, count=self._max_count-len(markets))
-
             markets += m
 
         self.log(f'{len(markets)} Märkte gefunden')
@@ -68,27 +66,52 @@ class ReadOSMWorker(ReadMarketsWorker):
                     markets_in_communities.append(market)
                     break
 
-        markets = self.parse_meta(markets_in_communities)
-        self.log(f'Schreibe {len(markets)} Märkte in die Datenbank...')
+        m_layer = QgsVectorLayer(f'Point?crs=EPSG:{self.epsg}', 'markets', 'memory')
+        pr = m_layer.dataProvider()
+        pr.addAttributes([QgsField('m_id', QVariant.Int)])
+        m_layer.updateFields()
+        for market in markets:
+            f = QgsFeature()
+            f.setGeometry(QgsGeometry.fromPointXY(market.geom))
+            f.setAttributes([market.id])
+            pr.addFeature(f)
+        c_layer = QgsVectorLayer(f'Point?crs=EPSG:{self.epsg}', 'layers', 'memory')
 
+
+        #layer = QgsProject.instance().mapLayersByName('firstLayer')[0]
+        #joined_layer = QgsProject.instance().mapLayersByName('secondLayer')[0]
+
+        #parameters = {'INPUT':layer,
+                        #'JOIN':joined_layer,
+                        #'PREDICATE':[0],
+                        #'JOIN_FIELDS':['ID'],
+                        #'METHOD':0,
+                        #'DISCARD_NONMATCHING':True,
+                        #'PREFIX':'new_',
+                        #'OUTPUT':'memory:'}
+
+        #processing.runAndLoadResults('qgis:joinattributesbylocation', parameters)
+
+        self.log(f'Schreibe {len(markets)} Märkte in die Datenbank...')
+        features = Markets.features(project=self.project)
         self.markets_to_db(markets,
                            truncate=False,  # already truncated osm markets
                            is_buffer=False,
                            is_osm=True)
 
-        n = remove_duplicates(self.folders.get_table(self._markets_table),
-                              'id', match_field='id_kette',
-                              where='is_osm=1', distance=50)
+        features = Markets.features(project=self.project).filter(is_osm=True)
+        n = remove_duplicates(features, match_field='id_kette', distance=50)
         self.log('{} Duplikate entfernt...'.format(n))
         self.log('Aktualisiere die AGS der Märkte...')
-        self.set_ags()
+        # self.set_ags()
 
 
 class OSMShopsReader(object):
     geoserver_epsg = 3035
 
     def __init__(self, epsg=31467):
-        self.url = r'https://geoserver.ggr-planung.de/geoserver/projektcheck/wfs?'
+        self.url = (r'https://geoserver.ggr-planung.de/'
+                    r'geoserver/projektcheck/wfs?')
         self.wfs_params = dict(service='WFS',
                                request='GetFeature',
                                version='2.0.0',
@@ -112,6 +135,8 @@ class OSMShopsReader(object):
         json
         """
         query = 'INTERSECTS(geom,POLYGON(({})))'
+        # weird that the geoserver expects a polygon in a different projection
+        # (always 3035) than the passed srs
         poly_trans = [p.transform(self.geoserver_epsg) for p in polygon]
         str_poly = ', '.join(('{} {}'.format(pnt[1], pnt[0])
                               for pnt in poly_trans))
@@ -153,8 +178,7 @@ class OSMShopsReader(object):
             id_markt += 1
             x, y = feature['geometry']['coordinates']
             properties = feature['properties']
-            supermarket = Supermarket(id_markt, x, y, epsg=self.geoserver_epsg,
+            supermarket = Supermarket(id_markt, x, y, epsg=self.epsg,
                                       **properties)
-            supermarket.transform(self.epsg)
             supermarkets.append(supermarket)
         return supermarkets

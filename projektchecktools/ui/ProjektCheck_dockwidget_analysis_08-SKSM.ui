@@ -323,9 +323,12 @@ padding: 2px;
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkBox_22">
+              <widget class="QCheckBox" name="truncate_osm_check">
                <property name="text">
                 <string>vorhandene OSM-Märkte entfernen</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
                </property>
               </widget>
              </item>

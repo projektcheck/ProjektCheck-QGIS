@@ -2,11 +2,13 @@ from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
-from projektchecktools.domains.marketcompetition.tables import Centers, Markets
+from projektchecktools.domains.marketcompetition.tables import (
+    Centers, Markets, MarketCellRelations)
 from projektchecktools.domains.marketcompetition.read_osm import ReadOSMWorker
 from projektchecktools.domains.marketcompetition.market_templates import (
     MarketTemplateCreateDialog, MarketTemplate)
 from projektchecktools.base.tools import FeaturePicker
+from projektchecktools.base.dialogs import ProgressDialog
 
 
 class SupermarketsCompetition(Domain):
@@ -33,6 +35,7 @@ class SupermarketsCompetition(Domain):
     def load_content(self):
         self.centers = Centers.features()
         self.markets = Markets.features(create=True)
+        self.relations = MarketCellRelations.features(create=True)
 
     def draw_gem(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -70,12 +73,10 @@ class SupermarketsCompetition(Domain):
         )
 
     def add_osm(self):
-        job = ReadOSMWorker(self.project, epsg=self.settings.EPSG)
-        job.work()
-        #dialog = ProgressDialog(
-            #job, parent=self.ui,
-            #on_success=lambda project: on_success(project, date))
-        #dialog.show()
+        job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
+                            truncate=self.ui.truncate_osm_check.isChecked())
+        dialog = ProgressDialog(job, parent=self.ui)
+        dialog.show()
 
     def close(self):
         self.center_picker.set_active(False)

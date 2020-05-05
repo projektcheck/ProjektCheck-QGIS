@@ -349,6 +349,7 @@ class GeopackageTable(Table):
         self._filters = {}
         self.where = ''
         self.spatial_filter()
+        self.reset_cursor()
 
     def reset_cursor(self):
         '''

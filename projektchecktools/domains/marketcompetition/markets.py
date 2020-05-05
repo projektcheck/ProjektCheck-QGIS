@@ -3,6 +3,8 @@ import re
 from projektchecktools.utils.spatial import Point
 from projektchecktools.base.domain import Worker
 from projektchecktools.utils.connection import Request
+from projektchecktools.domains.marketcompetition.tables import (
+    Markets, MarketCellRelations)
 
 requests = Request(synchronous=True)
 
@@ -67,86 +69,60 @@ class ReadMarketsWorker(Worker):
 
         self.output.hide_layer('projektdefinition')
 
-    def markets_to_db(self, supermarkets, tablename='Maerkte', truncate=False,
+    def markets_to_db(self, markets, truncate=False,
                       planfall=False, is_buffer=False, start_id=None,
                       is_osm=False):
         """Create the point-features for supermarkets"""
-        sr = arcpy.SpatialReference(self.parent_tbx.config.epsg)
 
-        columns = [
-            'name',
-            'id_betriebstyp_nullfall',
-            'id_betriebstyp_planfall',
-            'id_kette',
-            'betriebstyp_nullfall',
-            'betriebstyp_planfall',
-            'kette',
-            'SHAPE@',
-            'id_teilflaeche',
-            'id',
-            'adresse',
-            'is_buffer',
-            'is_osm',
-            'vkfl',
-            'vkfl_planfall',
-            'adresse'
-        ]
-        table = self.folders.get_table(tablename)
-        # remove results as well (distances etc.)
-        res_table = self.folders.get_table('Beziehungen_Maerkte_Zellen')
+        market_feats = Markets.features(project=self.project)
 
-        # delete markets of nullfall and ALL results (easiest way)
+        # delete markets of nullfall ( and ALL results (easiest way)
         if truncate:
-            self.parent_tbx.delete_rows_in_table(
-                tablename, where='id_betriebstyp_nullfall > 0')
-            arcpy.TruncateTable_management(self.folders.get_table(res_table))
+            # markets of nullfall (having a "betriebstyp" in nullfall, but not
+            # the ones of the planned areas)
+            nullfall_markets = market_feats.filter(
+                id_betriebstyp_nullfall__gt=0,
+                id_teilflaeche__lt=0)
+            nullfall_markets.delete()
+            MarketCellRelations.features(project=self.project).delete()
 
-        if start_id is None:
-            ids = [id for id, in self.parent_tbx.query_table('Maerkte', ['id'])]
-            start_id = max(ids) + 1 if ids else 0
-
-        with arcpy.da.InsertCursor(table, columns) as rows:
-            for i, market in enumerate(supermarkets):
-                if market.name is None:
-                    continue
-                id_planfall = market.id_betriebstyp
-                id_nullfall = 0 if planfall else id_planfall
-                bt_nullfall = self.df_bt[self.df_bt['id_betriebstyp']
-                                         == id_nullfall].name.values[0]
-                bt_planfall = self.df_bt[self.df_bt['id_betriebstyp']
-                                         == id_planfall].name.values[0]
-                kette = self.df_chains[self.df_chains['id_kette']
-                                       == market.id_kette].name.values[0]
-                market.create_geom()
-                # set sales area, if not set yet (esp. osm markets)
-                vkfl = market.vkfl or self.betriebstyp_to_vkfl(market)
-                vkfl_nullfall = vkfl if not planfall else 0
-                vkfl_planfall = vkfl
-                if market.geom:
-                    rows.insertRow((
-                        market.name,
-                        id_nullfall,
-                        id_planfall,
-                        market.id_kette,
-                        bt_nullfall,
-                        bt_planfall,
-                        kette,
-                        market.geom,
-                        market.id_teilflaeche,
-                        start_id + i,
-                        market.adresse,
-                        int(is_buffer),
-                        int(is_osm),
-                        vkfl_nullfall,
-                        vkfl_planfall,
-                        market.adresse
-                    ))
+        for i, market in enumerate(markets):
+            if market.name is None or not market.geom:
+                continue
+            id_planfall = market.id_betriebstyp
+            id_nullfall = 0 if planfall else id_planfall
+            bt_nullfall = self.df_bt[self.df_bt['id_betriebstyp']
+                                     == id_nullfall].name.values[0]
+            bt_planfall = self.df_bt[self.df_bt['id_betriebstyp']
+                                     == id_planfall].name.values[0]
+            kette = self.df_chains[self.df_chains['id_kette']
+                                   == market.id_kette].name.values[0]
+            # set sales area, if not set yet (esp. osm markets)
+            vkfl = market.vkfl or self.betriebstyp_to_vkfl(market)
+            vkfl_nullfall = vkfl if not planfall else 0
+            vkfl_planfall = vkfl
+            market_feats.add(
+                name=market.name,
+                id_betriebstyp_nullfall=id_nullfall,
+                id_betriebstyp_planfall=id_planfall,
+                id_kette=market.id_kette,
+                betriebstyp_nullfall=bt_nullfall,
+                betriebstyp_planfall=bt_planfall,
+                kette=kette,
+                id_teilflaeche=market.id_teilflaeche,
+                is_buffer=is_buffer,
+                is_osm=is_osm,
+                vkfl=vkfl_nullfall,
+                vkfl_planfall=vkfl_planfall,
+                adresse=market.adresse,
+                geom=market.geom
+            )
 
     def set_ags(self):
         """
         Assign community size to supermarkets
         """
-        markets = self.folders.get_table('Maerkte')
+        markets = Markets.features(project=self.project)
         ags = get_ags(markets, 'id')
         cursor = arcpy.da.UpdateCursor(markets, ['id', 'AGS'])
         for row in cursor:
