@@ -21,15 +21,20 @@ class SupermarketsCompetition(Domain):
     layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
 
     def setupUi(self):
-        self.center_picker = FeaturePicker(self.ui.select_centers_button,
-                                           canvas=self.canvas)
-        self.center_picker.feature_picked.connect(self.center_picked)
+        self.community_picker = FeaturePicker(self.ui.select_communities_button,
+                                              canvas=self.canvas)
+        self.community_picker.feature_picked.connect(self.community_picked)
 
         self.ui.create_template_button.clicked.connect(
             lambda: MarketTemplateCreateDialog().show())
         self.ui.read_template_button.clicked.connect(self.read_template)
-        self.ui.select_centers_button.clicked.connect(
-            lambda: self.draw_gem(zoom_to=True))
+        self.ui.select_communities_button.clicked.connect(
+            lambda: self.show_communities(
+                zoom_to=self.ui.select_communities_button.isChecked()))
+        self.ui.show_markets_button.clicked.connect(
+            lambda: self.show_markets(
+                zoom_to=self.ui.show_markets_button.isChecked()))
+
         self.ui.add_osm_button.clicked.connect(self.add_osm)
 
     def load_content(self):
@@ -37,7 +42,7 @@ class SupermarketsCompetition(Domain):
         self.markets = Markets.features(create=True)
         self.relations = MarketCellRelations.features(create=True)
 
-    def draw_gem(self, zoom_to=True):
+    def show_communities(self, zoom_to=True):
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         self.centers_selected_layer = output.draw(
@@ -45,7 +50,7 @@ class SupermarketsCompetition(Domain):
             style_file='standortkonkurrenz_gemeinden_ausgewaehlt.qml',
             filter='auswahl=1 AND nutzerdefiniert=-1'
         )
-        self.center_picker.set_layer(self.centers_selected_layer)
+        self.community_picker.set_layer(self.centers_selected_layer)
 
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
@@ -54,11 +59,36 @@ class SupermarketsCompetition(Domain):
             style_file='standortkonkurrenz_gemeinden_nicht_ausgewaehlt.qml',
             filter='auswahl=0 AND nutzerdefiniert=-1'
         )
-        self.center_picker.add_layer(self.centers_not_selected_layer)
+        self.community_picker.add_layer(self.centers_not_selected_layer)
         if zoom_to:
             output.zoom_to()
 
-    def center_picked(self, feature):
+    def show_markets(self, zoom_to=True):
+        output = ProjectLayer.from_table(
+            self.markets.table, groupname=self.layer_group)
+        output.draw(
+            label='Märkte im Bestand',
+            style_file='standortkonkurrenz_maerkte_im_bestand.qml',
+            filter='id_betriebstyp_nullfall > 0'
+        )
+        if zoom_to:
+            output.zoom_to()
+        output = ProjectLayer.from_table(
+            self.markets.table, groupname=self.layer_group)
+        output.draw(
+            label='geplante Märkte',
+            style_file='standortkonkurrenz_geplante_maerkte.qml',
+            filter='id_betriebstyp_nullfall = 0'
+        )
+        output = ProjectLayer.from_table(
+            self.markets.table, groupname=self.layer_group)
+        output.draw(
+            label='veränderte Märkte im Bestand',
+            style_file='standortkonkurrenz_veraenderte_maerkte.qml',
+            filter='id_betriebstyp_nullfall > 0 and id_betriebstyp_planfall > 0'
+        )
+
+    def community_picked(self, feature):
         center = self.centers.get(id=feature.id())
         center.auswahl = not center.auswahl
         center.save()
@@ -79,6 +109,6 @@ class SupermarketsCompetition(Domain):
         dialog.show()
 
     def close(self):
-        self.center_picker.set_active(False)
+        self.community_picker.set_active(False)
         super().close()
 

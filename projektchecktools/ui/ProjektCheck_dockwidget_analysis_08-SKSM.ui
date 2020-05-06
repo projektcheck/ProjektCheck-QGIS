@@ -71,7 +71,7 @@ padding: 2px;
          <x>0</x>
          <y>0</y>
          <width>478</width>
-         <height>778</height>
+         <height>798</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -85,7 +85,7 @@ padding: 2px;
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
-            <widget class="QPushButton" name="select_centers_button">
+            <widget class="QPushButton" name="select_communities_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -130,7 +130,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_41">
+            <widget class="QPushButton" name="show_markets_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -314,7 +314,8 @@ padding: 2px;
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum mit Märkten aus OSM ergänzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Den in OpenStreetMap verfügbaren Bestand an Lebensmittelmärkten innerhalb des Plangebiets online abfragen und einlesen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Betrachtungsraum mit Märkten aus OSM ergänzen</string>
+                <string>Betrachtungsraum mit Märkten 
+aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
@@ -894,7 +895,8 @@ padding: 2px;
              <item>
               <widget class="QCheckBox" name="checkBox">
                <property name="text">
-                <string>Neuberechnung der Distanzen und Siedlungszellen erzwingen</string>
+                <string>Neuberechnung der Distanzen 
+und Siedlungszellen erzwingen</string>
                </property>
               </widget>
              </item>
