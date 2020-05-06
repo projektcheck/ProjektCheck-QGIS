@@ -92,6 +92,8 @@ def get_ags(features, basedata, source_crs=None, use_centroid=False):
 
     Raises
     ------
+    Exception
+        feature is within multiple communities or in none
     """
     workspace = basedata.get_workspace('Basisdaten_deutschland')
     ags_table = workspace.get_table('bkg_gemeinden')
@@ -101,7 +103,7 @@ def get_ags(features, basedata, source_crs=None, use_centroid=False):
     ags_feats = []
 
     for feat in features:
-        geom = feat.geometry()
+        geom = feat.geom if hasattr(feat, 'geom') else feat.geometry()
         if (source_crs):
             tr = QgsCoordinateTransform(
                 source_crs, target_crs, QgsProject.instance())

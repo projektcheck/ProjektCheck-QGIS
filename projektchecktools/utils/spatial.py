@@ -3,6 +3,7 @@ from pyproj import Proj, transform
 from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsFeature, QgsPolygon)
 from qgis.PyQt.Qt import QVariant
+from typing import Union
 import processing
 
 from projektchecktools.utils.connection import Request
@@ -46,7 +47,28 @@ class Point(object):
         self.y = y
         return (x, y)
 
-def clip(input_features, overlay_features, output_field='id', epsg=4326):
+def create_layer(features, geom_type, fields=[], name='temp', epsg=4326):
+    layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{epsg}', name, 'memory')
+    pr = layer.dataProvider()
+    for field in fields:
+        pr.addAttributes([QgsField(field, QVariant.String)])
+    layer.updateFields()
+    for feature in features:
+        f = QgsFeature()
+        geom = feature.geom
+        if isinstance(feature.geom, QgsPointXY):
+            geom = QgsGeometry.fromPointXY(feature.geom)
+        if isinstance(feature.geom, QgsPolygon):
+            geom = QgsGeometry.fromPolygonXY(feature.geom)
+        f.setGeometry(geom)
+        for field in fields:
+            f.setAttributes([getattr(feature, field)])
+        pr.addFeature(f)
+    return layer
+
+def intersect(input_features, overlay: Union[QgsVectorLayer, list],
+              input_fields=['id'],
+              output_fields=[], epsg=4326):
     '''
     clips features by geometry, only features within the geometries of the
     overlay remain
@@ -55,51 +77,41 @@ def clip(input_features, overlay_features, output_field='id', epsg=4326):
     ----------
     input_features : list
         list of QgsFeatures with Point geometry to be clipped
-    overlay_features : list
-        list of QgsFeatures with Polygon geometry
-    output_field : string, optional
-        name of field in input_features to return, defaults to id
+    overlay_features : list or layer
+        list of QgsFeatures with Polygon geometry or layer with Polygon geom.
+    input_fields : list, optional
+        list of names of fields in input_features to return, defaults to [id]
+    output_fields : list, optional
+        list of names of fields of matched features in overlay_features
+        (resp. overlay layer) to return, empty by default
     epsg : int, optional
         epsg code of input and overlay features (should be the same)
 
     Returns
     -------
-    list
-        list of values of output_fields of input features within overlay
-        geometry
+    dict
+        dict with values of input features within overlay geometry, contains
+        values of both given input and output fields
     '''
 
-    def create_layer(features, geom_type, fields=[], name='temp'):
-        layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{epsg}', name, 'memory')
-        pr = layer.dataProvider()
-        for field in fields:
-            pr.addAttributes([QgsField(field, QVariant.String)])
-        layer.updateFields()
-        for feature in features:
-            f = QgsFeature()
-            geom = feature.geom
-            if isinstance(feature.geom, QgsPointXY):
-                geom = QgsGeometry.fromPointXY(feature.geom)
-            if isinstance(feature.geom, QgsPolygon):
-                geom = QgsGeometry.fromPolygonXY(feature.geom)
-            f.setGeometry(geom)
-            for field in fields:
-                f.setAttributes([getattr(feature, field)])
-            pr.addFeature(f)
-        return layer
 
-    input_layer = create_layer(input_features, 'Point', fields=[output_field],
-                               name='input')
-    overlay_layer = create_layer(overlay_features, 'Polygon', name='overlay')
+    input_layer = create_layer(input_features, 'Point', fields=input_fields,
+                               name='input', epsg=epsg)
+    if not isinstance(overlay, QgsVectorLayer):
+        overlay = create_layer(overlay, 'Polygon',
+                               name='overlay', fields=output_fields,
+                               epsg=epsg)
 
     parameters = {'INPUT': input_layer,
-                  'OVERLAY': overlay_layer,
+                  'OVERLAY': overlay,
                   'OUTPUT':'memory:'}
     output_layer = processing.run('native:intersection', parameters)['OUTPUT']
 
-    ret = [f.attribute(f.fieldNameIndex(output_field))
+    ret_fields = input_fields + output_fields
+    ret = [{i: f.attribute(f.fieldNameIndex(i)) for i in ret_fields}
            for f in output_layer.getFeatures()]
     return ret
+
 
 def closest_point(point, points):
     """get the point out of given points that is closest to the given point,
@@ -207,7 +219,7 @@ def remove_duplicates(features, match_field='', where='', distance=100):
         sub_ids = ids[indices]
         sub_mfs = mfs[indices]
         for p, pid, pmf in zip(p_within, sub_ids, sub_mfs):
-            if id == pid:
+            if feature.id == pid:
                 continue
             if match_field and getattr(feature, add) != pmf:
                 continue

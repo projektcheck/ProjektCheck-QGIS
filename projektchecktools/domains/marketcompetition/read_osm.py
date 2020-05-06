@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry
-from qgis.PyQt.Qt import QVariant
+#from qgis.core import (QgsVectorLayer, QgsField, QgsFeature, QgsGeometry,
+                       #QgsApplication)
 
 from projektchecktools.domains.marketcompetition.markets import (
     Supermarket, ReadMarketsWorker)
 from projektchecktools.utils.spatial import (Point, minimal_bounding_poly,
-                                             remove_duplicates)
+                                             remove_duplicates, intersect)
 from projektchecktools.domains.marketcompetition.tables import Centers, Markets
 from projektchecktools.utils.connection import Request
 
@@ -30,20 +30,19 @@ class ReadOSMWorker(ReadMarketsWorker):
         geometries = [f.geom for f in communities]
         multi_poly = minimal_bounding_poly(geometries)
 
-        self.log('Sende Standortanfrage an Geoserver...')
-        reader = OSMShopsReader(epsg=self.epsg)
         if self.truncate:
             osm_markets = Markets.features(
                 project=self.project).filter(is_osm=True)
-            if len(osm_markets) > 0:
+            n = len(osm_markets)
+            if n > 0:
                 self.log('Lösche vorhandene OSM-Märkte...')
                 osm_markets.delete()
-                self.log(f'{len(osm_markets)} OSM-Märkte gelöscht')
+                self.log(f'{n} OSM-Märkte gelöscht')
             else:
                 self.log('Keine OSM-Märkte vorhanden.')
-        #if self.par.count.value == 0:
-            #return
 
+        self.log('Sende Standortanfrage an Geoserver...')
+        reader = OSMShopsReader(epsg=self.epsg)
         markets = []
         for poly in multi_poly.asGeometryCollection():
             # minimal bounding geometry shouldn't contain holes, so it is safe
@@ -53,57 +52,31 @@ class ReadOSMWorker(ReadMarketsWorker):
             m = reader.get_shops(polygon, count=self._max_count-len(markets))
             markets += m
 
+        self.set_progress(30)
         self.log(f'{len(markets)} Märkte gefunden')
-        self.log('Analysiere gefundene Märkte...')
+        self.log('Verschneide gefundene Märkte...')
 
-        markets_in_communities = []
-        # convex hulls around communities were passed to geoserver ->
-        # some markets are outside
-        # ToDo: super inefficient this way, time was pressing :(
-        for market in markets:
-            for community in communities:
-                if community.geom.contains(market.geom):
-                    markets_in_communities.append(market)
-                    break
+        in_com_ids = intersect(markets, communities, input_fields=['id'],
+                               epsg=self.epsg)
+        in_com_ids = [i['id'] for i in in_com_ids]
+        markets_in_com = [m for m in markets if m.id in in_com_ids]
 
-        m_layer = QgsVectorLayer(f'Point?crs=EPSG:{self.epsg}', 'markets', 'memory')
-        pr = m_layer.dataProvider()
-        pr.addAttributes([QgsField('m_id', QVariant.Int)])
-        m_layer.updateFields()
-        for market in markets:
-            f = QgsFeature()
-            f.setGeometry(QgsGeometry.fromPointXY(market.geom))
-            f.setAttributes([market.id])
-            pr.addFeature(f)
-        c_layer = QgsVectorLayer(f'Point?crs=EPSG:{self.epsg}', 'layers', 'memory')
+        self.set_progress(50)
+        self.log(f'Schreibe {len(markets_in_com)} Märkte in die Datenbank...')
+        parsed = self.parse_meta(markets_in_com)
 
-
-        #layer = QgsProject.instance().mapLayersByName('firstLayer')[0]
-        #joined_layer = QgsProject.instance().mapLayersByName('secondLayer')[0]
-
-        #parameters = {'INPUT':layer,
-                        #'JOIN':joined_layer,
-                        #'PREDICATE':[0],
-                        #'JOIN_FIELDS':['ID'],
-                        #'METHOD':0,
-                        #'DISCARD_NONMATCHING':True,
-                        #'PREFIX':'new_',
-                        #'OUTPUT':'memory:'}
-
-        #processing.runAndLoadResults('qgis:joinattributesbylocation', parameters)
-
-        self.log(f'Schreibe {len(markets)} Märkte in die Datenbank...')
-        features = Markets.features(project=self.project)
-        self.markets_to_db(markets,
+        self.markets_to_db(parsed,
                            truncate=False,  # already truncated osm markets
                            is_buffer=False,
                            is_osm=True)
 
-        features = Markets.features(project=self.project).filter(is_osm=True)
-        n = remove_duplicates(features, match_field='id_kette', distance=50)
-        self.log('{} Duplikate entfernt...'.format(n))
-        self.log('Aktualisiere die AGS der Märkte...')
-        # self.set_ags()
+        self.set_progress(60)
+        osm_markets = Markets.features(project=self.project).filter(is_osm=1)
+        n = remove_duplicates(osm_markets, match_field='id_kette', distance=50)
+        self.log(f'{n} Duplikate entfernt...')
+        self.set_progress(80)
+        self.log('Ermittle die AGS der Märkte...')
+        self.set_ags(osm_markets)
 
 
 class OSMShopsReader(object):

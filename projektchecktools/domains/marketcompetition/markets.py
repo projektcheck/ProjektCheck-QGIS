@@ -1,10 +1,12 @@
 import re
+# from qgis.core import QgsVectorLayer
 
-from projektchecktools.utils.spatial import Point
+from projektchecktools.utils.spatial import Point# , intersect
 from projektchecktools.base.domain import Worker
 from projektchecktools.utils.connection import Request
 from projektchecktools.domains.marketcompetition.tables import (
     Markets, MarketCellRelations)
+from projektchecktools.utils.utils import get_ags
 
 requests = Request(synchronous=True)
 
@@ -118,21 +120,20 @@ class ReadMarketsWorker(Worker):
                 geom=market.geom
             )
 
-    def set_ags(self):
+    def set_ags(self, markets):
         """
         Assign community size to supermarkets
         """
-        markets = Markets.features(project=self.project)
-        ags = get_ags(markets, 'id')
-        cursor = arcpy.da.UpdateCursor(markets, ['id', 'AGS'])
-        for row in cursor:
-            try:
-                a = ags[row[0]]
-            except:
-                continue
-            row[1] = a[0]
-            cursor.updateRow(row)
-        del cursor
+        #gemeinden = self.project.basedata.get_table(
+            #'bkg_gemeinden', 'Basisdaten_deutschland')
+        #overlay = QgsVectorLayer(gemeinden.workspace.path,
+                                 #gemeinden.name, "ogr")
+        #ret = intersect(markets, overlay, input_fields=['id'],
+                        #output_fields=['AGS'], epsg=self.epsg)
+        gem = get_ags(markets, self.project.basedata)
+        for i, market in enumerate(markets):
+            market.AGS = gem[i].AGS
+            market.save()
 
     def vkfl_to_betriebstyp(self, markets):
         """

@@ -26,9 +26,6 @@ QGroupBox::title {
 	font: bold italic 8pt ;
     color: black;
 }
-QPushButton{
-	text-align: left;
-}
 QPushButton::flat{
 background-color: none;
 border: 0;
@@ -216,7 +213,7 @@ padding: 2px;
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">text-align:left</string>
                </property>
                <property name="text">
                 <string>befüllte Vorlage einlesen</string>
