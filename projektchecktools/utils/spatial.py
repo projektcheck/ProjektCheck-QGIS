@@ -1,6 +1,10 @@
 import numpy as np
 from pyproj import Proj, transform
-from qgis.core import QgsPointXY, QgsGeometry
+from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
+                       QgsFeature, QgsPolygon)
+from qgis.PyQt.Qt import QVariant
+import processing
+
 from projektchecktools.utils.connection import Request
 
 requests = Request(synchronous=True)
@@ -41,6 +45,61 @@ class Point(object):
         self.x = x
         self.y = y
         return (x, y)
+
+def clip(input_features, overlay_features, output_field='id', epsg=4326):
+    '''
+    clips features by geometry, only features within the geometries of the
+    overlay remain
+
+    Parameters
+    ----------
+    input_features : list
+        list of QgsFeatures with Point geometry to be clipped
+    overlay_features : list
+        list of QgsFeatures with Polygon geometry
+    output_field : string, optional
+        name of field in input_features to return, defaults to id
+    epsg : int, optional
+        epsg code of input and overlay features (should be the same)
+
+    Returns
+    -------
+    list
+        list of values of output_fields of input features within overlay
+        geometry
+    '''
+
+    def create_layer(features, geom_type, fields=[], name='temp'):
+        layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{epsg}', name, 'memory')
+        pr = layer.dataProvider()
+        for field in fields:
+            pr.addAttributes([QgsField(field, QVariant.String)])
+        layer.updateFields()
+        for feature in features:
+            f = QgsFeature()
+            geom = feature.geom
+            if isinstance(feature.geom, QgsPointXY):
+                geom = QgsGeometry.fromPointXY(feature.geom)
+            if isinstance(feature.geom, QgsPolygon):
+                geom = QgsGeometry.fromPolygonXY(feature.geom)
+            f.setGeometry(geom)
+            for field in fields:
+                f.setAttributes([getattr(feature, field)])
+            pr.addFeature(f)
+        return layer
+
+    input_layer = create_layer(input_features, 'Point', fields=[output_field],
+                               name='input')
+    overlay_layer = create_layer(overlay_features, 'Polygon', name='overlay')
+
+    parameters = {'INPUT': input_layer,
+                  'OVERLAY': overlay_layer,
+                  'OUTPUT':'memory:'}
+    output_layer = processing.run('native:intersection', parameters)['OUTPUT']
+
+    ret = [f.attribute(f.fieldNameIndex(output_field))
+           for f in output_layer.getFeatures()]
+    return ret
 
 def closest_point(point, points):
     """get the point out of given points that is closest to the given point,
