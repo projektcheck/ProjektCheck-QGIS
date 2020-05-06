@@ -88,6 +88,7 @@ class ReadMarketsWorker(Worker):
             nullfall_markets.delete()
             MarketCellRelations.features(project=self.project).delete()
 
+        created = []
         for i, market in enumerate(markets):
             if market.name is None or not market.geom:
                 continue
@@ -103,7 +104,7 @@ class ReadMarketsWorker(Worker):
             vkfl = market.vkfl or self.betriebstyp_to_vkfl(market)
             vkfl_nullfall = vkfl if not planfall else 0
             vkfl_planfall = vkfl
-            market_feats.add(
+            feat = market_feats.add(
                 name=market.name,
                 id_betriebstyp_nullfall=id_nullfall,
                 id_betriebstyp_planfall=id_planfall,
@@ -119,6 +120,8 @@ class ReadMarketsWorker(Worker):
                 adresse=market.adresse,
                 geom=market.geom
             )
+            created.append(feat)
+        return created
 
     def set_ags(self, markets):
         """

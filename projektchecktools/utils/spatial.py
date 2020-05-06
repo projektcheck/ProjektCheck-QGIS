@@ -174,7 +174,7 @@ def google_geocode(address, api_key=''):
     r = requests.get(url, params=params)
     json = r.json()
     results = json['results']
-    msg = json['status'] if json.has_key('status') else ''
+    msg = json.get('status', '')
     if not results:
         if json.has_key('error_message'):
             msg = json['error_message']

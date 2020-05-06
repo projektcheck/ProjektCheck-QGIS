@@ -410,7 +410,7 @@ aus OSM ergänzen</string>
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_5">
+              <widget class="QPushButton" name="remove_osm_button">
                <property name="text">
                 <string>OSM-Märkte löschen</string>
                </property>

@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import (QgsField, QgsVectorLayer, QgsVectorFileWriter,
                        QgsFeature, QgsProject)
 
@@ -24,7 +25,7 @@ class MarketTemplateImportWorker(ReadMarketsWorker):
 
     def __init__(self, file_path, project, epsg=4326, truncate=False,
                  parent=None):
-        super().__init__(project=project, parent=parent)
+        super().__init__(project=project, parent=parent, epsg=epsg)
         self.file_path = file_path
         self.truncate = truncate
 
@@ -32,17 +33,19 @@ class MarketTemplateImportWorker(ReadMarketsWorker):
         name, ext = os.path.splitext(os.path.split(self.file_path)[1])
         extensions = [v[0] for v in MarketTemplate.template_types.values()]
         idx = extensions.index(ext)
-        template_type = MarketTemplate.template_types.keys()[idx]
+        template_type = list(MarketTemplate.template_types.keys())[idx]
         template = MarketTemplate(template_type, self.file_path,
                                   epsg=self.epsg)
+        template.message.connect(self.log)
+        template.progress.connect(lambda p: self.set_progress(p*0.8))
         self.log('Lese Datei ein...')
         markets = template.get_markets()
         markets = self.parse_meta(markets, field='kette')
         markets = self.vkfl_to_betriebstyp(markets)
         self.log(f'Schreibe {len(markets)} Märkte in die Datenbank...')
-        self.markets_to_db(markets, truncate=self.truncate)
+        features = self.markets_to_db(markets, truncate=self.truncate)
         self.log('Aktualisiere die AGS der Märkte...')
-        self.set_ags()
+        self.set_ags(features)
 
 
 class MarketTemplateCreateDialog(Dialog):
@@ -85,7 +88,7 @@ class MarketTemplateCreateDialog(Dialog):
         self.path_edit.setText(path)
 
 
-class MarketTemplate(object):
+class MarketTemplate(QObject):
     '''
     class for managing templates holding markets as inputs for the Tool
     'Standortkonkurrenz'
@@ -102,6 +105,9 @@ class MarketTemplate(object):
         epsg : int, optional (defaults to 4326)
             the projection (required to write shapefiles)
     '''
+
+    message = pyqtSignal(str)
+    progress = pyqtSignal(int)
 
     template_types = {
         'CSV-Datei': ('.csv', 'ProjektCheck_Anleitung_WB7_Erfassungsvorlage_Maerkte_CSVDatei_befuellen.pdf'),
@@ -127,6 +133,7 @@ class MarketTemplate(object):
     _seperator = 'SEMICOLON'
 
     def __init__(self, template_type, file_path, epsg=4326):
+        super().__init__()
         self.template_type = template_type
 
         if template_type not in self.template_types.keys():
@@ -218,22 +225,27 @@ class MarketTemplate(object):
                 except:
                     continue
             if df is None:
-                raise Exception(u'Es gibt ein Problem mit der '
-                                u'Zeichenkodierung der CSV-Datei!')
+                raise Exception('Es gibt ein Problem mit der '
+                                'Zeichenkodierung der CSV-Datei!')
             df = df.reset_index()
         elif self.template_type == 'Exceldatei':
             df = pd.read_excel(self.file_path)
         elif self.template_type == 'Shapefile':
-            columns = [f.name for f in arcpy.ListFields(self.file_path)]
-            cursor = arcpy.da.SearchCursor(self.file_path, columns)
-            rows = [row for row in cursor]
-            del cursor
-            df = pd.DataFrame.from_records(rows, columns=columns)
+            layer = QgsVectorLayer(self.file_path, 'template', 'ogr')
+            field_names = [f.name() for f in layer.fields()]
+            rows = []
+            for feat in layer.getFeatures():
+                row = [feat.attribute(feat.fieldNameIndex(f))
+                       for f in field_names]
+                pnt = feat.geometry().asPoint()
+                row.append((pnt.x(), pnt.y()))
+                rows.append(row)
+            df = pd.DataFrame.from_records(rows, columns=field_names+['SHAPE'])
         else:
             raise Exception('unknown type of template')
-        required = self._required_fields.keys()
+        required = list(self._required_fields.keys())
         if self.template_type in ['CSV-Datei', 'Exceldatei']:
-            required += self._address_fields.keys()
+            required += list(self._address_fields.keys())
         if np.in1d(required, df.columns).sum() < len(required):
             raise LookupError('missing fields in given file')
         markets = self._df_to_markets(df)
@@ -241,18 +253,18 @@ class MarketTemplate(object):
 
     def _df_to_markets(self, df):
         markets = []
-        api_key = config.google_api_key
+        api_key = settings.GOOGLE_API_KEY
+        n_rows = len(df)
         for i, (idx, row) in enumerate(df.iterrows()):
             address = ''
-            name, kette, vkfl = row['Name'], row['Kette'], row[u'Vkfl_m²']
+            name, kette, vkfl = row['Name'], row['Kette'], row['Vkfl_m²']
             if self.template_type in ['CSV-Datei', 'Exceldatei']:
                 for field in self._address_fields.keys():
-                    address += u' {}'.format(row[field])
-                arcpy.AddMessage(u'Geocoding {name} {address}...'.format(
-                    name=name, address=address))
+                    address += f' {row[field]}'
+                self.message.emit(f'Geocoding {name} {address}...')
                 location, msg = google_geocode(address, api_key=api_key)
                 if location is None:
-                    arcpy.AddMessage(u'Fehler: {msg}'.format(msg=msg))
+                    self.message.emit(f'Fehler: {msg}')
                     continue
                 lat, lon = location
                 market = Supermarket(i, lon, lat, name, kette, vkfl=vkfl,
@@ -260,7 +272,9 @@ class MarketTemplate(object):
                 market.transform(self.epsg)
             else:
                 x, y = row['SHAPE']
+                self.message.emit(f'{name} @({x}, {y})')
                 market = Supermarket(i, x, y, name, kette, vkfl=vkfl,
                                      epsg=self.epsg)
             markets.append(market)
+            self.progress.emit(100*i/n_rows)
         return markets

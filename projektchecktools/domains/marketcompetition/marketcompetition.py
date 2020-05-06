@@ -6,7 +6,7 @@ from projektchecktools.domains.marketcompetition.tables import (
     Centers, Markets, MarketCellRelations)
 from projektchecktools.domains.marketcompetition.read_osm import ReadOSMWorker
 from projektchecktools.domains.marketcompetition.market_templates import (
-    MarketTemplateCreateDialog, MarketTemplate)
+    MarketTemplateCreateDialog, MarketTemplate, MarketTemplateImportWorker)
 from projektchecktools.base.tools import FeaturePicker
 from projektchecktools.base.dialogs import ProgressDialog
 
@@ -35,6 +35,7 @@ class SupermarketsCompetition(Domain):
             lambda: self.show_markets(
                 zoom_to=self.ui.show_markets_button.isChecked()))
 
+        self.ui.remove_osm_button.clicked.connect(self.remove_osm)
         self.ui.add_osm_button.clicked.connect(self.add_osm)
 
     def load_content(self):
@@ -99,14 +100,32 @@ class SupermarketsCompetition(Domain):
                    in MarketTemplate.template_types.values()]
         path, f = QFileDialog.getOpenFileName(
             self.ui, 'Templatedatei öffnen', None,
-            f'Templatedatei ({",".join(filters)})'
+            f'Templatedatei ({" ".join(filters)})'
         )
+        if path:
+            job = MarketTemplateImportWorker(path, self.project,
+                                             epsg=self.settings.EPSG)
+            dialog = ProgressDialog(
+                job, parent=self.ui,
+                on_success=lambda project: self.canvas.refreshAllLayers())
+            dialog.show()
 
     def add_osm(self):
         job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
                             truncate=self.ui.truncate_osm_check.isChecked())
-        dialog = ProgressDialog(job, parent=self.ui)
+        dialog = ProgressDialog(
+            job, parent=self.ui,
+            on_success=lambda: self.canvas.refreshAllLayers())
         dialog.show()
+
+    def remove_osm(self):
+        reply = QMessageBox.question(
+            self.ui, 'OSM-Märkte löschen',
+            'Möchten Sie alle aus OSM ermittelten Märkte löschen?',
+             QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.markets.filter(is_osm=True).delete()
+            self.canvas.refreshAllLayers()
 
     def close(self):
         self.community_picker.set_active(False)

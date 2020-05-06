@@ -535,8 +535,10 @@ class GeopackageTable(Table):
         for field, value in kwargs.items():
             if field not in self.field_names:
                 continue
-                #raise ValueError(f'{field} is not in fields of '
-                                 #f'table {self.name}')
+            if isinstance(value, np.integer):
+                value = int(value)
+            if isinstance(value, np.float):
+                value = float(value)
             ret = feature.SetField(field, value)
         if geom:
             if not isinstance(geom, ogr.Geometry):
@@ -606,6 +608,10 @@ class GeopackageTable(Table):
             geom = ogr.CreateGeometryFromWkt(geom.asWkt())
         feature.SetGeometry(geom)
         for field_name, value in kwargs.items():
+            if isinstance(value, np.integer):
+                value = int(value)
+            if isinstance(value, np.float):
+                value = float(value)
             feature.SetField(field_name, value)
         self._layer.SetFeature(feature)
         return True
