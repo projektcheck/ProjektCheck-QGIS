@@ -1,6 +1,6 @@
 from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsProject, QgsSymbol,
-                       QgsSimpleFillSymbolLayer,
+                       QgsSimpleFillSymbolLayer, QgsRectangle,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer)
 from qgis.PyQt.QtGui import QIcon
 import os
@@ -49,6 +49,17 @@ def set_category_renderer(layer, column, start_color, end_color,
     # create renderer object
     renderer = QgsCategorizedSymbolRenderer(column, categories)
     layer.setRenderer(renderer)
+
+def center_canvas(canvas, point, crs=None):
+    rect = QgsRectangle(point, point)
+    if crs:
+        transform = QgsCoordinateTransform(
+            crs,
+            canvas.mapSettings().destinationCrs(),
+            QgsProject.instance()
+        )
+    canvas.setExtent(transform.transform(rect))
+    canvas.refresh()
 
 def add_selection_icons(toolbox):
 
