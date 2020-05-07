@@ -367,6 +367,58 @@ class EditPlanfallMarkets(EditMarkets):
         self.fill_combo(select=market)
 
 
+class ChangeMarkets(EditMarkets):
+    layer_filter = ('id_betriebstyp_nullfall != id_betriebstyp_planfall '
+                    'and id_betriebstyp_nullfall > 0')
+    layer_style = 'standortkonkurrenz_veraenderte_maerkte.qml'
+    filter_args = {'id_betriebstyp_nullfall__gt': 0}
+    market_label = 'veränderte Märkte im Bestand'
+    suffix = 'nullfall'
+
+    def setup_params(self, market):
+        if self.params:
+            self.params.close()
+        layout = self.param_group.layout()
+        clear_layout(layout)
+        if not market:
+            return
+        self.params = Params(
+            layout, help_file='standortkonkurrenz_veraenderte_maerkte.txt')
+        self.params.name = Param(market.name, label='Name')
+
+        self.params.add(Seperator(margin=0))
+
+        self.params.kette = Param(market.kette, label='Anbieter')
+
+        self.params.nullfall = Param(
+            market.betriebstyp_nullfall,
+            label='Betriebstyp im Nullfall',
+        )
+
+        type_ids = [typ.id_betriebstyp for typ in self.typen]
+        type_labels = [self.detailed_type_label(i) for i in type_ids]
+        type_combo = ComboBox(type_labels, data=type_ids, width=300)
+
+        self.params.planfall = Param(
+            self.detailed_type_label(market.id_betriebstyp_planfall),
+            type_combo, label='Betriebstyp im Planfall',
+            value_label=market.betriebstyp_planfall
+        )
+
+        def save():
+            id_bt = type_combo.get_data()
+            bt = self.typen.get(id_betriebstyp=id_bt).name
+            market.id_betriebstyp_planfall = id_bt
+            market.betriebstyp_planfall = bt
+            market.save()
+            self.canvas.refreshAllLayers()
+            # lazy way to update the combo box
+            self.fill_combo(select=market)
+
+        self.params.show(title='Markt im Planfall verändern')
+        self.params.changed.connect(save)
+
+
 class SupermarketsCompetition(Domain):
     """"""
 
@@ -414,16 +466,26 @@ class SupermarketsCompetition(Domain):
         )
         self.planfall_edit.setupUi()
 
+        self.changed_edit = ChangeMarkets(
+            self.ui.changed_market_combo,
+            self.ui.select_changed_market_button,
+            self.ui.changed_market_parameter_group,
+            self.canvas, self.project
+        )
+        self.changed_edit.setupUi()
+
     def load_content(self):
         self.centers = Centers.features()
         self.markets = Markets.features(create=True)
         self.relations = MarketCellRelations.features(create=True)
         self.nullfall_edit.load_content()
         self.planfall_edit.load_content()
+        self.changed_edit.load_content()
 
     def show_markets(self, zoom_to=True):
-        self.nullfall_edit.add_layer(zoom_to=zoom_to)
         self.planfall_edit.add_layer()
+        self.changed_edit.add_layer()
+        self.nullfall_edit.add_layer(zoom_to=zoom_to)
 
     def show_communities(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -491,5 +553,6 @@ class SupermarketsCompetition(Domain):
         self.community_picker.set_active(False)
         self.nullfall_edit.close()
         self.planfall_edit.close()
+        self.changed_edit.close()
         super().close()
 
