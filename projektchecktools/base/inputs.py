@@ -161,7 +161,7 @@ class ComboBox(InputType):
             lambda: self.changed.emit(self.get_value()))
         for i, value in enumerate(values):
             args = [value]
-            if data:
+            if len(data) > 0:
                 args.append(data[i])
             self.add_value(*args)
         self.registerFocusEvent(self.input)

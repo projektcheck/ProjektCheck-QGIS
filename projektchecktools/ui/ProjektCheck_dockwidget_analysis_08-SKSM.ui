@@ -68,7 +68,7 @@ padding: 2px;
          <x>0</x>
          <y>0</y>
          <width>478</width>
-         <height>802</height>
+         <height>826</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -439,6 +439,45 @@ aus OSM ergänzen</string>
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="add_nullfall_market_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt manuell hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Lebensmittelmarkt in die Karte eintragen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Markt hinzufügen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+               <normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
               <string>Markt im Bestand</string>
@@ -538,45 +577,6 @@ aus OSM ergänzen</string>
              <property name="rightMargin">
               <number>0</number>
              </property>
-             <item>
-              <widget class="QPushButton" name="add_nullfall_market_button">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="cursor">
-                <cursorShape>PointingHandCursor</cursorShape>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt manuell hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Lebensmittelmarkt in die Karte eintragen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Markt hinzufügen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>24</width>
-                 <height>24</height>
-                </size>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="autoExclusive">
-                <bool>true</bool>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item>
               <spacer name="horizontalSpacer_15">
                <property name="orientation">
