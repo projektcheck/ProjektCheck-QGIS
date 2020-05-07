@@ -22,12 +22,13 @@ from projektchecktools.utils.utils import center_canvas, clear_layout, get_ags
 class EditMarkets:
     layer_filter = ''
     layer_style = ''
-    layer_label = ''
     filter_args = {}
     layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
+    market_label = ''
+    suffix = ''
 
     def __init__(self, combobox, select_button, param_group, canvas, project,
-                 add_button=None, ui=None):
+                 add_button=None, remove_button=None):
         self.combobox = combobox
         self.param_group = param_group
         self.select_button = select_button
@@ -35,7 +36,7 @@ class EditMarkets:
         self.project = project
         self.basedata = self.project.basedata
         self.add_button = add_button
-        self.ui = ui
+        self.remove_button = remove_button
         self.layer = None
         self.params = None
         self.add_market_tool = None
@@ -54,6 +55,9 @@ class EditMarkets:
                 target_epsg=self.project.settings.EPSG)
             self.add_market_tool.map_clicked.connect(self.add_market)
             self.add_button.clicked.connect(lambda: self.add_layer())
+        if self.remove_button:
+            self.remove_button.clicked.connect(
+                lambda: self.remove_markets())
 
     def load_content(self):
         self.typen = self.basedata.get_table(
@@ -79,8 +83,8 @@ class EditMarkets:
         label = f'{typ.name} {details}'
         return label
 
-    def detailed_market_label(self, market, suffix='nullfall'):
-        typ = market[f'betriebstyp_{suffix}']
+    def detailed_market_label(self, market):
+        typ = market[f'betriebstyp_{self.suffix}']
         osm = ' OSM' if market.is_osm else ''
         kette = market.kette if market.kette != 'nicht aufgeführt' \
             else 'Anbieter unbekannt'
@@ -92,8 +96,8 @@ class EditMarkets:
         self.combobox.clear()
         self.combobox.addItem('nichts ausgewählt')
         idx = 0
-        nullfall_markets = [m for m in self.markets.filter(**self.filter_args)]
-        markets_sorted = sorted(nullfall_markets, key=lambda m: m.AGS or ' ')
+        markets = [m for m in self.markets.filter(**self.filter_args)]
+        markets_sorted = sorted(markets, key=lambda m: m.AGS or ' ')
         for i, market in enumerate(markets_sorted):
             self.combobox.addItem(self.detailed_market_label(market), market)
             if select and market.id == select.id:
@@ -133,7 +137,7 @@ class EditMarkets:
         output = ProjectLayer.from_table(
             self.markets.table, groupname=self.layer_group)
         self.layer = output.draw(
-            label=self.layer_label,
+            label=self.market_label,
             style_file=self.layer_style,
             filter=self.layer_filter
         )
@@ -148,12 +152,24 @@ class EditMarkets:
         if not market:
             return
         reply = QMessageBox.question(
-            self.ui, 'Markt entfernen',
+            self.param_group, 'Markt entfernen',
             f'Soll der Markt "{market.name} ({market.kette})" '
             'entfernt werden?\n',
              QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             market.delete()
+            self.canvas.refreshAllLayers()
+            self.fill_combo()
+
+    def remove_markets(self):
+        reply = QMessageBox.question(
+            self.param_group, f'{self.market_label} löschen',
+            f'Möchten Sie alle {self.market_label} löschen?',
+            QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.markets.filter(**self.filter_args).delete()
+            markets.delete()
+            self.canvas.refreshAllLayers()
             self.fill_combo()
 
     def close(self):
@@ -166,16 +182,9 @@ class EditMarkets:
 class EditNullfallMarkets(EditMarkets):
     layer_filter = 'id_betriebstyp_nullfall > 0'
     layer_style = 'standortkonkurrenz_maerkte_im_bestand.qml'
-    layer_label = 'Märkte im Bestand'
     filter_args = {'id_betriebstyp_nullfall__gt': 0}
-
-    def setupUi(self):
-        super().setupUi()
-
-        self.ui.remove_osm_button.clicked.connect(
-            lambda: self.remove_markets(osm_only=True))
-        self.ui.remove_markets_button.clicked.connect(
-            lambda: self.remove_markets(osm_only=False))
+    market_label = 'Märkte im Bestand'
+    suffix = 'nullfall'
 
     def setup_params(self, market):
         if self.params:
@@ -197,7 +206,7 @@ class EditNullfallMarkets(EditMarkets):
 
         self.params.typ = Param(
             self.detailed_type_label(market.id_betriebstyp_nullfall),
-            type_combo, label='Betriebstyp',
+            type_combo, label='Betriebstyp im Nullfall',
             value_label=market.betriebstyp_nullfall
         )
 
@@ -224,6 +233,7 @@ class EditNullfallMarkets(EditMarkets):
             market.id_kette = chain_combo.get_data()
             market.kette = self.ketten.get(id_kette=market.id_kette).name
             market.save()
+            self.canvas.refreshAllLayers()
             # lazy way to update the combo box
             self.fill_combo(select=market)
 
@@ -260,20 +270,101 @@ class EditNullfallMarkets(EditMarkets):
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
         market.AGS = ags.AGS_0
         market.save()
+        self.canvas.refreshAllLayers()
         self.fill_combo(select=market)
 
-    def remove_markets(self, osm_only=False):
-        txt = 'OSM-Märkte' if osm_only else 'Märkte im Bestand'
-        reply = QMessageBox.question(
-            self.ui, f'{txt} löschen',
-            f'Möchten Sie alle {txt} löschen?',
-            QMessageBox.Yes, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            markets = self.markets.filter(is_osm=True) if osm_only \
-                else self.markets.filter(id_betriebstyp_nullfall__gt=0)
-            markets.delete()
-            self.fill_combo()
+
+class EditPlanfallMarkets(EditMarkets):
+    layer_filter = 'id_betriebstyp_nullfall = 0'
+    layer_style = 'standortkonkurrenz_geplante_maerkte.qml'
+    filter_args = {'id_betriebstyp_nullfall': 0}
+    market_label = 'geplante Märkte'
+    suffix = 'planfall'
+
+    def setup_params(self, market):
+        # ToDo: that's mostly the same as in EditNullfallMarkets,
+        # might be merged
+        if self.params:
+            self.params.close()
+        layout = self.param_group.layout()
+        clear_layout(layout)
+        if not market:
+            return
+        self.params = Params(
+            layout, help_file='standortkonkurrenz_geplante_maerkte.txt')
+
+        self.params.name = Param(
+            market.name, LineEdit(width=300),
+            label='Name')
+
+        self.params.add(Seperator(margin=0))
+
+        type_ids = [typ.id_betriebstyp for typ in self.typen]
+        type_labels = [self.detailed_type_label(i) for i in type_ids]
+        type_combo = ComboBox(type_labels, data=type_ids, width=300)
+
+        self.params.typ = Param(
+            self.detailed_type_label(market.id_betriebstyp_planfall),
+            type_combo, label='Betriebstyp im Planfall',
+            value_label=market.betriebstyp_planfall
+        )
+
+        # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
+        ketten = sorted(self.ketten, key=lambda k: k.name
+                        if k.name != 'nicht aufgeführt' else '')
+        chain_ids = [typ.id_kette for typ in ketten]
+        chain_labels = [kette.name for kette in ketten]
+        chain_combo = ComboBox(chain_labels, data=chain_ids, width=300)
+        value = self.ketten.get(id_kette=market.id_kette).name
+
+        self.params.kette = Param(value, chain_combo, label='Anbieter')
+
+        def save():
+            market.name = self.params.name.value
+            id_bt = type_combo.get_data()
+            bt = self.typen.get(id_betriebstyp=id_bt).name
+            market.id_betriebstyp_planfall = id_bt
+            market.betriebstyp_planfall = bt
+            market.id_kette = chain_combo.get_data()
+            market.kette = self.ketten.get(id_kette=market.id_kette).name
+            market.save()
             self.canvas.refreshAllLayers()
+            # lazy way to update the combo box
+            self.fill_combo(select=market)
+
+        self.params.show(title='Markt im Bestand bearbeiten')
+        self.params.changed.connect(save)
+
+        last_row = self.params.layout.children()[-1]
+        button = QPushButton()
+        icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
+        icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH, icon_path))
+        button.setText('Markt entfernen')
+        button.setIcon(icon)
+        button.setToolTip(
+            '<p><span style=" font-weight:600;">Markt entfernen</span>'
+            '</p><p>Löscht den aktuell gewählten Markt. '
+            '<br/>Dieser Schritt kann nicht rückgängig gemacht werden. </p>')
+        last_row.insertWidget(0, button)
+        button.clicked.connect(lambda: self.remove_market(market))
+
+    def add_market(self, geom, name='unbenannter geplanter Markt'):
+        market = self.markets.add(
+            name=name,
+            id_betriebstyp_nullfall=0,
+            betriebstyp_nullfall=self.typen.get(id_betriebstyp=0).name,
+            id_betriebstyp_planfall=1,
+            betriebstyp_planfall=self.typen.get(id_betriebstyp=1).name,
+            id_kette=0,
+            kette=self.ketten.get(id_kette=0).name,
+            geom=geom
+        )
+        crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
+        ags = get_ags([market], self.basedata, source_crs=crs)[0]
+        market.AGS = ags.AGS_0
+        market.save()
+        self.canvas.refreshAllLayers()
+        self.fill_combo(select=market)
 
 
 class SupermarketsCompetition(Domain):
@@ -300,6 +391,7 @@ class SupermarketsCompetition(Domain):
             lambda: self.show_markets(zoom_to=True))
 
         self.ui.add_osm_button.clicked.connect(self.add_osm)
+        self.ui.remove_osm_button.clicked.connect(self.remove_osm)
 
         self.nullfall_edit = EditNullfallMarkets(
             self.ui.nullfall_market_combo,
@@ -307,45 +399,31 @@ class SupermarketsCompetition(Domain):
             self.ui.nullfall_market_parameter_group,
             self.canvas,
             self.project,
-            ui=self.ui,
+            remove_button=self.ui.remove_planfall_markets_button,
             add_button=self.ui.add_nullfall_market_button
         )
         self.nullfall_edit.setupUi()
+
+        self.planfall_edit = EditPlanfallMarkets(
+            self.ui.planfall_market_combo,
+            self.ui.select_planfall_market_button,
+            self.ui.planfall_market_parameter_group,
+            self.canvas, self.project,
+            remove_button=self.ui.remove_planfall_markets_button,
+            add_button=self.ui.add_planfall_market_button
+        )
+        self.planfall_edit.setupUi()
 
     def load_content(self):
         self.centers = Centers.features()
         self.markets = Markets.features(create=True)
         self.relations = MarketCellRelations.features(create=True)
         self.nullfall_edit.load_content()
+        self.planfall_edit.load_content()
 
     def show_markets(self, zoom_to=True):
         self.nullfall_edit.add_layer(zoom_to=zoom_to)
-        #output = ProjectLayer.from_table(
-            #self.markets.table, groupname=self.layer_group)
-        #self.nullfall_markets_layer = output.draw(
-            #label='Märkte im Bestand',
-            #style_file='standortkonkurrenz_maerkte_im_bestand.qml',
-            #filter='id_betriebstyp_nullfall > 0'
-        #)
-        #self.select_nullfall_market_tool.set_layer(self.nullfall_markets_layer)
-        #if zoom_to:
-            #output.zoom_to()
-        #output = ProjectLayer.from_table(
-            #self.markets.table, groupname=self.layer_group)
-        #self.planfall_markets_layer = output.draw(
-            #label='geplante Märkte',
-            #style_file='standortkonkurrenz_geplante_maerkte.qml',
-            #filter='id_betriebstyp_nullfall = 0'
-        #)
-        #output = ProjectLayer.from_table(
-            #self.markets.table, groupname=self.layer_group)
-        #self.changed_markets_layer = output.draw(
-            #label='veränderte Märkte im Bestand',
-            #style_file='standortkonkurrenz_veraenderte_maerkte.qml',
-            ## ToDo: that's wrong
-            #filter='id_betriebstyp_nullfall > 0 and '
-            #'id_betriebstyp_nullfall != id_betriebstyp_planfall > 0'
-        #)
+        self.planfall_edit.add_layer()
 
     def show_communities(self, zoom_to=True):
         output = ProjectLayer.from_table(
@@ -399,8 +477,19 @@ class SupermarketsCompetition(Domain):
         dialog = ProgressDialog( job, parent=self.ui, on_success=on_success)
         dialog.show()
 
+    def remove_osm(self):
+        reply = QMessageBox.question(
+            self.ui, 'OSM-Märkte löschen',
+            f'Möchten Sie alle OSM-Märkte löschen?',
+            QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.markets.filter(is_osm=True).delete()
+            self.fill_combo()
+            self.canvas.refreshAllLayers()
+
     def close(self):
         self.community_picker.set_active(False)
         self.nullfall_edit.close()
+        self.planfall_edit.close()
         super().close()
 

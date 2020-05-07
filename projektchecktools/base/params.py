@@ -115,7 +115,6 @@ class Param(QObject):
             return
         self.row = QHBoxLayout()
         label = QLabel(self.label)
-        label.setWordWrap(True)
         spacer = QSpacerItem(0, 0, QSizePolicy.Expanding)
         if isinstance(layout, QGridLayout):
             n_rows = layout.rowCount()
