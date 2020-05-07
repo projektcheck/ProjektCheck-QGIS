@@ -41,7 +41,7 @@ class Param(QObject):
     changed = pyqtSignal(object)
 
     def __init__(self, value, input: InputType = None, label: str = '',
-                 unit='', help_text='', repr_format=None):
+                 unit='', help_text='', repr_format=None, value_label=None):
         '''
         Parameters
         ----------
@@ -52,6 +52,9 @@ class Param(QObject):
             (and not viewed) in the UI if None
         label : str, optional
             label shown when parameter is drawn in UI
+        value_label : str, optional
+            initial label of value shown in UI, defaults to
+            representation of value
         '''
         super().__init__()
         self._value = value
@@ -61,7 +64,8 @@ class Param(QObject):
             self.input.value = value
         self.unit = unit
         self.repr_format = repr_format
-        self._value_label = QLabel(self._v_repr(value))
+        _repr = value_label if value_label is not None else self._v_repr(value)
+        self._value_label = QLabel(_repr)
         self.help_text = help_text
 
     @property
@@ -111,6 +115,7 @@ class Param(QObject):
             return
         self.row = QHBoxLayout()
         label = QLabel(self.label)
+        label.setWordWrap(True)
         spacer = QSpacerItem(0, 0, QSizePolicy.Expanding)
         if isinstance(layout, QGridLayout):
             n_rows = layout.rowCount()
