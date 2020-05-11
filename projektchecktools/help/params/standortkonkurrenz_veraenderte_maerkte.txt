@@ -1,5 +1,6 @@
 {
     "tooltip": "Parameter editieren",
     "beschreibung": "",
-    "planfall": ""
+    "planfall": "",
+    "gets_closed": ""
 }

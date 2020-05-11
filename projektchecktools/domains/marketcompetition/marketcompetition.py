@@ -16,7 +16,7 @@ from projektchecktools.base.tools import (FeaturePicker, MapClickedTool,
                                           PolygonMapTool)
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.params import Params, Param, Seperator
-from projektchecktools.base.inputs import LineEdit, ComboBox
+from projektchecktools.base.inputs import LineEdit, ComboBox, Checkbox
 from projektchecktools.utils.utils import center_canvas, clear_layout, get_ags
 
 
@@ -121,7 +121,7 @@ class EditMarkets:
         self.combobox.setCurrentIndex(idx)
 
     def toggle_market(self, market, center_on_point=False):
-        if self.layer:
+        if self.layer and market:
             self.layer.removeSelection()
             self.layer.select(market.id)
             if center_on_point:
@@ -392,16 +392,36 @@ class ChangeMarkets(EditMarkets):
             market.betriebstyp_nullfall,
             label='Betriebstyp im Nullfall',
         )
+        closed_label = 'Markt geschlossen'
 
         type_ids = [typ.id_betriebstyp for typ in self.typen]
-        type_labels = [self.detailed_type_label(i) for i in type_ids]
+        type_labels = []
+        for tid in type_ids:
+            type_labels.append(closed_label if tid == 0
+                               else self.detailed_type_label(tid))
         type_combo = ComboBox(type_labels, data=type_ids, width=300)
 
+        typ = market.id_betriebstyp_planfall
         self.params.planfall = Param(
-            self.detailed_type_label(market.id_betriebstyp_planfall),
+            closed_label if typ == 0 else self.detailed_type_label(typ),
             type_combo, label='Betriebstyp im Planfall',
-            value_label=market.betriebstyp_planfall
+            value_label=closed_label if typ == 0 else market.betriebstyp_planfall
         )
+
+        close_check = Checkbox()
+        self.params.gets_closed = Param(
+            typ == 0, close_check, label='Markt im Planfall schließen'
+        )
+        self.params.gets_closed.hide_in_overview = True
+
+        def closed_toggled(checked):
+            if checked:
+                type_combo.set_value(closed_label)
+        close_check.changed.connect(closed_toggled)
+
+        def type_changed(value):
+            close_check.set_value(value == closed_label)
+        type_combo.changed.connect(type_changed)
 
         def save():
             id_bt = type_combo.get_data()
@@ -473,7 +493,7 @@ class EditCenters:
         self.fill_combo(select=center)
 
     def toggle_center(self, center, center_on_point=False):
-        if self.layer:
+        if self.layer and center:
             self.layer.removeSelection()
             self.layer.select(center.id)
             if center_on_point:
@@ -520,7 +540,7 @@ class EditCenters:
         button.setIcon(icon)
         button.setToolTip(
             '<p><span style=" font-weight:600;">Zentrum entfernen</span>'
-            '</p><p>Löscht das gezeichnete Zentrum. </p>')
+            '</p><p>Löscht das gewählte Zentrum. </p>')
         last_row.insertWidget(0, button)
         button.clicked.connect(lambda: self.remove_center(center))
 
@@ -666,8 +686,8 @@ class SupermarketsCompetition(Domain):
         )
         if path:
             def on_success(r):
-                self.fill_nullfall_market_combo()
-                self.show_markets(zoom_to=True)
+                self.nullfall_edit.fill_combo()
+                self.nullfall_edit.add_layer(zoom_to=True)
             job = MarketTemplateImportWorker(path, self.project,
                                              epsg=self.settings.EPSG)
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
@@ -677,8 +697,8 @@ class SupermarketsCompetition(Domain):
         job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
                             truncate=self.ui.truncate_osm_check.isChecked())
         def on_success(r):
-            self.fill_nullfall_market_combo()
-            self.show_markets(zoom_to=True)
+            self.nullfall_edit.fill_combo()
+            self.nullfall_edit.add_layer(zoom_to=True)
         dialog = ProgressDialog( job, parent=self.ui, on_success=on_success)
         dialog.show()
 
@@ -689,7 +709,7 @@ class SupermarketsCompetition(Domain):
             QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.markets.filter(is_osm=True).delete()
-            self.fill_combo()
+            self.nullfall_edit.fill_combo()
             self.canvas.refreshAllLayers()
 
     def close(self):

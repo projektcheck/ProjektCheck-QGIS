@@ -67,8 +67,8 @@ class MarketTemplateCreateDialog(Dialog):
                                   epsg=settings.EPSG)
         success = template.create()
         if success:
-            template.open()
             self.close()
+            template.open()
         else:
             QMessageBox.warning(
                 self.ui, 'Fehler',
@@ -180,7 +180,7 @@ class MarketTemplate(QObject):
         elif self.template_type == 'Shapefile':
             name = os.path.splitext(os.path.split(self.file_path)[1])[0]
             layer = QgsVectorLayer(self.file_path, name, 'ogr')
-            QgsProject.instance().addMapLayer(layer)
+            QgsProject.instance().layerTreeRoot().addLayer(layer)
 
     @staticmethod
     def _create_template_layer(fields, epsg=4326):
@@ -226,7 +226,8 @@ class MarketTemplate(QObject):
                     continue
             if df is None:
                 raise Exception('Es gibt ein Problem mit der '
-                                'Zeichenkodierung der CSV-Datei!')
+                                'Zeichenkodierung der CSV-Datei. Die Datei '
+                                'sollte UTF-8-kodiert sein.')
             df = df.reset_index()
         elif self.template_type == 'Exceldatei':
             df = pd.read_excel(self.file_path)

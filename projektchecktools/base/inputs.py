@@ -61,7 +61,8 @@ class Checkbox(InputType):
     def __init__(self, width=None, **kwargs):
         super().__init__(**kwargs)
         self.input = QCheckBox()
-        self.input.stateChanged.connect(self.changed.emit)
+        self.input.stateChanged.connect(
+            lambda state: self.changed.emit(self.input.isChecked()))
         self.registerFocusEvent(self.input)
 
     def set_value(self, checked):
