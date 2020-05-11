@@ -12,7 +12,8 @@ from projektchecktools.domains.marketcompetition.tables import (
 from projektchecktools.domains.marketcompetition.read_osm import ReadOSMWorker
 from projektchecktools.domains.marketcompetition.market_templates import (
     MarketTemplateCreateDialog, MarketTemplate, MarketTemplateImportWorker)
-from projektchecktools.base.tools import FeaturePicker, MapClickedTool
+from projektchecktools.base.tools import (FeaturePicker, MapClickedTool,
+                                          PolygonMapTool)
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.params import Params, Param, Seperator
 from projektchecktools.base.inputs import LineEdit, ComboBox
@@ -120,8 +121,6 @@ class EditMarkets:
         self.combobox.setCurrentIndex(idx)
 
     def toggle_market(self, market, center_on_point=False):
-        if not market:
-            return
         if self.layer:
             self.layer.removeSelection()
             self.layer.select(market.id)
@@ -168,7 +167,6 @@ class EditMarkets:
             QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.markets.filter(**self.filter_args).delete()
-            markets.delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
 
@@ -419,6 +417,146 @@ class ChangeMarkets(EditMarkets):
         self.params.changed.connect(save)
 
 
+class EditCenters:
+
+    def __init__(self, ui, canvas, project, layer_group=''):
+        self.ui = ui
+        self.canvas = canvas
+        self.project = project
+        self.drawing_tool = None
+        self.params = None
+        self.layer = None
+        self.select_tool = None
+        self.project = project
+        self.layer_group = layer_group
+
+    def setupUi(self):
+        self.drawing_tool = PolygonMapTool(
+            self.ui.draw_center_button, canvas=self.canvas)
+        self.drawing_tool.drawn.connect(self.add_center)
+        self.ui.draw_center_button.clicked.connect(self.add_layer)
+        self.ui.centers_combo.currentIndexChanged.connect(
+            lambda idx: self.toggle_center(self.ui.centers_combo.currentData(),
+                                           center_on_point=True)
+        )
+        self.select_tool = FeaturePicker(self.ui.select_center_button,
+                                         canvas=self.canvas)
+        self.select_tool.feature_picked.connect(self.select_center)
+        self.ui.select_center_button.clicked.connect(lambda: self.add_layer())
+
+    def load_content(self):
+        self.centers = Centers.features()
+        self.fill_combo()
+
+    def fill_combo(self, select=None):
+        self.ui.centers_combo.blockSignals(True)
+        self.ui.centers_combo.clear()
+        self.ui.centers_combo.addItem('nichts ausgewählt')
+        idx = 0
+        centers = self.centers.filter(nutzerdefiniert=1)
+        for i, center in enumerate(centers):
+            self.ui.centers_combo.addItem(center.name, center)
+            if select and center.id == select.id:
+                idx = i + 1
+        if idx:
+            self.ui.centers_combo.setCurrentIndex(idx)
+        self.ui.centers_combo.blockSignals(False)
+        self.toggle_center(self.ui.centers_combo.currentData())
+
+    def add_center(self, geom):
+        center = self.centers.add(
+            nutzerdefiniert=1,
+            name='unbenanntes Zentrum',
+            geom=geom
+        )
+        self.canvas.refreshAllLayers()
+        self.fill_combo(select=center)
+
+    def toggle_center(self, center, center_on_point=False):
+        if self.layer:
+            self.layer.removeSelection()
+            self.layer.select(center.id)
+            if center_on_point:
+                center_canvas(self.canvas, center.geom.centroid().asPoint(),
+                              self.layer.crs())
+        self.setup_params(center)
+
+    def add_layer(self, zoom_to=True):
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        self.layer = output.draw(
+            label='Zentren',
+            style_file='standortkonkurrenz_zentren.qml',
+            filter='nutzerdefiniert=1'
+        )
+        self.select_tool.set_layer(self.layer)
+
+    def setup_params(self, center):
+        if self.params:
+            self.params.close()
+        layout = self.ui.center_parameter_group.layout()
+        clear_layout(layout)
+        if not center:
+            return
+        self.params = Params(
+            layout, help_file='standortkonkurrenz_zentren.txt')
+        self.params.name = Param(center.name, LineEdit(width=300), label='Name')
+
+        def save():
+            center.name = self.params.name.value
+            center.save()
+            self.canvas.refreshAllLayers()
+            # lazy way to update the combo box
+            self.fill_combo(select=center)
+
+        self.params.show(title='Zentrum bearbeiten')
+        self.params.changed.connect(save)
+
+        last_row = self.params.layout.children()[-1]
+        button = QPushButton()
+        icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
+        icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH, icon_path))
+        button.setText('Zentrum entfernen')
+        button.setIcon(icon)
+        button.setToolTip(
+            '<p><span style=" font-weight:600;">Zentrum entfernen</span>'
+            '</p><p>Löscht das gezeichnete Zentrum. </p>')
+        last_row.insertWidget(0, button)
+        button.clicked.connect(lambda: self.remove_center(center))
+
+    def remove_center(self, center):
+        if not center:
+            return
+        reply = QMessageBox.question(
+            self.ui, 'Zentrum entfernen',
+            f'Soll das Zentrum "{center.name}" entfernt werden?\n',
+             QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            center.delete()
+            self.canvas.refreshAllLayers()
+            self.fill_combo()
+
+    def select_center(self, feature):
+        if not self.layer:
+            return
+        self.layer.removeSelection()
+        self.layer.select(feature.id())
+        fid = feature.id()
+        for idx in range(len(self.ui.centers_combo)):
+            center = self.ui.centers_combo.itemData(idx)
+            if center and fid == center.id:
+                break
+        self.ui.centers_combo.setCurrentIndex(idx)
+
+    def close(self):
+        if self.drawing_tool:
+            self.drawing_tool.set_active(False)
+        if self.select_tool:
+            self.select_tool.set_active(False)
+        if self.params:
+            self.params.close()
+
+
 class SupermarketsCompetition(Domain):
     """"""
 
@@ -451,7 +589,7 @@ class SupermarketsCompetition(Domain):
             self.ui.nullfall_market_parameter_group,
             self.canvas,
             self.project,
-            remove_button=self.ui.remove_planfall_markets_button,
+            remove_button=self.ui.remove_nullfall_markets_button,
             add_button=self.ui.add_nullfall_market_button
         )
         self.nullfall_edit.setupUi()
@@ -474,6 +612,10 @@ class SupermarketsCompetition(Domain):
         )
         self.changed_edit.setupUi()
 
+        self.center_edit = EditCenters(self.ui, self.canvas, self.project,
+                                      layer_group=self.layer_group)
+        self.center_edit.setupUi()
+
     def load_content(self):
         self.centers = Centers.features()
         self.markets = Markets.features(create=True)
@@ -481,6 +623,7 @@ class SupermarketsCompetition(Domain):
         self.nullfall_edit.load_content()
         self.planfall_edit.load_content()
         self.changed_edit.load_content()
+        self.center_edit.load_content()
 
     def show_markets(self, zoom_to=True):
         self.planfall_edit.add_layer()
@@ -490,21 +633,21 @@ class SupermarketsCompetition(Domain):
     def show_communities(self, zoom_to=True):
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
-        self.centers_selected_layer = output.draw(
+        self.communities_selected_layer = output.draw(
             label='Ausgewählte Gemeinden im Betrachtungsraum',
             style_file='standortkonkurrenz_gemeinden_ausgewaehlt.qml',
             filter='auswahl=1 AND nutzerdefiniert=-1'
         )
-        self.community_picker.set_layer(self.centers_selected_layer)
+        self.community_picker.set_layer(self.communities_selected_layer)
 
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
-        self.centers_not_selected_layer = output.draw(
+        self.communities_not_selected_layer = output.draw(
             label='Nicht ausgewählte Gemeinden',
             style_file='standortkonkurrenz_gemeinden_nicht_ausgewaehlt.qml',
             filter='auswahl=0 AND nutzerdefiniert=-1'
         )
-        self.community_picker.add_layer(self.centers_not_selected_layer)
+        self.community_picker.add_layer(self.communities_not_selected_layer)
         if zoom_to:
             output.zoom_to()
 
@@ -554,5 +697,6 @@ class SupermarketsCompetition(Domain):
         self.nullfall_edit.close()
         self.planfall_edit.close()
         self.changed_edit.close()
+        self.center_edit.close()
         super().close()
 

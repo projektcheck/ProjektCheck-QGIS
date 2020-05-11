@@ -66,9 +66,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-171</y>
          <width>478</width>
-         <height>923</height>
+         <height>925</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -871,7 +871,7 @@ aus OSM ergänzen</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="pushButton_27">
+            <widget class="QPushButton" name="draw_center_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -910,81 +910,82 @@ aus OSM ergänzen</string>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_28">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bereits in die Karte eingezeichnete Zentren (um)benennen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
+            <widget class="QLabel" name="label_15">
              <property name="text">
-              <string>Zentrum bearbeiten</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_3_checkable.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_specify_2_checkable.png</normalon>../../images/iconset_mob/20190619_iconset_mob_specify_3_checkable.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
+              <string>Zentrum</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_26">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayout_19">
+             <item>
+              <widget class="QComboBox" name="centers_combo">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über eine Liste aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="select_center_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Zentrum in Karte auswählen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="center_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
              </property>
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
+             <property name="title">
+              <string/>
              </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum entfernen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bereits in die Karte eingezeichnete Zentren löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Zentrum löschen</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_3.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_delete_3.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>true</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_19"/>
             </widget>
            </item>
           </layout>
