@@ -211,16 +211,6 @@ class EditNullfallMarkets(EditMarkets):
 
         self.params.add(Seperator(margin=0))
 
-        type_ids = [typ.id_betriebstyp for typ in self.typen]
-        type_labels = [self.detailed_type_label(i) for i in type_ids]
-        type_combo = ComboBox(type_labels, data=type_ids, width=300)
-
-        self.params.typ = Param(
-            self.detailed_type_label(market.id_betriebstyp_nullfall),
-            type_combo, label='Betriebstyp im Nullfall',
-            value_label=market.betriebstyp_nullfall
-        )
-
         # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
         ketten = sorted(self.ketten, key=lambda k: k.name
                         if k.name != 'nicht aufgeführt' else '')
@@ -230,6 +220,16 @@ class EditNullfallMarkets(EditMarkets):
         value = self.ketten.get(id_kette=market.id_kette).name
 
         self.params.kette = Param(value, chain_combo, label='Anbieter')
+
+        type_ids = [typ.id_betriebstyp for typ in self.typen]
+        type_labels = [self.detailed_type_label(i) for i in type_ids if i > 0]
+        type_combo = ComboBox(type_labels, data=type_ids, width=300)
+
+        self.params.typ = Param(
+            self.detailed_type_label(market.id_betriebstyp_nullfall),
+            type_combo, label='Betriebstyp im Nullfall',
+            value_label=market.betriebstyp_nullfall
+        )
 
         def save():
             market.name = self.params.name.value
@@ -314,16 +314,6 @@ class EditPlanfallMarkets(EditMarkets):
 
         self.params.add(Seperator(margin=0))
 
-        type_ids = [typ.id_betriebstyp for typ in self.typen]
-        type_labels = [self.detailed_type_label(i) for i in type_ids]
-        type_combo = ComboBox(type_labels, data=type_ids, width=300)
-
-        self.params.typ = Param(
-            self.detailed_type_label(market.id_betriebstyp_planfall),
-            type_combo, label='Betriebstyp im Planfall',
-            value_label=market.betriebstyp_planfall
-        )
-
         # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
         ketten = sorted(self.ketten, key=lambda k: k.name
                         if k.name != 'nicht aufgeführt' else '')
@@ -333,6 +323,16 @@ class EditPlanfallMarkets(EditMarkets):
         value = self.ketten.get(id_kette=market.id_kette).name
 
         self.params.kette = Param(value, chain_combo, label='Anbieter')
+
+        type_ids = [typ.id_betriebstyp for typ in self.typen]
+        type_labels = [self.detailed_type_label(i) for i in type_ids if i > 0]
+        type_combo = ComboBox(type_labels, data=type_ids, width=300)
+
+        self.params.typ = Param(
+            self.detailed_type_label(market.id_betriebstyp_planfall),
+            type_combo, label='Betriebstyp im Planfall',
+            value_label=market.betriebstyp_planfall
+        )
 
         def save():
             market.name = self.params.name.value
@@ -348,7 +348,7 @@ class EditPlanfallMarkets(EditMarkets):
             self.fill_combo(select=market)
             self.changed.emit()
 
-        self.params.show(title='Markt im Bestand bearbeiten')
+        self.params.show(title='Neuen Markt im Planfall bearbeiten')
         self.params.changed.connect(save)
 
         last_row = self.params.layout.children()[-1]

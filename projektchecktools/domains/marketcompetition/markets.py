@@ -157,7 +157,11 @@ class ReadMarketsWorker(Worker):
                 fit_idx = ((self.df_bt['von_m2'] < market.vkfl) &
                            (self.df_bt['bis_m2'] >= market.vkfl))
                 if fit_idx.sum() > 0:
-                    market.id_betriebstyp = self.df_bt[fit_idx]['id_betriebstyp'].values[0]
+                    market.id_betriebstyp = \
+                        self.df_bt[fit_idx]['id_betriebstyp'].values[0]
+            market.betriebstyp = self.df_bt[
+                self.df_bt['id_betriebstyp'] == market.id_betriebstyp
+                ].name.values[0]
         return markets
 
     def betriebstyp_to_vkfl(self, market):

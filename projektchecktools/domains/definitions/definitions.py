@@ -21,6 +21,10 @@ from projektchecktools.domains.jobs_inhabitants.tables import (
     ApProJahr, WohnenProJahr, WohnenStruktur)
 from projektchecktools.utils.utils import open_file
 from projektchecktools.base.dialogs import ProgressDialog
+from projektchecktools.domains.marketcompetition.tables import Markets
+from projektchecktools.domains.marketcompetition.markets import (
+    Supermarket, ReadMarketsWorker)
+from projektchecktools.utils.utils import get_ags
 
 
 class TrafficConnectors:
@@ -219,12 +223,12 @@ class WohnenDevelopment(Worker):
 
 class Wohnen:
 
-    def __init__(self, basedata, layout):
-        self.basedata = basedata
-        self.gebaeudetypen_base = basedata.get_table(
+    def __init__(self, project, layout):
+        self.basedata = project.basedata
+        self.gebaeudetypen_base = self.basedata.get_table(
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         ).features()
-        self.df_presets = basedata.get_table(
+        self.df_presets = self.basedata.get_table(
             'WE_nach_Gebietstyp', 'Definition_Projekt'
         ).to_pandas()
         self.wohneinheiten = Wohneinheiten.features(create=True)
@@ -373,28 +377,28 @@ class Gewerbe:
     DEFAULT_INDUSTRY_ID = 2
     BETRACHTUNGSZEITRAUM_JAHRE = 15
 
-    def __init__(self, basedata, layout):
+    def __init__(self, project, layout):
         self.layout = layout
         self.gewerbeanteile = Gewerbeanteile.features(create=True)
         self.ap_nach_jahr = ApProJahr.features(create=True)
         self.projektrahmendaten = Projektrahmendaten.features()
-        self.basedata = basedata
+        self.basedata = project.basedata
 
-        self.branchen = list(basedata.get_table(
+        self.branchen = list(self.basedata.get_table(
             'Gewerbe_Branchen', 'Definition_Projekt'
         ).features().filter(ID_Branche_ProjektCheck__gt=0))
 
-        presets = basedata.get_table(
+        presets = self.basedata.get_table(
             'Vorschlagswerte_Branchenstruktur', 'Definition_Projekt'
         )
         self.df_presets_base = presets.to_pandas()
 
-        density = basedata.get_table(
+        density = self.basedata.get_table(
             'Dichtekennwerte_Gewerbe', 'Definition_Projekt'
         )
         self.df_density_base = density.to_pandas()
 
-        industry_types = basedata.get_table(
+        industry_types = self.basedata.get_table(
             'Gewerbegebietstypen', 'Definition_Projekt'
         )
         self.df_industry_types_base = industry_types.to_pandas()
@@ -645,13 +649,15 @@ class Gewerbe:
 
 
 class Einzelhandel:
-    def __init__(self, basedata, layout):
-        self.basedata = basedata
-        self.sortimente_base = basedata.get_table(
+    def __init__(self, project, layout):
+        self.project = project
+        self.basedata = project.basedata
+        self.sortimente_base = self.basedata.get_table(
             'Einzelhandel_Sortimente', 'Definition_Projekt'
         )
         self.verkaufsflaechen = Verkaufsflaechen.features(create=True)
         self.layout = layout
+        self.markets = Markets.features(create=True)
 
     def setup_params(self, area):
         self.area = area
@@ -677,6 +683,9 @@ class Einzelhandel:
 
     def save(self):
         vkfl_sum = 0
+        vkfl_lebensmittel = 0
+        # id of food
+        id_lm = 1
         for sortiment in self.sortimente_base.features():
             feature = self.verkaufsflaechen.get(id_sortiment=sortiment.id,
                                                 id_teilflaeche=self.area.id)
@@ -686,25 +695,52 @@ class Einzelhandel:
             vkfl = getattr(self.params, sortiment.param_vfl).value
             feature.verkaufsflaeche_qm = vkfl
             vkfl_sum += vkfl
+            if sortiment.id == id_lm:
+                vkfl_lebensmittel += vkfl
             feature.name_sortiment = sortiment.Name_Sortiment_ProjektCheck
             feature.save()
 
         self.area.vf_gesamt = vkfl_sum
         self.area.save()
 
-        # ToDo: create market if verkaufsflaeche lebensmittel
-        #self.create_market()
-        self.set_ways(self.area)
+        market = self.markets.get(id_teilflaeche=self.area.id)
+        if vkfl_lebensmittel > 0:
+            if not market:
+                centroid = self.area.geom.centroid().asPoint()
+                name = f'Neuer Lebensmittelmarkt auf Fläche "{self.area.name}"'
+                market = self.markets.add(
+                    id_teilflaeche=self.area.id,
+                    name = name,
+                    geom=centroid,
+                    kette= 'Anbieter unbekannt'
+                )
+                gem = get_ags([market], self.project.basedata)[0]
+                market.AGS = gem.AGS
+                market.save()
 
+            sm = Supermarket(0, 0, 0, name='a', kette='b',
+                             vkfl=vkfl_lebensmittel)
+            market_tool = ReadMarketsWorker(self.project)
+            sm = market_tool.vkfl_to_betriebstyp([sm])[0]
+            market.id_betriebstyp_planfall = sm.id_betriebstyp
+            market.betriebstyp_planfall = sm.betriebstyp
+            # ToDo: betriebstyp text
+            market.save()
+        else:
+            if market:
+                market.delete()
+
+        self.set_ways(self.area)
         Traffic.reset()
 
     def clear(self, area):
+        # remove existing market
+        market = self.markets.get(id_teilflaeche=area.id)
+        if market:
+            market.delete()
         self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
         area.vf_gesamt = None
         area.save()
-
-    def create_market(self):
-        raise NotImplementedError
 
     def set_ways(self, area):
         df_verkaufsflaechen = self.verkaufsflaechen.filter(
@@ -756,9 +792,9 @@ class ProjectDefinitions(Domain):
         #  preferably store labels and id in a base table
         self.types = [
             ('Nutzung noch nicht definiert', None),
-            ('Wohnen', Wohnen(self.basedata, type_layout)),
-            ('Gewerbe', Gewerbe(self.basedata, type_layout)),
-            ('Einzelhandel', Einzelhandel(self.basedata, type_layout))
+            ('Wohnen', Wohnen(self.project, type_layout)),
+            ('Gewerbe', Gewerbe(self.project, type_layout)),
+            ('Einzelhandel', Einzelhandel(self.project, type_layout))
         ]
         self.typ = None
 
