@@ -28,6 +28,7 @@ class EditMarkets(QObject):
     layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
     market_label = ''
     suffix = ''
+    show_change = False
     changed = pyqtSignal()
 
     def __init__(self, combobox, select_button, param_group, canvas, project,
@@ -88,12 +89,17 @@ class EditMarkets(QObject):
         label = f'{typ.name} {details}'
         return label
 
-    def detailed_market_label(self, market):
+    def detailed_market_label(self, market, show_change=False):
         typ = market[f'betriebstyp_{self.suffix}']
         osm = ' OSM' if market.is_osm else ''
         kette = market.kette if market.kette != 'nicht aufgeführt' \
             else 'Anbieter unbekannt'
         label = (f'{market.name}{osm} ({market.id}) - {typ} ({kette})')
+        if (show_change and
+            market.id_betriebstyp_nullfall != market.id_betriebstyp_planfall):
+            betriebstyp = 'geschlossen' if market.id_betriebstyp_planfall == 0 \
+                else market.betriebstyp_planfall
+            label += f' -> {betriebstyp}'
         return label
 
     def fill_combo(self, select=None):
@@ -104,7 +110,8 @@ class EditMarkets(QObject):
         markets = [m for m in self.markets.filter(**self.filter_args)]
         markets_sorted = sorted(markets, key=lambda m: m.AGS or ' ')
         for i, market in enumerate(markets_sorted):
-            self.combobox.addItem(self.detailed_market_label(market), market)
+            self.combobox.addItem(self.detailed_market_label(
+                market, show_change=self.show_change), market)
             if select and market.id == select.id:
                 idx = i + 1
         if idx:
@@ -384,6 +391,7 @@ class ChangeMarkets(EditMarkets):
     filter_args = {'id_betriebstyp_nullfall__gt': 0}
     market_label = 'veränderte Märkte im Bestand'
     suffix = 'nullfall'
+    show_change = True
 
     def add_layer(self, zoom_to=False):
         super().add_layer(zoom_to=zoom_to)
@@ -464,6 +472,20 @@ class ChangeMarkets(EditMarkets):
 
         self.params.show(title='Markt im Planfall verändern')
         self.params.changed.connect(save)
+
+    def remove_markets(self):
+        reply = QMessageBox.question(
+            self.param_group, f'Veränderungen zurücksetzen',
+            'Möchten Sie alle Veränderungen der bestehenden Märkte '
+            'zurücksetzen?',
+            QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            for market in self.markets.filter(**self.filter_args):
+                market.id_betriebstyp_planfall = market.id_betriebstyp_nullfall
+                market.betriebstyp_planfall = market.betriebstyp_nullfall
+                market.save()
+            self.canvas.refreshAllLayers()
+            self.fill_combo()
 
 
 class EditCenters:
@@ -661,7 +683,8 @@ class SupermarketsCompetition(Domain):
             self.ui.changed_market_combo,
             self.ui.select_changed_market_button,
             self.ui.changed_market_parameter_group,
-            self.canvas, self.project
+            self.canvas, self.project,
+            remove_button=self.ui.reset_changed_markets_button
         )
         self.changed_edit.setupUi()
         self.nullfall_edit.changed.connect(self.changed_edit.fill_combo)
