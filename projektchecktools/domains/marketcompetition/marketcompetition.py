@@ -1,6 +1,7 @@
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.PyQt.Qt import QPushButton
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 import os
 import numpy as np
@@ -20,16 +21,18 @@ from projektchecktools.base.inputs import LineEdit, ComboBox, Checkbox
 from projektchecktools.utils.utils import center_canvas, clear_layout, get_ags
 
 
-class EditMarkets:
+class EditMarkets(QObject):
     layer_filter = ''
     layer_style = ''
     filter_args = {}
     layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
     market_label = ''
     suffix = ''
+    changed = pyqtSignal()
 
     def __init__(self, combobox, select_button, param_group, canvas, project,
                  add_button=None, remove_button=None):
+        super().__init__()
         self.combobox = combobox
         self.param_group = param_group
         self.select_button = select_button
@@ -50,6 +53,8 @@ class EditMarkets:
             lambda idx: self.toggle_market(self.combobox.currentData(),
             center_on_point=True)
         )
+        self.param_group.setVisible(False)
+
         if self.add_button:
             self.add_market_tool = MapClickedTool(
                 self.add_button, canvas=self.canvas,
@@ -59,7 +64,6 @@ class EditMarkets:
         if self.remove_button:
             self.remove_button.clicked.connect(
                 lambda: self.remove_markets())
-
     def load_content(self):
         self.typen = self.basedata.get_table(
             'Betriebstypen','Standortkonkurrenz_Supermaerkte'
@@ -190,7 +194,9 @@ class EditNullfallMarkets(EditMarkets):
         layout = self.param_group.layout()
         clear_layout(layout)
         if not market:
+            self.param_group.setVisible(False)
             return
+        self.param_group.setVisible(True)
         self.params = Params(layout, help_file='standortkonkurrenz_bestand.txt')
         self.params.name = Param(
             market.name, LineEdit(width=300),
@@ -234,6 +240,7 @@ class EditNullfallMarkets(EditMarkets):
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
             self.fill_combo(select=market)
+            self.changed.emit()
 
         self.params.show(title='Markt im Bestand bearbeiten')
         self.params.changed.connect(save)
@@ -268,6 +275,7 @@ class EditNullfallMarkets(EditMarkets):
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
         market.AGS = ags.AGS_0
         market.save()
+        self.changed.emit()
         self.canvas.refreshAllLayers()
         self.fill_combo(select=market)
 
@@ -287,7 +295,9 @@ class EditPlanfallMarkets(EditMarkets):
         layout = self.param_group.layout()
         clear_layout(layout)
         if not market:
+            self.param_group.setVisible(False)
             return
+        self.param_group.setVisible(True)
         self.params = Params(
             layout, help_file='standortkonkurrenz_geplante_maerkte.txt')
 
@@ -329,6 +339,7 @@ class EditPlanfallMarkets(EditMarkets):
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
             self.fill_combo(select=market)
+            self.changed.emit()
 
         self.params.show(title='Markt im Bestand bearbeiten')
         self.params.changed.connect(save)
@@ -361,6 +372,7 @@ class EditPlanfallMarkets(EditMarkets):
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
         market.AGS = ags.AGS_0
         market.save()
+        self.changed.emit()
         self.canvas.refreshAllLayers()
         self.fill_combo(select=market)
 
@@ -373,13 +385,29 @@ class ChangeMarkets(EditMarkets):
     market_label = 'veränderte Märkte im Bestand'
     suffix = 'nullfall'
 
+    def add_layer(self, zoom_to=False):
+        super().add_layer(zoom_to=zoom_to)
+        # additionally the nullfall layer is required to select from
+        output = ProjectLayer.from_table(
+            self.markets.table, groupname=self.layer_group)
+        self.layer = output.draw(
+            label=EditNullfallMarkets.market_label,
+            style_file=EditNullfallMarkets.layer_style,
+            filter=EditNullfallMarkets.layer_filter
+        )
+        self.select_tool.set_layer(self.layer)
+        if zoom_to:
+            output.zoom_to()
+
     def setup_params(self, market):
         if self.params:
             self.params.close()
         layout = self.param_group.layout()
         clear_layout(layout)
         if not market:
+            self.param_group.setVisible(False)
             return
+        self.param_group.setVisible(True)
         self.params = Params(
             layout, help_file='standortkonkurrenz_veraenderte_maerkte.txt')
         self.params.name = Param(market.name, label='Name')
@@ -432,6 +460,7 @@ class ChangeMarkets(EditMarkets):
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
             self.fill_combo(select=market)
+            self.changed.emit()
 
         self.params.show(title='Markt im Planfall verändern')
         self.params.changed.connect(save)
@@ -463,6 +492,8 @@ class EditCenters:
                                          canvas=self.canvas)
         self.select_tool.feature_picked.connect(self.select_center)
         self.ui.select_center_button.clicked.connect(lambda: self.add_layer())
+        self.ui.center_parameter_group.setVisible(False)
+
 
     def load_content(self):
         self.centers = Centers.features()
@@ -517,7 +548,9 @@ class EditCenters:
         layout = self.ui.center_parameter_group.layout()
         clear_layout(layout)
         if not center:
+            self.ui.center_parameter_group.setVisible(False)
             return
+        self.ui.center_parameter_group.setVisible(True)
         self.params = Params(
             layout, help_file='standortkonkurrenz_zentren.txt')
         self.params.name = Param(center.name, LineEdit(width=300), label='Name')
@@ -631,6 +664,7 @@ class SupermarketsCompetition(Domain):
             self.canvas, self.project
         )
         self.changed_edit.setupUi()
+        self.nullfall_edit.changed.connect(self.changed_edit.fill_combo)
 
         self.center_edit = EditCenters(self.ui, self.canvas, self.project,
                                       layer_group=self.layer_group)
