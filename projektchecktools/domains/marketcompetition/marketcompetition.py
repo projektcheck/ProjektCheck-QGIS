@@ -97,9 +97,9 @@ class EditMarkets(QObject):
         label = (f'{market.name}{osm} ({market.id}) - {typ} ({kette})')
         if (show_change and
             market.id_betriebstyp_nullfall != market.id_betriebstyp_planfall):
-            betriebstyp = 'geschlossen' if market.id_betriebstyp_planfall == 0 \
+            betriebstyp = 'Schließung' if market.id_betriebstyp_planfall == 0 \
                 else market.betriebstyp_planfall
-            label += f' -> {betriebstyp}'
+            label += f' geplant: {betriebstyp}'
         return label
 
     def fill_combo(self, select=None):
@@ -132,7 +132,7 @@ class EditMarkets(QObject):
         self.combobox.setCurrentIndex(idx)
 
     def toggle_market(self, market, center_on_point=False):
-        if self.layer and market:
+        if market and self.layer:
             self.layer.removeSelection()
             self.layer.select(market.id)
             if center_on_point:
@@ -398,12 +398,12 @@ class ChangeMarkets(EditMarkets):
         # additionally the nullfall layer is required to select from
         output = ProjectLayer.from_table(
             self.markets.table, groupname=self.layer_group)
-        self.layer = output.draw(
+        self.bestands_layer = output.draw(
             label=EditNullfallMarkets.market_label,
             style_file=EditNullfallMarkets.layer_style,
             filter=EditNullfallMarkets.layer_filter
         )
-        self.select_tool.set_layer(self.layer)
+        self.select_tool.set_layer(self.bestands_layer)
         if zoom_to:
             output.zoom_to()
 
