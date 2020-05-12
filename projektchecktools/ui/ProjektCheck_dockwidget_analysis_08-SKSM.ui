@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>478</width>
-         <height>951</height>
+         <width>485</width>
+         <height>736</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -78,7 +78,7 @@ padding: 2px;
            <string>Betrachtungsraum</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -99,7 +99,7 @@ padding: 2px;
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie auf der Karte die Gemeinden, die bei der Auswertung berücksichtigt werden sollen. &lt;br/&gt;Durch einen weiteren Klick können Sie Gemeinden wieder abwählen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -180,7 +180,7 @@ padding: 2px;
            <string>Lebensmitteleinzelhandel im Bestand</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
@@ -366,7 +366,7 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QSpinBox" name="spinBox">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;br/&gt;Geben Sie hier die zu berücksichtigende Bufferweite an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="maximum">
                 <number>10000</number>
@@ -376,7 +376,7 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QSlider" name="horizontalSlider">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;br/&gt;Geben Sie hier die zu berücksichtigende Bufferweite an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="maximum">
                 <number>10000</number>
@@ -411,6 +411,9 @@ aus OSM ergänzen</string>
              </item>
              <item>
               <widget class="QPushButton" name="remove_osm_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OSM-Märkte löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löschen Sie hier wieder die zuvor aus OpenStreetMap eingelesenen Lebensmittelmärkte.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>OSM-Märkte löschen</string>
                </property>
@@ -450,7 +453,7 @@ aus OSM ergänzen</string>
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt manuell hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Lebensmittelmarkt in die Karte eintragen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt manuell hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Lebensmittelmarkt in die Karte eintragen.&lt;br/&gt;Anschließend können Sie den Markt aus der Liste oder in der Karte auswählen und ihm einen Namen geben und einer Handelskette und einem Betriebstyp zuordnen, oder den Markt wieder löschen.  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Markt im Bestand hinzufügen</string>
@@ -495,7 +498,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über eine Liste aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über eine Liste aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -511,7 +514,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über die Karte aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Markt in Karte auswählen</string>
@@ -579,6 +582,9 @@ aus OSM ergänzen</string>
              </item>
              <item>
               <widget class="QPushButton" name="remove_nullfall_markets_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Märkte im Bestand löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht sämtliche Märkte, die Sie im Bestand erfasst haben (über Erfassungsvorlagen, aus OpenStreetMap und manuell).&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Dieser Schritt ist nicht rückgängigzumachen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>alle Märkte im Bestand löschen</string>
                </property>
@@ -595,7 +601,7 @@ aus OSM ergänzen</string>
            <string>Veränderungen durch Planung</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
@@ -629,7 +635,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über eine Liste aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über eine Liste aus, um ihn erweitern (einem anderen Betriebstyp zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -645,7 +651,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über die Karte aus, um ihn erweitern (einem anderen Betriebstyp zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Markt in Karte auswählen</string>
@@ -713,6 +719,9 @@ aus OSM ergänzen</string>
              </item>
              <item>
               <widget class="QPushButton" name="reset_changed_markets_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Veränderungen zurücksetzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Setzt sämtliche Veränderungen, die Sie für bestehende Märkte im Planfall eingetragen haben, zurück.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Dieser Schritt ist nicht rückgängigzumachen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>alle Veränderungen zurücksetzen</string>
                </property>
@@ -797,7 +806,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über eine Liste aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über eine Liste aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -813,7 +822,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über die Karte aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Markt in Karte auswählen</string>
@@ -881,6 +890,9 @@ aus OSM ergänzen</string>
              </item>
              <item>
               <widget class="QPushButton" name="remove_planfall_markets_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle neuen Märkte löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle neuen Märkte, die Sie für den Planfall eingetragen haben.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Dieser Schritt ist nicht rückgängig zu machen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string>alle neuen Märkte  löschen</string>
                </property>
@@ -897,7 +909,7 @@ aus OSM ergänzen</string>
            <string>Zentren</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
@@ -957,7 +969,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über eine Liste aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier ein Zentrum über eine Liste aus, um den Namen ändern, oder es löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -973,7 +985,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier ein Zentrum über die Karte aus, um den Namen ändern, oder es löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Zentrum in Karte auswählen</string>
@@ -1027,7 +1039,7 @@ aus OSM ergänzen</string>
            <string>Projektwirkung</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>

@@ -1,6 +1,6 @@
 {
     "tooltip": "Parameter editieren",
-    "beschreibung": "",
-    "planfall": "",
-    "gets_closed": ""
+    "beschreibung": "<b>Mit dieser Funktion können Sie bestehende Märkte als Teil Ihrer Planung erweitern oder schließen. Diese Veränderung ist Teil des »Planfalls« und damit Gegenstand der nachfolgenden Auswirkungsanalysen. Diese vergleichen den »Planfall« mit dem »Nullfall«, d.h. der aktuellen Bestandssituation.</b><p>Um einen Markt zu erweitern, ändern Sie dessen Betriebstyp. Um einen Markt zu schließen, setzen Sie ein Häkchen bei der Option »Markt schließen«.<br>Zum Abschluss klicken Sie »OK«.</p>",
+    "planfall": "<b>Wählen Sie im Falle einer Erweiterung hier den Betriebstyp aus, dem der Markt nach seiner Erweiterung im Planfall zuzuordnen ist.</b><p>Die entsprechende Veränderung wird in der Auswahlliste »Markt auswählen« durch einen Zusatz »geplant: …« kenntlich gemacht. </p><p>Im Falle einer Schließung ist die Eintragung in diesem Feld nicht relevant.</p>",
+    "gets_closed": "<b>Setzen Sie bei dieser Option ein Häkchen, wenn der Markt im Planfall geschlossen werden soll.</b><p>Der entsprechende Markt wird in der Auswahlliste »Markt auswählen« durch einen Zusatz »geplant: Schließung« gekennzeichnet.</p><p>Da sich die Schließung nur auf den Planfall bezieht, der Markt im Nullfall aber erhalten bleibt, wird der Markt auch nach dem Klicken des »OK«-Buttons nicht aus der Liste bzw. der Karten entfernt. Die Schließung im Planfall wird jedoch durch eine entsprechende Signatur kenntlich gemacht.</p>"
 }

@@ -1,4 +1,5 @@
 {
     "tooltip": "Parameter editieren",
-    "beschreibung": ""
+    "beschreibung": "<b>Mit dieser Funktion können Sie bereits in der Karte eingezeichnete Zentren (um)benennen.</b><p>Zum (Um)benennen schreiben Sie den aktuellen Namen im Eingabefeld »Name«.</p><p>Um die Form eines bereits gezeichneten Zentrums zu verändern, löschen Sie diesen und zeichnen Sie es neu ein.</p><p>Klicken Sie zum Abschluss auf “OK”.</p>", 
+    "name": "<b>Tragen Sie hier den Namen des Vorsorgungsbereichs ein, indem Sie den bisherigen (ggf. automatisch generierten) Namen überschreiben.</b>"
 }

@@ -95,9 +95,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>493</width>
-         <height>1027</height>
+         <y>-212</y>
+         <width>483</width>
+         <height>1127</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -911,7 +911,7 @@ padding: 2px;
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über dire Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Punktuelle Maßnahme auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier eine punktuelle Maßnahme über die Karte aus, um sie bearbeiten zu können (Bezeichnung vergeben, einem Netz zuordnen, Kosten festlegen).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Maßnahme auswählen</string>
