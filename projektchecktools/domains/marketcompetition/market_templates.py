@@ -131,6 +131,7 @@ class MarketTemplate(QObject):
     _option_2 = {u'BTyp': int}
 
     _seperator = 'SEMICOLON'
+    _delimiter = ';'
 
     def __init__(self, template_type, file_path, epsg=4326):
         super().__init__()
@@ -218,7 +219,7 @@ class MarketTemplate(QObject):
             df = None
             for encoding in ['utf-8-sig', 'ISO-8859-1']:
                 try:
-                    df = pd.DataFrame.from_csv(
+                    df = pd.read_csv(
                         self.file_path, sep=self._delimiter,
                         encoding=encoding)
                     break
@@ -248,7 +249,7 @@ class MarketTemplate(QObject):
         if self.template_type in ['CSV-Datei', 'Exceldatei']:
             required += list(self._address_fields.keys())
         if np.in1d(required, df.columns).sum() < len(required):
-            raise LookupError('missing fields in given file')
+            raise LookupError('Es fehlen benötigte Felder in der Eingangsdatei')
         markets = self._df_to_markets(df)
         return markets
 
