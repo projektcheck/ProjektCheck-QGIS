@@ -26,7 +26,7 @@ class ReadOSMWorker(ReadMarketsWorker):
         # get amrkets in minimal bounding polygon (in fact multiple rectangles,
         # as always there is no basic function for minimal bounding polygon)
         communities = Centers.features(project=self.project).filter(
-            auswahl__ne=0)
+            auswahl__ne=0, nutzerdefiniert=-1)
         geometries = [f.geom for f in communities]
         multi_poly = minimal_bounding_poly(geometries)
 

@@ -19,6 +19,8 @@ from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.params import Params, Param, Seperator
 from projektchecktools.base.inputs import LineEdit, ComboBox, Checkbox
 from projektchecktools.utils.utils import center_canvas, clear_layout, get_ags
+from projektchecktools.domains.marketcompetition.projektwirkung import (
+    Projektwirkung)
 
 
 class EditMarkets(QObject):
@@ -398,12 +400,12 @@ class ChangeMarkets(EditMarkets):
         # additionally the nullfall layer is required to select from
         output = ProjectLayer.from_table(
             self.markets.table, groupname=self.layer_group)
-        self.bestands_layer = output.draw(
+        self.nullfall_layer = output.draw(
             label=EditNullfallMarkets.market_label,
             style_file=EditNullfallMarkets.layer_style,
             filter=EditNullfallMarkets.layer_filter
         )
-        self.select_tool.set_layer(self.bestands_layer)
+        self.select_tool.set_layer(self.nullfall_layer)
         if zoom_to:
             output.zoom_to()
 
@@ -693,6 +695,8 @@ class SupermarketsCompetition(Domain):
                                       layer_group=self.layer_group)
         self.center_edit.setupUi()
 
+        self.ui.calculate_button.clicked.connect(self.calculate)
+
     def load_content(self):
         self.centers = Centers.features()
         self.markets = Markets.features(create=True)
@@ -713,7 +717,7 @@ class SupermarketsCompetition(Domain):
         self.communities_selected_layer = output.draw(
             label='Ausgewählte Gemeinden im Betrachtungsraum',
             style_file='standortkonkurrenz_gemeinden_ausgewaehlt.qml',
-            filter='auswahl=1 AND nutzerdefiniert=-1'
+            filter='auswahl!=0 AND nutzerdefiniert=-1'
         )
         self.community_picker.set_layer(self.communities_selected_layer)
 
@@ -730,6 +734,9 @@ class SupermarketsCompetition(Domain):
 
     def community_picked(self, feature):
         center = self.centers.get(id=feature.id())
+        # -1 indicates the project community, deselection not allowed
+        if center.auswahl == -1:
+            return
         center.auswahl = not center.auswahl
         center.save()
         self.canvas.refreshAllLayers()
@@ -768,6 +775,15 @@ class SupermarketsCompetition(Domain):
             self.markets.filter(is_osm=True).delete()
             self.nullfall_edit.fill_combo()
             self.canvas.refreshAllLayers()
+
+    def calculate(self):
+        recalculate = self.ui.recalculate_check.isChecked()
+        job = Projektwirkung(self.project, recalculate=recalculate)
+        success, msg = job.validate_inputs()
+        if not success:
+            QMessageBox.warning(self.ui, 'Fehler', msg)
+            return
+        job.work()
 
     def close(self):
         self.community_picker.set_active(False)
