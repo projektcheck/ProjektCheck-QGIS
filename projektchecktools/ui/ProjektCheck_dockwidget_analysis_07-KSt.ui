@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>482</width>
+    <width>580</width>
     <height>922</height>
    </rect>
   </property>
@@ -53,7 +53,7 @@ padding: 2px;
 }</string>
   </property>
   <property name="windowTitle">
-   <string>Projekt-Check Analyse-Tools // Kommunale Steuereinnahmen</string>
+   <string>Projekt-Check / Wirkungsanalysen / Kommunale Steuereinnahmen</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>462</width>
-         <height>848</height>
+         <width>543</width>
+         <height>1072</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -78,7 +78,7 @@ padding: 2px;
            <string>Wanderungssalden</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -153,7 +153,7 @@ padding: 2px;
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bearbeiten Sie die geschätzten Wanderungssalden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>geschätze Salden bearbeiten</string>
+              <string>Saldo für ausgewählte Gemeinde bearbeiten</string>
              </property>
              <property name="icon">
               <iconset>
@@ -413,7 +413,7 @@ padding: 2px;
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bearbeiten Sie die geschätzten Wanderungssalden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>geschätze Salden bearbeiten</string>
+              <string>Saldo für ausgewählte Gemeinde bearbeiten</string>
              </property>
              <property name="icon">
               <iconset>
@@ -591,10 +591,10 @@ padding: 2px;
         <item>
          <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
           <property name="title">
-           <string>fiskalische Finanzen</string>
+           <string>Fiskalische Wirkungen</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
@@ -682,7 +682,7 @@ padding: 2px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>407</width>
+                <width>503</width>
                 <height>69</height>
                </rect>
               </property>
@@ -857,7 +857,7 @@ padding: 2px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>389</width>
+                   <width>485</width>
                    <height>69</height>
                   </rect>
                  </property>
