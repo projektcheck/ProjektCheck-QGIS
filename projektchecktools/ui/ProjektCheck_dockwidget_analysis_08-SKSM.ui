@@ -53,7 +53,7 @@ padding: 2px;
 }</string>
   </property>
   <property name="windowTitle">
-   <string>Projekt-Check Analyse-Tools // Standortkonkurrenz und Supermärkte</string>
+   <string>Projekt-Check / Wirkungsanalysen / Standortkonkurrenz Supermärkte</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -66,9 +66,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>485</width>
-         <height>736</height>
+         <y>-439</y>
+         <width>480</width>
+         <height>1243</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -78,7 +78,7 @@ padding: 2px;
            <string>Betrachtungsraum</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -99,7 +99,7 @@ padding: 2px;
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie auf der Karte die Gemeinden, die bei der Auswertung berücksichtigt werden sollen. &lt;br/&gt;Durch einen weiteren Klick können Sie Gemeinden wieder abwählen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;In einer Karte die Gemeinden auswählen, die in die Betrachtung der Standortkonkurrenz zwischen bestehenden und neuen oder veränderten Märkten einbezogen werden sollen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -144,7 +144,7 @@ padding: 2px;
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Märkte und Zentren anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bereits erzeugte, in der Karte aktuell aber nicht enthaltene Layer mit Märkten (Nullfall und Planfall) und Zentren wieder zur Karte hinzufügen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Märkte und Zentren anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bereits definierte bzw. eingelesene Märkte und Zentren in der Karte anzeigen lassen, sofern sie dort nicht zu sehen sind.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -180,7 +180,7 @@ padding: 2px;
            <string>Lebensmitteleinzelhandel im Bestand</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
@@ -198,35 +198,6 @@ padding: 2px;
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout">
-             <item row="1" column="0">
-              <widget class="QPushButton" name="read_template_button">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Befüllte Vorlage einlesen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine von Ihnen zuvor erzeugte und anschließend befüllte Erfassungsvorlage für die Lebensmittelmärkte im Bestand wieder einlesen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">text-align:left</string>
-               </property>
-               <property name="text">
-                <string>befüllte Vorlage einlesen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
-               </property>
-               <property name="checkable">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="0">
               <widget class="QPushButton" name="create_template_button">
                <property name="sizePolicy">
@@ -236,7 +207,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erfassungsvorlage erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine leere Erfassungsvorlage im csv-, Excel- oder Shapefile-Format erzeugen, in der die Bestandsmärkte händisch eingetragen und später wieder mit Projekt-Check eingelesen werden können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erfassungsvorlage für Lebensmittelmärkte in Bestand erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine leere Erfassungsvorlage für Bestandsmärkte in Form einer csv-, Excel- oder Shape-Datei erzeugen lassen, um diese anschließend händisch zu befüllen und abschließend wieder einzulesen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
@@ -268,6 +239,64 @@ padding: 2px;
                 </size>
                </property>
               </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="read_template_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Befüllte Vorlage wieder einlesen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine zuvor erzeugte und anschließend händisch befüllte Erfassungsvorlage (csv-, Excel- oder Shape-Datei) wieder einlesen und die Märkte in der Karte sichtbar machen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">text-align:left</string>
+               </property>
+               <property name="text">
+                <string>befüllte Vorlage einlesen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="template_help_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erfassungsvorlage erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine leere Erfassungsvorlage im csv-, Excel- oder Shapefile-Format erzeugen, in der die Bestandsmärkte händisch eingetragen und später wieder mit Projekt-Check eingelesen werden können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">text-align:left</string>
+               </property>
+               <property name="text">
+                <string>Ausfüllhilfe anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -308,7 +337,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum mit Märkten aus OSM ergänzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Den in OpenStreetMap verfügbaren Bestand an Lebensmittelmärkten innerhalb des Plangebiets online abfragen und einlesen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenStreetMap-Daten verwenden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OpenStreetMap-Daten zu Lebensmittelgeschäften aus dem Internet laden, aufbereiten und in der Karte anzeigen. Diese Daten müssen anschließend i.d.R. noch nachbearbeitet werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Betrachtungsraum mit Märkten 
@@ -417,6 +446,10 @@ aus OSM ergänzen</string>
                <property name="text">
                 <string>OSM-Märkte löschen</string>
                </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+               </property>
               </widget>
              </item>
             </layout>
@@ -437,7 +470,7 @@ aus OSM ergänzen</string>
               </font>
              </property>
              <property name="text">
-              <string>individuelle Bearbeitung</string>
+              <string>Individuelle Bearbeitung</string>
              </property>
             </widget>
            </item>
@@ -453,7 +486,7 @@ aus OSM ergänzen</string>
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt manuell hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Lebensmittelmarkt in die Karte eintragen.&lt;br/&gt;Anschließend können Sie den Markt aus der Liste oder in der Karte auswählen und ihm einen Namen geben und einer Handelskette und einem Betriebstyp zuordnen, oder den Markt wieder löschen.  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Einzeichnen eines oder mehrerer bestehender Märkte in die Karte. Die Eigenschaften der Märkte (Name, Anbieter, Betriebstyp) können anschließend editiert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Markt im Bestand hinzufügen</string>
@@ -481,9 +514,25 @@ aus OSM ergänzen</string>
             </widget>
            </item>
            <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>6</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Markt im Bestand</string>
+              <string>Daten eines Marktes im Bestand anzeigen</string>
              </property>
             </widget>
            </item>
@@ -498,7 +547,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über eine Liste aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Markt aus der Liste auswählen, um seine Eigenschaften (Name, Anbieter, Betriebstyp) anzuzeigen und bei Bedarf zu verändern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -514,7 +563,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über die Karte aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines bestehenden Marktes durch Anklicken in der Karte. Nach der Auswahl werden dessen Eigenschaften (Name, Anbieter, Betriebstyp) angezeigt und können bei Bedarf verändert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Markt in Karte auswählen</string>
@@ -583,10 +632,14 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QPushButton" name="remove_nullfall_markets_button">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Märkte im Bestand löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht sämtliche Märkte, die Sie im Bestand erfasst haben (über Erfassungsvorlagen, aus OpenStreetMap und manuell).&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Dieser Schritt ist nicht rückgängigzumachen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Märkte im Bestand löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Alle Lebensmittelmärkte im Bestand löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>alle Märkte im Bestand löschen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -601,7 +654,7 @@ aus OSM ergänzen</string>
            <string>Veränderungen durch Planung</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
@@ -635,7 +688,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über eine Liste aus, um ihn erweitern (einem anderen Betriebstyp zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Markt aus der Liste auswählen, um seinen Betriebstyp im Planfall zu verändern oder ihn im Planfall zu schließen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -651,7 +704,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über die Karte aus, um ihn erweitern (einem anderen Betriebstyp zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines bestehenden Marktes durch Anklicken in der Karte. Nach der Auswahl kann dessen Betriebstyp im Planfall verändert oder er kann im Planfall geschlossen werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Markt in Karte auswählen</string>
@@ -720,10 +773,14 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QPushButton" name="reset_changed_markets_button">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Veränderungen zurücksetzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Setzt sämtliche Veränderungen, die Sie für bestehende Märkte im Planfall eingetragen haben, zurück.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Dieser Schritt ist nicht rückgängigzumachen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Veränderungen an Bestandsmärkten zurücksetzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Rücknahme aller bereits definierten Veränderungen an Bestandsmärkten im Planfall.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>alle Veränderungen zurücksetzen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</iconset>
                </property>
               </widget>
              </item>
@@ -761,7 +818,7 @@ aus OSM ergänzen</string>
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt manuell hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Lebensmittelmarkt in die Karte eintragen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt im Planfall hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen neuen Markt im Planfall hinzufügen. Dieser kann auch außerhalb des Plangebiets aus der Projektdefinition liegen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Neuen Markt hinzufügen</string>
@@ -806,7 +863,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über eine Liste aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt (Planfall) aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bereits in die Karte eingetragenen neuen Markt im Planfall aus der Liste auswählen, um seine Eigenschaften im Planfall zu verändern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -822,7 +879,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier einen Lebensmittelmarkt über die Karte aus, um ihn bearbeiten (Namen vergeben, einem Betriebstyp und einer Handelskette zuordnen) oder löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt (Planfall) in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines neuen Marktes im Planfall durch Anklicken in der Karte. Nach der Auswahl können dessen Eigenschaften im Planfall verändert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Markt in Karte auswählen</string>
@@ -891,10 +948,14 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QPushButton" name="remove_planfall_markets_button">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle neuen Märkte löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löscht alle neuen Märkte, die Sie für den Planfall eingetragen haben.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Dieser Schritt ist nicht rückgängig zu machen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle neuen Märkte im Planfall löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Alle für den Planfall definierten neuen Märkte löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>alle neuen Märkte  löschen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -909,7 +970,7 @@ aus OSM ergänzen</string>
            <string>Zentren</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
@@ -924,7 +985,7 @@ aus OSM ergänzen</string>
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum zeichnen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zentren in der Karte einzeichnen, um die räumliche Basis für die Bilanzierung der Auswirkungen im Planfall festzulegen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentren zeichnen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Einzeichnen von Zentren in die Karte. Zentren sind Teilbereich von Gemeinden (z.B. eine Innenstadt), für die in der Auswertung ein gesondertes Ergebnis ausgewiesen werden soll.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Zentrum zeichnen</string>
@@ -969,7 +1030,7 @@ aus OSM ergänzen</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier ein Zentrum über eine Liste aus, um den Namen ändern, oder es löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum aus der Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ein bereits in der Karte eingezeichnetes Zentrum aus der Liste auswählen, um den Namen zu ändern oder es zu löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
@@ -985,7 +1046,7 @@ aus OSM ergänzen</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wählen Sie hier ein Zentrum über die Karte aus, um den Namen ändern, oder es löschen zu können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines bereits gezeichneten Zentrums durch Anklicken in der Karte. Nach der Auswahl kann dessen Name verändert werden oder es kann gelöscht werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Zentrum in Karte auswählen</string>
@@ -1039,7 +1100,7 @@ aus OSM ergänzen</string>
            <string>Projektwirkung</string>
           </property>
           <property name="collapsed">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
@@ -1056,7 +1117,7 @@ aus OSM ergänzen</string>
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projektwirkung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Umsatzumverteilung zwischen Planfall und Nullfall bezogen auf die Gemeinden und die Zentren sowie weitere Kennwerte der Einzelhandelsplanung schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projektwirkung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine Modellrechnung starten, um die Veränderung der Kaufkraftströme zwischen Planfall und Nullfall zu ermitteln. Dabei wird die Kaufkraftbindung der neuen Märkte in den Gemeinden, die Umsatzveränderung im Bestand auf Ebene der Gemeinden und der Zentren, die Zentralität der Gemeinden im Planungsfall sowie die Verkaufsflächendichte im Planungsfall ermittelt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Projektwirkung schätzen</string>
