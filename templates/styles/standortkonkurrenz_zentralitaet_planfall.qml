@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
 <qgis styleCategories="Symbology|Labeling" labelsEnabled="1" version="3.4.11-Madeira">
-  <renderer-v2 graduatedMethod="GraduatedColor" symbollevels="0" forceraster="0" type="graduatedSymbol" attr="IF (&quot;nutzerdefiniert&quot; = -1 AND &quot;Auswahl&quot; != 0, &quot;zentralitaet_planfall&quot;, NULL)" enableorderby="0">
+  <renderer-v2 graduatedMethod="GraduatedColor" symbollevels="0" forceraster="0" type="graduatedSymbol" attr="zentralitaet_planfall" enableorderby="0">
     <ranges>
       <range symbol="0" label=" ≤ 80 %" upper="80.000000000000000" render="true" lower="0.000000000000000"/>
       <range symbol="1" label=" > 80 %" upper="85.000000000000000" render="true" lower="80.000000000000000"/>

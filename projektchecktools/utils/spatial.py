@@ -1,7 +1,8 @@
 import numpy as np
 from pyproj import Proj, transform
 from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
-                       QgsFeature, QgsPolygon)
+                       QgsFeature, QgsPolygon, QgsCoordinateTransform,
+                       QgsProject, QgsCoordinateReferenceSystem)
 from qgis.PyQt.Qt import QVariant
 from typing import Union
 import processing
@@ -47,15 +48,25 @@ class Point(object):
         self.y = y
         return (x, y)
 
-def create_layer(features, geom_type, fields=[], name='temp', epsg=4326):
-    layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{epsg}', name, 'memory')
+def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
+                 target_epsg=None):
+
+    layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{target_epsg or epsg}',
+                           name, 'memory')
     pr = layer.dataProvider()
     for field in fields:
         pr.addAttributes([QgsField(field, QVariant.String)])
     layer.updateFields()
+    if target_epsg:
+        tr = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(epsg), layer.crs(),
+            QgsProject.instance()
+        )
     for feature in features:
         f = QgsFeature()
         geom = feature.geom
+        if target_epsg:
+            geom.transform(tr)
         if isinstance(feature.geom, QgsPointXY):
             geom = QgsGeometry.fromPointXY(feature.geom)
         if isinstance(feature.geom, QgsPolygon):
@@ -176,7 +187,7 @@ def google_geocode(address, api_key=''):
     results = json['results']
     msg = json.get('status', '')
     if not results:
-        if json.has_key('error_message'):
+        if 'error_message' in json:
             msg = json['error_message']
         return None, msg
     location = results[0]['geometry']['location']

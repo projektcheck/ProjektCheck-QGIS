@@ -12,6 +12,14 @@ class Centers(ProjectTable):
     auswahl = Field(int, 0)
     ags = Field(str, '')
     rs = Field(str, '')
+    ew = Field(int, 0)
+    kk = Field(float, 0)
+    zentralitaet_nullfall = Field(float, 0)
+    zentralitaet_planfall = Field(float, 0)
+    zentralitaet_differenz = Field(float, 0)
+    vkfl_dichte_nullfall = Field(float, 0)
+    vkfl_dichte_planfall = Field(float, 0)
+    vkfl_dichte_differenz = Field(float, 0)
 
     class Meta:
         workspace = 'marketcompetition'
@@ -56,6 +64,25 @@ class MarketCellRelations(ProjectTable):
     class Meta:
         workspace = 'marketcompetition'
 
+
+class SettlementCells(ProjectTable):
+    ew = Field(int, 0)
+    kk_index = Field(float, 1)
+    kk = Field(float, 0)
+    id_teilflaeche = Field(int, 0)
+    in_auswahl = Field(bool, False)
+    ags = Field(str, '')
+
+    class Meta:
+        workspace = 'marketcompetition'
+
+
+class Settings(ProjectTable):
+    sz_puffer = Field(int, 0)
+    betrachtungsraum = Field(str, '')
+
+    class Meta:
+        workspace = 'marketcompetition'
 
 
 

@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
 <qgis styleCategories="Symbology|Labeling" version="3.4.11-Madeira" labelsEnabled="1">
-  <renderer-v2 graduatedMethod="GraduatedColor" type="graduatedSymbol" attr="IF (&quot;nutzerdefiniert&quot; = -1 AND &quot;Auswahl&quot; != 0, &quot;vkfl_dichte_differenz&quot;, NULL)" symbollevels="0" forceraster="0" enableorderby="0">
+  <renderer-v2 graduatedMethod="GraduatedColor" type="graduatedSymbol" attr="vkfl_dichte_differenz" symbollevels="0" forceraster="0" enableorderby="0">
     <ranges>
       <range upper="-0.000000000001000" lower="-999999.000000000000000" label=" Rückgang" symbol="0" render="true"/>
       <range upper="0.025000000000000" lower="-0.000000000001000" label=" ≤ + 0,025 m²" symbol="1" render="true"/>

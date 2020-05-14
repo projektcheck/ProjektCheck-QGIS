@@ -759,7 +759,8 @@ class SupermarketsCompetition(Domain):
 
     def add_osm(self):
         job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
-                            truncate=self.ui.truncate_osm_check.isChecked())
+                            truncate=False)
+                            #truncate=self.ui.truncate_osm_check.isChecked())
         def on_success(r):
             self.nullfall_edit.fill_combo()
             self.nullfall_edit.add_layer(zoom_to=True)
@@ -777,13 +778,116 @@ class SupermarketsCompetition(Domain):
             self.canvas.refreshAllLayers()
 
     def calculate(self):
-        recalculate = self.ui.recalculate_check.isChecked()
-        job = Projektwirkung(self.project, recalculate=recalculate)
+        #recalculate = self.ui.recalculate_check.isChecked()
+        self.show_results()
+        return
+        job = Projektwirkung(self.project, recalculate=False)
         success, msg = job.validate_inputs()
         if not success:
             QMessageBox.warning(self.ui, 'Fehler', msg)
             return
-        job.work()
+
+        def on_success(r):
+            pass
+
+        dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
+        dialog.show()
+
+    def show_results(self):
+
+        #betriebstyp_col = 'id_betriebstyp_nullfall'
+        #df_markets = self.parent_tbx.table_to_dataframe('Maerkte')
+        #id_nullfall = df_markets['id_betriebstyp_nullfall']
+        #id_planfall = df_markets['id_betriebstyp_planfall']
+        #planfall_idx = np.logical_and((id_nullfall != id_planfall), (id_planfall > 0))
+
+        #for index, plan_market in df_markets[planfall_idx].iterrows():
+            #layer_name = u'Kaufkraftbindung {m} ({i})'.format(
+                #m=plan_market['name'], i=plan_market['id'])
+            #self.output.remove_layer(layer_name)
+            #fn = u'Kaufkraftbindung_Raster_{i}'.format(i=plan_market['id'])
+
+            #fp = self.folders.get_table(fn, check=False)
+            #arcpy.AddMessage('Erzeuge Raster {}'.format(fn))
+            #table = self.folders.get_table('Beziehungen_Maerkte_Zellen')
+            #where = ('id_markt={} and distanz>=0 and in_auswahl=1'
+                     #.format(plan_market['id']))
+            #arcpy.Delete_management(fp)
+            #template = self.folders.ZENSUS_RASTER_500_FILE
+            #arcpy.Delete_management(fp)
+            #try:
+                #raster_file = features_to_raster(
+                    #table, fp, 'kk_bindung_planfall', template=template,
+                    #where=where)
+            #except arcpy.ExecuteError:
+                #arcpy.AddMessage(
+                    #u'Keine Ergebnisse der Kaufkraftbindung im '
+                    #u'Planfall für den Markt "{}" -> scheinbar nicht erreichbar'
+                    #.format(plan_market['name']))
+                #continue
+            #self.output.add_layer(group_layer, 'Kaufkraftbindung_Raster',
+                                  #fn,
+                                  #name=layer_name,
+                                  #template_folder=folder,
+                                  #zoom=False)
+
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Umsatzveränderung Bestand Zentren',
+            style_file='standortkonkurrenz_umsatzveraenderung_zentren.qml',
+            filter='nutzerdefiniert=1'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Umsatzveränderung Bestand Verwaltungsgemeinschaften',
+            style_file='standortkonkurrenz_umsatzveraenderung_vwg.qml',
+            filter='nutzerdefiniert=-1'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Zentralität Nullfall',
+            style_file='standortkonkurrenz_zentralitaet.qml',
+            filter='nutzerdefiniert=0'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Zentralität Planfall',
+            style_file='standortkonkurrenz_zentralitaet.qml',
+            filter='nutzerdefiniert=0'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Entwicklung Zentralität',
+            style_file='standortkonkurrenz_entwicklung_zentralitaet.qml',
+            filter='nutzerdefiniert=0'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Verkaufsflächendichte Nullfall',
+            style_file='standortkonkurrenz_verkaufsflaechendichte_nullfall.qml',
+            filter='nutzerdefiniert=0'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Verkaufsflächendichte Planfall',
+            style_file='standortkonkurrenz_verkaufsflaechendichte_planfall.qml',
+            filter='nutzerdefiniert=0'
+        )
+        output = ProjectLayer.from_table(
+            self.centers.table, groupname=self.layer_group)
+        output.draw(
+            label='Entwicklung Verkaufsflächendichte',
+            style_file='standortkonkurrenz_entwicklung_'
+            'verkaufsflaechendichte.qml',
+            filter='nutzerdefiniert=0'
+        )
 
     def close(self):
         self.community_picker.set_active(False)

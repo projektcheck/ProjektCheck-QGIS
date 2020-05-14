@@ -350,16 +350,6 @@ aus OSM ergänzen</string>
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="truncate_osm_check">
-               <property name="text">
-                <string>vorhandene OSM-Märkte entfernen</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
               <spacer name="horizontalSpacer_12">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -395,7 +385,7 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QSpinBox" name="spinBox">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;br/&gt;Geben Sie hier die zu berücksichtigende Bufferweite an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="maximum">
                 <number>10000</number>
@@ -405,7 +395,7 @@ aus OSM ergänzen</string>
              <item>
               <widget class="QSlider" name="horizontalSlider">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;br/&gt;Geben Sie hier die zu berücksichtigende Bufferweite an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="maximum">
                 <number>10000</number>
@@ -440,9 +430,6 @@ aus OSM ergänzen</string>
              </item>
              <item>
               <widget class="QPushButton" name="remove_osm_button">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OSM-Märkte löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Löschen Sie hier wieder die zuvor aus OpenStreetMap eingelesenen Lebensmittelmärkte.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
                <property name="text">
                 <string>OSM-Märkte löschen</string>
                </property>
@@ -1104,86 +1091,24 @@ aus OSM ergänzen</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <property name="topMargin">
-              <number>0</number>
+            <widget class="QPushButton" name="calculate_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <item>
-              <widget class="QPushButton" name="pushButton_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projektwirkung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine Modellrechnung starten, um die Veränderung der Kaufkraftströme zwischen Planfall und Nullfall zu ermitteln. Dabei wird die Kaufkraftbindung der neuen Märkte in den Gemeinden, die Umsatzveränderung im Bestand auf Ebene der Gemeinden und der Zentren, die Zentralität der Gemeinden im Planungsfall sowie die Verkaufsflächendichte im Planungsfall ermittelt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Projektwirkung schätzen</string>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBox">
-               <property name="text">
-                <string>Neuberechnung der Distanzen 
-und Siedlungszellen erzwingen</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_13">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QLabel" name="label">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projektwirkung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Umsatzumverteilung zwischen Planfall und Nullfall bezogen auf die Gemeinden und die Zentren sowie weitere Kennwerte der Einzelhandelsplanung schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
-              <string>Pufferzone für Siedlungszellen um gewählte Gemeinden (in m):</string>
+              <string>Projektwirkung schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
              </property>
             </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QSpinBox" name="spinBox_2">
-               <property name="maximum">
-                <number>5000</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="horizontalSlider_2">
-               <property name="maximum">
-                <number>5000</number>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </item>
           </layout>
          </widget>
@@ -1270,38 +1195,6 @@ und Siedlungszellen erzwingen</string>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>horizontalSlider_2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinBox_2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinBox_2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>69</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>checkBox_23</sender>
    <signal>toggled(bool)</signal>

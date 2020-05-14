@@ -216,6 +216,9 @@ class FeatureCollection:
         for id in ids:
             self.table.delete(id)
 
+    def values(self, field_name):
+        return self.table.values(field_name)
+
     @property
     def workspace(self):
         return self.table.workspace
@@ -357,7 +360,7 @@ class FeatureCollection:
         row = self.table[idx]
         return self._row_to_feature(row)
 
-    def to_pandas(self):
+    def to_pandas(self, columns=[]):
         '''
         pandas representation of this (filtered) feature collection
 
@@ -367,7 +370,7 @@ class FeatureCollection:
             pandas dataframe containing the (filtered) features as rows and
             fields as columns
         '''
-        return self.table.to_pandas()
+        return self.table.to_pandas(columns=columns)
 
     def update_pandas(self, dataframe, pkeys=None):
         '''
@@ -623,7 +626,7 @@ class Table(ABC):
         '''
         return FeatureCollection(self)
 
-    def to_pandas(self):
+    def to_pandas(self, columns=[]):
         '''
         override
 

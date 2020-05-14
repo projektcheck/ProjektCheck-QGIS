@@ -590,6 +590,15 @@ class GeopackageTable(Table):
         '''
         self._layer.DeleteFeature(id)
 
+    def truncate(self):
+        for feat in self._layer:
+            self._layer.DeleteFeature(feat.GetFID())
+
+    def values(self, field):
+        values = [f[field] for f in self._layer]
+        return values
+
+
     def set(self, id, **kwargs):
         '''
         sets given values to fields of row with given id
@@ -603,10 +612,11 @@ class GeopackageTable(Table):
         feature = self._layer.GetFeature(id)
         if not feature:
             return False
-        geom = kwargs.pop(self.geom_field, None)
-        if geom:
-            geom = ogr.CreateGeometryFromWkt(geom.asWkt())
-        feature.SetGeometry(geom)
+        if 'geom' in kwargs:
+            geom = kwargs.pop(self.geom_field, None)
+            if geom:
+                geom = ogr.CreateGeometryFromWkt(geom.asWkt())
+            feature.SetGeometry(geom)
         for field_name, value in kwargs.items():
             if isinstance(value, np.integer):
                 value = int(value)
@@ -676,7 +686,7 @@ class GeopackageTable(Table):
             self._cursor.SetField(field_name, value)
         self._layer.SetFeature(self._cursor)
 
-    def to_pandas(self):
+    def to_pandas(self, columns=[]):
         '''
         pandas representation of this (filtered) table
 
@@ -689,8 +699,8 @@ class GeopackageTable(Table):
         rows = []
         for row in self:
             rows.append(row)
-        df = pd.DataFrame.from_records(
-            rows, columns=[self.id_field, self.geom_field] + self.field_names)
+        columns = columns or [self.id_field, self.geom_field] + self.field_names
+        df = pd.DataFrame.from_records(rows, columns=columns)
         return df
 
     def update_pandas(self, dataframe, pkeys=None):
@@ -715,8 +725,7 @@ class GeopackageTable(Table):
 
         for i, df_row in dataframe.iterrows():
             items = df_row.to_dict()
-            geom = items.get('geom', None)
-            if isnan(geom):
+            if 'geom' in items and isnan(items['geom']):
                 items['geom'] = None
             # no pkeys: take id field directly
             pk = items.pop(self.id_field, None)
