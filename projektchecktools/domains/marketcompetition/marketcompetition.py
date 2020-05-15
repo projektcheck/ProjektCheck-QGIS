@@ -850,35 +850,35 @@ class SupermarketsCompetition(Domain):
         output.draw(
             label='Zentralität Nullfall',
             style_file='standortkonkurrenz_zentralitaet.qml',
-            filter='nutzerdefiniert=0'
+            filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Planfall',
             style_file='standortkonkurrenz_zentralitaet.qml',
-            filter='nutzerdefiniert=0'
+            filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Entwicklung Zentralität',
             style_file='standortkonkurrenz_entwicklung_zentralitaet.qml',
-            filter='nutzerdefiniert=0'
+            filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Verkaufsflächendichte Nullfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_nullfall.qml',
-            filter='nutzerdefiniert=0'
+            filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Verkaufsflächendichte Planfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_planfall.qml',
-            filter='nutzerdefiniert=0'
+            filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
@@ -886,7 +886,7 @@ class SupermarketsCompetition(Domain):
             label='Entwicklung Verkaufsflächendichte',
             style_file='standortkonkurrenz_entwicklung_'
             'verkaufsflaechendichte.qml',
-            filter='nutzerdefiniert=0'
+            filter='nutzerdefiniert=0 and auswahl=1'
         )
 
     def close(self):

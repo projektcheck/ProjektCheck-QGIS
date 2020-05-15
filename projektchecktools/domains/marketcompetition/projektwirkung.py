@@ -60,23 +60,15 @@ class Projektwirkung(Worker):
         return True, ''
 
     def work(self):
-        ## set "Gemeinden" as selected based on selection of "Verwaltungsgemeinschaften"
-        #selected_rs = self.parent_tbx.query_table(
-            #'Zentren', columns=['RS'],
-            #where='"Auswahl" <> 0 and nutzerdefiniert = -1')
-        #self.parent_tbx.update_table('Zentren', {'Auswahl': 0},
-                                     #where='nutzerdefiniert = 0')
-
-        #selected_rs = ["'{}'".format(r[0]) for r in selected_rs]
-        #self.parent_tbx.update_table(
-            #'Zentren', {'Auswahl': 1},
-            #where='"RS" in ({})'.format(','.join(selected_rs)))
-
         # check the settings of last calculation
         selected_vg = self.centers.filter(auswahl__ne=0, nutzerdefiniert=-1)
         selected_rs = [v.rs for v in selected_vg]
-        gemeinden = self.centers.filter(nutzerdefiniert=0, rs__in=selected_rs)
-        cur_ags = [c.ags for c in gemeinden]
+        gemeinden = self.centers.filter(nutzerdefiniert=0)
+        for gem in gemeinden:
+            gem.auswahl = 1 if gem.rs in selected_rs else 0
+            gem.save()
+        gemeinden_in_auswahl = gemeinden.filter(auswahl=1)
+        cur_ags = [c.ags for c in gemeinden_in_auswahl]
 
         if len(self.settings) == 0:
             # force recalc., because settings are empty (no calc. before)
@@ -106,17 +98,20 @@ class Projektwirkung(Worker):
         sz_count = len(self.cells)
         if sz_count == 0:
             # calculate cells with inhabitants (incl. 'teilflaechen')
-            self.calculate_zensus(gemeinden, default_kk_index, base_kk)
+            self.calculate_zensus(gemeinden_in_auswahl,
+                                  default_kk_index, base_kk)
         else:
             self.log('Siedlungszellen bereits vorhanden, '
                      'Berechnung wird übersprungen')
-
+        self.set_progress(20)
         self.log(u'Aktualisiere Siedlungszellen der Teilflächen...')
         self.update_areas(default_kk_index, base_kk)
 
+        self.set_progress(25)
         self.log(u'Berechne Erreichbarkeiten der Märkte...')
-        self.calculate_distances()
+        self.calculate_distances(progress_start=25, progress_end=60)
 
+        self.set_progress(60)
         self.log(u'Lade Eingangsdaten für die nachfolgenden '
                  u'Berechnungen...')
         # reload markets
@@ -126,10 +121,12 @@ class Projektwirkung(Worker):
 
         sales = Sales(self.project.basedata, df_relations, df_markets, df_cells,
                       debug=DEBUG)
+        self.set_progress(70)
         self.log('Berechne Nullfall...')
         kk_nullfall = sales.calculate_nullfall()
         self.log('Berechne Planfall...')
         kk_planfall = sales.calculate_planfall()
+        self.set_progress(85)
         self.log('Berechne Kenngrößen...')
         self.sales_to_db(kk_nullfall, kk_planfall)
         self.log('Werte Ergebnisse auf Verwaltungsgemeinschaftsebene und '
@@ -242,7 +239,7 @@ class Projektwirkung(Worker):
                 Point(ex.xMaximum(), ex.yMaximum(), epsg=epsg))
         return bbox
 
-    def calculate_distances(self):
+    def calculate_distances(self, progress_start=0, progress_end=100):
         '''calculate distances between settlement points and markets and
         write them to the database'''
 
@@ -257,12 +254,12 @@ class Projektwirkung(Worker):
         already_calculated = np.unique(self.relations.values('id_markt'))
         self.markets.filter()
         n_markets = len(self.markets)
+        progress_step = (progress_end - progress_start) / n_markets
         i = 1
         for market in self.markets:
             self.log(f' - {market.name} ({i}/{n_markets})')
-            i += 1
             if market.id not in already_calculated:
-                self.log('&#9;wird berechnet')
+                self.log('&nbsp;&nbsp;wird berechnet')
                 pnt = market.geom.asPoint()
                 origin = Point(pnt.x(), pnt.y(), id=market.id, epsg=epsg)
                 #try:
@@ -275,8 +272,9 @@ class Projektwirkung(Worker):
                 self.distances_to_db(market.id, destinations, distances,
                                      beelines)
             else:
-                self.log('&#9;bereits berechnet, wird übersprungen')
-            gc.collect()
+                self.log('&nbsp;&nbsp;bereits berechnet, wird übersprungen')
+            self.set_progress(progress_start + (i * progress_step))
+            i += 1
 
     def sales_to_db(self, kk_nullfall, kk_planfall):
         '''store the sales matrices in database'''
