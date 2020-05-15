@@ -68,7 +68,7 @@ padding: 2px;
          <x>0</x>
          <y>0</y>
          <width>543</width>
-         <height>1072</height>
+         <height>1209</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -105,7 +105,7 @@ padding: 2px;
              <item>
               <widget class="QPushButton" name="pushButton_32">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden abschätzen/anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abschätzen/anzeigen, welchen Einfluss das Projekt auf die Einwohnerzahl der Gemeinden in der Region hat. (Nur relevant für Wohnnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen (Einwohner)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Schätzen, welche Veränderung der Einwohnerzahlen sich durch das Projekt in der Projektgemeinde sowie den umliegenden Gemeinden durch Umzüge in die neuen Wohnungen sowie Nachbezüge der Bestandswohnungen ergeben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Wanderungssalden anzeigen</string>
@@ -150,7 +150,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bearbeiten Sie die geschätzten Wanderungssalden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten (Einwohner)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Das Schätzergebnis der Wanderungsbewegungen für ausgewählte Gemeinden verändern und für alle anderen automatisch anpassen lassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Saldo für ausgewählte Gemeinde bearbeiten</string>
@@ -365,7 +365,7 @@ padding: 2px;
              <item>
               <widget class="QPushButton" name="pushButton_44">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen/anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abschätzen/anzeigen, welchen Einfluss das Projekt auf die Zahl der Beschäftigten in den Gemeinden der Region hat. (Nur relevant für Gewerbenutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen (Beschäftigte)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Schätzen, welche Veränderung der Zahl der Beschäftigten (am Arbeitsort) sich durch das Projekt in der Projektgemeinde sowie den umliegenden Gemeinden durch Umzüge von Unternehmen auf die neuen Flächen sowie Nachbezüge der Bestandsflächen ergeben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Wanderungssalden anzeigen</string>
@@ -410,7 +410,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bearbeiten Sie die geschätzten Wanderungssalden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden bearbeiten (Beschäftigte)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Das Schätzergebnis der Wanderungsbewegungen für ausgewählte Gemeinden verändern und für alle anderen automatisch anpassen lassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Saldo für ausgewählte Gemeinde bearbeiten</string>
@@ -598,6 +598,19 @@ padding: 2px;
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
+            <widget class="QLabel" name="label_9">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Grundsteuer</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButton_33">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -606,7 +619,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Grundsteuer schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde aus der Grundsteuer B schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Grundsteuer&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde aus der Grundsteuer B auf Basis der vorstehenden Kennwerte sowie der Angaben aus der Projektdefinition schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -705,6 +718,29 @@ padding: 2px;
             </widget>
            </item>
            <item>
+            <widget class="Line" name="line_2">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Einkommensteuer (Kommunalanteil)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButton_34">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -713,7 +749,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Einkommensteuer (Kommunalanteil) schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus der Einkommensteuer (Kommunalanteil) schätzen. (Nur relevant für Wohnnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Einkommensteuer (Kommunalanteil)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus der Einkommensteuer (Kommunalanteil) auf Basis der vorstehenden Schätzung der Wanderungssalden (Einwohner) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Einkommenssteuer schätzen</string>
@@ -721,6 +757,29 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_3">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Familienleistungsausgleich</string>
              </property>
             </widget>
            </item>
@@ -733,7 +792,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Familienleistungsausgleich schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus dem Familienleistungsausgleich schätzen. (Nur relevant für Wohnnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Familienleistungsausgleich&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus Mitteln des Familienleistungsausgleichs auf Basis der vorstehenden Schätzung der Wanderungssalden (Einwohner) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Familienleistungsausgleich schätzen</string>
@@ -741,6 +800,16 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_4">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -753,165 +822,170 @@ padding: 2px;
               </font>
              </property>
              <property name="text">
-              <string>Gewerbesteuer</string>
+              <string>Gewerbesteuer (netto)</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QFrame" name="frame">
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+            <widget class="QPushButton" name="pushButton_36">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gewerbesteuer-Hebesätze&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Hebesätze der Projektgemeinde sowie der umliegenden Gemeinden für die Gewerbesteuer anpassen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
-             <property name="lineWidth">
-              <number>1</number>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
              </property>
-             <property name="midLineWidth">
-              <number>0</number>
+             <property name="autoFillBackground">
+              <bool>false</bool>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="QPushButton" name="pushButton_36">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hebesätze kontrollieren&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Vor der Berechnung der Gewerbesteuer die Hebesätze der Gemeinden in der Region kontrollieren und bei Bedarf anpassen. (Nur relevant für Gewerbe- und Einzelhandelsnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Hebesätze kontrollieren</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="flat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QScrollArea" name="scrollArea_2">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="palette">
-                 <palette>
-                  <active>
-                   <colorrole role="Button">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>255</red>
-                      <green>213</green>
-                      <blue>253</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </active>
-                  <inactive>
-                   <colorrole role="Button">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>255</red>
-                      <green>213</green>
-                      <blue>253</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </inactive>
-                  <disabled>
-                   <colorrole role="Button">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>255</red>
-                      <green>213</green>
-                      <blue>253</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </disabled>
-                 </palette>
-                </property>
-                <property name="widgetResizable">
-                 <bool>true</bool>
-                </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>485</width>
-                   <height>69</height>
-                  </rect>
+             <property name="text">
+              <string>Hebesätze ändern</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QScrollArea" name="scrollArea_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>255</red>
+                   <green>213</green>
+                   <blue>253</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>255</red>
+                   <green>213</green>
+                   <blue>253</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>255</red>
+                   <green>213</green>
+                   <blue>253</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </disabled>
+              </palette>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>503</width>
+                <height>69</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_8">
-                  <item>
-                   <widget class="QLabel" name="label_4">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="text">
-                     <string>komplexer Dialog</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <property name="text">
+                  <string>komplexer Dialog</string>
+                 </property>
                 </widget>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton_42">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gewerbesteuer (netto) schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus der Gewerbesteuer (netto) schätzen. (Nur relevant für Gewerbe- und Einzelhandelsnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Gewerbesteuer (netto) schätzen</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</iconset>
-                </property>
-                <property name="checkable">
-                 <bool>false</bool>
-                </property>
-                <property name="flat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_42">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gewerbesteuer (netto)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus der Gewerbesteuer (netto) auf Basis der vorstehenden Schätzung der Wanderungssalden (Beschäftigte) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Gewerbesteuer (netto) schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_6">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_12">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Umsatzsteuer (Kommunalanteil)</string>
+             </property>
             </widget>
            </item>
            <item>
@@ -923,7 +997,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Umsatzsteuer (Kommunalanteil) schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mehreinnahmen der Projektgemeinde sowie Mindereinnahmen der Nachbargemeinden aus der Umsatzsteuer (Kommunalanteil) schätzen. (Nur relevant für Gewerbe- und Einzelhandelsnutzungen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Umsatzsteuer (Kommunalanteil)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus der Umsatzsteuer (Kommunalanteil) auf Basis der vorstehenden Schätzung der Wanderungssalden (Beschäftigte) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Umsatzsteuer schätzen</string>
@@ -938,6 +1012,29 @@ padding: 2px;
             </widget>
            </item>
            <item>
+            <widget class="Line" name="line_7">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Summe der Steuereinahmen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButton_38">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -946,7 +1043,7 @@ padding: 2px;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gesamtsumme schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zuvor ermittelte Mehr- und Mindereinnahmen der Gemeinden aus der Grund-, Einkommens-, Gewerbe- und Umsatzsteuer sowie dem Familienleistungsausgleich aufsummieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gesamtsumme&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die mit den vorstehenden Funktionen ermittelten Mehr- und Mindereinnahmen aus der Grundsteuer, der Einkommensteuer, dem Familienleistungsausgleich, der Gewerbesteuer und der Umsatzsteuer aufsummieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Gesamtsumme schätzen</string>
@@ -981,7 +1078,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hinweise zur Ergebnisinterpretation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PDF-Kurzanleitung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Interpretationshilfe&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine kurze Interpretationshilfe (pdf) anzeigen lassen, in der u.a. beschrieben ist, welche Effekte (z.B. Kommunaler Finanzausgleich und Kreisumlage) in der Gesamtsumme noch nicht enthalten sind.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
