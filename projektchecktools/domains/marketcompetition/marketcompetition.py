@@ -657,7 +657,7 @@ class SupermarketsCompetition(Domain):
         self.ui.show_markets_button.clicked.connect(
             lambda: self.show_markets(zoom_to=True))
 
-        self.ui.add_osm_button.clicked.connect(self.add_osm)
+        self.ui.add_osm_button.clicked.connect(self.read_osm)
         self.ui.remove_osm_button.clicked.connect(self.remove_osm)
 
         self.nullfall_edit = EditNullfallMarkets(
@@ -696,6 +696,8 @@ class SupermarketsCompetition(Domain):
         self.center_edit.setupUi()
 
         self.ui.calculate_button.clicked.connect(self.calculate)
+        self.ui.osm_buffer_input.setEnabled(False)
+        self.ui.osm_buffer_slider.setEnabled(False)
 
     def load_content(self):
         self.centers = Centers.features()
@@ -757,10 +759,11 @@ class SupermarketsCompetition(Domain):
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
             dialog.show()
 
-    def add_osm(self):
+    def read_osm(self):
+        buffer = self.ui.osm_buffer_input \
+            if self.ui.osm_buffer_check.isChecked() else 0
         job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
-                            truncate=False)
-                            #truncate=self.ui.truncate_osm_check.isChecked())
+                            buffer=buffer, truncate=False)
         def on_success(r):
             self.nullfall_edit.fill_combo()
             self.nullfall_edit.add_layer(zoom_to=True)
@@ -778,17 +781,14 @@ class SupermarketsCompetition(Domain):
             self.canvas.refreshAllLayers()
 
     def calculate(self):
-        #recalculate = self.ui.recalculate_check.isChecked()
-        self.show_results()
-        return
-        job = Projektwirkung(self.project, recalculate=False)
+        job = Projektwirkung(self.project, recalculate=True)
         success, msg = job.validate_inputs()
         if not success:
             QMessageBox.warning(self.ui, 'Fehler', msg)
             return
 
         def on_success(r):
-            pass
+            self.show_results()
 
         dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
         dialog.show()

@@ -17,9 +17,11 @@ class ReadOSMWorker(ReadMarketsWorker):
     _markets_table = 'Maerkte'
     _max_count = 3000  # max number of markets
 
-    def __init__(self, project, epsg=4326, truncate=False, parent=None):
+    def __init__(self, project, epsg=4326, truncate=False, buffer=0,
+                 parent=None):
         super().__init__(project=project, parent=parent)
         self.epsg = epsg
+        self.buffer = buffer
         self.truncate = truncate
 
     def work(self):
@@ -29,7 +31,7 @@ class ReadOSMWorker(ReadMarketsWorker):
             auswahl__ne=0, nutzerdefiniert=-1)
         geometries = [f.geom for f in communities]
         multi_poly = minimal_bounding_poly(geometries)
-
+        multi_poly = multi_poly.buffer(self.buffer, 1)
         if self.truncate:
             osm_markets = Markets.features(
                 project=self.project).filter(is_osm=True)

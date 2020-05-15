@@ -66,9 +66,9 @@ padding: 2px;
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-439</y>
-         <width>480</width>
-         <height>1243</height>
+         <y>0</y>
+         <width>478</width>
+         <height>915</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -365,7 +365,7 @@ aus OSM ergänzen</string>
             </layout>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox_23">
+            <widget class="QCheckBox" name="osm_buffer_check">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
@@ -383,7 +383,7 @@ aus OSM ergänzen</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QSpinBox" name="spinBox">
+              <widget class="QSpinBox" name="osm_buffer_input">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -393,7 +393,7 @@ aus OSM ergänzen</string>
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="horizontalSlider">
+              <widget class="QSlider" name="osm_buffer_slider">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -1196,66 +1196,66 @@ aus OSM ergänzen</string>
  <resources/>
  <connections>
   <connection>
-   <sender>checkBox_23</sender>
+   <sender>osm_buffer_check</sender>
    <signal>toggled(bool)</signal>
-   <receiver>spinBox</receiver>
+   <receiver>osm_buffer_input</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>362</y>
+     <x>338</x>
+     <y>266</y>
     </hint>
     <hint type="destinationlabel">
-     <x>322</x>
-     <y>408</y>
+     <x>64</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider</sender>
+   <sender>osm_buffer_slider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox</receiver>
+   <receiver>osm_buffer_input</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>381</x>
-     <y>390</y>
+     <x>437</x>
+     <y>285</y>
     </hint>
     <hint type="destinationlabel">
-     <x>341</x>
-     <y>414</y>
+     <x>64</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>spinBox</sender>
+   <sender>osm_buffer_input</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider</receiver>
+   <receiver>osm_buffer_slider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>329</x>
-     <y>414</y>
+     <x>64</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
-     <x>385</x>
-     <y>390</y>
+     <x>441</x>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>checkBox_23</sender>
+   <sender>osm_buffer_check</sender>
    <signal>toggled(bool)</signal>
-   <receiver>horizontalSlider</receiver>
+   <receiver>osm_buffer_slider</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>395</x>
-     <y>362</y>
+     <x>402</x>
+     <y>266</y>
     </hint>
     <hint type="destinationlabel">
-     <x>414</x>
-     <y>390</y>
+     <x>470</x>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
