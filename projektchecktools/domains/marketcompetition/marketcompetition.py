@@ -794,42 +794,19 @@ class SupermarketsCompetition(Domain):
         dialog.show()
 
     def show_results(self):
-
-        #betriebstyp_col = 'id_betriebstyp_nullfall'
-        #df_markets = self.parent_tbx.table_to_dataframe('Maerkte')
-        #id_nullfall = df_markets['id_betriebstyp_nullfall']
-        #id_planfall = df_markets['id_betriebstyp_planfall']
-        #planfall_idx = np.logical_and((id_nullfall != id_planfall), (id_planfall > 0))
-
-        #for index, plan_market in df_markets[planfall_idx].iterrows():
-            #layer_name = u'Kaufkraftbindung {m} ({i})'.format(
-                #m=plan_market['name'], i=plan_market['id'])
-            #self.output.remove_layer(layer_name)
-            #fn = u'Kaufkraftbindung_Raster_{i}'.format(i=plan_market['id'])
-
-            #fp = self.folders.get_table(fn, check=False)
-            #arcpy.AddMessage('Erzeuge Raster {}'.format(fn))
-            #table = self.folders.get_table('Beziehungen_Maerkte_Zellen')
-            #where = ('id_markt={} and distanz>=0 and in_auswahl=1'
-                     #.format(plan_market['id']))
-            #arcpy.Delete_management(fp)
-            #template = self.folders.ZENSUS_RASTER_500_FILE
-            #arcpy.Delete_management(fp)
-            #try:
-                #raster_file = features_to_raster(
-                    #table, fp, 'kk_bindung_planfall', template=template,
-                    #where=where)
-            #except arcpy.ExecuteError:
-                #arcpy.AddMessage(
-                    #u'Keine Ergebnisse der Kaufkraftbindung im '
-                    #u'Planfall für den Markt "{}" -> scheinbar nicht erreichbar'
-                    #.format(plan_market['name']))
-                #continue
-            #self.output.add_layer(group_layer, 'Kaufkraftbindung_Raster',
-                                  #fn,
-                                  #name=layer_name,
-                                  #template_folder=folder,
-                                  #zoom=False)
+        planfall_markets = self.markets.filter(id_betriebstyp_planfall__gt=0)
+        for market in planfall_markets:
+            if market.id_betriebstyp_nullfall == market.id_betriebstyp_planfall:
+                continue
+            output = ProjectLayer.from_table(
+                self.relations.table, groupname=self.layer_group)
+            layer_name = f'Kaufkraftbindung {market.name} ({market.id})'
+            output.draw(
+                label=layer_name,
+                style_file='standortkonkurrenz_kk_bindung.qml',
+                filter=f'id_markt={market.id}'
+            )
+        self.markets.filter()
 
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)

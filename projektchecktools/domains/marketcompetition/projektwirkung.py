@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import pandas as pd
-import json
 import numpy as np
 import pandas as pd
-import gc
 from collections import Counter
 import processing
 from qgis.core import (QgsCoordinateTransform, QgsProject, QgsVectorLayer,
@@ -103,18 +101,17 @@ class Projektwirkung(Worker):
         else:
             self.log('Siedlungszellen bereits vorhanden, '
                      'Berechnung wird übersprungen')
-        self.set_progress(20)
+        self.set_progress(10)
         self.log(u'Aktualisiere Siedlungszellen der Teilflächen...')
         self.update_areas(default_kk_index, base_kk)
 
-        self.set_progress(25)
+        self.set_progress(15)
         self.log(u'Berechne Erreichbarkeiten der Märkte...')
-        self.calculate_distances(progress_start=25, progress_end=60)
+        self.calculate_distances(progress_start=15, progress_end=65)
 
-        self.set_progress(60)
+        self.set_progress(65)
         self.log(u'Lade Eingangsdaten für die nachfolgenden '
                  u'Berechnungen...')
-        # reload markets
         df_markets = self.markets.to_pandas().rename(columns={'fid': 'id'})
         df_relations = self.relations.to_pandas()
         df_cells = self.cells.to_pandas().rename(columns={'fid': 'id'})
@@ -124,11 +121,13 @@ class Projektwirkung(Worker):
         self.set_progress(70)
         self.log('Berechne Nullfall...')
         kk_nullfall = sales.calculate_nullfall()
+        self.set_progress(75)
         self.log('Berechne Planfall...')
         kk_planfall = sales.calculate_planfall()
-        self.set_progress(85)
+        self.set_progress(80)
         self.log('Berechne Kenngrößen...')
         self.sales_to_db(kk_nullfall, kk_planfall)
+        self.set_progress(90)
         self.log('Werte Ergebnisse auf Verwaltungsgemeinschaftsebene und '
                  'für die Zentren aus...')
         self.update_centers()
@@ -141,7 +140,7 @@ class Projektwirkung(Worker):
         given area
         """
         zensus_file = os.path.join(self.project.basedata.base_path,
-                                   self.project.settings.ZENSUS_FILE)
+                                   self.project.settings.ZENSUS_500_FILE)
         raster_layer = QgsRasterLayer(zensus_file)
 
         parameters = {
