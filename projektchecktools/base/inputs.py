@@ -61,7 +61,8 @@ class Checkbox(InputType):
     def __init__(self, width=None, **kwargs):
         super().__init__(**kwargs)
         self.input = QCheckBox()
-        self.input.stateChanged.connect(self.changed.emit)
+        self.input.stateChanged.connect(
+            lambda state: self.changed.emit(self.input.isChecked()))
         self.registerFocusEvent(self.input)
 
     def set_value(self, checked):
@@ -161,7 +162,7 @@ class ComboBox(InputType):
             lambda: self.changed.emit(self.get_value()))
         for i, value in enumerate(values):
             args = [value]
-            if data:
+            if len(data) > 0:
                 args.append(data[i])
             self.add_value(*args)
         self.registerFocusEvent(self.input)

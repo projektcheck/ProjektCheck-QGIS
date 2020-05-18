@@ -118,10 +118,12 @@ class Layer(ABC):
             return
         canvas = iface.mapCanvas()
         self.layer.updateExtents()
-        transform = QgsCoordinateTransform(
-            self.layer.crs(), canvas.mapSettings().destinationCrs(),
-            QgsProject.instance())
-        canvas.setExtent(transform.transform(self.layer.extent()))
+        extent = self.layer.extent()
+        if not extent.isEmpty():
+            transform = QgsCoordinateTransform(
+                self.layer.crs(), canvas.mapSettings().destinationCrs(),
+                QgsProject.instance())
+            canvas.setExtent(transform.transform(extent))
 
     def remove(self):
         if not self.layer:

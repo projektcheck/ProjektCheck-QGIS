@@ -42,7 +42,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         self.ui.project_combo.currentIndexChanged.connect(
             lambda index: self.change_project(
                 self.ui.project_combo.itemData(index)))
-
         self.setup_projects()
 
     def show(self):
@@ -174,6 +173,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         fill project combobox with available projects
         load active project? (or later after setting up domains?)
         '''
+        self.project_manager.active_project = None
+
         self.ui.project_combo.blockSignals(True)
         self.ui.project_combo.clear()
         self.ui.project_combo.addItem('Projekt wählen')
@@ -223,7 +224,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         inactive.append(municipaltaxrevenue)
 
         supermarkets = SupermarketsCompetition()
-        inactive.append(supermarkets)
+        self.domains.append(supermarkets)
 
         # fill the analysis menu with available domains
         menu = QMenu()

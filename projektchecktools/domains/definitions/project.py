@@ -69,6 +69,7 @@ class ProjectInitialization(Worker):
         if len(np.unique(ags)) > 1:
             raise Exception("Die Teilflächen liegen nicht in "
                             "der selben Gemeinde")
+        project_ags = ags[0]
 
         centroids = [geom.centroid().asPoint() for geom in trans_geoms]
         xs = [centroid.x() for centroid in centroids]
@@ -116,7 +117,7 @@ class ProjectInitialization(Worker):
                 name_teilflaeche=area.name,
                 geom=centroids[i]
             )
-        self.set_progress(66)
+        self.set_progress(50)
 
         # general project data
         project_frame = Projektrahmendaten.features(project=self.project,
@@ -135,7 +136,7 @@ class ProjectInitialization(Worker):
             basisdaten_version=basedata_version['version'],
             basisdaten_datum=basedata_version['date']
         )
-        self.set_progress(80)
+        self.set_progress(60)
 
         # create selectable centers around the areas for the market competition
         # domain
@@ -149,6 +150,7 @@ class ProjectInitialization(Worker):
             QgsPointXY(*project_centroid)).buffer(sk_radius, 20)
         vg_table.spatial_filter(buffer.asWkt())
         centers = Centers.features(project=self.project, create=True)
+        rs_list = []
         for row in vg_table:
             centers.add(
                 name=row['GEN'],
@@ -157,6 +159,30 @@ class ProjectInitialization(Worker):
                 # -1 indicates that it is a vg for selection and output only
                 nutzerdefiniert=-1
             )
+            rs_list.append(row['RS'])
+
+        project_rs = None
+        gem_table = workspace.get_table('bkg_gemeinden')
+        for row in gem_table:
+            cut_rs = row['RS'][:9]
+            ags = row['AGS']
+            if cut_rs in rs_list:
+                if ags == project_ags:
+                    project_rs = cut_rs
+                centers.add(
+                    name=row['GEN'],
+                    rs=cut_rs,
+                    ags=ags,
+                    geom=row['geom'],
+                    # 0 indicates gemeinden, for calculations only
+                    nutzerdefiniert=0
+                )
+
+        # preselect the VG the project is in
+        if project_rs:
+            project_vg = centers.get(rs=project_rs, nutzerdefiniert=-1)
+            project_vg.auswahl = -1
+            project_vg.save()
 
         self.set_progress(100)
 

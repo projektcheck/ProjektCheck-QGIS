@@ -108,7 +108,7 @@ class NewProjectDialog(Dialog):
 
     def browse_path(self):
         path, sf = QFileDialog.getOpenFileName(
-            self, u'Datei wählen', filter="Shapefile(*.shp)",
+            self, 'Datei wählen', filter="Shapefile(*.shp)",
             directory=self.path)
         if path:
             self.path = os.path.split(path)[0]
@@ -332,7 +332,7 @@ class SettingsDialog(Dialog):
         path = str(
             QFileDialog.getExistingDirectory(
                 self,
-                u'Verzeichnis wählen',
+                'Verzeichnis wählen',
                 line_edit.text()
             )
         )

@@ -1,0 +1,7 @@
+{
+    "tooltip": "Parameter editieren",
+    "beschreibung": "<b>Mit dieser Funktion können Sie die Eigenschaften von Lebensmittelmärkten im Bestand editieren.</b><p>Dabei können den Namen eines Marktes eintragen oder verändern und ihn einer Handelskette und einem Betriebstyp zuordnen.</p><p>Nehmen Sie jeweils Ihre Eintragungen bei den Eingabefeldern »Name«, »Anbieter« und »Betriebstyp« vor. <br>Zum Abschluss klicken Sie »OK«.</p>",
+    "name": "<b>Ändern Sie hier den Namen des ausgewählten Marktes, indem Sie den aktuellen Eintrag überschreiben.</b>",
+    "typ": "<b>Wählen Sie hier den Betriebstyp aus, der den ausgewählten Markt am besten beschreibt.</b><p>Wählen Sie bei Discountern immer den Betriebstyp »Discounter«. Für alle anderen Märkte orientieren Sie sich bitte für die Auswahl an der Verkaufsfläche.</p>",
+    "kette": "<b>Wählen Sie hier den Anbieter aus, zu der der Markt gehört. </b><p>Falls der Markt zu keinem Anbieter gehört oder der Anbieter nicht aufgeführt ist, wählen Sie »nicht aufgeführt«.</p>"
+}
