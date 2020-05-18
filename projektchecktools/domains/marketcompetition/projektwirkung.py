@@ -291,6 +291,7 @@ class Projektwirkung(Worker):
         df_sales['umsatz_differenz'] = (
             (df_sales['umsatz_planfall'] /
              df_sales['umsatz_nullfall']) * 100 - 100)
+        df_sales.replace([np.inf, -np.inf], np.nan, inplace=True)
         df_sales.fillna(0, inplace=True)
 
         self.markets.update_pandas(df_sales)
@@ -319,7 +320,6 @@ class Projektwirkung(Worker):
         df_relations.fillna(0, inplace=True)
         df_relations.sort_values(by = ['id_markt', 'id_siedlungszelle'],
                                  inplace=True)
-
 
         # should be identical, but take both anyway
         sum_null = df_relations.groupby('id_siedlungszelle',

@@ -782,7 +782,7 @@ class SupermarketsCompetition(Domain):
             self.canvas.refreshAllLayers()
 
     def calculate(self):
-        job = Projektwirkung(self.project, recalculate=True)
+        job = Projektwirkung(self.project, recalculate=False)
         success, msg = job.validate_inputs()
         if not success:
             QMessageBox.warning(self.ui, 'Fehler', msg)
@@ -827,14 +827,14 @@ class SupermarketsCompetition(Domain):
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Nullfall',
-            style_file='standortkonkurrenz_zentralitaet.qml',
+            style_file='standortkonkurrenz_zentralitaet_nullfall.qml',
             filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Planfall',
-            style_file='standortkonkurrenz_zentralitaet.qml',
+            style_file='standortkonkurrenz_zentralitaet_planfall.qml',
             filter='nutzerdefiniert=0 and auswahl=1'
         )
         output = ProjectLayer.from_table(
