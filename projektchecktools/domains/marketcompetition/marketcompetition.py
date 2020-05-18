@@ -44,7 +44,7 @@ class EditMarkets(QObject):
         self.basedata = self.project.basedata
         self.add_button = add_button
         self.remove_button = remove_button
-        self.layer = None
+        self.output = None
         self.params = None
         self.add_market_tool = None
 
@@ -122,10 +122,10 @@ class EditMarkets(QObject):
         self.toggle_market(self.combobox.currentData())
 
     def select_market(self, feature):
-        if not self.layer:
+        if not self.output or not self.output.layer:
             return
-        self.layer.removeSelection()
-        self.layer.select(feature.id())
+        self.output.layer.removeSelection()
+        self.output.layer.select(feature.id())
         fid = feature.id()
         for idx in range(len(self.combobox)):
             market = self.combobox.itemData(idx)
@@ -134,28 +134,28 @@ class EditMarkets(QObject):
         self.combobox.setCurrentIndex(idx)
 
     def toggle_market(self, market, center_on_point=False):
-        if market and self.layer:
-            self.layer.removeSelection()
-            self.layer.select(market.id)
+        if market and self.output and self.output.layer:
+            self.output.layer.removeSelection()
+            self.output.layer.select(market.id)
             if center_on_point:
                 center_canvas(self.canvas, market.geom.asPoint(),
-                              self.layer.crs())
+                              self.output.layer.crs())
         self.setup_params(market)
 
     def setup_params(self, market):
         raise NotImplementedError
 
     def add_layer(self, zoom_to=False):
-        output = ProjectLayer.from_table(
+        self.output = ProjectLayer.from_table(
             self.markets.table, groupname=self.layer_group)
-        self.layer = output.draw(
+        self.output.draw(
             label=self.market_label,
             style_file=self.layer_style,
             filter=self.layer_filter
         )
-        self.select_tool.set_layer(self.layer)
+        self.select_tool.set_layer(self.output.layer)
         if zoom_to:
-            output.zoom_to()
+            self.output.zoom_to()
 
     def add_market(self, geom):
         raise NotImplementedError
@@ -398,16 +398,16 @@ class ChangeMarkets(EditMarkets):
     def add_layer(self, zoom_to=False):
         super().add_layer(zoom_to=zoom_to)
         # additionally the nullfall layer is required to select from
-        output = ProjectLayer.from_table(
+        self.nullfall_output = ProjectLayer.from_table(
             self.markets.table, groupname=self.layer_group)
-        self.nullfall_layer = output.draw(
+        nullfall_layer = self.nullfall_output.draw(
             label=EditNullfallMarkets.market_label,
             style_file=EditNullfallMarkets.layer_style,
             filter=EditNullfallMarkets.layer_filter
         )
-        self.select_tool.set_layer(self.nullfall_layer)
+        self.select_tool.set_layer(nullfall_layer)
         if zoom_to:
-            output.zoom_to()
+            self.nullfall_output.zoom_to()
 
     def setup_params(self, market):
         if self.params:
@@ -498,7 +498,7 @@ class EditCenters:
         self.project = project
         self.drawing_tool = None
         self.params = None
-        self.layer = None
+        self.output = None
         self.select_tool = None
         self.project = project
         self.layer_group = layer_group
@@ -548,23 +548,23 @@ class EditCenters:
         self.fill_combo(select=center)
 
     def toggle_center(self, center, center_on_point=False):
-        if self.layer and center:
-            self.layer.removeSelection()
-            self.layer.select(center.id)
+        if self.output and self.output.layer and center:
+            self.output.layer.removeSelection()
+            self.output.layer.select(center.id)
             if center_on_point:
                 center_canvas(self.canvas, center.geom.centroid().asPoint(),
-                              self.layer.crs())
+                              self.output.layer.crs())
         self.setup_params(center)
 
     def add_layer(self, zoom_to=True):
-        output = ProjectLayer.from_table(
+        self.output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
-        self.layer = output.draw(
+        self.output.draw(
             label='Zentren',
             style_file='standortkonkurrenz_zentren.qml',
             filter='nutzerdefiniert=1'
         )
-        self.select_tool.set_layer(self.layer)
+        self.select_tool.set_layer(self.output.layer)
 
     def setup_params(self, center):
         if self.params:
@@ -614,10 +614,10 @@ class EditCenters:
             self.fill_combo()
 
     def select_center(self, feature):
-        if not self.layer:
+        if not self.output or not self.output.layer:
             return
-        self.layer.removeSelection()
-        self.layer.select(feature.id())
+        self.output.layer.removeSelection()
+        self.output.layer.select(feature.id())
         fid = feature.id()
         for idx in range(len(self.ui.centers_combo)):
             center = self.ui.centers_combo.itemData(idx)
