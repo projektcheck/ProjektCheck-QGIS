@@ -13,7 +13,8 @@ from projektchecktools.domains.marketcompetition.tables import (
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.marketcompetition.routing_distances import (
     DistanceRouting)
-from projektchecktools.utils.spatial import Point, create_layer, intersect
+from projektchecktools.utils.spatial import (Point, create_layer, intersect,
+                                             clip_raster)
 from projektchecktools.base.domain import Worker
 from projektchecktools.domains.marketcompetition.sales import Sales
 
@@ -84,6 +85,7 @@ class Projektwirkung(Worker):
 
         # empty result tables (empty indicates need of recalculation later on)
         if self.recalculate:
+            self.log('Bereinige Datenbank...')
             self.relations.table.truncate()
             self.cells.table.truncate()
 
@@ -139,12 +141,17 @@ class Projektwirkung(Worker):
         """
         self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
         epsg = self.project.settings.EPSG
+
+        bbox = self.get_bbox(gemeinden.table)
+
         zensus_file = os.path.join(self.project.basedata.base_path,
                                    self.project.settings.ZENSUS_500_FILE)
-        raster_layer = QgsRasterLayer(zensus_file)
 
+        clipped_raster = clip_raster(zensus_file, bbox)
+
+        raster_layer = QgsRasterLayer(clipped_raster)
         parameters = {
-            'INPUT_RASTER':raster_layer,
+            'INPUT_RASTER': raster_layer,
             'RASTER_BAND': 1,
             'FIELD_NAME': 'value',
             'OUTPUT': 'memory:'
@@ -261,13 +268,12 @@ class Projektwirkung(Worker):
                 self.log('&nbsp;&nbsp;wird berechnet')
                 pnt = market.geom.asPoint()
                 origin = Point(pnt.x(), pnt.y(), id=market.id, epsg=epsg)
-                #try:
-                distances, beelines = routing.get_distances(
-                    origin, destinations, bbox)
-                #except Exception as e:
-                    #self.error.emit(str(e))
-                    #print(str(e))
-                    #continue
+                try:
+                    distances, beelines = routing.get_distances(
+                        origin, destinations, bbox)
+                except Exception as e:
+                    self.error.emit(str(e))
+                    continue
                 self.distances_to_db(market.id, destinations, distances,
                                      beelines)
             else:

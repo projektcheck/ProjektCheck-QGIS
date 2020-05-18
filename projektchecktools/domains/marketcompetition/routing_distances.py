@@ -15,7 +15,7 @@ import tempfile
 import processing
 from osgeo import gdal
 
-from projektchecktools.utils.spatial import Point
+from projektchecktools.utils.spatial import Point, clip_raster
 # ToDo: use custom requests
 # from projektchecktools.utils.connection import Request
 
@@ -135,14 +135,7 @@ class DistanceRouting:
             return distances, beelines
         if bbox is not None:
             p1, p2 = self.add_bbox_edge(bbox)
-            p1.transform(self.target_epsg)
-            p2.transform(self.target_epsg)
-            fn, ext = os.path.splitext(dist_raster)
-            clipped_raster = f'{fn}_clipped{ext}'
-            ds = gdal.OpenEx(dist_raster)
-            clipped = gdal.Translate(clipped_raster, ds,
-                                     projWin = [p1.x, p2.y, p2.x, p1.y])
-            clipped = ds = None
+            clipped_raster = clip_raster(dist_raster, (p1, p2))
             #os.remove(dist_raster)
             dist_raster = clipped_raster
         start = time.time()

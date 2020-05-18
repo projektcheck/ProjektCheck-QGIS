@@ -4,7 +4,10 @@ from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsFeature, QgsPolygon, QgsCoordinateTransform,
                        QgsProject, QgsCoordinateReferenceSystem)
 from qgis.PyQt.Qt import QVariant
+import gdal
 from typing import Union
+import os
+import tempfile
 import processing
 
 from projektchecktools.utils.connection import Request
@@ -35,18 +38,37 @@ class Point(object):
         """Create geometry from coordinates"""
         return QgsPointXY(self.x, self.y)
 
-    def transform(self, target_srid):
+    def transform(self, target_srid, inplace=True):
         target_srid = str(target_srid).lower()
         target_srid = target_srid.replace('epsg:', '')
         # a little weird to replace it and add it again, but i wanted to keep
         # the api of the old ArcGIS Project
         target_srs = Proj(init='epsg:{}'.format(target_srid))
         x, y = transform(self.proj, target_srs, self.x, self.y)
-        self.epsg = int(target_srid)
-        self.proj = Proj(init='epsg:{}'.format(self.epsg))
-        self.x = x
-        self.y = y
-        return (x, y)
+        epsg = int(target_srid)
+        if inplace:
+            self.epsg = epsg
+            self.proj = Proj(init='epsg:{}'.format(self.epsg))
+            self.x = x
+            self.y = y
+            return (x, y)
+        else:
+            return Point(x, y, id=self.id, epsg=epsg)
+
+def clip_raster(raster_file, bbox):
+    '''clip given raster file with given bbox
+    (tuple of upper left and lower right Points)'''
+    ds = gdal.OpenEx(raster_file)
+    raster_epsg = ds.GetSpatialRef().GetAttrValue('AUTHORITY', 1)
+    p1, p2 = bbox
+    p1 = p1.transform(raster_epsg, inplace=False)
+    p2 = p2.transform(raster_epsg, inplace=False)
+    suffix = os.path.splitext(raster_file)[1]
+    clipped_raster = tempfile.NamedTemporaryFile(suffix=suffix).name
+    clipped = gdal.Translate(clipped_raster, ds,
+                             projWin = [p1.x, p2.y, p2.x, p1.y])
+    clipped = ds = None
+    return clipped_raster
 
 def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
                  target_epsg=None):
