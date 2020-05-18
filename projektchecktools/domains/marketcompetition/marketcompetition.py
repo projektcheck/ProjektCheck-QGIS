@@ -655,7 +655,7 @@ class SupermarketsCompetition(Domain):
             lambda: self.show_communities(
                 zoom_to=self.ui.select_communities_button.isChecked()))
         self.ui.show_markets_button.clicked.connect(
-            lambda: self.show_markets(zoom_to=True))
+            lambda: self.show_markets_and_centers(zoom_to=True))
 
         self.ui.add_osm_button.clicked.connect(self.read_osm)
         self.ui.remove_osm_button.clicked.connect(self.remove_osm)
@@ -708,10 +708,11 @@ class SupermarketsCompetition(Domain):
         self.changed_edit.load_content()
         self.center_edit.load_content()
 
-    def show_markets(self, zoom_to=True):
+    def show_markets_and_centers(self, zoom_to=True):
         self.planfall_edit.add_layer()
         self.changed_edit.add_layer()
         self.nullfall_edit.add_layer(zoom_to=zoom_to)
+        self.center_edit.add_layer()
 
     def show_communities(self, zoom_to=True):
         output = ProjectLayer.from_table(
