@@ -215,8 +215,9 @@ class WohnenDevelopment(Worker):
         n_ways = n_ew * joined['Wege_je_Einwohner']
         n_ways_miv = n_ways * joined['Anteil_Pkw_Fahrer'] / 100
 
-        self.area.wege_gesamt = int(n_ways.sum())
-        self.area.wege_miv = int(n_ways_miv.sum())
+        self.area.wege_gesamt = round(n_ways.sum())
+        self.area.wege_miv = round(n_ways_miv.sum())
+        self.area.ew = round(n_ew.sum())
 
         self.area.save()
 
@@ -365,6 +366,7 @@ class Wohnen:
     def clear(self, area):
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
         area.we_gesamt = None
+        area.ew = 0
         area.save()
 
     def close(self):

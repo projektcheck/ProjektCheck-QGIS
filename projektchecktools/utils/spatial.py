@@ -70,6 +70,14 @@ def clip_raster(raster_file, bbox):
     clipped = ds = None
     return clipped_raster
 
+def get_bbox(table):
+    layer = QgsVectorLayer(f'{table.workspace.path}|layername={table.name}')
+    ex = layer.extent()
+    epsg = layer.crs().postgisSrid()
+    bbox = (Point(ex.xMinimum(), ex.yMinimum(), epsg=epsg),
+            Point(ex.xMaximum(), ex.yMaximum(), epsg=epsg))
+    return bbox
+
 def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
                  target_epsg=None):
 

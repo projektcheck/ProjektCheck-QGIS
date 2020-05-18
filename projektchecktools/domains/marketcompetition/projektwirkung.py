@@ -14,7 +14,7 @@ from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.marketcompetition.routing_distances import (
     DistanceRouting)
 from projektchecktools.utils.spatial import (Point, create_layer, intersect,
-                                             clip_raster)
+                                             clip_raster, get_bbox)
 from projektchecktools.base.domain import Worker
 from projektchecktools.domains.marketcompetition.sales import Sales
 
@@ -142,7 +142,7 @@ class Projektwirkung(Worker):
         self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
         epsg = self.project.settings.EPSG
 
-        bbox = self.get_bbox(gemeinden.table)
+        bbox = get_bbox(gemeinden.table)
 
         zensus_file = os.path.join(self.project.basedata.base_path,
                                    self.project.settings.ZENSUS_500_FILE)
@@ -158,6 +158,7 @@ class Projektwirkung(Worker):
         }
         point_layer = processing.run(
             'native:pixelstopoints', parameters)['OUTPUT']
+        point_layer.setSubsetString('value>0')
 
         overlay = create_layer(gemeinden, 'Polygon', fields=['ags'],
                                name='overlay', epsg=epsg,
@@ -237,20 +238,12 @@ class Projektwirkung(Worker):
             cell.kk = area.ew * base_kk * cell.kk_index / 100
             cell.save()
 
-    def get_bbox(self, table):
-        layer = QgsVectorLayer(f'{table.workspace.path}|layername={table.name}')
-        ex = layer.extent()
-        epsg = layer.crs().postgisSrid()
-        bbox = (Point(ex.xMinimum(), ex.yMinimum(), epsg=epsg),
-                Point(ex.xMaximum(), ex.yMaximum(), epsg=epsg))
-        return bbox
-
     def calculate_distances(self, progress_start=0, progress_end=100):
         '''calculate distances between settlement points and markets and
         write them to the database'''
 
         # calculate bounding box
-        bbox = self.get_bbox(self.cells.table)
+        bbox = get_bbox(self.cells.table)
         epsg = self.project.settings.EPSG
         routing = DistanceRouting(target_epsg=epsg, resolution=300)
         destinations = []
