@@ -218,10 +218,8 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         infrastructuralcosts = InfrastructuralCosts()
         self.domains.append(infrastructuralcosts)
 
-        inactive = []
-
         municipaltaxrevenue = MunicipalTaxRevenue()
-        inactive.append(municipaltaxrevenue)
+        self.domains.append(municipaltaxrevenue)
 
         supermarkets = SupermarketsCompetition()
         self.domains.append(supermarkets)
@@ -234,11 +232,6 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             action = menu.addAction(icon, domain.ui_label)
             action.triggered.connect(
                 lambda e, d=domain: self.show_dockwidget(d))
-
-        for domain in inactive:
-            icon = QIcon(os.path.join(current_dir, domain.ui_icon))
-            action = menu.addAction(icon, f'{domain.ui_label} (demnächst)')
-            action.setEnabled(False)
 
         self.ui.domain_button.setMenu(menu)
 

@@ -133,12 +133,12 @@ class Projektwirkung(Worker):
         self.update_centers()
 
     def calculate_zensus(self, gemeinden, default_kk_index, base_kk):
-        self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
-        epsg = self.project.settings.EPSG
         """
         return the centroids of the zensus cells as points inside the
         given area
         """
+        self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
+        epsg = self.project.settings.EPSG
         zensus_file = os.path.join(self.project.basedata.base_path,
                                    self.project.settings.ZENSUS_500_FILE)
         raster_layer = QgsRasterLayer(zensus_file)
