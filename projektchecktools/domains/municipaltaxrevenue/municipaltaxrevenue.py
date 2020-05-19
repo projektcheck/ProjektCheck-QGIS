@@ -10,7 +10,48 @@ from projektchecktools.domains.definitions.tables import (
     Projektrahmendaten, Teilflaechen)
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.params import Params, Param, Title, Seperator
-from projektchecktools.base.inputs import DoubleSpinBox
+from projektchecktools.base.inputs import DoubleSpinBox, SpinBox
+
+
+class Grundsteuer:
+    def __init__(self, project, ui):
+        self.project = project
+        self.ui = ui
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
+        self.gemeinden = Gemeinden.features()
+        self.hebesatz_params = None
+
+    def load_content(self):
+        self.gemeinden = Gemeinden.features(create=True)
+        self.setup_hebesatz()
+
+    def setup_hebesatz(self):
+        if self.hebesatz_params:
+            self.hebesatz_params.close()
+        layout = self.ui.grundsteuer_hebesatz_param_group.layout()
+        clear_layout(layout)
+        self.params = Params(
+            layout, help_file='einnahmen_grundsteuer_hebesatz.txt')
+
+        project_gem = self.gemeinden.get(AGS=self.project_frame.ags)
+
+        self.params.hebesatz = Param(
+            project_gem.Hebesatz_GrStB,
+            SpinBox(maximum=10000, step=10),
+            label='Hebesatz GrSt B Projektgemeinde',
+            unit='v.H.'
+        )
+
+        def save():
+            project_gem.Hebesatz_GrStB = self.params.hebesatz.value
+            project_gem.save()
+
+        self.params.show(title='Hebesatz bearbeiten')
+        self.params.changed.connect(save)
+
+    def close(self):
+        if self.hebesatz_params:
+            self.hebesatz_params.close()
 
 
 class MunicipalTaxRevenue(Domain):
@@ -26,6 +67,7 @@ class MunicipalTaxRevenue(Domain):
         self.ui.migration_inhabitants_button.clicked.connect(
             self.calculate_migration_einwohner)
         self.einwohner_params = None
+        self.grundsteuer = Grundsteuer(self.project, self.ui)
 
     def load_content(self):
         super().load_content()
@@ -34,8 +76,9 @@ class MunicipalTaxRevenue(Domain):
         self.wanderung_ew = EinwohnerWanderung.features(create=True)
         if len(self.gemeinden) == 0:
             self.get_gemeinden()
-
         self.areas = Teilflaechen.features()
+
+        self.grundsteuer.load_content()
 
         self.setup_einwohner_params()
 
@@ -163,4 +206,5 @@ class MunicipalTaxRevenue(Domain):
     def close(self):
         if self.einwohner_params:
             self.einwohner_params.close()
+        self.grundsteuer.close()
         super().close()

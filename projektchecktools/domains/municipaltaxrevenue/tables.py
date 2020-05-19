@@ -13,6 +13,7 @@ class Gemeinden(ProjectTable):
     SvB = Field(int, 0)
     SvB_pro_Ew = Field(float, 0)
     Hebesatz_GewSt = Field(int, 0)
+    Hebesatz_GrStB = Field(int, 0)
 
     class Meta:
         workspace = 'einnahmen'
