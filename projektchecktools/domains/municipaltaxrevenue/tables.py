@@ -19,6 +19,7 @@ class Gemeinden(ProjectTable):
 
 
 class EinwohnerWanderung(ProjectTable):
+    AGS = Field(str, '')
     zuzug = Field(float, 0)
     fortzug = Field(float, 0)
     saldo = Field(float, 0)

@@ -142,6 +142,22 @@ padding: 2px;
             </layout>
            </item>
            <item>
+            <widget class="QGroupBox" name="einwohner_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9"/>
+            </widget>
+           </item>
+           <item>
             <widget class="Line" name="line">
              <property name="frameShadow">
               <enum>QFrame::Sunken</enum>
