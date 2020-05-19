@@ -15,6 +15,7 @@ class InputType(QObject):
     '''
     changed = pyqtSignal(object)
     focus = pyqtSignal()
+    locked = pyqtSignal(bool)
 
     def __init__(self, hide_in_overview=True):
         self.hide_in_overview = hide_in_overview
@@ -40,7 +41,7 @@ class InputType(QObject):
         raise NotImplementedError
 
     @property
-    def locked(self):
+    def is_locked(self):
         '''override function to implement a locked state'''
         return False
 
@@ -103,7 +104,7 @@ class Slider(InputType):
             self.lock_button.setSizePolicy(
                 QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-            def toggle_icon():
+            def toggle_icon(emit=True):
                 is_locked = self.lock_button.isChecked()
                 fn = '20190619_iconset_mob_lock_locked_02.png' if is_locked \
                     else '20190619_iconset_mob_lock_unlocked_03.png'
@@ -112,8 +113,9 @@ class Slider(InputType):
                 icon_path = os.path.join(settings.IMAGE_PATH, 'iconset_mob', fn)
                 icon = QIcon(icon_path)
                 self.lock_button.setIcon(icon)
-            toggle_icon()
-            self.lock_button.clicked.connect(toggle_icon)
+                self.locked.emit(is_locked)
+            toggle_icon(emit=False)
+            self.lock_button.clicked.connect(lambda: toggle_icon(emit=True))
 
         self.slider.valueChanged.connect(
             lambda: self.set_value(self.slider.value()))
@@ -133,7 +135,7 @@ class Slider(InputType):
             element.blockSignals(False)
 
     @property
-    def locked(self):
+    def is_locked(self):
         if not self.lockable:
             return False
         return self.lock_button.isChecked()
@@ -220,7 +222,7 @@ class SpinBox(InputType):
             self.lock_button.setSizePolicy(
                 QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-            def toggle_icon():
+            def toggle_icon(emit=True):
                 is_locked = self.lock_button.isChecked()
                 fn = '20190619_iconset_mob_lock_locked_02.png' if is_locked \
                     else '20190619_iconset_mob_lock_unlocked_03.png'
@@ -228,8 +230,9 @@ class SpinBox(InputType):
                 icon_path = os.path.join(settings.IMAGE_PATH, 'iconset_mob', fn)
                 icon = QIcon(icon_path)
                 self.lock_button.setIcon(icon)
-            toggle_icon()
-            self.lock_button.clicked.connect(toggle_icon)
+                self.locked.emit(is_locked)
+            toggle_icon(emit=False)
+            self.lock_button.clicked.connect(lambda: toggle_icon(emit=True))
 
     def set_value(self, value):
         self.input.setValue(value or 0)
@@ -238,7 +241,7 @@ class SpinBox(InputType):
         return self.input.value()
 
     @property
-    def locked(self):
+    def is_locked(self):
         if not self.lockable:
             return False
         return self.lock_button.isChecked()

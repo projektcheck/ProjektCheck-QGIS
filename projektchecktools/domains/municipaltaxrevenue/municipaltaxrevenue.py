@@ -9,7 +9,7 @@ from projektchecktools.domains.municipaltaxrevenue.migration import (
 from projektchecktools.domains.definitions.tables import (
     Projektrahmendaten, Teilflaechen)
 from projektchecktools.utils.utils import clear_layout
-from projektchecktools.base.params import Params, Param, Title
+from projektchecktools.base.params import Params, Param, Title, Seperator
 from projektchecktools.base.inputs import DoubleSpinBox
 
 
@@ -85,6 +85,27 @@ class MunicipalTaxRevenue(Domain):
         self.params = Params(
             layout, help_file='einnahmen_einwohner_wanderung.txt')
 
+        self.df_wanderung = self.wanderung_ew.to_pandas()
+
+        def update_salden(ags_changed):
+            param = self.params[ags_changed]
+            fixed = not param.is_locked
+            saldo = param.input.value
+            idx = self.df_wanderung['AGS'] == ags_changed
+            self.df_wanderung.loc[idx, 'fixed'] = fixed
+            self.df_wanderung.loc[idx, 'saldo'] = saldo
+            if fixed:
+                zuzug = self.df_wanderung[idx]['zuzug'].values[0]
+                self.df_wanderung.loc[idx, 'fortzug'] = zuzug - saldo
+            self.df_wanderung = Migration.calculate_saldi(
+                self.df_wanderung, factor, project_ags)
+            for gemeinde_ags in self.df_wanderung['AGS'].values:
+                param = self.params[gemeinde_ags]
+                row = self.df_wanderung[self.df_wanderung['AGS']==gemeinde_ags]
+                param.input.blockSignals(True)
+                param.input.value = row['saldo'].values[0]
+                param.input.blockSignals(False)
+
         project_ags = self.project_frame.ags
 
         project_gem = self.gemeinden.get(AGS=project_ags)
@@ -92,31 +113,45 @@ class MunicipalTaxRevenue(Domain):
 
         self.params.add(Title('Standortgemeinde des Projekts'))
 
-        self.params.project_saldo = Param(
-            wanderung.saldo,
-            DoubleSpinBox(minimum=0, maximum=1000, step=0.1, lockable=True,
-                          locked=wanderung.fixed),
-            label=f' -{project_gem.GEN}'
-        )
+        spinbox = DoubleSpinBox(minimum=-1000, maximum=1000, step=1,
+                                lockable=True, locked=not wanderung.fixed)
+        project_saldo = Param(wanderung.saldo, spinbox,
+                              label=f' -{project_gem.GEN}')
+        self.params.add(project_saldo, name=project_ags)
+        spinbox.changed.connect(lambda o: update_salden(project_ags))
+        spinbox.locked.connect(lambda o: update_salden(project_ags))
 
+        self.params.add(Seperator())
         self.params.add(Title('Region um Standortgemeinde'))
 
+        randsummen = self.project.basedata.get_table(
+            'Wanderung_Randsummen', 'Einnahmen').features()
+        factor = randsummen.get(IDWanderungstyp=1).Anteil_Wohnen
+        sum_ew = sum(self.areas.values('ew'))
+
         for gemeinde in self.gemeinden:
-            if gemeinde.AGS == project_ags:
+            ags = gemeinde.AGS
+            if ags == project_ags:
                 continue
-            wanderung = self.wanderung_ew.get(AGS=gemeinde.AGS)
+            wanderung = self.wanderung_ew.get(AGS=ags)
             if not wanderung:
                 continue
-            param = Param(
-                wanderung.saldo,
-                DoubleSpinBox(minimum=0, maximum=1000, step=0.1, lockable=True,
-                              locked=wanderung.fixed),
-                label=f' -{gemeinde.GEN}'
-            )
-            self.params.add(param, name=gemeinde.AGS)
+            spinbox = DoubleSpinBox(minimum=-1000, maximum=1000, step=1,
+                                    lockable=True, locked=not wanderung.fixed)
+            param = Param(wanderung.saldo, spinbox, label=f' -{gemeinde.GEN}')
+            self.params.add(param, name=ags)
+            spinbox.changed.connect(lambda o, a=ags: update_salden(a))
+            spinbox.locked.connect(lambda o, a=ags: update_salden(a))
+
+        self.params.add(Seperator())
+
+        self.params.add(Param(
+            (factor - 1) * sum_ew,
+            label='Restliches Bundesgebiet / Ausland'
+        ))
 
         def save():
-            pass
+            self.wanderung_ew.update_pandas(self.df_wanderung)
 
         self.params.show(title='Geschätzte Salden (Einwohner) bearbeiten',
             scrollable=True)

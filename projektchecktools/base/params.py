@@ -70,8 +70,8 @@ class Param(QObject):
         self.help_text = help_text
 
     @property
-    def locked(self):
-        return self.input.locked
+    def is_locked(self):
+        return self.input.is_locked
 
     @property
     def value(self):
@@ -173,7 +173,7 @@ class SumDependency(Dependency):
                     max(abs(share), 1/math.pow(10, self.decimals)), share)
             distributed = 0
             for p in self._params:
-                if param == p or p.locked:
+                if param == p or p.is_locked:
                     continue
                 # no equal share -> try to add complete missing amount
                 if not equally:

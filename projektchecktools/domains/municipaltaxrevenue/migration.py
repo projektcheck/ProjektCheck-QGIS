@@ -72,12 +72,12 @@ class Migration(Worker):
             )
         self.set_progress(80)
         self.log('Berechne Wanderungssaldi...')
-        df_result = self.calculate_saldi(
-            self, self.wanderung_ew.to_pandas(), factor, project_ags)
+        df_result = self.calculate_saldi(self.wanderung_ew.to_pandas(),
+                                         factor, project_ags)
         self.wanderung_ew.update_pandas(df_result)
 
     @staticmethod
-    def calculate_saldi(self, df_wanderung_ew, wanderungs_factor, project_ags,
+    def calculate_saldi(df_wanderung_ew, wanderungs_factor, project_ags,
                         decimals=2):
         project_row = df_wanderung_ew[df_wanderung_ew['AGS']==project_ags]
         zuzug = project_row['zuzug'].values[0]
