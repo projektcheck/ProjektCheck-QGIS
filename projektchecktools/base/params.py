@@ -1,9 +1,10 @@
 from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
-                          QLabel, QGridLayout, QDialogButtonBox, QWidget)
+                          QLabel, QGridLayout, QDialogButtonBox, QWidget,
+                          QScrollArea, QGroupBox)
 from projektchecktools.utils.utils import clear_layout
-from qgis.PyQt.QtGui import QFont, QIcon, QCursor
+from qgis.PyQt.QtGui import QIcon, QCursor
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
                                  QPushButton, QLayoutItem)
 from typing import Union
@@ -330,7 +331,7 @@ class Params(QObject):
     def load(self):
         pass
 
-    def show(self, *args, title='Parameter einstellen'):
+    def show(self, *args, title='Parameter einstellen', scrollable=False):
         '''
         render parameters and elements in parent
 
@@ -352,24 +353,33 @@ class Params(QObject):
             with open(self.help_file, 'w') as json_file:
                 json.dump(self.help_dict, json_file, indent=4)
 
-
-        #parent = self.parent.parent() if not isinstance(self.parent) \
-            #else self.parent
-        #if not isinstance(parent, QWidget):
-            #parent = None
         self.dialog = ParamsDialog(parent=None,
                                    help_text=self.help_dict['beschreibung'],
                                    title=title)
 
+        self.parent.addLayout(self.layout, *args)
+
+        if scrollable:
+            frame = QFrame()
+            scroll_area = QScrollArea()
+            layout = QVBoxLayout()
+            layout.setSpacing(5)
+            frame.setLayout(layout)
+            scroll_area.setWidget(frame)
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setFixedHeight(400)
+            self.layout.addWidget(scroll_area)
+        else:
+            layout = self.layout
+
         for element in self._elements:
             if isinstance(element, QLayoutItem):
-                self.layout.addItem(element)
+                layout.addItem(element)
             # overview
             elif not getattr(element, 'hide_in_overview', None):
-                element.draw(self.layout)
+                element.draw(layout)
             self.dialog.draw(element)
 
-        self.parent.addLayout(self.layout, *args)
 
         if not self.editable:
             return
@@ -463,6 +473,14 @@ class ParamsDialog(Dialog):
         self.details_button.toggled.connect(toggle)
         self.back_button.setCursor(QCursor(Qt.PointingHandCursor))
         self._grid = None
+
+    def exec_(self):
+        min_width = self.base_layout.minimumSize().width() + 50
+        self.param_widget.setMinimumWidth(min_width)
+        min_height = self.base_layout.minimumSize().height()
+        self.min_height = min(900, min_height + 100)
+        self.param_widget.setMinimumHeight(self.min_height)
+        return super().exec_()
 
     def draw(self, element):
         self.inputs = []

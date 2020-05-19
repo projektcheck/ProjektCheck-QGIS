@@ -78,7 +78,7 @@ class Slider(InputType):
     '''
 
     def __init__(self, minimum=0, maximum=100000000, step=1, width=300,
-                 lockable=False, **kwargs):
+                 lockable=False, locked=False, **kwargs):
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -99,6 +99,7 @@ class Slider(InputType):
         if lockable:
             self.lock_button = QPushButton()
             self.lock_button.setCheckable(True)
+            self.lock_button.setChecked(locked)
             self.lock_button.setSizePolicy(
                 QSizePolicy.Fixed, QSizePolicy.Fixed)
 
@@ -198,7 +199,8 @@ class LineEdit(InputType):
 
 class SpinBox(InputType):
     InputClass = QSpinBox
-    def __init__(self, minimum=0, maximum=100000000, step=1, **kwargs):
+    def __init__(self, minimum=0, maximum=100000000, step=1,
+                 lockable=False, locked=False, **kwargs):
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -208,12 +210,47 @@ class SpinBox(InputType):
         self.input.setSingleStep(step)
         self.input.valueChanged.connect(self.changed.emit)
         self.registerFocusEvent(self.input)
+        self.lockable = lockable
+
+        # ToDo: almost the same as in Slider, outsource into common function
+        if lockable:
+            self.lock_button = QPushButton()
+            self.lock_button.setCheckable(True)
+            self.lock_button.setChecked(locked)
+            self.lock_button.setSizePolicy(
+                QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+            def toggle_icon():
+                is_locked = self.lock_button.isChecked()
+                fn = '20190619_iconset_mob_lock_locked_02.png' if is_locked \
+                    else '20190619_iconset_mob_lock_unlocked_03.png'
+                self.input.setEnabled(not is_locked)
+                icon_path = os.path.join(settings.IMAGE_PATH, 'iconset_mob', fn)
+                icon = QIcon(icon_path)
+                self.lock_button.setIcon(icon)
+            toggle_icon()
+            self.lock_button.clicked.connect(toggle_icon)
 
     def set_value(self, value):
         self.input.setValue(value or 0)
 
     def get_value(self):
         return self.input.value()
+
+    @property
+    def locked(self):
+        if not self.lockable:
+            return False
+        return self.lock_button.isChecked()
+
+    def draw(self, layout, unit=''):
+        l = QHBoxLayout()
+        l.addWidget(self.input)
+        if unit:
+            l.addWidget(QLabel(unit))
+        if self.lockable:
+            l.addWidget(self.lock_button)
+        layout.addLayout(l)
 
 
 class DoubleSpinBox(SpinBox):
