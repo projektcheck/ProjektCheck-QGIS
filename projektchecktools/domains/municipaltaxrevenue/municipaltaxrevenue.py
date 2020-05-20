@@ -4,9 +4,9 @@ import numpy as np
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.domains.municipaltaxrevenue.tables import (
-    Gemeinden, EinwohnerWanderung, GrundsteuerSettings)
+    Gemeinden, EinwohnerWanderung, BeschaeftigtenWanderung, GrundsteuerSettings)
 from projektchecktools.domains.municipaltaxrevenue.migration import (
-    EinwohnerMigrationCalculation, BeschaeftigtenMigrationCalculation)
+    EwMigrationCalculation, SvBMigrationCalculation, MigrationCalculation)
 from projektchecktools.domains.definitions.tables import (
     Projektrahmendaten, Teilflaechen)
 from projektchecktools.utils.utils import clear_layout
@@ -25,9 +25,7 @@ class Migration:
     def load_content(self):
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
-        self.gemeinden = Gemeinden.features(project=self.project)
         self.grst_settings = GrundsteuerSettings.features(create=True)
-
         self.gemeinden = Gemeinden.features(create=True)
         self.project_frame = Projektrahmendaten.features()[0]
         self.wanderung = EinwohnerWanderung.features(create=True)
@@ -65,10 +63,6 @@ class EinwohnerMigration(Migration):
     def load_content(self):
         super().load_content()
         self.wanderung = EinwohnerWanderung.features(create=True)
-        if len(self.gemeinden) == 0:
-            self.get_gemeinden()
-        self.areas = Teilflaechen.features()
-
         self.setup_params()
 
     def calculate(self):
@@ -80,7 +74,7 @@ class EinwohnerMigration(Migration):
                                 'der Nutzungsart "Wohnen" gefunden.')
             return
 
-        job = EinwohnerMigrationCalculation(self.project)
+        job = EwMigrationCalculation(self.project)
 
         def on_close():
             if not self.dialog.success:
@@ -130,7 +124,7 @@ class EinwohnerMigration(Migration):
                 self.df_wanderung.loc[idx, 'fortzug'] = zuzug - saldo
             self.df_wanderung.loc[idx, 'fixed'] = fixed
             self.df_wanderung.loc[idx, 'saldo'] = saldo
-            self.df_wanderung = EinwohnerMigrationCalculation.calculate_saldi(
+            self.df_wanderung = MigrationCalculation.calculate_saldi(
                 self.df_wanderung, factor_inner, project_ags)
             for gemeinde_ags in self.df_wanderung['AGS'].values:
                 param = self.params[gemeinde_ags]
@@ -172,7 +166,7 @@ class EinwohnerMigration(Migration):
         self.params.add(Seperator())
 
         self.params.add(Param(
-            factor_outer * sum_ew,
+            -factor_outer * sum_ew,
             label='Restliches Bundesgebiet / Ausland'
         ))
 
@@ -186,7 +180,137 @@ class EinwohnerMigration(Migration):
 
 
 class BeschaeftigtenMigration(Migration):
-    ''''''
+
+    def __init__(self, project, ui):
+        super().__init__(project, ui)
+        self.ui.migration_jobs_button.clicked.connect(self.calculate)
+
+    def load_content(self):
+        super().load_content()
+        self.wanderung = BeschaeftigtenWanderung.features(create=True)
+        self.setup_params()
+
+    def calculate(self):
+        # ToDo: remove results depending on this
+        sum_ap = sum(self.areas.values('ap_gesamt'))
+        if sum_ap == 0:
+            # ToDo: actually there are just no jobs
+            # (e.g. when manually set to zero)
+            QMessageBox.warning(self.ui, 'Fehler',
+                                'Es wurden keine definierten Teilflächen mit '
+                                'der Nutzungsart "Gewerbe" gefunden.')
+            return
+
+        job = SvBMigrationCalculation(self.project)
+
+        def on_close():
+            if not self.dialog.success:
+                # ToDo: remove results of this calculation
+                return
+            self.setup_params()
+
+        self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
+        self.dialog.show()
+
+    def setup_params(self):
+        if self.params:
+            self.params.close()
+        layout = self.ui.svb_parameter_group.layout()
+        clear_layout(layout)
+        if len(self.wanderung) == 0:
+            self.ui.svb_parameter_group.setVisible(False)
+            return
+        self.ui.svb_parameter_group.setVisible(True)
+        self.params = Params(
+            layout, help_file='einnahmen_beschaeftigte_wanderung.txt')
+
+        self.df_wanderung = self.wanderung.to_pandas()
+
+        randsummen = self.project.basedata.get_table(
+            'Wanderung_Randsummen', 'Einnahmen').features()
+        factor_inner = randsummen.get(IDWanderungstyp=1).Anteil_Gewerbe
+        factor_outer = randsummen.get(IDWanderungstyp=2).Anteil_Gewerbe
+        factor_neu = randsummen.get(IDWanderungstyp=3).Anteil_Gewerbe
+        project_ags = self.project_frame.ags
+        project_gem = self.gemeinden.get(AGS=project_ags)
+        wanderung = self.wanderung.get(AGS=project_ags)
+        sum_ap = sum(self.areas.values('ew'))
+
+        # ToDo: this is exactly the same as in EinwohnerMigration
+        def update_salden(ags_changed):
+            param = self.params[ags_changed]
+            fixed = param.is_locked
+            saldo = param.input.value
+            idx = self.df_wanderung['AGS'] == ags_changed
+            if fixed:
+                fixed_fortzug = self.df_wanderung[
+                    np.invert(idx) & self.df_wanderung['fixed']==True
+                    ]['fortzug'].sum()
+                # the rest of "fortzüge" that can be applied to this row
+                min_value = fixed_fortzug - (sum_ap * factor_inner)
+                saldo = max(saldo, min_value)
+                zuzug = self.df_wanderung[idx]['zuzug'].values[0]
+                self.df_wanderung.loc[idx, 'fortzug'] = zuzug - saldo
+            self.df_wanderung.loc[idx, 'fixed'] = fixed
+            self.df_wanderung.loc[idx, 'saldo'] = saldo
+            self.df_wanderung = MigrationCalculation.calculate_saldi(
+                self.df_wanderung, factor_inner, project_ags)
+            for gemeinde_ags in self.df_wanderung['AGS'].values:
+                param = self.params[gemeinde_ags]
+                row = self.df_wanderung[self.df_wanderung['AGS']==gemeinde_ags]
+                param.input.blockSignals(True)
+                param.input.value = row['saldo'].values[0]
+                param.input.blockSignals(False)
+
+        self.params.add(Title('Standortgemeinde des Projekts', bold=False))
+
+        spinbox = DoubleSpinBox(minimum=0, maximum=1000, step=1,
+                                lockable=True, locked=wanderung.fixed,
+                                reversed_lock=True)
+        project_saldo = Param(wanderung.saldo, spinbox,
+                              label=f' -{project_gem.GEN}', unit='SvB')
+        self.params.add(project_saldo, name=project_ags)
+        spinbox.changed.connect(lambda o: update_salden(project_ags))
+        spinbox.locked.connect(lambda o: update_salden(project_ags))
+
+        self.params.add(Param(
+            factor_neu * sum_ap,
+            label='davon neu geschaffene Arbeitsplätze'
+        ))
+
+        self.params.add(Seperator())
+        self.params.add(Title('Region um Standortgemeinde', bold=False))
+
+        for gemeinde in sorted(self.gemeinden, key=lambda x: x.GEN):
+            ags = gemeinde.AGS
+            if ags == project_ags:
+                continue
+            wanderung = self.wanderung.get(AGS=ags)
+            if not wanderung:
+                continue
+            spinbox = DoubleSpinBox(minimum=-1000, maximum=0, step=1,
+                                    lockable=True, locked=wanderung.fixed,
+                                    reversed_lock=True)
+            param = Param(wanderung.saldo, spinbox, label=f' -{gemeinde.GEN}',
+                          unit='SvB')
+            self.params.add(param, name=ags)
+            spinbox.changed.connect(lambda o, a=ags: update_salden(a))
+            spinbox.locked.connect(lambda o, a=ags: update_salden(a))
+
+        self.params.add(Seperator())
+
+        self.params.add(Param(
+            -factor_outer * sum_ap,
+            label='Restliches Bundesgebiet / Ausland'
+        ))
+
+        def save():
+            # ToDo: remove results depending on this
+            self.wanderung.update_pandas(self.df_wanderung)
+
+        self.params.show(title='Geschätzte Salden (Beschäftigte) bearbeiten',
+                         scrollable=True)
+        self.params.changed.connect(save)
 
 
 class Grundsteuer:
@@ -298,14 +422,16 @@ class MunicipalTaxRevenue(Domain):
     def setupUi(self):
         self.grundsteuer = Grundsteuer(self.project, self.ui)
         self.migration_ew = EinwohnerMigration(self.project, self.ui)
-        #self.migration_svb = BeschaeftigtenMigration(self.project, self.ui)
+        self.migration_svb = BeschaeftigtenMigration(self.project, self.ui)
 
     def load_content(self):
         super().load_content()
         self.grundsteuer.load_content()
         self.migration_ew.load_content()
+        self.migration_svb.load_content()
 
     def close(self):
         self.migration_ew.close()
         self.grundsteuer.close()
+        self.migration_svb.close()
         super().close()

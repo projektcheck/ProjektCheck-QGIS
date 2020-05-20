@@ -131,11 +131,17 @@ padding: 2px;
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_21">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string>Neuberechnung erzwingen</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -186,7 +192,7 @@ padding: 2px;
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_44">
+              <widget class="QPushButton" name="migration_jobs_button">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen (Beschäftigte)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Schätzen, welche Veränderung der Zahl der Beschäftigten (am Arbeitsort) sich durch das Projekt in der Projektgemeinde sowie den umliegenden Gemeinden durch Umzüge von Unternehmen auf die neuen Flächen sowie Nachbezüge der Bestandsflächen ergeben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -214,15 +220,37 @@ padding: 2px;
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_24">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string>Neuberechnung erzwingen</string>
                </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="svb_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_15"/>
+            </widget>
            </item>
           </layout>
          </widget>
