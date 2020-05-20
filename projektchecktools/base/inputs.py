@@ -202,7 +202,7 @@ class LineEdit(InputType):
 class SpinBox(InputType):
     InputClass = QSpinBox
     def __init__(self, minimum=0, maximum=100000000, step=1,
-                 lockable=False, locked=False, **kwargs):
+                 lockable=False, locked=False, reversed_lock=False, **kwargs):
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -226,7 +226,8 @@ class SpinBox(InputType):
                 is_locked = self.lock_button.isChecked()
                 fn = '20190619_iconset_mob_lock_locked_02.png' if is_locked \
                     else '20190619_iconset_mob_lock_unlocked_03.png'
-                self.input.setEnabled(not is_locked)
+                self.input.setEnabled(is_locked if reversed_lock else
+                                      not is_locked)
                 icon_path = os.path.join(settings.IMAGE_PATH, 'iconset_mob', fn)
                 icon = QIcon(icon_path)
                 self.lock_button.setIcon(icon)

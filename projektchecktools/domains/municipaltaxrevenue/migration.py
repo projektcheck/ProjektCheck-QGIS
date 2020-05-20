@@ -9,93 +9,47 @@ from projektchecktools.utils.spatial import create_layer
 from projektchecktools.domains.definitions.tables import (Teilflaechen,
                                                           Projektrahmendaten)
 from projektchecktools.domains.municipaltaxrevenue.tables import (
-    Gemeinden, EinwohnerWanderung)
+    Gemeinden, EinwohnerWanderung, BeschaeftigtenWanderung)
 from projektchecktools.base.domain import Worker
 from projektchecktools.utils.spatial import clip_raster, get_bbox
 import pandas as pd
+import numpy as np
 
 
-class Migration(Worker):
+class MigrationCalculation(Worker):
     _param_projectname = 'projectname'
     rings = [1500, 2500, 3500, 4500, 6500, 8500, 11500, 14500, 18500, 25000]
 
-    def __init__(self, project, parent=None):
+    def __init__(self, project, typ='Einwohner', parent=None):
         super().__init__(parent=parent)
+        self.typ = typ
         self.project = project
         self.areas = Teilflaechen.features(project=project)
         self.gemeinden = Gemeinden.features(project=project)
         self.zensus_layer = QgsVectorLayer(f'{self.gemeinden.workspace.path}'
                             '|layername=zensus_rings')
         self.project_frame = Projektrahmendaten.features()[0]
-        self.wanderung_ew = EinwohnerWanderung.features(project=project)
-
-    def work(self):
-        #p = self.zensus_layer.dataProvider()
-        #p.truncate()
-        if not self.zensus_layer.isValid() or len(self.zensus_layer) == 0:
-            self.zensus_layer = self.create_zensus_rings()
-        else:
-            self.log('Siedlungszellen bereits vorhanden, '
-                     'Berechnung wird übersprungen')
-        self.set_progress(40)
-        self.log('Berechne Wanderungsanteile...')
-        self.wanderung_ew.table.truncate()
-        columns = [f.name() for f in self.zensus_layer.fields()]
-        rows = [f.attributes() for f in self.zensus_layer.getFeatures()]
-        df_zensus = pd.DataFrame.from_records(rows, columns=columns)
-        #df_zensus.rename(columns={'value': 'ew',}, inplace=True)
-        df_wichtung = self.project.basedata.get_table(
-            'Wanderung_Entfernungswichtung', 'Einnahmen').to_pandas(
-                columns=['Distance', 'Wichtung_Wohnen'])
-        df_wichtung.rename(columns={'Distance': 'ring'}, inplace=True)
-        df_merged = df_zensus.merge(df_wichtung, on='ring', how='left')
-        df_merged['ew_wichtet'] = df_merged['ew'] * df_merged['Wichtung_Wohnen']
-        grouped = df_merged.groupby('AGS')
-        ew_wichtet_ags = grouped['ew_wichtet'].sum()
-        anteil_ags = ew_wichtet_ags / ew_wichtet_ags.sum()
-
-        self.set_progress(50)
-        project_ags = self.project_frame.ags
-        zuzug_project = sum(self.areas.values('ew'))
-        randsummen = self.project.basedata.get_table(
-            'Wanderung_Randsummen', 'Einnahmen').features()
-        factor = randsummen.get(IDWanderungstyp=1).Anteil_Wohnen
-        for AGS, anteil in anteil_ags.items():
-            zuzug = zuzug_project if AGS == project_ags else 0
-            gemeinde = self.gemeinden.get(AGS=AGS)
-            self.wanderung_ew.add(
-                zuzug=zuzug,
-                AGS=AGS,
-                wanderungs_anteil=anteil,
-                fixed=False,
-                geom=gemeinde.geom
-            )
-        self.set_progress(80)
-        self.log('Berechne Wanderungssaldi...')
-        df_result = self.calculate_saldi(self.wanderung_ew.to_pandas(),
-                                         factor, project_ags)
-        self.wanderung_ew.update_pandas(df_result)
 
     @staticmethod
-    def calculate_saldi(df_wanderung_ew, wanderungs_factor, project_ags,
-                        decimals=2):
-        project_row = df_wanderung_ew[df_wanderung_ew['AGS']==project_ags]
+    def calculate_saldi(df_wanderung, wanderungs_factor, project_ags):
+        project_idx = df_wanderung['AGS'] == project_ags
+        project_row = df_wanderung[project_idx]
         zuzug = project_row['zuzug'].values[0]
         fortzug_25 = zuzug * wanderungs_factor
-        fixed_idx = df_wanderung_ew['fixed'] == True
-        variable_idx = df_wanderung_ew['fixed'] == False
-        variable_rows = df_wanderung_ew[variable_idx]
-        fortzug_fixed = df_wanderung_ew[fixed_idx]['fortzug'].sum()
+        fixed_idx = df_wanderung['fixed'] == True
+        variable_idx = df_wanderung['fixed'] == False
+        variable_rows = df_wanderung[variable_idx]
+        fortzug_fixed = df_wanderung[fixed_idx]['fortzug'].sum()
         wanderungsanteil_variable = variable_rows['wanderungs_anteil'].sum()
         fortzug_pro_anteil = ((fortzug_25 - fortzug_fixed) /
                               wanderungsanteil_variable)
-        df_wanderung_ew.loc[variable_idx, 'fortzug'] = (
+        df_wanderung.loc[variable_idx, 'fortzug'] = (
             variable_rows['wanderungs_anteil'] * fortzug_pro_anteil)
         # reload rows, have been updated
-        variable_rows = df_wanderung_ew[variable_idx]
-        df_wanderung_ew.loc[variable_idx, 'saldo'] = (variable_rows['zuzug'] -
-                                                      variable_rows['fortzug'])
-        return df_wanderung_ew
+        variable_rows = df_wanderung[variable_idx]
+        df_wanderung.loc[variable_idx, 'saldo'] = (variable_rows['zuzug'] -
+                                                   variable_rows['fortzug'])
+        return df_wanderung
 
     def create_zensus_rings(self):
         self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
@@ -192,3 +146,111 @@ class Migration(Worker):
             clipped_w_ags, self.gemeinden.workspace.path, options)
 
         return clipped_w_ags
+
+
+class EinwohnerMigrationCalculation(MigrationCalculation):
+
+    def __init__(self, project, parent=None):
+        super().__init__(project, parent=parent)
+        self.wanderung = EinwohnerWanderung.features(project=project)
+
+    def work(self):
+        #p = self.zensus_layer.dataProvider()
+        #p.truncate()
+        if not self.zensus_layer.isValid() or len(self.zensus_layer) == 0:
+            self.zensus_layer = self.create_zensus_rings()
+        else:
+            self.log('Siedlungszellen bereits vorhanden, '
+                     'Berechnung wird übersprungen')
+        self.set_progress(40)
+        self.log('Berechne Wanderungsanteile...')
+        self.wanderung.table.truncate()
+        columns = [f.name() for f in self.zensus_layer.fields()]
+        rows = [f.attributes() for f in self.zensus_layer.getFeatures()]
+        df_zensus = pd.DataFrame.from_records(rows, columns=columns)
+        #df_zensus.rename(columns={'value': 'ew',}, inplace=True)
+        df_wichtung = self.project.basedata.get_table(
+            'Wanderung_Entfernungswichtung', 'Einnahmen').to_pandas(
+                columns=['Distance', 'Wichtung_Wohnen'])
+        df_wichtung.rename(columns={'Distance': 'ring'}, inplace=True)
+        df_merged = df_zensus.merge(df_wichtung, on='ring', how='left')
+        df_merged['ew_wichtet'] = df_merged['ew'] * df_merged['Wichtung_Wohnen']
+        grouped = df_merged.groupby('AGS')
+        ew_wichtet_ags = grouped['ew_wichtet'].sum()
+        anteil_ags = ew_wichtet_ags / ew_wichtet_ags.sum()
+
+        self.set_progress(50)
+        project_ags = self.project_frame.ags
+        zuzug_project = sum(self.areas.values('ew'))
+        randsummen = self.project.basedata.get_table(
+            'Wanderung_Randsummen', 'Einnahmen').features()
+        factor = randsummen.get(IDWanderungstyp=1).Anteil_Wohnen
+        for AGS, anteil in anteil_ags.items():
+            zuzug = zuzug_project if AGS == project_ags else 0
+            gemeinde = self.gemeinden.get(AGS=AGS)
+            self.wanderung.add(
+                zuzug=zuzug,
+                AGS=AGS,
+                wanderungs_anteil=anteil,
+                fixed=False,
+                geom=gemeinde.geom
+            )
+        self.set_progress(80)
+        self.log('Berechne Wanderungssaldi...')
+        df_result = self.calculate_saldi(self.wanderung.to_pandas(),
+                                         factor, project_ags)
+        self.wanderung.update_pandas(df_result)
+
+class BeschaeftigtenMigrationCalculation(MigrationCalculation):
+    ''''''
+
+    def __init__(self, project, parent=None):
+        super().__init__(project, parent=parent)
+        self.wanderung = BeschaeftigtenWanderung.features(project=project)
+
+    def work(self):
+        #p = self.zensus_layer.dataProvider()
+        #p.truncate()
+        if not self.zensus_layer.isValid() or len(self.zensus_layer) == 0:
+            self.zensus_layer = self.create_zensus_rings()
+        else:
+            self.log('Siedlungszellen bereits vorhanden, '
+                     'Berechnung wird übersprungen')
+        self.set_progress(40)
+        self.log('Berechne Wanderungsanteile...')
+        self.wanderung.table.truncate()
+        columns = [f.name() for f in self.zensus_layer.fields()]
+        rows = [f.attributes() for f in self.zensus_layer.getFeatures()]
+        df_zensus = pd.DataFrame.from_records(rows, columns=columns)
+        #df_zensus.rename(columns={'value': 'ew',}, inplace=True)
+        df_wichtung = self.project.basedata.get_table(
+            'Wanderung_Entfernungswichtung', 'Einnahmen').to_pandas(
+                columns=['Distance', 'Wichtung_Wohnen'])
+        df_wichtung.rename(columns={'Distance': 'ring'}, inplace=True)
+        df_merged = df_zensus.merge(df_wichtung, on='ring', how='left')
+        df_merged['ew_wichtet'] = df_merged['ew'] * df_merged['Wichtung_Wohnen']
+        grouped = df_merged.groupby('AGS')
+        ew_wichtet_ags = grouped['ew_wichtet'].sum()
+        anteil_ags = ew_wichtet_ags / ew_wichtet_ags.sum()
+
+        self.set_progress(50)
+        project_ags = self.project_frame.ags
+        zuzug_project = sum(self.areas.values('ew'))
+        randsummen = self.project.basedata.get_table(
+            'Wanderung_Randsummen', 'Einnahmen').features()
+        factor = randsummen.get(IDWanderungstyp=1).Anteil_Wohnen
+        for AGS, anteil in anteil_ags.items():
+            zuzug = zuzug_project if AGS == project_ags else 0
+            gemeinde = self.gemeinden.get(AGS=AGS)
+            self.wanderung.add(
+                zuzug=zuzug,
+                AGS=AGS,
+                wanderungs_anteil=anteil,
+                fixed=False,
+                geom=gemeinde.geom
+            )
+        self.set_progress(80)
+        self.log('Berechne Wanderungssaldi...')
+        df_result = self.calculate_saldi(self.wanderung.to_pandas(),
+                                         factor, project_ags)
+        self.wanderung.update_pandas(df_result)

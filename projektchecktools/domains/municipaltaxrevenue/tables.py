@@ -13,7 +13,6 @@ class Gemeinden(ProjectTable):
     SvB = Field(int, 0)
     SvB_pro_Ew = Field(float, 0)
     Hebesatz_GewSt = Field(int, 0)
-    Hebesatz_GrStB = Field(int, 0)
 
     class Meta:
         workspace = 'einnahmen'
@@ -29,3 +28,30 @@ class EinwohnerWanderung(ProjectTable):
 
     class Meta:
         workspace = 'einnahmen'
+
+
+class BeschaeftigtenWanderung(ProjectTable):
+    AGS = Field(str, '')
+    zuzug = Field(float, 0)
+    fortzug = Field(float, 0)
+    saldo = Field(float, 0)
+    fixed = Field(bool, False)
+    wanderungs_anteil = Field(float, 0)
+
+    class Meta:
+        workspace = 'einnahmen'
+
+
+class GrundsteuerSettings(ProjectTable):
+    Hebesatz_GrStB = Field(int, 0)
+    EFH_Rohmiete = Field(int, 0)
+    DHH_Rohmiete = Field(int, 0)
+    RHW_Rohmiete = Field(int, 0)
+    MFH_Rohmiete = Field(int, 0)
+    Bodenwert_SWV = Field(int, 0)
+    qm_Grundstueck_pro_WE_EFH = Field(int, 0)
+    is_new_bundesland = Field(bool, True)
+
+    class Meta:
+        workspace = 'einnahmen'
+
