@@ -1,0 +1,8 @@
+{
+    "tooltip": "Parameter editieren",
+    "beschreibung": "",
+    "efh": "",
+    "dhh": "",
+    "rhw": "",
+    "mfh": ""
+}

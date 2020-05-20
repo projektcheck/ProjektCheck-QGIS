@@ -25,7 +25,6 @@ class Migration:
     def load_content(self):
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
-        self.grst_settings = GrundsteuerSettings.features(create=True)
         self.gemeinden = Gemeinden.features(create=True)
         self.project_frame = Projektrahmendaten.features()[0]
         self.wanderung = EinwohnerWanderung.features(create=True)
@@ -362,8 +361,6 @@ class Grundsteuer:
         self.params = Params(
             layout, help_file='einnahmen_grundsteuer_hebesatz.txt')
 
-        self.params.add(Title('Rohmiete 1964 in Euro pro Monat', bold=False))
-
         self.params.hebesatz = Param(
             self.grst_settings.Hebesatz_GrStB,
             SpinBox(maximum=999, step=10),
@@ -381,20 +378,43 @@ class Grundsteuer:
     def setup_rohmiete(self):
         if self.rohmiete_params:
             self.rohmiete_params.close()
-        layout = self.ui.grundsteuer_hebesatz_param_group.layout()
+        layout = self.ui.grundsteuer_rohmiete_param_group.layout()
         clear_layout(layout)
         self.params = Params(
             layout, help_file='einnahmen_grundsteuer_rohmieten.txt')
 
-        self.params.hebesatz = Param(
-            self.grst_settings.Hebesatz_GrStB,
-            SpinBox(maximum=999, step=10),
-            label='Hebesatz GrSt B Projektgemeinde',
-            unit='v.H.'
+        self.params.add(Title('Rohmiete 1964 in Euro pro Monat', bold=False))
+
+        self.params.efh = Param(
+            self.grst_settings.EFH_Rohmiete / 100,
+            DoubleSpinBox(maximum=100, step=0.05),
+            label=f' -Einfamilienhaus',
+            unit='€/m²'
+        )
+        self.params.dhh = Param(
+            self.grst_settings.DHH_Rohmiete / 100,
+            DoubleSpinBox(maximum=100, step=0.05),
+            label=f' -Doppelhaus',
+            unit='€/m²'
+        )
+        self.params.rhw = Param(
+            self.grst_settings.RHW_Rohmiete / 100,
+            DoubleSpinBox(maximum=100, step=0.05),
+            label=f' -Reihenhaus',
+            unit='€/m²'
+        )
+        self.params.mfh = Param(
+            self.grst_settings.MFH_Rohmiete / 100,
+            DoubleSpinBox(maximum=100, step=0.05),
+            label=f' -Mehrfamilienhaus',
+            unit='€/m²'
         )
 
         def save():
-            self.grst_settings.Hebesatz_GrStB = self.params.hebesatz.value
+            self.grst_settings.EFH_Rohmiete = round(self.params.efh.value * 100)
+            self.grst_settings.DHH_Rohmiete = round(self.params.dhh.value * 100)
+            self.grst_settings.RHW_Rohmiete = round(self.params.rhw.value * 100)
+            self.grst_settings.MFH_Rohmiete = round(self.params.mfh.value * 100)
             self.grst_settings.save()
 
         self.params.show(title='Rohmieten bearbeiten')
