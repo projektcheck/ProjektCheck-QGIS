@@ -1,0 +1,6 @@
+{
+    "tooltip": "Parameter editieren",
+    "beschreibung": "",
+    "bodenwert": "",
+    "flaeche": ""
+}

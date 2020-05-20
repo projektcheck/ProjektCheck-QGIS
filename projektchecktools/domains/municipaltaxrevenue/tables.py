@@ -49,6 +49,8 @@ class GrundsteuerSettings(ProjectTable):
     RHW_Rohmiete = Field(int, 0)
     MFH_Rohmiete = Field(int, 0)
     Bodenwert_SWV = Field(int, 0)
+    Bueroflaeche = Field(int, 0)
+    Verkaufsraeume = Field(int, 0)
     qm_Grundstueck_pro_WE_EFH = Field(int, 0)
     is_new_bundesland = Field(bool, True)
 

@@ -25,28 +25,9 @@ class Migration:
     def load_content(self):
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
-        self.gemeinden = Gemeinden.features(create=True)
+        self.gemeinden = Gemeinden.features()
         self.project_frame = Projektrahmendaten.features()[0]
-        self.wanderung = EinwohnerWanderung.features(create=True)
-        if len(self.gemeinden) == 0:
-            self.get_gemeinden()
         self.areas = Teilflaechen.features()
-
-    def get_gemeinden(self):
-        gemeinden = self.project.basedata.get_table('bkg_gemeinden',
-                                                    'Basisdaten_deutschland')
-        buffer_geom = self.project_frame.geom.buffer(self.radius, 5)
-        gemeinden.spatial_filter(buffer_geom.asWkt())
-        # project table has some of the fields of the basedata table
-        # (same names)
-        common_fields = set([f.name for f in gemeinden.fields()]).intersection(
-            [f.name for f in self.gemeinden.fields()])
-        for gemeinde in gemeinden:
-            attrs = {}
-            for field in common_fields:
-                attrs[field] = gemeinde[field]
-            attrs['geom'] = gemeinde['geom']
-            self.gemeinden.add(**attrs)
 
     def close(self):
         if self.params:
@@ -138,7 +119,7 @@ class EinwohnerMigration(Migration):
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
         project_saldo = Param(wanderung.saldo, spinbox,
-                              label=f' -{project_gem.GEN}', unit='Einwohner')
+                              label=f' - {project_gem.GEN}', unit='Einwohner')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
         spinbox.locked.connect(lambda o: update_salden(project_ags))
@@ -156,7 +137,7 @@ class EinwohnerMigration(Migration):
             spinbox = DoubleSpinBox(minimum=-1000, maximum=0, step=1,
                                     lockable=True, locked=wanderung.fixed,
                                     reversed_lock=True)
-            param = Param(wanderung.saldo, spinbox, label=f' -{gemeinde.GEN}',
+            param = Param(wanderung.saldo, spinbox, label=f' - {gemeinde.GEN}',
                           unit='Einwohner')
             self.params.add(param, name=ags)
             spinbox.changed.connect(lambda o, a=ags: update_salden(a))
@@ -267,7 +248,7 @@ class BeschaeftigtenMigration(Migration):
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
         project_saldo = Param(wanderung.saldo, spinbox,
-                              label=f' -{project_gem.GEN}', unit='SvB')
+                              label=f' - {project_gem.GEN}', unit='SvB')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
         spinbox.locked.connect(lambda o: update_salden(project_ags))
@@ -290,7 +271,7 @@ class BeschaeftigtenMigration(Migration):
             spinbox = DoubleSpinBox(minimum=-1000, maximum=0, step=1,
                                     lockable=True, locked=wanderung.fixed,
                                     reversed_lock=True)
-            param = Param(wanderung.saldo, spinbox, label=f' -{gemeinde.GEN}',
+            param = Param(wanderung.saldo, spinbox, label=f' - {gemeinde.GEN}',
                           unit='SvB')
             self.params.add(param, name=ags)
             spinbox.changed.connect(lambda o, a=ags: update_salden(a))
@@ -332,6 +313,8 @@ class Grundsteuer:
 
         self.setup_hebesatz()
         self.setup_rohmiete()
+        self.setup_sachwert()
+        self.setup_bauvolumen()
 
     def get_grst_base_settings(self):
         gemeinden = self.project.basedata.get_table(
@@ -358,10 +341,10 @@ class Grundsteuer:
             self.hebesatz_params.close()
         layout = self.ui.grundsteuer_hebesatz_param_group.layout()
         clear_layout(layout)
-        self.params = Params(
+        self.hebesatz_params = Params(
             layout, help_file='einnahmen_grundsteuer_hebesatz.txt')
 
-        self.params.hebesatz = Param(
+        self.hebesatz_params.hebesatz = Param(
             self.grst_settings.Hebesatz_GrStB,
             SpinBox(maximum=999, step=10),
             label='Hebesatz GrSt B Projektgemeinde',
@@ -369,56 +352,130 @@ class Grundsteuer:
         )
 
         def save():
-            self.grst_settings.Hebesatz_GrStB = self.params.hebesatz.value
+            self.grst_settings.Hebesatz_GrStB = \
+                self.hebesatz_params.hebesatz.value
             self.grst_settings.save()
 
-        self.params.show(title='Hebesatz bearbeiten')
-        self.params.changed.connect(save)
+        self.hebesatz_params.show(title='Hebesatz bearbeiten')
+        self.hebesatz_params.changed.connect(save)
 
     def setup_rohmiete(self):
         if self.rohmiete_params:
             self.rohmiete_params.close()
         layout = self.ui.grundsteuer_rohmiete_param_group.layout()
         clear_layout(layout)
-        self.params = Params(
+        self.rohmiete_params = Params(
             layout, help_file='einnahmen_grundsteuer_rohmieten.txt')
 
-        self.params.add(Title('Rohmiete 1964 in Euro pro Monat', bold=False))
+        self.rohmiete_params.add(Title('Rohmiete 1964 in Euro pro Monat',
+                                       bold=False))
 
-        self.params.efh = Param(
+        self.rohmiete_params.efh = Param(
             self.grst_settings.EFH_Rohmiete / 100,
             DoubleSpinBox(maximum=100, step=0.05),
-            label=f' -Einfamilienhaus',
+            label=f' - Einfamilienhaus',
             unit='€/m²'
         )
-        self.params.dhh = Param(
+        self.rohmiete_params.dhh = Param(
             self.grst_settings.DHH_Rohmiete / 100,
             DoubleSpinBox(maximum=100, step=0.05),
-            label=f' -Doppelhaus',
+            label=f' - Doppelhaus',
             unit='€/m²'
         )
-        self.params.rhw = Param(
+        self.rohmiete_params.rhw = Param(
             self.grst_settings.RHW_Rohmiete / 100,
             DoubleSpinBox(maximum=100, step=0.05),
-            label=f' -Reihenhaus',
+            label=f' - Reihenhaus',
             unit='€/m²'
         )
-        self.params.mfh = Param(
+        self.rohmiete_params.mfh = Param(
             self.grst_settings.MFH_Rohmiete / 100,
             DoubleSpinBox(maximum=100, step=0.05),
-            label=f' -Mehrfamilienhaus',
+            label=f' - Mehrfamilienhaus',
             unit='€/m²'
         )
 
         def save():
-            self.grst_settings.EFH_Rohmiete = round(self.params.efh.value * 100)
-            self.grst_settings.DHH_Rohmiete = round(self.params.dhh.value * 100)
-            self.grst_settings.RHW_Rohmiete = round(self.params.rhw.value * 100)
-            self.grst_settings.MFH_Rohmiete = round(self.params.mfh.value * 100)
+            self.grst_settings.EFH_Rohmiete = round(
+                self.rohmiete_params.efh.value * 100)
+            self.grst_settings.DHH_Rohmiete = round(
+                self.rohmiete_params.dhh.value * 100)
+            self.grst_settings.RHW_Rohmiete = round(
+                self.rohmiete_params.rhw.value * 100)
+            self.grst_settings.MFH_Rohmiete = round(
+                self.rohmiete_params.mfh.value * 100)
             self.grst_settings.save()
 
-        self.params.show(title='Rohmieten bearbeiten')
-        self.params.changed.connect(save)
+        self.rohmiete_params.show(title='Rohmieten bearbeiten')
+        self.rohmiete_params.changed.connect(save)
+
+    def setup_sachwert(self):
+        if self.sachwert_params:
+            self.sachwert_params.close()
+        layout = self.ui.grundsteuer_sachwert_param_group.layout()
+        clear_layout(layout)
+        self.sachwert_params = Params(
+            layout, help_file='einnahmen_grundsteuer_sachwertverfahren.txt')
+
+        self.sachwert_params.add(Title('Sachwertverfahren', bold=False))
+        self.sachwert_params.bodenwert = Param(
+            self.grst_settings.Bodenwert_SWV / 100,
+            DoubleSpinBox(maximum=100, step=0.05),
+            label=f' - Bodenwert 1935 pro m²',
+            unit='€/m²'
+        )
+        self.sachwert_params.flaeche = Param(
+            self.grst_settings.qm_Grundstueck_pro_WE_EFH,
+            SpinBox(maximum=9999, step=1),
+            label=f' - mittl. Größe Einfamilienhausgrundstücke',
+            unit='m²'
+        )
+
+        def save():
+            self.grst_settings.Bodenwert_SWV = round(
+                self.sachwert_params.bodenwert.value * 100)
+            self.grst_settings.qm_Grundstueck_pro_WE_EFH = \
+                self.sachwert_params.flaeche.value
+            self.grst_settings.save()
+
+        self.sachwert_params.show(title='Sachwertverfahren bearbeiten')
+        self.sachwert_params.changed.connect(save)
+
+    def setup_bauvolumen(self):
+        if self.bauvolumen_params:
+            self.bauvolumen_params.close()
+        layout = self.ui.grundsteuer_bauvolumen_param_group.layout()
+        clear_layout(layout)
+        self.bauvolumen_params = Params(
+            layout, help_file='einnahmen_grundsteuer_bauvolumen.txt')
+
+        self.bauvolumen_params.add(
+            Title('Gewerbe / Einzelhandel: Voraussichtliches '
+                  'Bauvolumen\n(Brutto-Grundfläche, BGF)', bold=False))
+
+        self.bauvolumen_params.bueroflaeche = Param(
+            self.grst_settings.Bueroflaeche,
+            SpinBox(maximum=999999, step=10),
+            label=f' - Bürofläche',
+            unit='m²'
+        )
+        self.bauvolumen_params.verkaufsraeume = Param(
+            self.grst_settings.Verkaufsraeume,
+            SpinBox(maximum=999999, step=10),
+            label=f' - Hallen und Verkaufsräume',
+            unit='m²'
+        )
+
+        def save():
+            self.grst_settings.Bueroflaeche = \
+                self.bauvolumen_params.bueroflaeche.value
+            self.grst_settings.Verkaufsraeume = \
+                self.bauvolumen_params.verkaufsraeume.value
+            self.grst_settings.save()
+
+        self.bauvolumen_params.show(
+            title='Voraussichtliches Bauvolumen bearbeiten')
+        self.bauvolumen_params.changed.connect(save)
 
     def close(self):
         if self.hebesatz_params:
@@ -429,6 +486,48 @@ class Grundsteuer:
             self.sachwert_params.close()
         if self.bauvolumen_params:
             self.bauvolumen_params.close()
+
+
+class Gewerbesteuer:
+    def __init__(self, project, ui):
+        self.project = project
+        self.ui = ui
+        self.params = None
+
+    def load_content(self):
+        self.gemeinden = Gemeinden.features(project=self.project)
+        self.setup_params()
+
+    def setup_params(self):
+        if self.params:
+            self.params.close()
+        layout = self.ui.gewerbesteuer_hebesatz_param_group.layout()
+        clear_layout(layout)
+        self.params = Params(
+            layout, help_file='einnahmen_gewerbesteuer_hebesätze.txt')
+
+        self.params.add(Title('Hebesätze', bold=False))
+
+        for gemeinde in sorted(self.gemeinden, key=lambda x: x.GEN):
+            spinbox = SpinBox(minimum=0, maximum=999, step=1)
+            param = Param(gemeinde.Hebesatz_GewSt, spinbox,
+                          label=f' - {gemeinde.GEN}',
+                          unit='v.H.')
+            self.params.add(param, name=gemeinde.AGS)
+
+        def save():
+            for gemeinde in self.gemeinden:
+                param = self.params[gemeinde.AGS]
+                gemeinde.Hebesatz_GewSt = param.value
+                gemeinde.save()
+
+        self.params.show(title='Hebesätze Gewerbesteuer bearbeiten',
+                         scrollable=True)
+        self.params.changed.connect(save)
+
+    def close(self):
+        if self.params:
+            self.params.close()
 
 
 class MunicipalTaxRevenue(Domain):
@@ -443,15 +542,40 @@ class MunicipalTaxRevenue(Domain):
         self.grundsteuer = Grundsteuer(self.project, self.ui)
         self.migration_ew = EinwohnerMigration(self.project, self.ui)
         self.migration_svb = BeschaeftigtenMigration(self.project, self.ui)
+        self.gewerbesteuer = Gewerbesteuer(self.project, self.ui)
 
     def load_content(self):
         super().load_content()
+        self.project_frame = Projektrahmendaten.features(
+            project=self.project)[0]
+        self.gemeinden = Gemeinden.features(create=True)
+        if len(self.gemeinden) == 0:
+            self.get_gemeinden()
+
         self.grundsteuer.load_content()
         self.migration_ew.load_content()
         self.migration_svb.load_content()
+        self.gewerbesteuer.load_content()
+
+    def get_gemeinden(self):
+        gemeinden = self.project.basedata.get_table('bkg_gemeinden',
+                                                    'Basisdaten_deutschland')
+        buffer_geom = self.project_frame.geom.buffer(self.radius, 5)
+        gemeinden.spatial_filter(buffer_geom.asWkt())
+        # project table has some of the fields of the basedata table
+        # (same names)
+        common_fields = set([f.name for f in gemeinden.fields()]).intersection(
+            [f.name for f in self.gemeinden.fields()])
+        for gemeinde in gemeinden:
+            attrs = {}
+            for field in common_fields:
+                attrs[field] = gemeinde[field]
+            attrs['geom'] = gemeinde['geom']
+            self.gemeinden.add(**attrs)
 
     def close(self):
         self.migration_ew.close()
         self.grundsteuer.close()
         self.migration_svb.close()
+        self.gewerbesteuer.close()
         super().close()
