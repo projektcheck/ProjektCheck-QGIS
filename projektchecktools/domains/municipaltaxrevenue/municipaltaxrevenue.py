@@ -9,13 +9,13 @@ from projektchecktools.domains.municipaltaxrevenue.migration import (
     EwMigrationCalculation, SvBMigrationCalculation, MigrationCalculation)
 from projektchecktools.domains.definitions.tables import (
     Projektrahmendaten, Teilflaechen)
+from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.params import Params, Param, Title, Seperator
 from projektchecktools.base.inputs import DoubleSpinBox, SpinBox
 
 
 class Migration:
-    radius = 25000
 
     def __init__(self, project, ui):
         self.project = project
@@ -214,7 +214,7 @@ class BeschaeftigtenMigration(Migration):
         project_ags = self.project_frame.ags
         project_gem = self.gemeinden.get(AGS=project_ags)
         wanderung = self.wanderung.get(AGS=project_ags)
-        sum_ap = sum(self.areas.values('ew'))
+        sum_ap = sum(self.areas.values('ap_gesamt'))
 
         # ToDo: this is exactly the same as in EinwohnerMigration
         def update_salden(ags_changed):
@@ -310,6 +310,7 @@ class Grundsteuer:
         if len(self.grst_settings) == 0:
             self.get_grst_base_settings()
         self.grst_settings = self.grst_settings[0]
+        self.areas = Teilflaechen.features(project=self.project)
 
         self.setup_hebesatz()
         self.setup_rohmiete()
@@ -360,6 +361,12 @@ class Grundsteuer:
         self.hebesatz_params.changed.connect(save)
 
     def setup_rohmiete(self):
+        tou = self.areas.values('nutzungsart')
+        if self.grst_settings.is_new_bundesland \
+           or not Nutzungsart.WOHNEN.value in tou:
+            self.ui.grundsteuer_rohmiete_param_group.setVisible(False)
+            return
+        self.ui.grundsteuer_rohmiete_param_group.setVisible(True)
         if self.rohmiete_params:
             self.rohmiete_params.close()
         layout = self.ui.grundsteuer_rohmiete_param_group.layout()
@@ -410,8 +417,14 @@ class Grundsteuer:
         self.rohmiete_params.changed.connect(save)
 
     def setup_sachwert(self):
+        tou = self.areas.values('nutzungsart')
+        if not self.grst_settings.is_new_bundesland\
+           or not Nutzungsart.WOHNEN.value in tou:
+            self.ui.grundsteuer_sachwert_param_group.setVisible(False)
+            return
         if self.sachwert_params:
             self.sachwert_params.close()
+        self.ui.grundsteuer_sachwert_param_group.setVisible(True)
         layout = self.ui.grundsteuer_sachwert_param_group.layout()
         clear_layout(layout)
         self.sachwert_params = Params(
@@ -442,6 +455,12 @@ class Grundsteuer:
         self.sachwert_params.changed.connect(save)
 
     def setup_bauvolumen(self):
+        tou = self.areas.values('nutzungsart')
+        if not (Nutzungsart.GEWERBE.value in tou or
+                Nutzungsart.EINZELHANDEL.value in tou):
+            self.ui.grundsteuer_bauvolumen_param_group.setVisible(False)
+            return
+        self.ui.grundsteuer_bauvolumen_param_group.setVisible(True)
         if self.bauvolumen_params:
             self.bauvolumen_params.close()
         layout = self.ui.grundsteuer_bauvolumen_param_group.layout()
@@ -532,6 +551,7 @@ class Gewerbesteuer:
 
 class MunicipalTaxRevenue(Domain):
     """"""
+    radius = 25000
 
     ui_label = 'kommunale Steuereinnahmen'
     ui_file = 'ProjektCheck_dockwidget_analysis_07-KSt.ui'
