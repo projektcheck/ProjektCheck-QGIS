@@ -130,7 +130,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkBox_21">
+              <widget class="QCheckBox" name="recalculate_inhabitants_check">
                <property name="enabled">
                 <bool>true</bool>
                </property>
@@ -219,7 +219,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkBox_24">
+              <widget class="QCheckBox" name="recalculate_jobs_check">
                <property name="enabled">
                 <bool>true</bool>
                </property>
@@ -342,7 +342,7 @@ padding: 2px;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_33">
+            <widget class="QPushButton" name="calc_grundsteuer_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -366,7 +366,7 @@ padding: 2px;
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</iconset>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>false</bool>
@@ -414,6 +414,9 @@ padding: 2px;
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</iconset>
              </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -456,6 +459,9 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -616,6 +622,9 @@ padding: 2px;
              <property name="icon">
               <iconset>
                <normaloff>../../images/iconset_mob/20190619_iconset_mob_sum_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_sum_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
              </property>
             </widget>
            </item>

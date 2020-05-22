@@ -701,6 +701,10 @@ class SupermarketsCompetition(Domain):
         self.ui.osm_buffer_slider.setEnabled(False)
 
         self.ui.template_help_button.clicked.connect(self.show_template_help)
+        manual_path = os.path.join(
+            self.settings.HELP_PATH,
+            'Anleitung_Standortkonkurrenz_Supermaerkte.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(manual_path))
 
     def load_content(self):
         self.centers = Centers.features()

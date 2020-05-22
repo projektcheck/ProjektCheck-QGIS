@@ -2,7 +2,7 @@ from projektchecktools.base.project import ProjectTable
 from projektchecktools.base.database import Field
 
 
-class Gemeinden(ProjectTable):
+class Gemeindebilanzen(ProjectTable):
     RS = Field(str, )
     AGS = Field(str, )
     GEN = Field(str, )
@@ -13,6 +13,11 @@ class Gemeinden(ProjectTable):
     SvB = Field(int, 0)
     SvB_pro_Ew = Field(float, 0)
     Hebesatz_GewSt = Field(int, 0)
+    grundsteuer = Field(int, 0)
+    einkommensteuer = Field(int, 0)
+    gewerbesteuer = Field(int, 0)
+    umsatzsteuer = Field(int, 0)
+    fam_leistungs_ausgleich = Field(int, 0)
 
     class Meta:
         workspace = 'einnahmen'
@@ -56,4 +61,7 @@ class GrundsteuerSettings(ProjectTable):
 
     class Meta:
         workspace = 'einnahmen'
+
+
+
 

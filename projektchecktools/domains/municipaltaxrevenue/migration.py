@@ -9,7 +9,7 @@ from projektchecktools.utils.spatial import create_layer
 from projektchecktools.domains.definitions.tables import (Teilflaechen,
                                                           Projektrahmendaten)
 from projektchecktools.domains.municipaltaxrevenue.tables import (
-    Gemeinden, EinwohnerWanderung, BeschaeftigtenWanderung)
+    Gemeindebilanzen, EinwohnerWanderung, BeschaeftigtenWanderung)
 from projektchecktools.base.domain import Worker
 from projektchecktools.utils.spatial import clip_raster, get_bbox
 import pandas as pd
@@ -25,7 +25,7 @@ class MigrationCalculation(Worker):
         self.typ = typ
         self.project = project
         self.areas = Teilflaechen.features(project=project)
-        self.gemeinden = Gemeinden.features(project=project)
+        self.gemeinden = Gemeindebilanzen.features(project=project)
         self.zensus_layer = QgsVectorLayer(f'{self.gemeinden.workspace.path}'
                             '|layername=zensus_rings')
         self.project_frame = Projektrahmendaten.features()[0]

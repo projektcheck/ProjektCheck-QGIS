@@ -3,11 +3,14 @@ import numpy as np
 import os
 
 from projektchecktools.base.domain import Domain
+from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.domains.municipaltaxrevenue.tables import (
-    Gemeinden, EinwohnerWanderung, BeschaeftigtenWanderung, GrundsteuerSettings)
+    Gemeindebilanzen, EinwohnerWanderung, BeschaeftigtenWanderung, GrundsteuerSettings)
 from projektchecktools.domains.municipaltaxrevenue.migration import (
     EwMigrationCalculation, SvBMigrationCalculation, MigrationCalculation)
+from projektchecktools.domains.municipaltaxrevenue.tax import (
+    GrundsteuerCalculation)
 from projektchecktools.domains.definitions.tables import (
     Projektrahmendaten, Teilflaechen)
 from projektchecktools.domains.constants import Nutzungsart
@@ -19,7 +22,9 @@ from projektchecktools.utils.utils import open_file
 
 class Migration:
 
-    def __init__(self, project, ui):
+    def __init__(self, project, ui, layer_group, canvas):
+        self.layer_group = layer_group
+        self.canvas = canvas
         self.project = project
         self.ui = ui
         self.params = None
@@ -27,7 +32,7 @@ class Migration:
     def load_content(self):
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
-        self.gemeinden = Gemeinden.features()
+        self.gemeinden = Gemeindebilanzen.features()
         self.project_frame = Projektrahmendaten.features()[0]
         self.areas = Teilflaechen.features()
 
@@ -38,16 +43,26 @@ class Migration:
 
 class EinwohnerMigration(Migration):
 
-    def __init__(self, project, ui):
-        super().__init__(project, ui)
+    def __init__(self, project, ui, layer_group, canvas):
+        super().__init__(project, ui, layer_group, canvas)
         self.ui.migration_inhabitants_button.clicked.connect(self.calculate)
 
     def load_content(self):
         super().load_content()
         self.wanderung = EinwohnerWanderung.features(create=True)
-        self.setup_params()
+
+        self.ui.einwohner_parameter_group.setVisible(False)
+        if len(self.wanderung) == 0:
+            self.ui.recalculate_inhabitants_check.setChecked(True)
+            self.ui.recalculate_inhabitants_check.setVisible(False)
+            self.ui.einwohner_parameter_group.setVisible(False)
+        else:
+            self.setup_params()
 
     def calculate(self):
+        if not self.ui.recalculate_inhabitants_check.isChecked():
+            self.add_layer()
+            return
         # ToDo: remove results depending on this
         sum_ew = sum(self.areas.values('ew'))
         if sum_ew == 0:
@@ -62,6 +77,9 @@ class EinwohnerMigration(Migration):
             if not self.dialog.success:
                 # ToDo: remove results
                 return
+            self.ui.recalculate_inhabitants_check.setVisible(True)
+            self.ui.recalculate_inhabitants_check.setChecked(False)
+            self.add_layer()
             self.setup_params()
 
         self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
@@ -70,12 +88,9 @@ class EinwohnerMigration(Migration):
     def setup_params(self):
         if self.params:
             self.params.close()
+        self.ui.einwohner_parameter_group.setVisible(True)
         layout = self.ui.einwohner_parameter_group.layout()
         clear_layout(layout)
-        if len(self.wanderung) == 0:
-            self.ui.einwohner_parameter_group.setVisible(False)
-            return
-        self.ui.einwohner_parameter_group.setVisible(True)
         self.params = Params(
             layout, help_file='einnahmen_einwohner_wanderung.txt')
 
@@ -155,24 +170,42 @@ class EinwohnerMigration(Migration):
         def save():
             # ToDo: remove results depending on this
             self.wanderung.update_pandas(self.df_wanderung)
+            self.canvas.refreshAllLayers()
 
         self.params.show(title='Geschätzte Salden (Einwohner) bearbeiten',
             scrollable=True)
         self.params.changed.connect(save)
 
+    def add_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.wanderung.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Wanderungssalden Einwohner',
+            style_file='einnahmen_einwohnerwanderung.qml'
+        )
+        self.output.zoom_to()
+
 
 class BeschaeftigtenMigration(Migration):
 
-    def __init__(self, project, ui):
-        super().__init__(project, ui)
+    def __init__(self, project, ui, layer_group, canvas):
+        super().__init__(project, ui, layer_group, canvas)
         self.ui.migration_jobs_button.clicked.connect(self.calculate)
 
     def load_content(self):
         super().load_content()
         self.wanderung = BeschaeftigtenWanderung.features(create=True)
-        self.setup_params()
+        if len(self.wanderung) == 0:
+            self.ui.recalculate_jobs_check.setChecked(True)
+            self.ui.recalculate_jobs_check.setVisible(False)
+            self.ui.svb_parameter_group.setVisible(False)
+        else:
+            self.setup_params()
 
     def calculate(self):
+        if not self.ui.recalculate_jobs_check.isChecked():
+            self.add_layer()
+            return
         # ToDo: remove results depending on this
         sum_ap = sum(self.areas.values('ap_gesamt'))
         if sum_ap == 0:
@@ -189,6 +222,9 @@ class BeschaeftigtenMigration(Migration):
             if not self.dialog.success:
                 # ToDo: remove results of this calculation
                 return
+            self.ui.recalculate_jobs_check.setVisible(True)
+            self.ui.recalculate_jobs_check.setChecked(False)
+            self.add_layer()
             self.setup_params()
 
         self.dialog = ProgressDialog(job, parent=self.ui, on_close=on_close)
@@ -197,6 +233,7 @@ class BeschaeftigtenMigration(Migration):
     def setup_params(self):
         if self.params:
             self.params.close()
+        self.ui.svb_parameter_group.setVisible(True)
         layout = self.ui.svb_parameter_group.layout()
         clear_layout(layout)
         if len(self.wanderung) == 0:
@@ -289,16 +326,29 @@ class BeschaeftigtenMigration(Migration):
         def save():
             # ToDo: remove results depending on this
             self.wanderung.update_pandas(self.df_wanderung)
+            self.canvas.refreshAllLayers()
 
         self.params.show(title='Geschätzte Salden (Beschäftigte) bearbeiten',
                          scrollable=True)
         self.params.changed.connect(save)
+
+    def add_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.wanderung.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Wanderungssalden Beschäftigte',
+            style_file='einnahmen_beschaeftigtenwanderung.qml'
+        )
+        self.output.zoom_to()
 
 
 class Grundsteuer:
     def __init__(self, project, ui):
         self.project = project
         self.ui = ui
+
+        self.ui.calc_grundsteuer_button.clicked.connect(self.calculate)
+
         self.hebesatz_params = None
         self.rohmiete_params = None
         self.sachwert_params = None
@@ -307,12 +357,14 @@ class Grundsteuer:
     def load_content(self):
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
-        self.gemeinden = Gemeinden.features(project=self.project)
+        self.gemeinden = Gemeindebilanzen.features(project=self.project)
         self.grst_settings = GrundsteuerSettings.features(create=True)
         if len(self.grst_settings) == 0:
             self.get_grst_base_settings()
         self.grst_settings = self.grst_settings[0]
         self.areas = Teilflaechen.features(project=self.project)
+        self.ew_wanderung = EinwohnerWanderung.features()
+        self.svb_wanderung = BeschaeftigtenWanderung.features()
 
         self.setup_hebesatz()
         self.setup_rohmiete()
@@ -381,25 +433,25 @@ class Grundsteuer:
 
         self.rohmiete_params.efh = Param(
             self.grst_settings.EFH_Rohmiete / 100,
-            DoubleSpinBox(maximum=100, step=0.05),
+            DoubleSpinBox(minimum=0.3, maximum=5, step=0.05),
             label=f' - Einfamilienhaus',
             unit='€/m²'
         )
         self.rohmiete_params.dhh = Param(
             self.grst_settings.DHH_Rohmiete / 100,
-            DoubleSpinBox(maximum=100, step=0.05),
+            DoubleSpinBox(minimum=0.3, maximum=5, step=0.05),
             label=f' - Doppelhaus',
             unit='€/m²'
         )
         self.rohmiete_params.rhw = Param(
             self.grst_settings.RHW_Rohmiete / 100,
-            DoubleSpinBox(maximum=100, step=0.05),
+            DoubleSpinBox(minimum=0.3, maximum=5, step=0.05),
             label=f' - Reihenhaus',
             unit='€/m²'
         )
         self.rohmiete_params.mfh = Param(
             self.grst_settings.MFH_Rohmiete / 100,
-            DoubleSpinBox(maximum=100, step=0.05),
+            DoubleSpinBox(minimum=0.3, maximum=5, step=0.05),
             label=f' - Mehrfamilienhaus',
             unit='€/m²'
         )
@@ -435,13 +487,13 @@ class Grundsteuer:
         self.sachwert_params.add(Title('Sachwertverfahren', bold=False))
         self.sachwert_params.bodenwert = Param(
             self.grst_settings.Bodenwert_SWV / 100,
-            DoubleSpinBox(maximum=100, step=0.05),
+            DoubleSpinBox(minimum=0.3, maximum=5, step=0.05),
             label=f' - Bodenwert 1935 pro m²',
             unit='€/m²'
         )
         self.sachwert_params.flaeche = Param(
             self.grst_settings.qm_Grundstueck_pro_WE_EFH,
-            SpinBox(maximum=9999, step=1),
+            SpinBox(minimum=300, maximum=2000, step=1),
             label=f' - mittl. Größe Einfamilienhausgrundstücke',
             unit='m²'
         )
@@ -461,6 +513,11 @@ class Grundsteuer:
         if not (Nutzungsart.GEWERBE.value in tou or
                 Nutzungsart.EINZELHANDEL.value in tou):
             self.ui.grundsteuer_bauvolumen_param_group.setVisible(False)
+            # set to 0 as a precaution to not put some old values into
+            # the calculation
+            self.grst_settings.Bueroflaeche = 0
+            self.grst_settings.Verkaufsraeume = 0
+            self.grst_settings.save()
             return
         self.ui.grundsteuer_bauvolumen_param_group.setVisible(True)
         if self.bauvolumen_params:
@@ -476,13 +533,13 @@ class Grundsteuer:
 
         self.bauvolumen_params.bueroflaeche = Param(
             self.grst_settings.Bueroflaeche,
-            SpinBox(maximum=999999, step=10),
+            SpinBox(minimum=0, maximum=99999, step=10),
             label=f' - Bürofläche',
             unit='m²'
         )
         self.bauvolumen_params.verkaufsraeume = Param(
             self.grst_settings.Verkaufsraeume,
-            SpinBox(maximum=999999, step=10),
+            SpinBox(minimum=0, maximum=99999, step=10),
             label=f' - Hallen und Verkaufsräume',
             unit='m²'
         )
@@ -497,6 +554,24 @@ class Grundsteuer:
         self.bauvolumen_params.show(
             title='Voraussichtliches Bauvolumen bearbeiten')
         self.bauvolumen_params.changed.connect(save)
+
+    def calculate(self):
+        #if len(self.ew_wanderung) == 0 and len(self.svb_wanderung) == 0:
+            #QMessageBox.warning(
+                #self.ui, 'Fehler',
+                #'Bitte führen sie zunächst Schätzung der Wanderungssalden '
+                #'(Einwohner und/oder Beschäftige) durch.')
+            #return
+
+        job = GrundsteuerCalculation(self.project)
+
+        def on_success():
+            # ToDo: results layer
+            pass
+
+        self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
+                                     auto_close=True)
+        self.dialog.show()
 
     def close(self):
         if self.hebesatz_params:
@@ -516,7 +591,7 @@ class Gewerbesteuer:
         self.params = None
 
     def load_content(self):
-        self.gemeinden = Gemeinden.features(project=self.project)
+        self.gemeinden = Gemeindebilanzen.features(project=self.project)
         self.setup_params()
 
     def setup_params(self):
@@ -561,9 +636,11 @@ class MunicipalTaxRevenue(Domain):
     layer_group = 'Wirkungsbereich 7 - Kommunale Steuereinnahmen'
 
     def setupUi(self):
+        self.migration_ew = EinwohnerMigration(
+            self.project, self.ui, self.layer_group, self.canvas)
+        self.migration_svb = BeschaeftigtenMigration(
+            self.project, self.ui, self.layer_group, self.canvas)
         self.grundsteuer = Grundsteuer(self.project, self.ui)
-        self.migration_ew = EinwohnerMigration(self.project, self.ui)
-        self.migration_svb = BeschaeftigtenMigration(self.project, self.ui)
         self.gewerbesteuer = Gewerbesteuer(self.project, self.ui)
 
         manual_path = os.path.join(
@@ -579,13 +656,13 @@ class MunicipalTaxRevenue(Domain):
         super().load_content()
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
-        self.gemeinden = Gemeinden.features(create=True)
+        self.gemeinden = Gemeindebilanzen.features(create=True)
         if len(self.gemeinden) == 0:
             self.get_gemeinden()
 
-        self.grundsteuer.load_content()
         self.migration_ew.load_content()
         self.migration_svb.load_content()
+        self.grundsteuer.load_content()
         self.gewerbesteuer.load_content()
 
     def get_gemeinden(self):
@@ -603,6 +680,12 @@ class MunicipalTaxRevenue(Domain):
                 attrs[field] = gemeinde[field]
             attrs['geom'] = gemeinde['geom']
             self.gemeinden.add(**attrs)
+
+    def reset_results(self, fields=['grundsteuer', 'einkommensteuer',
+                                    'gewerbesteuer', 'umsatzsteuer',
+                                    'fam_leistungs_ausgleich']):
+        # ToDo: dataframe columns to 0 and update db
+        pass
 
     def close(self):
         self.migration_ew.close()
