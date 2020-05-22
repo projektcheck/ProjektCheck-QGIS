@@ -178,7 +178,6 @@ class ProgressDialog(Dialog):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
 
-
     def show(self):
         QDialog.show(self)
         if self.auto_run:

@@ -251,10 +251,11 @@ class Projektwirkung(Worker):
             pnt = cell.geom.asPoint()
             destinations.append(Point(pnt.x(), pnt.y(), id=cell.id, epsg=epsg))
         already_calculated = np.unique(self.relations.values('id_markt'))
-        self.markets.filter()
+        self.markets.reset()
         n_markets = len(self.markets)
         progress_step = (progress_end - progress_start) / n_markets
         i = 1
+        results = {}
         for market in self.markets:
             self.log(f' - {market.name} ({i}/{n_markets})')
             if market.id not in already_calculated:
@@ -266,13 +267,18 @@ class Projektwirkung(Worker):
                         origin, destinations, bbox)
                 except Exception as e:
                     self.error.emit(str(e))
-                    continue
-                self.distances_to_db(market.id, destinations, distances,
-                                     beelines)
+                    return
+                results[market.id] = destinations, distances, beelines
+                #self.distances_to_db(market.id, destinations, distances,
+                                     #beelines)
             else:
                 self.log('&nbsp;&nbsp;bereits berechnet, wird übersprungen')
             self.set_progress(progress_start + (i * progress_step))
             i += 1
+        # workaround: ogr crashes when setting relations in loop
+        for market_id, (destinations, distances, beelines) in results.items():
+            self.distances_to_db(market_id, destinations, distances,
+                                 beelines)
 
     def sales_to_db(self, kk_nullfall, kk_planfall):
         '''store the sales matrices in database'''
