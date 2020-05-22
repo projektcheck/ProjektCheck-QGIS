@@ -377,7 +377,7 @@ class Grundsteuer:
         gemeinden = self.project.basedata.get_table(
             'bkg_gemeinden', 'Basisdaten_deutschland').features()
         gem = gemeinden.get(AGS=self.project_frame.ags)
-        is_new_bundesland = int(self.project_frame.ags) > 11000000
+        is_new_bundesland = int(self.project_frame.ags) >= 11000000
         attrs = {'Hebesatz_GrStB': gem.Hebesatz_GrStB,
                  'is_new_bundesland': is_new_bundesland}
 
