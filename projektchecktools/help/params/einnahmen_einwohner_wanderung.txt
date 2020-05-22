@@ -1,4 +1,4 @@
 {
     "tooltip": "Parameter editieren",
-    "beschreibung": ""
+    "beschreibung": "<b>Geschätztes Wanderungssaldo einer Gemeinde ändern (Einwohner)</b><p>An dieser Stelle können Sie das projektbedingte Wanderungssaldo der ausgewählten Gemeinde ändern, also die Zahl der Einwohner/innen, die die Gemeinde im Saldo der Zu- und Fortzüge durch das neue Projekt hinzugewinnt oder verliert.</p><p>Ist die ausgewählte Gemeinde die Projektgemeinde, so muss das Wanderungssaldo positiv (oder 0) sein. Bei allen anderen Gemeinden muss es negativ (oder 0) sein.</p><p>Veränderungen für die ausgewählte Gemeinde verändern auch die Wanderungsbilanz anderer Gemeinden in der Region, weil die Wanderungssalden insgesamt ausgeglichen sein müssen.</p><p>Das von Ihnen eingetragene Wanderungssaldo wird bei nachfolgenden händischen Anpassung für andere Gemeinden nicht mehr automatisch verändert. Bei erzwungenen Neuberechnungen für die Gesamtregion wird hingegen auch das Saldo dieser Gemeinden wieder neu berechnet.</p>"
 }

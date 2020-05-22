@@ -1,4 +1,4 @@
 {
     "tooltip": "Parameter editieren",
-    "beschreibung": ""
+    "beschreibung": "<b>Hebesätze Gewerbesteuer</b><p>Geben Sie hier bitte den aktuellen Hebesatz der Projektgemeinde sowie der umliegenden Gemeinden für die Gewerbesteuer (brutto) als »von-Hundert-Satz« (v.H. entspricht mathematisch dem Prozent) ein.</p>"
 }
