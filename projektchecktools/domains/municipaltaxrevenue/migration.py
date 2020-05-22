@@ -17,12 +17,10 @@ import numpy as np
 
 
 class MigrationCalculation(Worker):
-    _param_projectname = 'projectname'
     rings = [1500, 2500, 3500, 4500, 6500, 8500, 11500, 14500, 18500, 25000]
 
-    def __init__(self, project, typ='Einwohner', parent=None):
+    def __init__(self, project, parent=None):
         super().__init__(parent=parent)
-        self.typ = typ
         self.project = project
         self.areas = Teilflaechen.features(project=project)
         self.gemeinden = Gemeindebilanzen.features(project=project)

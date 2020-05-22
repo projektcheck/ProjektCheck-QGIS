@@ -22,7 +22,6 @@ DEBUG = False
 
 
 class Projektwirkung(Worker):
-    _param_projectname = 'projectname'
 
     def __init__(self, project, recalculate=False, settlement_buffer=3000,
                  markets_buffer=6000, parent=None):

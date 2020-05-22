@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-from projektchecktools.domains.definitions.tables import (Teilflaechen,
-                                                          Projektrahmendaten)
+from projektchecktools.domains.definitions.tables import (
+    Teilflaechen, Projektrahmendaten, Gewerbeanteile, Verkaufsflaechen)
 from projektchecktools.domains.municipaltaxrevenue.tables import (
-    Gemeindebilanzen, GrundsteuerSettings)
+    Gemeindebilanzen, GrundsteuerSettings, EinwohnerWanderung,
+    BeschaeftigtenWanderung)
 from projektchecktools.domains.definitions.tables import Wohneinheiten
 from projektchecktools.base.domain import Worker
 
 
 class GrundsteuerCalculation(Worker):
-    _param_projectname = 'projectname'
-    rings = [1500, 2500, 3500, 4500, 6500, 8500, 11500, 14500, 18500, 25000]
 
     # ToDo: that is not a good way to allocate the fields to the building type
     geb_types_suffix = {
@@ -19,16 +18,12 @@ class GrundsteuerCalculation(Worker):
         4: 'MFH'
     }
 
-    def __init__(self, project, typ='Einwohner', parent=None):
+    def __init__(self, project, parent=None):
         super().__init__(parent=parent)
-        self.typ = typ
         self.project = project
         self.bilanzen = Gemeindebilanzen.features(project=project)
         self.grst_settings = GrundsteuerSettings.features(project=project)[0]
-        self.project_frame = Projektrahmendaten.features(
-            project=self.project)[0]
-        self.messzahlen = self.project.basedata.get_table(
-            'GrSt_Wohnflaeche_und_Steuermesszahlen', 'Einnahmen').features()
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
 
     def work(self):
         self.log('Berechne Grundsteuer...')
@@ -37,10 +32,15 @@ class GrundsteuerCalculation(Worker):
         messbetrag_gewerbe = self.calc_messbetrag_gewerbe()
         gem = self.bilanzen.get(AGS=self.project_frame.ags)
         gst = (messbetrag_wohnen + messbetrag_gewerbe) * gem.Hebesatz_GewSt
+        rnd = 1000 if gst >= 500 else 100
+        gst = round(gst/rnd) * rnd
         gem.grundsteuer = gst
         gem.save()
+        return True
 
     def calc_messbetrag_wohnen(self, is_new_bundesland):
+        messzahlen = self.project.basedata.get_table(
+            'GrSt_Wohnflaeche_und_Steuermesszahlen', 'Einnahmen').features()
         vvf = self.project.basedata.get_table(
             'GrSt_Vervielfaeltiger', 'Einnahmen').features()
         gem_gkl = self.project.basedata.get_table(
@@ -50,7 +50,7 @@ class GrundsteuerCalculation(Worker):
 
         messbetrag_sum = 0
 
-        for m_gt in self.messzahlen:
+        for m_gt in messzahlen:
             geb_typ_id = m_gt.IDGebaeudetyp
             wohnfl = m_gt.Mittlere_Wohnflaeche
             aufschlag = m_gt.Aufschlag_Garagen_Carport
@@ -77,3 +77,145 @@ class GrundsteuerCalculation(Worker):
         ewert = (1685 * self.grst_settings.Bueroflaeche +
                  800 * self.grst_settings.Verkaufsraeume) * 0.1554
         return ewert * 0.0035
+
+
+class EinkommensteuerCalculation(Worker):
+
+    def __init__(self, project, parent=None):
+        super().__init__(parent=parent)
+        self.project = project
+        self.bilanzen = Gemeindebilanzen.features(project=project)
+        self.wanderung = EinwohnerWanderung.features(project=project)
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
+        self.we = Wohneinheiten.features()
+
+    def work(self):
+        self.log('Berechne Einkommensteuer...')
+        est_pro_wes = self.project.basedata.get_table(
+            'ESt_Einnahmen_pro_WE', 'Einnahmen').features().filter(
+                AGS2=self.project_frame.ags[:2],
+                Gemeindetyp=self.project_frame.gemeinde_typ
+            )
+        est_gesamt = 0
+        for est_pro_we_geb_typ in est_pro_wes:
+            geb_typ_id = est_pro_we_geb_typ.IDGebaeudetyp
+            anzahl_we = sum(
+                self.we.filter(id_gebaeudetyp=geb_typ_id).values('we'))
+            est = anzahl_we * est_pro_we_geb_typ.ESt_pro_WE
+            est_gesamt += est
+        project_gem = self.wanderung.get(AGS=self.project_frame.ags)
+        est_pro_ew = est_gesamt / project_gem.zuzug
+
+        for gem in self.bilanzen:
+            wanderung = self.wanderung.get(AGS=gem.AGS)
+            if not wanderung:
+                continue
+            est = est_pro_ew * wanderung.saldo
+            rnd = 1000 if abs(est) >= 500 else 100
+            est = round(est/rnd) * rnd
+            gem.einkommensteuer = est
+            gem.save()
+
+        return True
+
+
+class FamAusgleichCalculation(Worker):
+
+    def __init__(self, project, parent=None):
+        super().__init__(parent=parent)
+        self.project = project
+        self.bilanzen = Gemeindebilanzen.features(project=project)
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
+
+    def work(self):
+        self.log('Berechne Familienleistungsausgleich...')
+        fla_factor = self.project.basedata.get_table(
+            'FLA_Landesfaktoren', 'Einnahmen').features().get(
+                AGS_Land=self.project_frame.ags[:2]
+            ).FLA_Faktor
+
+        for gem in self.bilanzen:
+            fla = gem.einkommensteuer * fla_factor
+            rnd = 1000 if abs(fla) >= 500 else 100
+            fla = round(fla/rnd) * rnd
+            gem.fam_leistungs_ausgleich = fla
+            gem.save()
+
+        return True
+
+
+class GewerbesteuerCalculation(Worker):
+
+    def __init__(self, project, parent=None):
+        super().__init__(parent=parent)
+        self.project = project
+        self.bilanzen = Gemeindebilanzen.features(project=project)
+        self.wanderung = BeschaeftigtenWanderung.features(project=project)
+        self.project_frame = Projektrahmendaten.features(project=project)[0]
+        self.areas = Teilflaechen.features(project=project)
+        self.gewerbe_anteile = Gewerbeanteile.features(project=project)
+        self.verkaufsflaechen = Verkaufsflaechen.features(project=project)
+
+    def work(self):
+        self.log('Berechne Gewerbesteuer...')
+        messbetrag_g, svb_g = self.calc_messbetrag_gewerbe()
+        messbetrag_eh, svb_eh = self.calc_messbetrag_einzelhandel()
+        messbetrag_pro_svb = (messbetrag_g + messbetrag_eh) / (svb_g + svb_eh)
+
+        bvv_plus_lvv_plus_ehz = self.project.basedata.get_table(
+            'GewSt_Umlage_Vervielfaeltiger', 'Einnahmen').features().get(
+                AGS_Land=self.project_frame.ags[:2]
+            ).Summe_BVV_LVV_EHZ
+
+        for gem in self.bilanzen:
+            wanderung = self.wanderung.get(AGS=gem.AGS)
+            if not wanderung:
+                continue
+            saldo = wanderung.saldo
+            if gem.AGS == self.project_frame.ags:
+                saldo += svb_eh
+            gst = (messbetrag_pro_svb * gem.Hebesatz_GewSt / 100 * saldo *
+                   (1 - bvv_plus_lvv_plus_ehz / gem.Hebesatz_GewSt))
+            rnd = 1000 if gst >= 500 else 100
+            gst = round(gst/rnd) * rnd
+            gem.gewerbesteuer = gst
+            gem.save()
+
+        return True
+
+    def calc_messbetrag_gewerbe(self):
+        messzahlen = self.project.basedata.get_table(
+            'GewSt_Messbetrag_pro_Arbeitsplatz', 'Einnahmen').features().filter(
+                AGS2=self.project_frame.ags[:2])
+        messbetrag_sum = 0
+        svb_sum = 0
+        for area in self.areas:
+            anteile = self.gewerbe_anteile.filter(id_teilflaeche=area.id)
+            estimated = sum(anteile.values('anzahl_jobs_schaetzung'))
+            svb = area.ap_gesamt
+            svb_sum += svb
+            cor_factor = svb / estimated if estimated > 0 else 0
+            for anteil in anteile:
+                m_bt = messzahlen.get(IDBranche=anteil.id_branche)
+                betrag = (area.ap_gesamt * cor_factor *
+                          m_bt.GewStMessbetrag_pro_Arbeitsplatz)
+                messbetrag_sum += betrag
+
+        return messbetrag_sum, svb_sum
+
+    def calc_messbetrag_einzelhandel(self):
+        messzahlen = self.project.basedata.get_table(
+            'GewSt_Messbetrag_und_SvB_pro_qm_Verkaufsflaeche',
+            'Einnahmen').features()
+        df_vkfl = self.verkaufsflaechen.to_pandas()
+        messbetrag_sum = 0
+        svb_sum = 0
+        for id_sortiment, vkfl in df_vkfl.groupby('id_sortiment'):
+            m_s = messzahlen.get(ID_Sortiment=id_sortiment)
+            vkfl_sum = vkfl['verkaufsflaeche_qm'].sum()
+            betrag = (vkfl_sum * m_s.GewStMessbetrag_pro_qm_Verkaufsflaeche)
+            svb = (vkfl_sum * m_s.SvB_pro_qm_Verkaufsflaeche)
+            messbetrag_sum += betrag
+            svb_sum += svb
+        return messbetrag_sum, svb_sum
+

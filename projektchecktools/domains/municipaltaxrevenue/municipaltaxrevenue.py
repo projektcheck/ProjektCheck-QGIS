@@ -6,11 +6,13 @@ from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.domains.municipaltaxrevenue.tables import (
-    Gemeindebilanzen, EinwohnerWanderung, BeschaeftigtenWanderung, GrundsteuerSettings)
+    Gemeindebilanzen, EinwohnerWanderung, BeschaeftigtenWanderung,
+    GrundsteuerSettings)
 from projektchecktools.domains.municipaltaxrevenue.migration import (
     EwMigrationCalculation, SvBMigrationCalculation, MigrationCalculation)
 from projektchecktools.domains.municipaltaxrevenue.tax import (
-    GrundsteuerCalculation)
+    GrundsteuerCalculation, EinkommensteuerCalculation,
+    FamAusgleichCalculation, GewerbesteuerCalculation)
 from projektchecktools.domains.definitions.tables import (
     Projektrahmendaten, Teilflaechen)
 from projektchecktools.domains.constants import Nutzungsart
@@ -559,13 +561,13 @@ class Grundsteuer:
         #if len(self.ew_wanderung) == 0 and len(self.svb_wanderung) == 0:
             #QMessageBox.warning(
                 #self.ui, 'Fehler',
-                #'Bitte führen sie zunächst Schätzung der Wanderungssalden '
+                #'Bitte führen Sie zunächst Schätzung der Wanderungssalden '
                 #'(Einwohner und/oder Beschäftige) durch.')
             #return
 
         job = GrundsteuerCalculation(self.project)
 
-        def on_success():
+        def on_success(r):
             # ToDo: results layer
             pass
 
@@ -588,6 +590,7 @@ class Gewerbesteuer:
     def __init__(self, project, ui):
         self.project = project
         self.ui = ui
+        self.ui.calc_gewerbesteuer_button.clicked.connect(self.calculate)
         self.params = None
 
     def load_content(self):
@@ -621,6 +624,23 @@ class Gewerbesteuer:
                          scrollable=True)
         self.params.changed.connect(save)
 
+    def calculate(self):
+        if len(BeschaeftigtenWanderung.features()) == 0:
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Bitte führen Sie zunächst die Schätzung der Wanderungssalden '
+                '(Beschäftigte) durch.')
+            return
+        job = GewerbesteuerCalculation(self.project)
+
+        def on_success(r):
+            # ToDo: results layer
+            pass
+
+        self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
+                                     auto_close=True)
+        self.dialog.show()
+
     def close(self):
         if self.params:
             self.params.close()
@@ -652,6 +672,11 @@ class MunicipalTaxRevenue(Domain):
         self.ui.result_help_button.clicked.connect(
             lambda: open_file(result_help_path))
 
+        self.ui.calc_einkommensteuer_button.clicked.connect(
+            self.calc_einkommensteuer)
+        self.ui.calc_fla_button.clicked.connect(
+            self.calc_fam_ausgleich)
+
     def load_content(self):
         super().load_content()
         self.project_frame = Projektrahmendaten.features(
@@ -680,6 +705,40 @@ class MunicipalTaxRevenue(Domain):
                 attrs[field] = gemeinde[field]
             attrs['geom'] = gemeinde['geom']
             self.gemeinden.add(**attrs)
+
+    def calc_einkommensteuer(self):
+        if len(self.migration_ew.wanderung) == 0:
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Bitte führen Sie zunächst die Schätzung der Wanderungssalden '
+                '(Einwohner) durch.')
+            return
+        job = EinkommensteuerCalculation(self.project)
+
+        def on_success(r):
+            # ToDo: results layer
+            pass
+
+        self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
+                                     auto_close=True)
+        self.dialog.show()
+
+    def calc_fam_ausgleich(self):
+        if sum([abs(gem.einkommensteuer) for gem in self.gemeinden]) == 0:
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Bitte führen Sie zunächst die Schätzung der Einkommensteuer '
+                'durch.')
+            return
+        job = FamAusgleichCalculation(self.project)
+
+        def on_success(r):
+            # ToDo: results layer
+            pass
+
+        self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
+                                     auto_close=True)
+        self.dialog.show()
 
     def reset_results(self, fields=['grundsteuer', 'einkommensteuer',
                                     'gewerbesteuer', 'umsatzsteuer',

@@ -516,6 +516,8 @@ class ParamsDialog(Dialog):
         self.adjustSize()
 
     def show_help(self, text, hide_back=False, expand=False):
+        if not text:
+            return
         self.help_text_edit.setText(text)
         if expand:
             self.details_button.setChecked(True)
