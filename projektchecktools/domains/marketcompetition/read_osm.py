@@ -58,6 +58,9 @@ class ReadOSMWorker(ReadMarketsWorker):
         self.log(f'{len(markets)} Märkte gefunden')
         self.log('Verschneide gefundene Märkte...')
 
+        # not only the selected communities (else buffer is cut)
+        communities = Centers.features(project=self.project).filter(
+            nutzerdefiniert=-1)
         in_com_ids = intersect(markets, communities, input_fields=['id'],
                                epsg=self.epsg)
         in_com_ids = [i['id'] for i in in_com_ids]

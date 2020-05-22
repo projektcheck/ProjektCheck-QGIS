@@ -774,7 +774,7 @@ class SupermarketsCompetition(Domain):
             dialog.show()
 
     def read_osm(self):
-        buffer = self.ui.osm_buffer_input \
+        buffer = self.ui.osm_buffer_input.value() \
             if self.ui.osm_buffer_check.isChecked() else 0
         job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
                             buffer=buffer, truncate=False)
@@ -793,6 +793,7 @@ class SupermarketsCompetition(Domain):
             self.markets.filter(is_osm=True).delete()
             self.nullfall_edit.fill_combo()
             self.canvas.refreshAllLayers()
+            self.markets.filter()
 
     def calculate(self):
         job = Projektwirkung(self.project, recalculate=False)
