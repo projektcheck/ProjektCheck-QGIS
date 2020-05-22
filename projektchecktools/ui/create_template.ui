@@ -108,13 +108,6 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="check_on_start">
-     <property name="text">
-      <string>Kurzanleitung zum Ausfüllen anzeigen</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <spacer name="verticalSpacer_3">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

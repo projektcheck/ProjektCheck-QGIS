@@ -1,5 +1,6 @@
 from qgis.PyQt.QtWidgets import QMessageBox
 import numpy as np
+import os
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.dialogs import ProgressDialog
@@ -13,6 +14,7 @@ from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.params import Params, Param, Title, Seperator
 from projektchecktools.base.inputs import DoubleSpinBox, SpinBox
+from projektchecktools.utils.utils import open_file
 
 
 class Migration:
@@ -563,6 +565,15 @@ class MunicipalTaxRevenue(Domain):
         self.migration_ew = EinwohnerMigration(self.project, self.ui)
         self.migration_svb = BeschaeftigtenMigration(self.project, self.ui)
         self.gewerbesteuer = Gewerbesteuer(self.project, self.ui)
+
+        manual_path = os.path.join(
+            self.settings.HELP_PATH, 'Anleitung_Kommunale_Steuereinnahmen.pdf')
+        self.ui.manual_button.clicked.connect(lambda: open_file(manual_path))
+        result_help_path = os.path.join(
+            self.settings.HELP_PATH,
+            'Hinweise_zur_Ergebnisinterpretation_Kommunale_Einnahmen.pdf')
+        self.ui.result_help_button.clicked.connect(
+            lambda: open_file(result_help_path))
 
     def load_content(self):
         super().load_content()

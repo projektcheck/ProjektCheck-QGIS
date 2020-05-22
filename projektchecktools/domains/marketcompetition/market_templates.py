@@ -110,9 +110,9 @@ class MarketTemplate(QObject):
     progress = pyqtSignal(int)
 
     template_types = {
-        'CSV-Datei': ('.csv', 'ProjektCheck_Anleitung_WB7_Erfassungsvorlage_Maerkte_CSVDatei_befuellen.pdf'),
-        'Exceldatei': ('.xlsx', 'ProjektCheck_Anleitung_WB7_Erfassungsvorlage_Maerkte_Exceldatei_befuellen.pdf'),
-        'Shapefile': ('.shp', 'ProjektCheck_Anleitung_WB7_Erfassungsvorlage_Maerkte_ShapeFile_befuellen.pdf')
+        'CSV-Datei': ('.csv', 'Template_Ausfuellhilfe_CSV.pdf'),
+        'Exceldatei': ('.xlsx', 'Template_Ausfuellhilfe_Excel.pdf'),
+        'Shapefile': ('.shp', 'Template_Ausfuellhilfe_Shapefile.pdf')
      }
 
     _required_fields = OrderedDict([

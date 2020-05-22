@@ -635,7 +635,7 @@ padding: 2px;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_40">
+              <widget class="QPushButton" name="result_help_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>

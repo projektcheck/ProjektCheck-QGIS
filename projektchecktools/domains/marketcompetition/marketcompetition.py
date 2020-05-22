@@ -1,4 +1,4 @@
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QInputDialog
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import QObject, pyqtSignal
@@ -18,7 +18,8 @@ from projektchecktools.base.tools import (FeaturePicker, MapClickedTool,
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.base.params import Params, Param, Seperator
 from projektchecktools.base.inputs import LineEdit, ComboBox, Checkbox
-from projektchecktools.utils.utils import center_canvas, clear_layout, get_ags
+from projektchecktools.utils.utils import (center_canvas, clear_layout,
+                                           get_ags, open_file)
 from projektchecktools.domains.marketcompetition.projektwirkung import (
     Projektwirkung)
 
@@ -699,6 +700,8 @@ class SupermarketsCompetition(Domain):
         self.ui.osm_buffer_input.setEnabled(False)
         self.ui.osm_buffer_slider.setEnabled(False)
 
+        self.ui.template_help_button.clicked.connect(self.show_template_help)
+
     def load_content(self):
         self.centers = Centers.features()
         self.markets = Markets.features(create=True)
@@ -707,6 +710,16 @@ class SupermarketsCompetition(Domain):
         self.planfall_edit.load_content()
         self.changed_edit.load_content()
         self.center_edit.load_content()
+
+    def show_template_help(self):
+        types = MarketTemplate.template_types.keys()
+        typ, ok = QInputDialog.getItem(
+            self.ui, 'Ausfüllhilfe anzeigen',
+            'Dateiformat', types, 0, False)
+        if ok:
+            fn = os.path.join(self.settings.HELP_PATH,
+                              MarketTemplate.template_types[typ][1])
+            open_file(fn)
 
     def show_markets_and_centers(self, zoom_to=True):
         self.planfall_edit.add_layer()
