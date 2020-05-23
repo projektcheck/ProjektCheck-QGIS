@@ -84,13 +84,17 @@ class Layer(ABC):
         return found
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
-             filter=None, expanded=True, prepend=False):
+             filter=None, expanded=True, prepend=False, uncheck_siblings=False):
         if not self.layer:
             layers = Layer.find(label, groupname=self.groupname)
             if layers:
                 self.layer = layers[0].layer()
         if redraw:
             self.remove()
+
+        if uncheck_siblings:
+            for layer in self.root.children():
+                layer.setItemVisibilityChecked(False)
 
         if not self.layer:
             self.layer = QgsVectorLayer(self.data_path, self.layername, "ogr")

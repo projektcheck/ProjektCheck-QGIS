@@ -1,6 +1,7 @@
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 import numpy as np
+from qgis import utils
 import os
 
 from projektchecktools.base.domain import Domain
@@ -190,7 +191,8 @@ class EinwohnerMigration(Migration):
             self.wanderung.table, groupname=self.layer_group)
         self.output.draw(
             label='Wanderungssalden Einwohner',
-            style_file='einnahmen_einwohnerwanderung.qml'
+            style_file='einnahmen_einwohnerwanderung.qml',
+            expanded=False, uncheck_siblings=True, redraw=False
         )
         self.output.zoom_to()
 
@@ -349,7 +351,8 @@ class BeschaeftigtenMigration(Migration):
             self.wanderung.table, groupname=self.layer_group)
         self.output.draw(
             label='Wanderungssalden Beschäftigte',
-            style_file='einnahmen_beschaeftigtenwanderung.qml'
+            style_file='einnahmen_beschaeftigtenwanderung.qml',
+            expanded=False, uncheck_siblings=True, redraw=False
         )
         self.output.zoom_to()
 
@@ -357,10 +360,11 @@ class BeschaeftigtenMigration(Migration):
 class Grundsteuer(QObject):
     changed = pyqtSignal()
 
-    def __init__(self, project, ui):
+    def __init__(self, project, ui, layer_group):
         super().__init__()
         self.project = project
         self.ui = ui
+        self.layer_group = layer_group
 
         self.ui.calc_grundsteuer_button.clicked.connect(self.calculate)
 
@@ -607,8 +611,9 @@ class Grundsteuer(QObject):
 class Gewerbesteuer(QObject):
     changed = pyqtSignal()
 
-    def __init__(self, project, ui):
+    def __init__(self, project, ui, layer_group):
         super().__init__()
+        self.layer_group = layer_group
         self.project = project
         self.ui = ui
         self.ui.calc_gewerbesteuer_button.clicked.connect(self.calculate)
@@ -656,13 +661,23 @@ class Gewerbesteuer(QObject):
         job = GewerbesteuerCalculation(self.project)
 
         def on_success(r):
-            # ToDo: results layer
-            pass
+            self.add_layer()
 
         self.changed.emit()
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
                                      auto_close=True)
         self.dialog.show()
+
+    def add_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.gemeinden.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Gewerbesteuer',
+            style_file='einnahmen_gewerbesteuer.qml',
+            filter="gewerbesteuer != 'NULL'",
+            expanded=False, uncheck_siblings=True, redraw=False
+        )
+        self.output.zoom_to()
 
     def close(self):
         if self.params:
@@ -683,8 +698,9 @@ class MunicipalTaxRevenue(Domain):
             self.project, self.ui, self.layer_group, self.canvas)
         self.migration_svb = BeschaeftigtenMigration(
             self.project, self.ui, self.layer_group, self.canvas)
-        self.grundsteuer = Grundsteuer(self.project, self.ui)
-        self.gewerbesteuer = Gewerbesteuer(self.project, self.ui)
+        self.grundsteuer = Grundsteuer(self.project, self.ui, self.layer_group)
+        self.gewerbesteuer = Gewerbesteuer(self.project, self.ui,
+                                           self.layer_group)
 
         manual_path = os.path.join(
             self.settings.HELP_PATH, 'Anleitung_Kommunale_Steuereinnahmen.pdf')
@@ -701,6 +717,8 @@ class MunicipalTaxRevenue(Domain):
             self.calc_fam_ausgleich)
         self.ui.calc_umsatzsteuer_button.clicked.connect(
             self.calc_umsatzsteuer)
+        self.ui.calc_gesamtsumme_button.clicked.connect(
+            self.calc_gesamtsumme)
 
         self.migration_ew.changed.connect(
             lambda: self.reset_results(
@@ -831,7 +849,13 @@ class MunicipalTaxRevenue(Domain):
                               'umsatzsteuer', 'fam_leistungs_ausgleich',
                               'summe_einnahmen']):
         # ToDo: dataframe columns to 0 and update db
-        pass
+        bilanzen = Gemeindebilanzen.features(create=True)
+        df_bilanzen = bilanzen.to_pandas()
+        for field in fields:
+            df_bilanzen[field] = None
+        bilanzen.update_pandas(df_bilanzen)
+        canvas = utils.iface.mapCanvas()
+        canvas.refreshAllLayers()
 
     @staticmethod
     def reset_gewerbe_einzelhandel():
