@@ -1,7 +1,7 @@
 from qgis.core import QgsNetworkAccessManager
 from qgis.PyQt.QtNetwork import QNetworkRequest
-from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer, QUrlQuery, QObject
-from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtCore import (QUrl, QEventLoop, QTimer, QUrlQuery,
+                              QObject, pyqtSignal)
 import json
 
 

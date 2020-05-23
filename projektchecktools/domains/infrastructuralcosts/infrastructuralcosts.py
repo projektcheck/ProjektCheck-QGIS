@@ -10,9 +10,9 @@ from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.tools import FeaturePicker, MapClickedTool
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.params import (Params, Param, Title, Seperator,
-                                      SumDependency)
+                                           SumDependency)
 from projektchecktools.base.inputs import (SpinBox, ComboBox, LineEdit,
-                                      Slider, DoubleSpinBox)
+                                           Slider, DoubleSpinBox)
 from projektchecktools.base.dialogs import ProgressDialog
 
 from .diagrams import (GesamtkostenDiagramm, KostentraegerDiagramm,

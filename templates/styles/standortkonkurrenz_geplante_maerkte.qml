@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
 <qgis styleCategories="Symbology|Labeling" version="3.4.11-Madeira" labelsEnabled="1">
-  <renderer-v2 type="categorizedSymbol" attr="IF (&quot;id_betriebstyp_nullfall&quot; >0 AND &quot;id_betriebstyp_nullfall&quot;!=&quot;id_betriebstyp_planfall&quot;, &quot;id_betriebstyp_planfall&quot;, NULL)" symbollevels="0" forceraster="0" enableorderby="0">
+  <renderer-v2 type="categorizedSymbol" attr="id_betriebstyp_planfall" symbollevels="0" forceraster="0" enableorderby="0">
     <categories>
       <category value="1" label="kleiner Nahversorgungsmarkt" symbol="0" render="true"/>
       <category value="2" label="kleiner Supermarkt" symbol="1" render="true"/>
@@ -21,7 +21,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -50,7 +50,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -79,7 +79,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -108,7 +108,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -137,7 +137,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -166,7 +166,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -195,7 +195,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
@@ -226,7 +226,7 @@
           <prop k="offset" v="0.00000000000000006,0"/>
           <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="230,230,0,255"/>
+          <prop k="outline_color" v="217,0,112,255"/>
           <prop k="outline_style" v="solid"/>
           <prop k="outline_width" v="0.6"/>
           <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>

@@ -64,9 +64,6 @@ class GeoserverQuery(object):
 
 
 class EinrichtungenQuery(Worker):
-
-    _param_projectname = 'projectname'
-    _workspace = 'FGDB_Erreichbarkeit.gdb'
     cutoff = None
 
     categories = [u'Kita', u'Autobahnanschlussstelle', u'Dienstleistungen',

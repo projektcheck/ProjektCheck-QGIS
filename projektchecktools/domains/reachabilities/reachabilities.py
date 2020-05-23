@@ -152,8 +152,6 @@ class Reachabilities(Domain):
             job, parent=self.ui,
             on_success=lambda project: on_success(project, date))
         dialog.show()
-        #job.work()
-        #on_success(None, date)
 
     def fill_haltestellen(self):
         last_calc = self.project_frame.haltestellen_berechnet

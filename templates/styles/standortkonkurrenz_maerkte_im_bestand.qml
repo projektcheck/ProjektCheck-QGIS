@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
 <qgis styleCategories="Symbology|Labeling" version="3.4.11-Madeira" labelsEnabled="1">
-  <renderer-v2 type="categorizedSymbol" attr="IF (&quot;id_betriebstyp_nullfall&quot; =&quot;id_betriebstyp_planfall&quot;, &quot;id_betriebstyp_nullfall&quot;, NULL)" symbollevels="0" forceraster="0" enableorderby="0">
+  <renderer-v2 type="categorizedSymbol" attr="id_betriebstyp_nullfall" symbollevels="0" forceraster="0" enableorderby="0">
     <categories>
       <category value="1" label="kleiner Nahversorgungsmarkt" symbol="0" render="true"/>
       <category value="2" label="kleiner Supermarkt" symbol="1" render="true"/>

@@ -1,0 +1,5 @@
+{
+    "tooltip": "Parameter editieren",
+    "beschreibung": "<b>Hebesatz Grundsteuer B</b><p>Geben Sie hier bitte den aktuellen Hebesatz der Projektgemeinde für die Grundsteuer B als »von-Hundert-Satz« (v.H. entspricht mathematisch dem Prozent) ein.</p>",
+    "hebesatz": "<b>Hebesatz Grundsteuer B</b><p>Geben Sie hier bitte den aktuellen Hebesatz der Projektgemeinde für die Grundsteuer B als »von-Hundert-Satz« (v.H. entspricht mathematisch dem Prozent) ein.</p>"
+}

@@ -1,0 +1,7 @@
+{
+    "tooltip": "Parameter editieren",
+    "beschreibung": "<b>Mit dieser Funktion können Sie die Eigenschaften von neuen Lebensmittelmärkten im Planfall editieren.</b><p>Dabei können den Namen eines neuen Marktes eintragen oder verändern und ihn einer Handelskette und einem Betriebstyp zuordnen.</p><p>Nehmen Sie Ihre Eintragungen bei den Eingabefeldern »Name des Marktes«, »Handelskette« und »Betriebstyp« vor.<br>Zum Abschluss klicken Sie »OK«.</p>",
+    "name": "<b>Ändern Sie hier den Namen des ausgewählten neuen Marktes im Planfall, indem Sie den aktuellen Eintrag überschreiben.</b>",
+    "typ": "<b>Wählen Sie hier den Betriebstyp aus, der den ausgewählten neuen Markt im Planfall am besten beschreibt.</b><p>Wählen Sie bei Discountern immer den Betriebstyp »Discounter«. Für alle anderen Märkte orientieren Sie sich bitte für die Auswahl an der geplanten Verkaufsfläche.</p>",
+    "kette": "<b>Wählen Sie hier die Handelskette aus, zu der der neue Markt im Planfall gehört.</b><p>Falls der Markt zu keiner Handelskette gehört oder die Handelskette nicht aufgeführt ist, wählen Sie »nicht aufgeführt«.</p>"
+}

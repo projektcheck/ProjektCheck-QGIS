@@ -1,6 +1,6 @@
 from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsProject, QgsSymbol,
-                       QgsSimpleFillSymbolLayer,
+                       QgsSimpleFillSymbolLayer, QgsRectangle,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer)
 from qgis.PyQt.QtGui import QIcon
 import os
@@ -50,6 +50,17 @@ def set_category_renderer(layer, column, start_color, end_color,
     renderer = QgsCategorizedSymbolRenderer(column, categories)
     layer.setRenderer(renderer)
 
+def center_canvas(canvas, point, crs=None):
+    rect = QgsRectangle(point, point)
+    if crs:
+        transform = QgsCoordinateTransform(
+            crs,
+            canvas.mapSettings().destinationCrs(),
+            QgsProject.instance()
+        )
+    canvas.setExtent(transform.transform(rect))
+    canvas.refresh()
+
 def add_selection_icons(toolbox):
 
     triangle_right = QIcon(os.path.join(
@@ -92,6 +103,8 @@ def get_ags(features, basedata, source_crs=None, use_centroid=False):
 
     Raises
     ------
+    Exception
+        feature is within multiple communities or in none
     """
     workspace = basedata.get_workspace('Basisdaten_deutschland')
     ags_table = workspace.get_table('bkg_gemeinden')
@@ -101,7 +114,7 @@ def get_ags(features, basedata, source_crs=None, use_centroid=False):
     ags_feats = []
 
     for feat in features:
-        geom = feat.geometry()
+        geom = feat.geom if hasattr(feat, 'geom') else feat.geometry()
         if (source_crs):
             tr = QgsCoordinateTransform(
                 source_crs, target_crs, QgsProject.instance())
