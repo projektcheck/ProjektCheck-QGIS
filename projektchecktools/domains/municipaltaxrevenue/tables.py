@@ -18,6 +18,7 @@ class Gemeindebilanzen(ProjectTable):
     gewerbesteuer = Field(int, 0)
     umsatzsteuer = Field(int, 0)
     fam_leistungs_ausgleich = Field(int, 0)
+    summe_einnahmen = Field(int, 0)
 
     class Meta:
         workspace = 'einnahmen'

@@ -1,4 +1,5 @@
 from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 import numpy as np
 import os
 
@@ -22,9 +23,11 @@ from projektchecktools.base.inputs import DoubleSpinBox, SpinBox
 from projektchecktools.utils.utils import open_file
 
 
-class Migration:
+class Migration(QObject):
+    changed = pyqtSignal()
 
     def __init__(self, project, ui, layer_group, canvas):
+        super().__init__()
         self.layer_group = layer_group
         self.canvas = canvas
         self.project = project
@@ -76,8 +79,11 @@ class EinwohnerMigration(Migration):
         job = EwMigrationCalculation(self.project)
 
         def on_close():
+            self.changed.emit()
             if not self.dialog.success:
-                # ToDo: remove results
+                self.wanderung.table.truncate()
+                self.ui.recalculate_inhabitants_check.setVisible(False)
+                self.ui.recalculate_inhabitants_check.setChecked(True)
                 return
             self.ui.recalculate_inhabitants_check.setVisible(True)
             self.ui.recalculate_inhabitants_check.setChecked(False)
@@ -172,6 +178,7 @@ class EinwohnerMigration(Migration):
         def save():
             # ToDo: remove results depending on this
             self.wanderung.update_pandas(self.df_wanderung)
+            self.changed.emit()
             self.canvas.refreshAllLayers()
 
         self.params.show(title='Geschätzte Salden (Einwohner) bearbeiten',
@@ -221,8 +228,11 @@ class BeschaeftigtenMigration(Migration):
         job = SvBMigrationCalculation(self.project)
 
         def on_close():
+            self.changed.emit()
             if not self.dialog.success:
-                # ToDo: remove results of this calculation
+                self.wanderung.table.truncate()
+                self.ui.recalculate_inhabitants_check.setVisible(False)
+                self.ui.recalculate_inhabitants_check.setChecked(True)
                 return
             self.ui.recalculate_jobs_check.setVisible(True)
             self.ui.recalculate_jobs_check.setChecked(False)
@@ -344,8 +354,11 @@ class BeschaeftigtenMigration(Migration):
         self.output.zoom_to()
 
 
-class Grundsteuer:
+class Grundsteuer(QObject):
+    changed = pyqtSignal()
+
     def __init__(self, project, ui):
+        super().__init__()
         self.project = project
         self.ui = ui
 
@@ -409,6 +422,7 @@ class Grundsteuer:
         )
 
         def save():
+            self.changed.emit()
             self.grst_settings.Hebesatz_GrStB = \
                 self.hebesatz_params.hebesatz.value
             self.grst_settings.save()
@@ -459,6 +473,7 @@ class Grundsteuer:
         )
 
         def save():
+            self.changed.emit()
             self.grst_settings.EFH_Rohmiete = round(
                 self.rohmiete_params.efh.value * 100)
             self.grst_settings.DHH_Rohmiete = round(
@@ -501,6 +516,7 @@ class Grundsteuer:
         )
 
         def save():
+            self.changed.emit()
             self.grst_settings.Bodenwert_SWV = round(
                 self.sachwert_params.bodenwert.value * 100)
             self.grst_settings.qm_Grundstueck_pro_WE_EFH = \
@@ -547,6 +563,7 @@ class Grundsteuer:
         )
 
         def save():
+            self.changed.emit()
             self.grst_settings.Bueroflaeche = \
                 self.bauvolumen_params.bueroflaeche.value
             self.grst_settings.Verkaufsraeume = \
@@ -561,7 +578,7 @@ class Grundsteuer:
         #if len(self.ew_wanderung) == 0 and len(self.svb_wanderung) == 0:
             #QMessageBox.warning(
                 #self.ui, 'Fehler',
-                #'Bitte führen Sie zunächst Schätzung der Wanderungssalden '
+                #'Bitte führen Sie zunächst die Schätzung der Wanderungssalden '
                 #'(Einwohner und/oder Beschäftige) durch.')
             #return
 
@@ -571,6 +588,7 @@ class Grundsteuer:
             # ToDo: results layer
             pass
 
+        self.changed.emit()
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
                                      auto_close=True)
         self.dialog.show()
@@ -586,8 +604,11 @@ class Grundsteuer:
             self.bauvolumen_params.close()
 
 
-class Gewerbesteuer:
+class Gewerbesteuer(QObject):
+    changed = pyqtSignal()
+
     def __init__(self, project, ui):
+        super().__init__()
         self.project = project
         self.ui = ui
         self.ui.calc_gewerbesteuer_button.clicked.connect(self.calculate)
@@ -615,6 +636,7 @@ class Gewerbesteuer:
             self.params.add(param, name=gemeinde.AGS)
 
         def save():
+            self.changed.emit()
             for gemeinde in self.gemeinden:
                 param = self.params[gemeinde.AGS]
                 gemeinde.Hebesatz_GewSt = param.value
@@ -637,6 +659,7 @@ class Gewerbesteuer:
             # ToDo: results layer
             pass
 
+        self.changed.emit()
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
                                      auto_close=True)
         self.dialog.show()
@@ -676,6 +699,22 @@ class MunicipalTaxRevenue(Domain):
             self.calc_einkommensteuer)
         self.ui.calc_fla_button.clicked.connect(
             self.calc_fam_ausgleich)
+        self.ui.calc_umsatzsteuer_button.clicked.connect(
+            self.calc_umsatzsteuer)
+
+        self.migration_ew.changed.connect(
+            lambda: self.reset_results(
+                fields=['grundsteuer', 'einkommensteuer',
+                        'fam_leistungs_ausgleich', 'summe_einnahmen']))
+        self.migration_svb.changed.connect(
+            lambda: self.reset_results(
+                fields=['gewerbesteuer', 'umsatzsteuer', 'summe_einnahmen']))
+        self.grundsteuer.changed.connect(
+            lambda: self.reset_results(
+                fields=['grundsteuer', 'summe_einnahmen']))
+        self.gewerbesteuer.changed.connect(
+            lambda: self.reset_results(
+                fields=['gewerbesteuer', 'umsatzsteuer', 'summe_einnahmen']))
 
     def load_content(self):
         super().load_content()
@@ -719,6 +758,8 @@ class MunicipalTaxRevenue(Domain):
             # ToDo: results layer
             pass
 
+        self.reset_results(fields=['fam_leistungs_ausgleich',
+                                   'summe_einnahmen'])
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
                                      auto_close=True)
         self.dialog.show()
@@ -736,14 +777,68 @@ class MunicipalTaxRevenue(Domain):
             # ToDo: results layer
             pass
 
+        self.reset_results(fields=['summe_einnahmen'])
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
                                      auto_close=True)
         self.dialog.show()
 
-    def reset_results(self, fields=['grundsteuer', 'einkommensteuer',
-                                    'gewerbesteuer', 'umsatzsteuer',
-                                    'fam_leistungs_ausgleich']):
+    def calc_umsatzsteuer(self):
+        if sum([abs(gem.gewerbesteuer) for gem in self.gemeinden]) == 0:
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Bitte führen Sie zunächst die Schätzung der Gewerbesteuer '
+                'durch.')
+            return
+        ust_base = self.basedata.get_table(
+            'USt_Kennwerte', 'Einnahmen').features()[0]
+        factor_gst = ust_base.GemAnt_USt_EUR_pro_EUR_GewSt
+        factor_svb = ust_base.GemANt_USt_EUR_pro_SvB
+        for gem in self.gemeinden:
+            wanderung = self.migration_svb.wanderung.get(AGS=gem.AGS)
+            saldo = wanderung.saldo if wanderung else 0
+            ust = factor_gst * gem.gewerbesteuer + factor_svb * saldo
+            rnd = 1000 if ust >= 500 else 100
+            ust = round(ust/rnd) * rnd
+            gem.umsatzsteuer = ust
+            gem.save()
+
+    def calc_gesamtsumme(self):
+        tou = self.areas.values('nutzungsart')
+        if (Nutzungsart.WOHNEN.value in tou and
+            sum([abs(gem.fam_leistungs_ausgleich)
+                 for gem in self.gemeinden]) == 0):
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Bitte führen Sie zunächst die Schätzung des '
+                'Familienleistungsausgleichs durch.')
+            return
+        if ((Nutzungsart.GEWERBE.value in tou or
+            Nutzungsart.EINZELHANDEL.value in tou) and
+            sum([abs(gem.umsatzsteuer) for gem in self.gemeinden]) == 0):
+            QMessageBox.warning(
+                self.ui, 'Fehler',
+                'Bitte führen Sie zunächst die Schätzung der Umsatzsteuer '
+                'durch.')
+            return
+        for gem in self.gemeinden:
+            gem.summe_einnahmen = (gem.grundsteuer + gem.einkommensteuer +
+                                   gem.gewerbesteuer + gem.umsatzsteuer +
+                                   gem.fam_leistungs_ausgleich)
+            gem.save()
+
+    @staticmethod
+    def reset_results(fields=['grundsteuer', 'einkommensteuer', 'gewerbesteuer',
+                              'umsatzsteuer', 'fam_leistungs_ausgleich',
+                              'summe_einnahmen']):
         # ToDo: dataframe columns to 0 and update db
+        pass
+
+    @staticmethod
+    def reset_gewerbe_einzelhandel():
+        pass
+
+    @staticmethod
+    def reset_wohnen():
         pass
 
     def close(self):
