@@ -13,6 +13,8 @@ from projektchecktools.base.domain import Domain, Worker
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.domains.traffic.traffic import Traffic
+from projektchecktools.domains.municipaltaxrevenue.municipaltaxrevenue import (
+    MunicipalTaxRevenue)
 from projektchecktools.domains.traffic.tables import Connectors
 from projektchecktools.domains.definitions.tables import (
     Teilflaechen, Verkaufsflaechen, Wohneinheiten,
@@ -353,6 +355,7 @@ class Wohnen:
         self.area.we_gesamt = we_sum
 
         Traffic.reset()
+        MunicipalTaxRevenue.reset_wohnen()
 
         self.area.save()
 
@@ -368,6 +371,7 @@ class Wohnen:
         area.we_gesamt = None
         area.ew = 0
         area.save()
+        MunicipalTaxRevenue.reset_wohnen()
 
     def close(self):
         if hasattr(self, 'params'):
@@ -584,8 +588,10 @@ class Gewerbe:
         self.set_ways(self.area)
 
         Traffic.reset()
+        MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
 
     def clear(self, area):
+        MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
         self.gewerbeanteile.filter(id_teilflaeche=area.id).delete()
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
         area.ap_gesamt = None
@@ -734,6 +740,7 @@ class Einzelhandel:
 
         self.set_ways(self.area)
         Traffic.reset()
+        MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
 
     def clear(self, area):
         # remove existing market
@@ -743,6 +750,7 @@ class Einzelhandel:
         self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
         area.vf_gesamt = None
         area.save()
+        MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
 
     def set_ways(self, area):
         df_verkaufsflaechen = self.verkaufsflaechen.filter(
