@@ -708,6 +708,12 @@ class SupermarketsCompetition(Domain):
 
     def load_content(self):
         self.centers = Centers.features()
+        if len(self.centers.filter(nutzerdefiniert=0)) == 0:
+            QMessageBox.warning(
+                self.ui, 'Hinweis',
+                'Das Projekt wurde scheinbar mit einer alten '
+                'Projekt-Check-Version erstellt. Bitte legen Sie eine neues '
+                'Projekt an, um die Standortkonkurrenz dort nutzen zu können.')
         self.markets = Markets.features(create=True)
         self.relations = MarketCellRelations.features(create=True)
         self.nullfall_edit.load_content()

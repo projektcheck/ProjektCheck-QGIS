@@ -142,7 +142,7 @@ class ProjectInitialization(Worker):
         # domain
 
         sk_radius = getattr(settings, 'PROJECT_RADIUS', 20000)
-        self.log(f'Ermittle Gemeinden im Umkreis von {sk_radius/1000} km...')
+        self.log(f'Ermittle Gemeinden im Umkreis von {int(sk_radius/1000)} km...')
 
         workspace = basedata.get_workspace('Basisdaten_deutschland')
         vg_table = workspace.get_table('Verwaltungsgemeinschaften')

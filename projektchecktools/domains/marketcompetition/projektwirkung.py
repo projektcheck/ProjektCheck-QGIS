@@ -30,7 +30,7 @@ class Projektwirkung(Worker):
         self.markets = Markets.features(project=project)
         self.centers = Centers.features(project=project)
         self.relations = MarketCellRelations.features(project=project,
-                                                    create=True)
+                                                      create=True)
         self.cells = SettlementCells.features(project=project, create=True)
         self.settings = Settings.features(project=project, create=True)
         self.project = project
@@ -66,6 +66,10 @@ class Projektwirkung(Worker):
             gem.auswahl = 1 if gem.rs in selected_rs else 0
             gem.save()
         gemeinden_in_auswahl = gemeinden.filter(auswahl=1)
+        if len(gemeinden_in_auswahl) == 0:
+            self.error.emit(
+                'Keine Gemeinden in der Auswahl gefunden. Breche ab...')
+            return
         cur_ags = [c.ags for c in gemeinden_in_auswahl]
 
         if len(self.settings) == 0:
@@ -94,9 +98,9 @@ class Projektwirkung(Worker):
         default_kk_index = defaults.get(Info='KK je Einwohner default').Wert
         base_kk = defaults.get(Info='Kaufkraft pro Person').Wert
 
-        sz_count = len(self.cells)
+        sz_count = len(self.cells.filter(id_teilflaeche__lt=0))
+        self.cells.filter()
         if sz_count == 0:
-            # calculate cells with inhabitants (incl. 'teilflaechen')
             self.calculate_zensus(gemeinden_in_auswahl,
                                   default_kk_index, base_kk)
         else:

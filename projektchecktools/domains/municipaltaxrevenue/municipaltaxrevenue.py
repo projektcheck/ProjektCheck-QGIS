@@ -69,7 +69,6 @@ class EinwohnerMigration(Migration):
         if not self.ui.recalculate_inhabitants_check.isChecked():
             self.add_layer()
             return
-        # ToDo: remove results depending on this
         sum_ew = sum(self.areas.values('ew'))
         if sum_ew == 0:
             QMessageBox.warning(self.ui, 'Fehler',
@@ -177,7 +176,6 @@ class EinwohnerMigration(Migration):
         ))
 
         def save():
-            # ToDo: remove results depending on this
             self.wanderung.update_pandas(self.df_wanderung)
             self.changed.emit()
             self.canvas.refreshAllLayers()
@@ -217,7 +215,6 @@ class BeschaeftigtenMigration(Migration):
         if not self.ui.recalculate_jobs_check.isChecked():
             self.add_layer()
             return
-        # ToDo: remove results depending on this
         sum_ap = sum(self.areas.values('ap_gesamt'))
         if sum_ap == 0:
             # ToDo: actually there are just no jobs
@@ -338,7 +335,6 @@ class BeschaeftigtenMigration(Migration):
         ))
 
         def save():
-            # ToDo: remove results depending on this
             self.wanderung.update_pandas(self.df_wanderung)
             self.canvas.refreshAllLayers()
 
@@ -905,7 +901,6 @@ class MunicipalTaxRevenue(Domain):
                                    'gewerbesteuer', 'umsatzsteuer',
                                    'fam_leistungs_ausgleich',
                                    'summe_einnahmen']):
-        # ToDo: dataframe columns to 0 and update db
         bilanzen = Gemeindebilanzen.features(create=True)
         df_bilanzen = bilanzen.to_pandas()
         for field in fields:
