@@ -192,7 +192,7 @@ class EinwohnerMigration(Migration):
         self.output.draw(
             label='Wanderungssalden Einwohner',
             style_file='einnahmen_einwohnerwanderung.qml',
-            expanded=False, uncheck_siblings=True, redraw=False
+            uncheck_siblings=True, redraw=False
         )
         self.output.zoom_to()
 
@@ -352,7 +352,7 @@ class BeschaeftigtenMigration(Migration):
         self.output.draw(
             label='Wanderungssalden Beschäftigte',
             style_file='einnahmen_beschaeftigtenwanderung.qml',
-            expanded=False, uncheck_siblings=True, redraw=False
+            uncheck_siblings=True, redraw=False
         )
         self.output.zoom_to()
 
@@ -589,13 +589,23 @@ class Grundsteuer(QObject):
         job = GrundsteuerCalculation(self.project)
 
         def on_success(r):
-            # ToDo: results layer
-            pass
+            self.add_layer()
 
         self.changed.emit()
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
                                      auto_close=True)
         self.dialog.show()
+
+    def add_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.gemeinden.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Grundsteuer',
+            style_file='einnahmen_grundsteuer.qml',
+            filter="grundsteuer != 'NULL'",
+            uncheck_siblings=True, redraw=False
+        )
+        self.output.zoom_to()
 
     def close(self):
         if self.hebesatz_params:
@@ -675,7 +685,7 @@ class Gewerbesteuer(QObject):
             label='Gewerbesteuer',
             style_file='einnahmen_gewerbesteuer.qml',
             filter="gewerbesteuer != 'NULL'",
-            expanded=False, uncheck_siblings=True, redraw=False
+            uncheck_siblings=True, redraw=False
         )
         self.output.zoom_to()
 
@@ -701,6 +711,7 @@ class MunicipalTaxRevenue(Domain):
         self.grundsteuer = Grundsteuer(self.project, self.ui, self.layer_group)
         self.gewerbesteuer = Gewerbesteuer(self.project, self.ui,
                                            self.layer_group)
+        self.areas = Teilflaechen.features()
 
         manual_path = os.path.join(
             self.settings.HELP_PATH, 'Anleitung_Kommunale_Steuereinnahmen.pdf')
@@ -773,8 +784,7 @@ class MunicipalTaxRevenue(Domain):
         job = EinkommensteuerCalculation(self.project)
 
         def on_success(r):
-            # ToDo: results layer
-            pass
+            self.add_est_layer()
 
         self.reset_results(fields=['fam_leistungs_ausgleich',
                                    'summe_einnahmen'])
@@ -792,8 +802,7 @@ class MunicipalTaxRevenue(Domain):
         job = FamAusgleichCalculation(self.project)
 
         def on_success(r):
-            # ToDo: results layer
-            pass
+            self.add_fla_layer()
 
         self.reset_results(fields=['summe_einnahmen'])
         self.dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
@@ -819,6 +828,8 @@ class MunicipalTaxRevenue(Domain):
             ust = round(ust/rnd) * rnd
             gem.umsatzsteuer = ust
             gem.save()
+        self.reset_results(fields=['summe_einnahmen'])
+        self.add_ust_layer()
 
     def calc_gesamtsumme(self):
         tou = self.areas.values('nutzungsart')
@@ -843,11 +854,57 @@ class MunicipalTaxRevenue(Domain):
                                    gem.gewerbesteuer + gem.umsatzsteuer +
                                    gem.fam_leistungs_ausgleich)
             gem.save()
+        self.add_gesamt_layer()
 
-    @staticmethod
-    def reset_results(fields=['grundsteuer', 'einkommensteuer', 'gewerbesteuer',
-                              'umsatzsteuer', 'fam_leistungs_ausgleich',
-                              'summe_einnahmen']):
+    def add_est_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.gemeinden.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Einkommensteuer',
+            style_file='einnahmen_einkommensteuer.qml',
+            filter="einkommensteuer != 'NULL'",
+            uncheck_siblings=True, redraw=False
+        )
+        self.output.zoom_to()
+
+    def add_fla_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.gemeinden.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Familienleistungsausgleich',
+            style_file='einnahmen_fam_leistungs_ausgleich.qml',
+            filter="fam_leistungs_ausgleich != 'NULL'",
+            uncheck_siblings=True, redraw=False
+        )
+        self.output.zoom_to()
+
+    def add_ust_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.gemeinden.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Umsatzsteuer',
+            style_file='einnahmen_umsatzsteuer.qml',
+            filter="umsatzsteuer != 'NULL'",
+            uncheck_siblings=True, redraw=False
+        )
+        self.output.zoom_to()
+
+    def add_gesamt_layer(self):
+        self.output = ProjectLayer.from_table(
+            self.gemeinden.table, groupname=self.layer_group)
+        self.output.draw(
+            label='Gesamtsumme Einnahmen',
+            style_file='einnahmen_summe_einnahmen.qml',
+            filter="summe_einnahmen != 'NULL'",
+            uncheck_siblings=True, redraw=False
+        )
+        self.output.zoom_to()
+
+    @classmethod
+    def reset_results(cls, fields=['grundsteuer', 'einkommensteuer',
+                                   'gewerbesteuer', 'umsatzsteuer',
+                                   'fam_leistungs_ausgleich',
+                                   'summe_einnahmen']):
         # ToDo: dataframe columns to 0 and update db
         bilanzen = Gemeindebilanzen.features(create=True)
         df_bilanzen = bilanzen.to_pandas()
@@ -857,13 +914,17 @@ class MunicipalTaxRevenue(Domain):
         canvas = utils.iface.mapCanvas()
         canvas.refreshAllLayers()
 
-    @staticmethod
-    def reset_gewerbe_einzelhandel():
-        pass
+    @classmethod
+    def reset_gewerbe_einzelhandel(cls):
+        BeschaeftigtenWanderung.get_table(create=True).truncate()
+        cls.reset_results(fields=['grundsteuer', 'gewerbesteuer','umsatzsteuer',
+                                  'summe_einnahmen'])
 
-    @staticmethod
-    def reset_wohnen():
-        pass
+    @classmethod
+    def reset_wohnen(cls):
+        EinwohnerWanderung.get_table(create=True).truncate()
+        cls.reset_results(fields=['grundsteuer', 'fam_leistungs_ausgleich',
+                                  'einkommensteuer', 'summe_einnahmen'])
 
     def close(self):
         self.migration_ew.close()

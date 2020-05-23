@@ -30,12 +30,16 @@ class GrundsteuerCalculation(Worker):
         messbetrag_wohnen = self.calc_messbetrag_wohnen(
             self.grst_settings.is_new_bundesland)
         messbetrag_gewerbe = self.calc_messbetrag_gewerbe()
-        gem = self.bilanzen.get(AGS=self.project_frame.ags)
-        gst = (messbetrag_wohnen + messbetrag_gewerbe) * gem.Hebesatz_GewSt
-        rnd = 1000 if gst >= 500 else 100
-        gst = round(gst/rnd) * rnd
-        gem.grundsteuer = gst
-        gem.save()
+        for gem in self.bilanzen:
+            if gem.AGS == self.project_frame.ags:
+                gst = ((messbetrag_wohnen + messbetrag_gewerbe) *
+                       gem.Hebesatz_GewSt)
+                rnd = 1000 if gst >= 500 else 100
+                gst = round(gst/rnd) * rnd
+            else:
+                gst = 0
+            gem.grundsteuer = gst
+            gem.save()
         return True
 
     def calc_messbetrag_wohnen(self, is_new_bundesland):
