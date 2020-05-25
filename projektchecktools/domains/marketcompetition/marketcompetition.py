@@ -781,7 +781,7 @@ class SupermarketsCompetition(Domain):
             def on_success(r):
                 self.nullfall_edit.fill_combo()
                 self.nullfall_edit.add_layer(zoom_to=True)
-            self.changed_edit.fill_combo()
+                self.changed_edit.fill_combo()
             job = MarketTemplateImportWorker(path, self.project,
                                              epsg=self.settings.EPSG)
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
