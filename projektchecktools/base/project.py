@@ -24,7 +24,8 @@ DEFAULT_SETTINGS = {
     'active_project': u'',
     'project_path': os.path.join(APPDATA_PATH, 'Projekte'),
     'basedata_path': os.path.join(APPDATA_PATH, 'Basisdaten'),
-    'check_data_on_start': True
+    'check_data_on_start': True,
+    'disclaimer_read': False,
 }
 
 

@@ -62,6 +62,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
             if reply == QMessageBox.Yes:
                 settings = SettingsDialog(self)
                 settings.download_basedata()
+        if not self.settings.disclaimer_read:
+            pdf = os.path.join(self.settings.HELP_PATH,
+                               'Haftungsausschluss.pdf')
+            open_file(pdf)
+            self.settings.disclaimer_read = True
 
     def show_settings(self):
         settings_dialog = SettingsDialog(self)
