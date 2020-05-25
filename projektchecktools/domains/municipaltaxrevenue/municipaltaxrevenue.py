@@ -143,7 +143,7 @@ class EinwohnerMigration(Migration):
         spinbox = DoubleSpinBox(minimum=0, maximum=1000, step=1,
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
-        project_saldo = Param(wanderung.saldo, spinbox,
+        project_saldo = Param(wanderung.saldo, spinbox, repr_format='%+.2f',
                               label=f' - {project_gem.GEN}', unit='Einwohner')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
@@ -297,7 +297,7 @@ class BeschaeftigtenMigration(Migration):
         spinbox = DoubleSpinBox(minimum=0, maximum=1000, step=1,
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
-        project_saldo = Param(wanderung.saldo, spinbox,
+        project_saldo = Param(wanderung.saldo, spinbox, repr_format='%+.2f',
                               label=f' - {project_gem.GEN}', unit='SvB')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
