@@ -68,6 +68,7 @@ class EditMarkets(QObject):
         if self.remove_button:
             self.remove_button.clicked.connect(
                 lambda: self.remove_markets())
+
     def load_content(self):
         self.typen = self.basedata.get_table(
             'Betriebstypen','Standortkonkurrenz_Supermaerkte'
@@ -173,6 +174,7 @@ class EditMarkets(QObject):
             market.delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
+            self.changed.emit()
 
     def remove_markets(self):
         reply = QMessageBox.question(
@@ -183,6 +185,7 @@ class EditMarkets(QObject):
             self.markets.filter(**self.filter_args).delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
+            self.changed.emit()
 
     def close(self):
         if self.add_market_tool:
@@ -778,6 +781,7 @@ class SupermarketsCompetition(Domain):
             def on_success(r):
                 self.nullfall_edit.fill_combo()
                 self.nullfall_edit.add_layer(zoom_to=True)
+            self.changed_edit.fill_combo()
             job = MarketTemplateImportWorker(path, self.project,
                                              epsg=self.settings.EPSG)
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
@@ -791,6 +795,7 @@ class SupermarketsCompetition(Domain):
         def on_success(r):
             self.nullfall_edit.fill_combo()
             self.nullfall_edit.add_layer(zoom_to=True)
+            self.changed_edit.fill_combo()
         dialog = ProgressDialog( job, parent=self.ui, on_success=on_success)
         dialog.show()
 
@@ -802,6 +807,7 @@ class SupermarketsCompetition(Domain):
         if reply == QMessageBox.Yes:
             self.markets.filter(is_osm=True).delete()
             self.nullfall_edit.fill_combo()
+            self.changed_edit.fill_combo()
             self.canvas.refreshAllLayers()
             self.markets.filter()
 
