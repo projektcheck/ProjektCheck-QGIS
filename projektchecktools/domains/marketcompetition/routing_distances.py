@@ -9,17 +9,15 @@ import sys
 import time
 import numpy as np
 import math
-import requests
 from scipy.ndimage import filters
 import tempfile
 import processing
 from osgeo import gdal
 
 from projektchecktools.utils.spatial import Point, clip_raster
-# ToDo: use custom requests
-# from projektchecktools.utils.connection import Request
+from projektchecktools.utils.connection import Request
 
-# requests = Request(synchronous=True)
+requests = Request(synchronous=True)
 
 def filter_raster(array, threshold=120):
     y_dim, x_dim = np.shape(array)
@@ -147,7 +145,12 @@ class DistanceRouting:
         if destinations:
             o = origin.transform(destinations[0].epsg)
         for i, dest in enumerate(destinations):
-            value = raster.get_value(dest)
+            try:
+                value = raster.get_value(dest)
+            # unreachable origins sometimes create a raster too small to
+            # allocate the (unreachable) destinations
+            except IndexError:
+                value = -1
             distance = (value / 60.) * kmh * 1000 if value < 120 else -1
             distances[i] = distance if distance <= 20000 else -1
             # euclidian distance
@@ -202,15 +205,14 @@ class DistanceRouting:
             'crs': f'EPSG:{self.target_epsg}',
         }
         start = time.time()
-        r = requests.get(url, stream=True, params=params)
+        r = requests.get(url, params=params)
         print('request get {}s'.format(time.time() - start))
         out_raster = os.path.join(
             self.tmp_folder,
             self.RASTER_FILE_PATTERN.format(id=origin.id))
         if r.status_code == 200:
             with open(out_raster, 'wb') as f:
-                r.raw.decode_content = True
-                shutil.copyfileobj(r.raw, f)
+                f.write(r.raw_data)
         else:
             raise Exception('Das angefragte Distanzraster ist fehlerhaft.')
         return out_raster

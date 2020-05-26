@@ -76,6 +76,21 @@ class Request(QObject):
 
         return self._get_async(qurl)
 
+    def post(self, url, params=None, data=b'', timeout=10000, verify=False):
+        qurl = QUrl(url)
+
+        if params:
+            query = QUrlQuery()
+            for param, value in params.items():
+                query.addQueryItem(param, str(value))
+            qurl.setQuery(query.query())
+
+        if self.synchronous:
+            return self._post_sync(qurl, timeout=timeout, data=data)
+
+        return self._post_async(qurl)
+
+
     def _get_sync(self, qurl: QUrl, timeout=10000):
         request = QNetworkRequest(qurl)
         # newer versions of QGIS (3.6+) support synchronous requests
@@ -124,4 +139,39 @@ class Request(QObject):
             lambda: self.finished.emit(Reply(self.reply)))
         #self.reply.readyRead.connect(ready_read)
         return 0
+
+    def _post_sync(self, qurl: QUrl, timeout=10000, data=b''):
+        request = QNetworkRequest(qurl)
+        # newer versions of QGIS (3.6+) support synchronous requests
+        if hasattr(self.manager, 'blockingPost'):
+            reply = self.manager.blockingPost(request, data, forceRefresh=True)
+        # use blocking event loop for older versions
+        else:
+            loop = QEventLoop()
+            timer = QTimer()
+            timer.setSingleShot(True)
+            # reply or timeout break event loop, whoever comes first
+            timer.timeout.connect(loop.quit)
+            reply = self.manager.post(request, data)
+            reply.finished.connect(loop.quit)
+
+            timer.start(timeout)
+
+            # start blocking loop
+            loop.exec()
+            loop.deleteLater()
+            if not timer.isActive():
+                reply.deleteLater()
+                raise ConnectionError('Timeout ')
+
+            timer.stop()
+        if reply.error():
+            self.error.emit(reply.errorString())
+            raise ConnectionError(reply.errorString())
+        res = Reply(reply)
+        self.finished.emit(res)
+        return res
+
+    def _post_async(self, qurl: QUrl):
+        raise NotImplementedError
 
