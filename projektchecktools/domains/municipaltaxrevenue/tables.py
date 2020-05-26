@@ -3,10 +3,10 @@ from projektchecktools.base.database import Field
 
 
 class Gemeindebilanzen(ProjectTable):
-    RS = Field(str, )
-    AGS = Field(str, )
-    GEN = Field(str, )
-    BEZ = Field(str, )
+    RS = Field(str, '')
+    AGS = Field(str, '')
+    GEN = Field(str, '')
+    BEZ = Field(str, '')
     IBZ = Field(float, 0)
     BEM = Field(str, )
     Einwohner = Field(int, 0)
@@ -26,6 +26,7 @@ class Gemeindebilanzen(ProjectTable):
 
 class EinwohnerWanderung(ProjectTable):
     AGS = Field(str, '')
+    GEN = Field(str, '')
     zuzug = Field(float, 0)
     fortzug = Field(float, 0)
     saldo = Field(float, 0)
@@ -38,6 +39,7 @@ class EinwohnerWanderung(ProjectTable):
 
 class BeschaeftigtenWanderung(ProjectTable):
     AGS = Field(str, '')
+    GEN = Field(str, '')
     zuzug = Field(float, 0)
     fortzug = Field(float, 0)
     saldo = Field(float, 0)
