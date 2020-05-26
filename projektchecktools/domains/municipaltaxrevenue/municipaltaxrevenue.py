@@ -144,7 +144,7 @@ class EinwohnerMigration(Migration):
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
         project_saldo = Param(wanderung.saldo, spinbox, repr_format='%+.2f',
-                              label=f' - {project_gem.GEN}', unit='Einwohner')
+                              label=f' - {project_gem.GEN}', unit='Ew')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
         spinbox.locked.connect(lambda o: update_salden(project_ags))
@@ -163,7 +163,7 @@ class EinwohnerMigration(Migration):
                                     lockable=True, locked=wanderung.fixed,
                                     reversed_lock=True)
             param = Param(wanderung.saldo, spinbox, label=f' - {gemeinde.GEN}',
-                          unit='Einwohner')
+                          unit='Ew')
             self.params.add(param, name=ags)
             spinbox.changed.connect(lambda o, a=ags: update_salden(a))
             spinbox.locked.connect(lambda o, a=ags: update_salden(a))
