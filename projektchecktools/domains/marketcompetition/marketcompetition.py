@@ -835,7 +835,8 @@ class SupermarketsCompetition(Domain):
             output.draw(
                 label=layer_name,
                 style_file='standortkonkurrenz_kk_bindung.qml',
-                filter=f'id_markt={market.id}'
+                filter=f'id_markt={market.id}',
+                expanded=False
             )
         self.markets.filter()
 
@@ -844,49 +845,56 @@ class SupermarketsCompetition(Domain):
         output.draw(
             label='Umsatzveränderung Bestand Zentren',
             style_file='standortkonkurrenz_umsatzveraenderung_zentren.qml',
-            filter='nutzerdefiniert=1'
+            filter='nutzerdefiniert=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Umsatzveränderung Bestand Verwaltungsgemeinschaften',
             style_file='standortkonkurrenz_umsatzveraenderung_vwg.qml',
-            filter='nutzerdefiniert=-1'
+            filter='nutzerdefiniert=-1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Nullfall',
             style_file='standortkonkurrenz_zentralitaet_nullfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Planfall',
             style_file='standortkonkurrenz_zentralitaet_planfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Entwicklung Zentralität',
             style_file='standortkonkurrenz_entwicklung_zentralitaet.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Verkaufsflächendichte Nullfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_nullfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Verkaufsflächendichte Planfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_planfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
@@ -894,7 +902,8 @@ class SupermarketsCompetition(Domain):
             label='Entwicklung Verkaufsflächendichte',
             style_file='standortkonkurrenz_entwicklung_'
             'verkaufsflaechendichte.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
 
     def close(self):

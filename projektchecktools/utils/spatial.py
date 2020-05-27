@@ -72,6 +72,7 @@ def clip_raster(raster_file, bbox):
 
 def get_bbox(table):
     layer = QgsVectorLayer(f'{table.workspace.path}|layername={table.name}')
+    layer.updateExtents()
     ex = layer.extent()
     epsg = layer.crs().postgisSrid()
     bbox = (Point(ex.xMinimum(), ex.yMinimum(), epsg=epsg),
