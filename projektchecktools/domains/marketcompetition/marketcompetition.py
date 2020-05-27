@@ -218,7 +218,7 @@ class EditNullfallMarkets(EditMarkets):
         self.params.add(Seperator(margin=0))
 
         # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
-        ketten = sorted(self.ketten, key=lambda k: k.name
+        ketten = sorted(self.ketten, key=lambda k: k.name.lower()
                         if k.name != 'nicht aufgeführt' else '')
         chain_ids = [typ.id_kette for typ in ketten]
         chain_labels = [kette.name for kette in ketten]
