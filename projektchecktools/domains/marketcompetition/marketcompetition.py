@@ -321,7 +321,7 @@ class EditPlanfallMarkets(EditMarkets):
         self.params.add(Seperator(margin=0))
 
         # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
-        ketten = sorted(self.ketten, key=lambda k: k.name
+        ketten = sorted(self.ketten, key=lambda k: k.name.lower()
                         if k.name != 'nicht aufgeführt' else '')
         chain_ids = [typ.id_kette for typ in ketten]
         chain_labels = [kette.name for kette in ketten]
@@ -641,11 +641,11 @@ class EditCenters:
 class SupermarketsCompetition(Domain):
     """"""
 
-    ui_label = 'Standortkonkurrenz und Supermärkte'
+    ui_label = 'Standortkonkurrenz Supermärkte'
     ui_file = 'ProjektCheck_dockwidget_analysis_08-SKSM.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_supermarkets_1.png"
 
-    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
+    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz Supermärkte'
 
     def setupUi(self):
         self.community_picker = FeaturePicker(self.ui.select_communities_button,
