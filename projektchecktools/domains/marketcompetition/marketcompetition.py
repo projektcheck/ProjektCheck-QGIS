@@ -834,7 +834,7 @@ class SupermarketsCompetition(Domain):
             layer_name = f'Kaufkraftbindung {market.name} ({market.id})'
             output.draw(
                 label=layer_name,
-                style_file='standortkonkurrenz_kk_bindung.qml',
+                style_file='standortkonkurrenz_kk_bindung_2.qml',
                 filter=f'id_markt={market.id}',
                 expanded=False
             )
