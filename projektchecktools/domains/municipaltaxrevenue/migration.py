@@ -130,7 +130,7 @@ class MigrationCalculation(Worker):
         prev_outer_circle = None
         for distance in self.rings:
             ring = QgsFeature()
-            outer_circle = center.buffer(distance, 100)
+            outer_circle = self.project_frame.geom.buffer(distance, 100)
             if prev_outer_circle is not None:
                 geom = outer_circle.difference(prev_outer_circle)
             else:
