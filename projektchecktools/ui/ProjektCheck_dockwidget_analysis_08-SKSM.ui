@@ -67,8 +67,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>478</width>
-         <height>915</height>
+         <width>491</width>
+         <height>754</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -78,7 +78,7 @@ padding: 2px;
            <string>Betrachtungsraum</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -180,7 +180,7 @@ padding: 2px;
            <string>Lebensmitteleinzelhandel im Bestand</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
@@ -641,7 +641,7 @@ aus OSM ergänzen</string>
            <string>Veränderungen durch Planung</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
@@ -957,7 +957,7 @@ aus OSM ergänzen</string>
            <string>Zentren</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
@@ -1087,7 +1087,7 @@ aus OSM ergänzen</string>
            <string>Projektwirkung</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>

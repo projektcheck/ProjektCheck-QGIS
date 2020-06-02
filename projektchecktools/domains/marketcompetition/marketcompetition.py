@@ -68,6 +68,7 @@ class EditMarkets(QObject):
         if self.remove_button:
             self.remove_button.clicked.connect(
                 lambda: self.remove_markets())
+
     def load_content(self):
         self.typen = self.basedata.get_table(
             'Betriebstypen','Standortkonkurrenz_Supermaerkte'
@@ -173,6 +174,7 @@ class EditMarkets(QObject):
             market.delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
+            self.changed.emit()
 
     def remove_markets(self):
         reply = QMessageBox.question(
@@ -183,6 +185,7 @@ class EditMarkets(QObject):
             self.markets.filter(**self.filter_args).delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
+            self.changed.emit()
 
     def close(self):
         if self.add_market_tool:
@@ -215,7 +218,7 @@ class EditNullfallMarkets(EditMarkets):
         self.params.add(Seperator(margin=0))
 
         # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
-        ketten = sorted(self.ketten, key=lambda k: k.name
+        ketten = sorted(self.ketten, key=lambda k: k.name.lower()
                         if k.name != 'nicht aufgeführt' else '')
         chain_ids = [typ.id_kette for typ in ketten]
         chain_labels = [kette.name for kette in ketten]
@@ -318,7 +321,7 @@ class EditPlanfallMarkets(EditMarkets):
         self.params.add(Seperator(margin=0))
 
         # 'nicht aufgeführt' (kette 0) is first, rest alphabetical order
-        ketten = sorted(self.ketten, key=lambda k: k.name
+        ketten = sorted(self.ketten, key=lambda k: k.name.lower()
                         if k.name != 'nicht aufgeführt' else '')
         chain_ids = [typ.id_kette for typ in ketten]
         chain_labels = [kette.name for kette in ketten]
@@ -638,11 +641,11 @@ class EditCenters:
 class SupermarketsCompetition(Domain):
     """"""
 
-    ui_label = 'Standortkonkurrenz und Supermärkte'
+    ui_label = 'Standortkonkurrenz Supermärkte'
     ui_file = 'ProjektCheck_dockwidget_analysis_08-SKSM.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_supermarkets_1.png"
 
-    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
+    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz Supermärkte'
 
     def setupUi(self):
         self.community_picker = FeaturePicker(self.ui.select_communities_button,
@@ -778,6 +781,7 @@ class SupermarketsCompetition(Domain):
             def on_success(r):
                 self.nullfall_edit.fill_combo()
                 self.nullfall_edit.add_layer(zoom_to=True)
+                self.changed_edit.fill_combo()
             job = MarketTemplateImportWorker(path, self.project,
                                              epsg=self.settings.EPSG)
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
@@ -791,6 +795,7 @@ class SupermarketsCompetition(Domain):
         def on_success(r):
             self.nullfall_edit.fill_combo()
             self.nullfall_edit.add_layer(zoom_to=True)
+            self.changed_edit.fill_combo()
         dialog = ProgressDialog( job, parent=self.ui, on_success=on_success)
         dialog.show()
 
@@ -802,6 +807,7 @@ class SupermarketsCompetition(Domain):
         if reply == QMessageBox.Yes:
             self.markets.filter(is_osm=True).delete()
             self.nullfall_edit.fill_combo()
+            self.changed_edit.fill_combo()
             self.canvas.refreshAllLayers()
             self.markets.filter()
 
@@ -828,8 +834,9 @@ class SupermarketsCompetition(Domain):
             layer_name = f'Kaufkraftbindung {market.name} ({market.id})'
             output.draw(
                 label=layer_name,
-                style_file='standortkonkurrenz_kk_bindung.qml',
-                filter=f'id_markt={market.id}'
+                style_file='standortkonkurrenz_kk_bindung_2.qml',
+                filter=f'id_markt={market.id}',
+                expanded=False
             )
         self.markets.filter()
 
@@ -838,49 +845,56 @@ class SupermarketsCompetition(Domain):
         output.draw(
             label='Umsatzveränderung Bestand Zentren',
             style_file='standortkonkurrenz_umsatzveraenderung_zentren.qml',
-            filter='nutzerdefiniert=1'
+            filter='nutzerdefiniert=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Umsatzveränderung Bestand Verwaltungsgemeinschaften',
             style_file='standortkonkurrenz_umsatzveraenderung_vwg.qml',
-            filter='nutzerdefiniert=-1'
+            filter='nutzerdefiniert=-1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Nullfall',
             style_file='standortkonkurrenz_zentralitaet_nullfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Zentralität Planfall',
             style_file='standortkonkurrenz_zentralitaet_planfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Entwicklung Zentralität',
             style_file='standortkonkurrenz_entwicklung_zentralitaet.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Verkaufsflächendichte Nullfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_nullfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         output.draw(
             label='Verkaufsflächendichte Planfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_planfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
@@ -888,7 +902,8 @@ class SupermarketsCompetition(Domain):
             label='Entwicklung Verkaufsflächendichte',
             style_file='standortkonkurrenz_entwicklung_'
             'verkaufsflaechendichte.qml',
-            filter='nutzerdefiniert=0 and auswahl=1'
+            filter='nutzerdefiniert=0 and auswahl=1',
+            expanded=False
         )
 
     def close(self):

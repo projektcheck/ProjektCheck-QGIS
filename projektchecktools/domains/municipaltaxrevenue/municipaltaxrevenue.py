@@ -143,8 +143,8 @@ class EinwohnerMigration(Migration):
         spinbox = DoubleSpinBox(minimum=0, maximum=1000, step=1,
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
-        project_saldo = Param(wanderung.saldo, spinbox,
-                              label=f' - {project_gem.GEN}', unit='Einwohner')
+        project_saldo = Param(wanderung.saldo, spinbox, repr_format='%+.2f',
+                              label=f' - {project_gem.GEN}', unit='Ew')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
         spinbox.locked.connect(lambda o: update_salden(project_ags))
@@ -163,7 +163,7 @@ class EinwohnerMigration(Migration):
                                     lockable=True, locked=wanderung.fixed,
                                     reversed_lock=True)
             param = Param(wanderung.saldo, spinbox, label=f' - {gemeinde.GEN}',
-                          unit='Einwohner')
+                          unit='Ew')
             self.params.add(param, name=ags)
             spinbox.changed.connect(lambda o, a=ags: update_salden(a))
             spinbox.locked.connect(lambda o, a=ags: update_salden(a))
@@ -297,7 +297,7 @@ class BeschaeftigtenMigration(Migration):
         spinbox = DoubleSpinBox(minimum=0, maximum=1000, step=1,
                                 lockable=True, locked=wanderung.fixed,
                                 reversed_lock=True)
-        project_saldo = Param(wanderung.saldo, spinbox,
+        project_saldo = Param(wanderung.saldo, spinbox, repr_format='%+.2f',
                               label=f' - {project_gem.GEN}', unit='SvB')
         self.params.add(project_saldo, name=project_ags)
         spinbox.changed.connect(lambda o: update_salden(project_ags))
@@ -694,7 +694,7 @@ class MunicipalTaxRevenue(Domain):
     """"""
     radius = 25000
 
-    ui_label = 'kommunale Steuereinnahmen'
+    ui_label = 'Kommunale Steuereinnahmen'
     ui_file = 'ProjektCheck_dockwidget_analysis_07-KSt.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_tax_1.png"
     layer_group = 'Wirkungsbereich 7 - Kommunale Steuereinnahmen'

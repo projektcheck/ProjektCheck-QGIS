@@ -195,6 +195,7 @@ class EwMigrationCalculation(MigrationCalculation):
                 AGS=AGS,
                 wanderungs_anteil=anteil,
                 fixed=False,
+                GEN=gemeinde.GEN,
                 geom=gemeinde.geom
             )
         self.set_progress(80)
@@ -233,6 +234,7 @@ class SvBMigrationCalculation(MigrationCalculation):
                 AGS=AGS,
                 wanderungs_anteil=anteil,
                 fixed=False,
+                GEN=gemeinde.GEN,
                 geom=gemeinde.geom
             )
         self.set_progress(80)

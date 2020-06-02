@@ -78,7 +78,7 @@ padding: 2px;
            <string>Wanderungssalden</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
@@ -261,7 +261,7 @@ padding: 2px;
            <string>Fiskalische Wirkungen</string>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
