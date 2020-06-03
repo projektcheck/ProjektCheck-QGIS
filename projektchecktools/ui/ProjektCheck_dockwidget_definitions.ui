@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>456</height>
+    <width>819</width>
+    <height>779</height>
    </rect>
   </property>
   <property name="font">
@@ -122,8 +122,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>528</width>
-         <height>322</height>
+         <width>799</width>
+         <height>599</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -240,7 +240,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
-           <string>Anbindung der Teilfläche an das Straßennetz</string>
+           <string>Anbindung der ausgewählten Teilfläche an das Straßennetz</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
