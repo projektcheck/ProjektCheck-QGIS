@@ -743,6 +743,9 @@ class MunicipalTaxRevenue(Domain):
 
     def load_content(self):
         super().load_content()
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(True)
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
         self.gemeinden = Gemeindebilanzen.features(create=True)
@@ -922,6 +925,9 @@ class MunicipalTaxRevenue(Domain):
                                   'einkommensteuer', 'summe_einnahmen'])
 
     def close(self):
+        output = ProjectLayer.find('Projektdefinition')
+        if output:
+            output[0].setItemVisibilityChecked(False)
         self.migration_ew.close()
         self.grundsteuer.close()
         self.migration_svb.close()
