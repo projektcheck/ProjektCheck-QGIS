@@ -521,7 +521,6 @@ class EditCenters:
         self.ui.select_center_button.clicked.connect(lambda: self.add_layer())
         self.ui.center_parameter_group.setVisible(False)
 
-
     def load_content(self):
         self.centers = Centers.features()
         self.fill_combo()
@@ -678,6 +677,7 @@ class SupermarketsCompetition(Domain):
             layer_group=f'{self.layer_group}/{self.nullfall_group}'
         )
         self.nullfall_edit.setupUi()
+        self.nullfall_edit.changed.connect(self.remove_results)
 
         self.planfall_edit = EditPlanfallMarkets(
             self.ui.planfall_market_combo,
@@ -689,6 +689,7 @@ class SupermarketsCompetition(Domain):
             layer_group=f'{self.layer_group}/{self.planfall_group}'
         )
         self.planfall_edit.setupUi()
+        self.planfall_edit.changed.connect(self.remove_results)
 
         self.changed_edit = ChangeMarkets(
             self.nullfall_edit,
@@ -701,6 +702,7 @@ class SupermarketsCompetition(Domain):
         )
         self.changed_edit.setupUi()
         self.nullfall_edit.changed.connect(self.changed_edit.fill_combo)
+        self.changed_edit.changed.connect(self.remove_results)
 
         self.center_edit = EditCenters(
             self.ui, self.canvas, self.project,
@@ -784,6 +786,7 @@ class SupermarketsCompetition(Domain):
             return
         center.auswahl = not center.auswahl
         center.save()
+        self.remove_results()
         self.canvas.refreshAllLayers()
 
     def read_template(self):
@@ -798,6 +801,7 @@ class SupermarketsCompetition(Domain):
                 self.nullfall_edit.fill_combo()
                 self.nullfall_edit.add_layer(zoom_to=True)
                 self.changed_edit.fill_combo()
+                self.remove_results()
             job = MarketTemplateImportWorker(path, self.project,
                                              epsg=self.settings.EPSG)
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
@@ -812,6 +816,7 @@ class SupermarketsCompetition(Domain):
             self.nullfall_edit.fill_combo()
             self.nullfall_edit.add_layer(zoom_to=True)
             self.changed_edit.fill_combo()
+            self.remove_results()
         dialog = ProgressDialog( job, parent=self.ui, on_success=on_success)
         dialog.show()
 
@@ -826,6 +831,7 @@ class SupermarketsCompetition(Domain):
             self.changed_edit.fill_combo()
             self.canvas.refreshAllLayers()
             self.markets.filter()
+            self.remove_results()
 
     def calculate(self):
         job = Projektwirkung(self.project, recalculate=False)
@@ -833,6 +839,7 @@ class SupermarketsCompetition(Domain):
         if not success:
             QMessageBox.warning(self.ui, 'Fehler', msg)
             return
+        self.remove_results()
 
         def on_success(r):
             self.show_results()
@@ -923,6 +930,13 @@ class SupermarketsCompetition(Domain):
             filter='nutzerdefiniert=0 and auswahl=1',
             expanded=False
         )
+
+    @classmethod
+    def remove_results(cls):
+        group = ProjectLayer.find(cls.results_group,
+                                  groupname=cls.layer_group)
+        if group:
+            group[0].removeAllChildren()
 
     def close(self):
         self.community_picker.set_active(False)
