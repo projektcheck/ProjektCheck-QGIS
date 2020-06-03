@@ -102,8 +102,9 @@ class ReadMarketsWorker(Worker):
                                    == market.id_kette].name.values[0]
             # set sales area, if not set yet (esp. osm markets)
             vkfl = market.vkfl or self.betriebstyp_to_vkfl(
-                self.project.basedata, market.id_betriebstyp, market.id_kette)
+                market.id_betriebstyp, market.id_kette)
             vkfl_nullfall = vkfl if not planfall else 0
+            vkfl_planfall = vkfl
             feat = market_feats.add(
                 name=market.name,
                 id_betriebstyp_nullfall=id_nullfall,
@@ -116,7 +117,7 @@ class ReadMarketsWorker(Worker):
                 is_buffer=is_buffer,
                 is_osm=is_osm,
                 vkfl=vkfl_nullfall,
-                vkfl_planfall=vkfl,
+                vkfl_planfall=vkfl_planfall,
                 adresse=market.adresse,
                 geom=market.geom
             )
@@ -164,25 +165,22 @@ class ReadMarketsWorker(Worker):
                 ].name.values[0]
         return markets
 
-    @staticmethod
-    def betriebstyp_to_vkfl(basedata, id_betriebstyp, id_kette):
+    def betriebstyp_to_vkfl(self, id_betriebstyp, id_kette):
         """
         return the sales area (vkfl) matching the type of use (betriebstyp)
         of a single market
         """
-        ws_name = 'Standortkonkurrenz_Supermaerkte'
-        types = basedata.get_table('Betriebstypen', workspace=ws_name)
         # some discounters have (since there is no specific betriebstyp and
         # therefore no hint on possible vkfl for them)
         if id_betriebstyp == 7:
-            chains = basedata.get_table('Ketten', workspace=ws_name)
-            chains.filter(id_kette=id_kette)
-            if len(chains) > 0:
-                vkfl = chains[0]['default_vkfl']
+            default_vkfl = self.df_chains[
+                self.df_chains['id_kette']==id_kette]
+            if len(default_vkfl) != 0:
+                vkfl = default_vkfl['default_vkfl'].values[0]
                 return vkfl
         # all other vkfl are assigned via betriebstyp (+ unmatched discounters)
-        types.filter(id_betriebstyp=id_betriebstyp)
-        vkfl = types[0]['default_vkfl']
+        idx = self.df_bt['id_betriebstyp'] == id_betriebstyp
+        vkfl = self.df_bt[idx]['default_vkfl'].values[0]
         return vkfl
 
     def parse_meta(self, markets, field='name'):
@@ -231,7 +229,6 @@ class ReadMarketsWorker(Worker):
     def delete_area_market(self, id_area):
         '''delete the market corresponding to a planned area and the already
         calculated results for this market'''
-        markets = self.folders.get_table('Maerkte')
         where = 'id_teilflaeche={}'.format(id_area)
         rows = self.parent_tbx.query_table(
             'Maerkte', columns=['id'], where=where)

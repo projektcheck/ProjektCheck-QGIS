@@ -48,6 +48,8 @@ class EditMarkets(QObject):
         self.params = None
         self.add_market_tool = None
         self.layer_group = layer_group
+        # just used for calculating the vkfl
+        self.market_tool = ReadOSMWorker(self.project)
 
     def setupUi(self):
         self.select_tool = FeaturePicker(self.select_button, canvas=self.canvas)
@@ -249,8 +251,8 @@ class EditNullfallMarkets(EditMarkets):
             market.betriebstyp_planfall = bt
             market.id_kette = chain_combo.get_data()
             market.kette = self.ketten.get(id_kette=market.id_kette).name
-            vkfl = ReadOSMWorker.betriebstyp_to_vkfl(self.project.basedata,
-                                                     id_bt, market.id_kette)
+            vkfl = self.market_tool.betriebstyp_to_vkfl(
+                market.id_betriebstyp_nullfall, market.id_kette)
             market.vkfl = vkfl
             market.vkfl_planfall = vkfl
             market.save()
@@ -288,8 +290,8 @@ class EditNullfallMarkets(EditMarkets):
             kette=self.ketten.get(id_kette=0).name,
             geom=geom
         )
-        vkfl = ReadOSMWorker.betriebstyp_to_vkfl(self.project.basedata,
-                                                 id_bt, 0)
+        vkfl = self.market_tool.betriebstyp_to_vkfl(
+            market.id_betriebstyp_nullfall, market.id_kette)
         market.vkfl = vkfl
         market.vkfl_planfall = vkfl
         crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
@@ -356,8 +358,8 @@ class EditPlanfallMarkets(EditMarkets):
             market.betriebstyp_planfall = bt
             market.id_kette = chain_combo.get_data()
             market.kette = self.ketten.get(id_kette=market.id_kette).name
-            vkfl = ReadOSMWorker.betriebstyp_to_vkfl(self.project.basedata,
-                                                     id_bt, market.id_kette)
+            vkfl = self.market_tool.betriebstyp_to_vkfl(
+                market.id_betriebstyp_planfall, market.id_kette)
             market.vkfl_planfall = vkfl
             market.save()
             self.canvas.refreshAllLayers()
@@ -382,23 +384,21 @@ class EditPlanfallMarkets(EditMarkets):
         button.clicked.connect(lambda: self.remove_market(market))
 
     def add_market(self, geom, name='unbenannter geplanter Markt'):
-        id_bt = 1
-        id_kette = 0
         market = self.markets.add(
             name=name,
             id_betriebstyp_nullfall=0,
             betriebstyp_nullfall=self.typen.get(id_betriebstyp=0).name,
-            id_betriebstyp_planfall=id_bt,
+            id_betriebstyp_planfall=1,
             betriebstyp_planfall=self.typen.get(id_betriebstyp=1).name,
-            id_kette=id_kette,
+            id_kette=0,
             kette=self.ketten.get(id_kette=0).name,
             geom=geom
         )
         crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
         market.AGS = ags.AGS_0
-        vkfl = ReadOSMWorker.betriebstyp_to_vkfl(self.project.basedata,
-                                                 id_bt, id_kette)
+        vkfl = self.market_tool.betriebstyp_to_vkfl(
+            market.id_betriebstyp_planfall, market.id_kette)
         market.vkfl_planfall = vkfl
         market.save()
         self.changed.emit()
@@ -485,8 +485,8 @@ class ChangeMarkets(EditMarkets):
             bt = self.typen.get(id_betriebstyp=id_bt).name
             market.id_betriebstyp_planfall = id_bt
             market.betriebstyp_planfall = bt
-            vkfl = ReadOSMWorker.betriebstyp_to_vkfl(self.project.basedata,
-                                                     id_bt, market.id_kette)
+            vkfl = self.market_tool.betriebstyp_to_vkfl(
+                market.id_betriebstyp_planfall, market.id_kette)
             market.vkfl_planfall = vkfl
             market.save()
             self.canvas.refreshAllLayers()
