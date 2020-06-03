@@ -42,6 +42,16 @@ class MigrationCalculation(Worker):
         columns = [f.name() for f in self.zensus_layer.fields()]
         rows = [f.attributes() for f in self.zensus_layer.getFeatures()]
         df_zensus = pd.DataFrame.from_records(rows, columns=columns)
+
+        # append empty gemeinden with no settlement cells but in radius
+        missing = np.setdiff1d(self.gemeinden.values('ags'),
+                               df_zensus['AGS'].values)
+        missing_df = pd.DataFrame(columns=df_zensus.columns)
+        missing_df['AGS'] = missing
+        missing_df['ring'] = self.rings[0]
+        missing_df['ew'] = 0
+        df_zensus = df_zensus.append(missing_df)
+
         df_wichtung = self.project.basedata.get_table(
             'Wanderung_Entfernungswichtung', 'Einnahmen').to_pandas(
                 columns=['Distance', 'Wichtung_Wohnen', 'Wichtung_Gewerbe'])
@@ -52,6 +62,7 @@ class MigrationCalculation(Worker):
         df_merged['ew_wichtet_gewerbe'] = (df_merged['ew'] *
                                            df_merged['Wichtung_Gewerbe'])
         self.set_progress(50)
+
         self.calculate(df_merged)
 
     @staticmethod
@@ -126,7 +137,6 @@ class MigrationCalculation(Worker):
         pr = ring_layer.dataProvider()
         pr.addAttributes([QgsField('ring', QVariant.Int)])
         ring_layer.updateFields()
-        center = self.project_frame.geom
         prev_outer_circle = None
         for distance in self.rings:
             ring = QgsFeature()
@@ -187,6 +197,7 @@ class EwMigrationCalculation(MigrationCalculation):
         randsummen = self.project.basedata.get_table(
             'Wanderung_Randsummen', 'Einnahmen').features()
         factor = randsummen.get(IDWanderungstyp=1).Anteil_Wohnen
+
         for AGS, anteil in anteil_ags.items():
             zuzug = zuzug_project if AGS == project_ags else 0
             gemeinde = self.gemeinden.get(AGS=AGS)
@@ -198,6 +209,7 @@ class EwMigrationCalculation(MigrationCalculation):
                 GEN=gemeinde.GEN,
                 geom=gemeinde.geom
             )
+
         self.set_progress(80)
         self.log('Berechne Wanderungssaldi...')
         df_result = self.calculate_saldi(self.wanderung.to_pandas(),
