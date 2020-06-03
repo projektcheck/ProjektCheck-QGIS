@@ -184,7 +184,8 @@ class EditMarkets(QObject):
             f'Möchten Sie alle {self.market_label} löschen?',
             QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            self.markets.filter(**self.filter_args).delete()
+            # markets on project area can never be deleted
+            self.markets.filter(id_teilflaeche=-1, **self.filter_args).delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
             self.changed.emit()
@@ -370,18 +371,22 @@ class EditPlanfallMarkets(EditMarkets):
         self.params.show(title='Neuen Markt im Planfall bearbeiten')
         self.params.changed.connect(save)
 
-        last_row = self.params.layout.children()[-1]
-        button = QPushButton()
-        icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
-        icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH, icon_path))
-        button.setText('Markt entfernen')
-        button.setIcon(icon)
-        button.setToolTip(
-            '<p><span style=" font-weight:600;">Markt entfernen</span>'
-            '</p><p>Löscht den aktuell gewählten Markt. '
-            '<br/>Dieser Schritt kann nicht rückgängig gemacht werden. </p>')
-        last_row.insertWidget(0, button)
-        button.clicked.connect(lambda: self.remove_market(market))
+        # markets on project areas can not be deleted
+        if market.id_teilflaeche < 0:
+            last_row = self.params.layout.children()[-1]
+            button = QPushButton()
+            icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
+            icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH,
+                                      icon_path))
+            button.setText('Markt entfernen')
+            button.setIcon(icon)
+            button.setToolTip(
+                '<p><span style=" font-weight:600;">Markt entfernen</span>'
+                '</p><p>Löscht den aktuell gewählten Markt. '
+                '<br/>Dieser Schritt kann nicht rückgängig gemacht '
+                'werden. </p>')
+            last_row.insertWidget(0, button)
+            button.clicked.connect(lambda: self.remove_market(market))
 
     def add_market(self, geom, name='unbenannter geplanter Markt'):
         market = self.markets.add(
