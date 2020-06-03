@@ -734,6 +734,7 @@ class Einzelhandel:
             sm = market_tool.vkfl_to_betriebstyp([sm])[0]
             market.id_betriebstyp_planfall = sm.id_betriebstyp
             market.betriebstyp_planfall = sm.betriebstyp
+            market.vkfl_planfall = vkfl_lebensmittel
             # ToDo: betriebstyp text
             market.save()
             SupermarketsCompetition.remove_results()
