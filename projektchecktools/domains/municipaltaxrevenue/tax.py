@@ -34,8 +34,7 @@ class GrundsteuerCalculation(Worker):
         for gem in self.bilanzen:
             if gem.AGS == self.project_frame.ags:
                 gst = ((messbetrag_wohnen + messbetrag_gewerbe) *
-                       # ToDo: /100, grundsteuer hebesetz
-                       gem.Hebesatz_GewSt)
+                       self.grst_settings.Hebesatz_GrStB / 100)
                 rnd = 1000 if gst >= 500 else 100
                 gst = round(gst/rnd) * rnd
             else:
