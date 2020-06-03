@@ -172,7 +172,8 @@ class EinwohnerMigration(Migration):
 
         self.params.add(Param(
             -factor_outer * sum_ew,
-            label='Restliches Bundesgebiet / Ausland'
+            label='Restliches Bundesgebiet / Ausland',
+            unit='Ew'
         ))
 
         def save():
@@ -331,7 +332,8 @@ class BeschaeftigtenMigration(Migration):
 
         self.params.add(Param(
             -factor_outer * sum_ap,
-            label='Restliches Bundesgebiet / Ausland'
+            label='Restliches Bundesgebiet / Ausland',
+            unit='SvB'
         ))
 
         def save():
