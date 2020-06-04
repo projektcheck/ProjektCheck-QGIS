@@ -79,9 +79,9 @@ class Param(QObject):
 
     def _v_repr(self, value):
         if self.repr_format:
-            return locale.format(self.repr_format, value)
+            return locale.format_string(self.repr_format, value)
         if isinstance(value, float):
-            v_repr = locale.format("%.2f", value, grouping=True)
+            v_repr = locale.format_string("%.2f", value, grouping=True)
         elif isinstance(value, bool):
             v_repr = 'ja' if value == True else 'nein'
         elif isinstance(value, int):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib
+import locale
 matplotlib.use('agg')
 import matplotlib.ticker as mticker
 import pandas as pd
@@ -9,11 +10,13 @@ import matplotlib.pyplot as plt
 from projektchecktools.base.diagrams import MatplotDiagram
 
 
-def horizontal_label_values(bars, ax):
+def horizontal_label_values(bars, ax, force_signum=False):
     for bar in bars:
         width = bar.get_width()
+        r_format = '%.1f' if force_signum else '%+.1f'
+        val_label = locale.format_string(r_format, width)
         ax.annotate(
-            '{}'.format(width),
+            val_label,
             xy=(width if width >= 0 else width - 0.4,
                 bar.get_y() + bar.get_height() / 2),
             va='center'#, ha='left'
@@ -30,7 +33,6 @@ def u_categories(categories):
 
 class Leistungskennwerte(MatplotDiagram):
     def create(self, **kwargs):
-        categories = u_categories(kwargs['categories'])
         labels = kwargs['columns']
 
         y = np.arange(len(labels))
@@ -43,6 +45,7 @@ class Leistungskennwerte(MatplotDiagram):
                         width, label='Planfall', color='#036ffc')
         ax.set_yticks(y)
         ax.set_yticklabels(labels)
+        #categories = u_categories(kwargs['categories'])
         #ax.minorticks_on()
         #ax.set_yticks(y, minor=True)
         #ax.set_yticks(np.arange(len(categories)), minor=False)
@@ -54,10 +57,10 @@ class Leistungskennwerte(MatplotDiagram):
         x_label = 'Bewertung'
         if 'max_rating' in kwargs:
             max_rating = kwargs['max_rating']
-            ax.axes.set_xlim([0, max_rating])
+            ax.axes.set_xlim([0, max_rating + 1])
             x_label += f' (in Punkten von 0 bis {max_rating})'
         ax.set_xlabel(x_label)
-        ax.set_xticks(range(0, max_rating, 2))
+        ax.set_xticks(range(0, max_rating + 1, 1))
         ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: f'{x:n}'))
         ax.legend(loc='best')
@@ -71,7 +74,6 @@ class Leistungskennwerte(MatplotDiagram):
 
 class LeistungskennwerteDelta(MatplotDiagram):
     def create(self, **kwargs):
-        categories = u_categories(kwargs['categories'])
         labels = kwargs['columns']
 
         y = np.arange(len(labels))
@@ -84,6 +86,7 @@ class LeistungskennwerteDelta(MatplotDiagram):
         bars = ax.barh(y, data, align='center', color=colors)
 
         ax.set_yticks(y)
+        #categories = u_categories(kwargs['categories'])
         #ax.minorticks_on()
         #ax.set_yticks(y, minor=True)
         #ax.set_yticks(np.arange(len(categories)), minor=False)
@@ -93,17 +96,20 @@ class LeistungskennwerteDelta(MatplotDiagram):
 
         ax.set_xlabel('Bewertung im Planfall minus Bewertung im Nullfall')
         ax.set_title(kwargs['title'])
-        min_val = min(-3, min(data))
-        max_val = max(3, max(data))
-        ax.set_xlim(left=min_val, right=max_val)
-        ax.set_xticks(range(min_val, max_val, 2))
+        max_rating = kwargs.get('max_rating', 0)
+        min_val = -max_rating or min(-3, min(data))
+        max_val = max_rating or max(3, max(data))
+
+        ax.set_xlim(left=min_val-1, right=max_val+1)
+        ax.set_xticks(range(min_val, max_val+1, 1))
         ax.set_yticklabels(labels)
         ax.get_xaxis().set_major_formatter(
-            matplotlib.ticker.FuncFormatter(lambda x, p: f'{x:n}'))
+            matplotlib.ticker.FuncFormatter(
+                lambda x, p: locale.format_string('%+d', x)))
         ax.axvline(linewidth=1, color='grey')
         ax.legend()
 
-        horizontal_label_values(bars, ax)
+        horizontal_label_values(bars, ax, force_signum=True)
 
         figure.tight_layout()
         return figure
