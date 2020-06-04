@@ -874,6 +874,8 @@ class SupermarketsCompetition(Domain):
     def show_results(self):
         group_name = f'{self.layer_group}/{self.results_group}'
         planfall_markets = self.markets.filter(id_betriebstyp_planfall__gt=0)
+        # check first one only
+        checked = True
         for market in planfall_markets:
             if market.id_betriebstyp_nullfall == market.id_betriebstyp_planfall:
                 continue
@@ -884,8 +886,9 @@ class SupermarketsCompetition(Domain):
                 label=layer_name,
                 style_file='standortkonkurrenz_kk_bindung_2.qml',
                 filter=f'id_markt={market.id}',
-                expanded=False
+                expanded=False, checked=checked
             )
+            checked = False
         self.markets.filter()
 
         output = ProjectLayer.from_table(
@@ -894,15 +897,16 @@ class SupermarketsCompetition(Domain):
             label='Umsatzveränderung der Bestandsmärke nach Zentren',
             style_file='standortkonkurrenz_umsatzveraenderung_zentren.qml',
             filter='nutzerdefiniert=1',
-            expanded=False
+            expanded=False, checked=checked
         )
+        checked = False
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
         output.draw(
             label='Umsatzveränderung der Bestandsmärke nach Gemeinde/Verw-Gem.',
             style_file='standortkonkurrenz_umsatzveraenderung_vwg.qml',
             filter='nutzerdefiniert=-1',
-            expanded=False
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -910,7 +914,7 @@ class SupermarketsCompetition(Domain):
             label='Zentralität im Nullfall nach Gemeinde/Verw-Gem.',
             style_file='standortkonkurrenz_zentralitaet_nullfall.qml',
             filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -918,7 +922,7 @@ class SupermarketsCompetition(Domain):
             label='Zentralität im Planfall nach Gemeinde/Verw-Gem.',
             style_file='standortkonkurrenz_zentralitaet_planfall.qml',
             filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -926,7 +930,7 @@ class SupermarketsCompetition(Domain):
             label='Veränderung der Zentralität im Planfall gegenüber Nullfall',
             style_file='standortkonkurrenz_entwicklung_zentralitaet.qml',
             filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -934,7 +938,7 @@ class SupermarketsCompetition(Domain):
             label='Verkaufsflächendichte im Nullfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_nullfall.qml',
             filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -942,7 +946,7 @@ class SupermarketsCompetition(Domain):
             label='Verkaufsflächendichte im Planfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_planfall.qml',
             filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -952,7 +956,7 @@ class SupermarketsCompetition(Domain):
             style_file='standortkonkurrenz_entwicklung_'
             'verkaufsflaechendichte.qml',
             filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            expanded=False, checked=checked
         )
 
     @classmethod
