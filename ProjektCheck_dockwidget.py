@@ -266,8 +266,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         # Legal notes
         icon_path = 'images/iconset_mob/20190619_iconset_mob_legal_01.png'
-        pdf_path = os.path.join(
-            help_path, 'Haftungsausschluss.pdf')
+        pdf_path = os.path.join(help_path, 'Haftungsausschluss.pdf')
         action = menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)), 'Haftungssausschluss')
         action.triggered.connect(lambda b, p=pdf_path: open_file(p))
