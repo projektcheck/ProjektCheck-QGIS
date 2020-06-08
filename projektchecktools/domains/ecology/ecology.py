@@ -492,8 +492,8 @@ class Ecology(Domain):
         diagram = LeistungskennwerteDelta(
             delta=rating_delta, columns=columns,
             categories=categories,
-            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der\n'
-            'Leistungskennwerte im Planfall gegenüber dem Nullfall)',
+            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der '
+            '\nLeistungskennwerte im Planfall gegenüber dem Nullfall)',
             max_rating=self.MAX_RATING)
         diagram.draw(offset_x=100, offset_y=100)
 

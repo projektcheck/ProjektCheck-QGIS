@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>332</width>
-    <height>110</height>
+    <width>360</width>
+    <height>116</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,8 @@
       </font>
      </property>
      <property name="text">
-      <string>Bitte lesen Sie vor der Nutzung von Projekt-Check den Haftungsauschluss.</string>
+      <string>Bitte lesen Sie vor der Nutzung von Projekt-Check den Haftungsauschluss.
+Durch die Nutzung des Programms akzeptieren Sie den Haftungsauschluss.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
