@@ -1,6 +1,6 @@
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QInputDialog
+from qgis.PyQt.QtWidgets import (QFileDialog, QMessageBox, QInputDialog,
+                                 QCheckBox, QPushButton)
 from qgis.core import QgsCoordinateReferenceSystem
-from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 import os
@@ -858,6 +858,7 @@ class SupermarketsCompetition(Domain):
             self.remove_results()
 
     def calculate(self):
+
         job = Projektwirkung(self.project, recalculate=False)
         success, msg = job.validate_inputs()
         if not success:
@@ -867,11 +868,28 @@ class SupermarketsCompetition(Domain):
 
         def on_success(r):
             self.show_results()
+            if not self.settings.show_result_layer_info:
+                return
+            msg_box = QMessageBox(self.ui)
+            msg_box.setText('Die Ergebnislayer wurden dem QGIS-Layerbaum '
+                            'in der Gruppe "Projektwirkung" hinzugefügt. Nur der'
+                            ' oberste Ergebnislayer ist aktiviert.\n\n'
+                            'Um die anderen Ergebnisse anzuzeigen, '
+                            'aktivieren Sie sie bitte manuell im Layerbaum.\n')
+            check = QCheckBox('nicht wieder anzeigen')
+            msg_box.setCheckBox(check)
+            msg_box.exec()
+            if check.isChecked():
+                self.settings.show_result_layer_info = False
 
         dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
         dialog.show()
 
     def show_results(self):
+        study_output = ProjectLayer.find(self.study_group)
+        if study_output:
+            study_output[0].setItemVisibilityChecked(False)
+
         group_name = f'{self.layer_group}/{self.results_group}'
         planfall_markets = self.markets.filter(id_betriebstyp_planfall__gt=0)
         # check first one only
@@ -888,6 +906,9 @@ class SupermarketsCompetition(Domain):
                 filter=f'id_markt={market.id}',
                 expanded=False, checked=checked
             )
+            # zoom to first layer
+            if checked:
+                output.zoom_to()
             checked = False
         self.markets.filter()
 

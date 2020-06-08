@@ -26,6 +26,7 @@ DEFAULT_SETTINGS = {
     'basedata_path': os.path.join(APPDATA_PATH, 'Basisdaten'),
     'check_data_on_start': True,
     'disclaimer_read': False,
+    'show_result_layer_info': True
 }
 
 
