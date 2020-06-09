@@ -786,7 +786,8 @@ class SupermarketsCompetition(Domain):
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
         self.communities_selected_layer = output.draw(
-            label='Ausgewählte Gemeinden im Betrachtungsraum',
+            label='Ausgewählte Gemeinden/Verw.gemeinschaften im '
+            'Betrachtungsraum',
             style_file='standortkonkurrenz_gemeinden_ausgewaehlt.qml',
             filter='auswahl!=0 AND nutzerdefiniert=-1'
         )
@@ -795,7 +796,7 @@ class SupermarketsCompetition(Domain):
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
         self.communities_not_selected_layer = output.draw(
-            label='Nicht ausgewählte Gemeinden',
+            label='Nicht ausgewählte Gemeinden/Verw.gemeinschaften',
             style_file='standortkonkurrenz_gemeinden_nicht_ausgewaehlt.qml',
             filter='auswahl=0 AND nutzerdefiniert=-1'
         )
@@ -886,9 +887,13 @@ class SupermarketsCompetition(Domain):
         dialog.show()
 
     def show_results(self):
+        # hide layers messing up the readability of the results
         study_output = ProjectLayer.find(self.study_group)
         if study_output:
             study_output[0].setItemVisibilityChecked(False)
+        nullfall_output = ProjectLayer.find(self.nullfall_group)
+        if nullfall_output:
+            nullfall_output[0].setItemVisibilityChecked(False)
 
         group_name = f'{self.layer_group}/{self.results_group}'
         planfall_markets = self.markets.filter(id_betriebstyp_planfall__gt=0)
