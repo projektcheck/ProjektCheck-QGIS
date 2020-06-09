@@ -13,13 +13,14 @@ from projektchecktools.base.diagrams import MatplotDiagram
 def horizontal_label_values(bars, ax, force_signum=False):
     for bar in bars:
         width = bar.get_width()
-        r_format = '%.1f' if force_signum else '%+.1f'
+        r_format = '%.1f' if not force_signum else '%+.1f'
         val_label = locale.format_string(r_format, width)
+        ha = 'right' if width < 0 else 'left'
         ax.annotate(
-            val_label,
+            ' ' + val_label if width > 0 else val_label,
             xy=(width if width >= 0 else width - 0.4,
                 bar.get_y() + bar.get_height() / 2),
-            va='center'#, ha='left'
+            va='center', ha=ha
         )
 
 def u_categories(categories):
