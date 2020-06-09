@@ -65,7 +65,6 @@ class NewProjectDialog(Dialog):
         hlayout = QHBoxLayout(self)
         label = QLabel('Import der (Teil-)Flächen des Plangebiets')
         self.layer_combo = QgsMapLayerComboBox()
-        self.layer_combo.setCurrentIndex(-1)
         self.layer_combo.setFilters(QgsMapLayerProxyModel.VectorLayer)
 
         self.source = None
@@ -106,6 +105,10 @@ class NewProjectDialog(Dialog):
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
+        if len(self.layer_combo) > 0:
+            set_layer(self.layer_combo.currentLayer())
+        self.layer_combo.setCurrentIndex(0)
+
     def browse_path(self):
         path, sf = QFileDialog.getOpenFileName(
             self, 'Datei wählen', filter="Shapefile(*.shp)",
@@ -113,7 +116,7 @@ class NewProjectDialog(Dialog):
         if path:
             self.path = os.path.split(path)[0]
             self.layer_combo.setAdditionalItems([str(path)])
-            self.layer_combo.selectedindex = self.layer_combo.count() - 1
+            self.layer_combo.setCurrentIndex(self.layer_combo.count()-1)
 
     def show(self):
         confirmed = self.exec_()
