@@ -85,6 +85,7 @@ class Projektwirkung(Worker):
                          'Siedlungszellen und Distanzen wird ausgeführt.')
                 self.recalculate = True
                 settings.betrachtungsraum = ','.join(cur_ags)
+                settings.save()
 
         # empty result tables (empty indicates need of recalculation later on)
         if self.recalculate:
