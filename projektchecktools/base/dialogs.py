@@ -1,4 +1,5 @@
 from qgis.PyQt import uic
+import re
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
@@ -127,16 +128,21 @@ class NewProjectDialog(Dialog):
     def validate(self):
         name = str(self.name_edit.text())
         status_text = ''
-        if name in self.project_names:
+        regexp = re.compile(f'[\\\/\:*?\"\'<>|]')
+        error = False
+        if name and regexp.search(name):
+            status_text = ('Der Projektname darf keines der folgenden Zeichen '
+                           f'enthalten: \/:*?"\'<>|')
+            error = True
+        elif name in self.project_names:
             status_text = (
                 f'Ein Projekt mit dem Namen {name} existiert bereits!\n'
                 'Projektnamen müssen einzigartig sein.')
-            self.ok_button.setEnabled(False)
-            self.status_label.setText(status_text)
-            return
+            error = True
+
         self.status_label.setText(status_text)
 
-        if name and self.source:
+        if not error and (name and self.source):
             self.ok_button.setEnabled(True)
         else:
             self.ok_button.setEnabled(False)
