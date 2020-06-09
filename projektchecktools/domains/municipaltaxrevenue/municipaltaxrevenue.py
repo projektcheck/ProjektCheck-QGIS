@@ -69,7 +69,7 @@ class EinwohnerMigration(Migration):
         if not self.ui.recalculate_inhabitants_check.isChecked():
             self.add_layer()
             return
-        sum_ew = sum(self.areas.values('ew'))
+        sum_ew = sum(x or 0 for x in self.areas.values('ew'))
         if sum_ew == 0:
             QMessageBox.warning(self.ui, 'Fehler',
                                 'Es wurden keine definierten Teilflächen mit '
@@ -216,7 +216,7 @@ class BeschaeftigtenMigration(Migration):
         if not self.ui.recalculate_jobs_check.isChecked():
             self.add_layer()
             return
-        sum_ap = sum(self.areas.values('ap_gesamt'))
+        sum_ap = sum(x or 0 for x in self.areas.values('ap_gesamt'))
         if sum_ap == 0:
             # ToDo: actually there are just no jobs
             # (e.g. when manually set to zero)
