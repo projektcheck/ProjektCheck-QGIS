@@ -87,8 +87,8 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>446</width>
-         <height>737</height>
+         <width>452</width>
+         <height>761</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -104,7 +104,7 @@ padding: 2px;
            <bool>false</bool>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="spacing">
@@ -290,7 +290,7 @@ padding: 2px;
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellen anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;ÖPNV-Haltestellen und Anzahl der Abfahrten im Umfeld des Plangebiets ermitteln/anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellen anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zehn nächstgelegenen ÖPNV-Haltestellen und Anzahl der Abfahrten im Umkreis von 2 km um das Plangebiet ermitteln/anzeigen.&lt;/p&gt;</string>
                </property>
                <property name="text">
                 <string>Haltestellen anzeigen</string>
@@ -549,7 +549,7 @@ padding: 2px;
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellenplan aufrufen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abfahrtsplan für eine auszuwählende Haltestelle in einem Webbrowser anzeigen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Haltestellen anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zehn nächstgelegenen ÖPNV-Haltestellen und Anzahl der Abfahrten im Umkreis von 2 km um das Plangebiet ermitteln/anzeigen.&lt;/p&gt;</string>
                   </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
@@ -674,7 +674,7 @@ padding: 2px;
            <bool>true</bool>
           </property>
           <property name="collapsed">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <property name="spacing">
@@ -835,6 +835,9 @@ padding: 2px;
                <property name="minimum">
                 <number>1</number>
                </property>
+               <property name="maximum">
+                <number>60</number>
+               </property>
                <property name="value">
                 <number>15</number>
                </property>
@@ -883,6 +886,9 @@ padding: 2px;
                </property>
                <property name="minimum">
                 <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
                </property>
                <property name="value">
                 <number>3</number>
