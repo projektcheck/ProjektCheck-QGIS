@@ -37,7 +37,7 @@ class JobsInhabitants(Domain):
         if output:
             output[0].setItemVisibilityChecked(True)
 
-    def inhabitants_diagram(self):
+    def get_living_areas(self):
         areas = Teilflaechen.features().filter(
             nutzungsart=Nutzungsart.WOHNEN.value,
             we_gesamt__gt=0
@@ -48,13 +48,10 @@ class JobsInhabitants(Domain):
                 'Es wurden keine Teilflächen mit definierter '
                 'Wohnnutzung gefunden'
             )
-        for i, area in enumerate(areas):
-            title = (f"{self.project.name} - {area.name}: "
-                     "Geschätzte Einwohnerentwicklung")
-            diagram = BewohnerEntwicklung(area=area, title=title)
-            diagram.draw(offset_x=i*100, offset_y=i*100)
+            return []
+        return areas
 
-    def jobs_diagram(self):
+    def get_job_areas(self):
         areas = Teilflaechen.features().filter(
             nutzungsart=Nutzungsart.GEWERBE.value,
             ap_gesamt__gt=0
@@ -65,6 +62,23 @@ class JobsInhabitants(Domain):
                 'Es wurden keine Teilflächen mit definierter '
                 'Gewerbenutzung gefunden'
             )
+            return []
+        return areas
+
+    def inhabitants_diagram(self):
+        areas = self.get_living_areas()
+        if not areas:
+            return
+        for i, area in enumerate(areas):
+            title = (f"{self.project.name} - {area.name}: "
+                     "Geschätzte Einwohnerentwicklung")
+            diagram = BewohnerEntwicklung(area=area, title=title)
+            diagram.draw(offset_x=i*100, offset_y=i*100)
+
+    def jobs_diagram(self):
+        areas = self.get_job_areas()
+        if not areas:
+            return
         for i, area in enumerate(areas):
             title = (f"{self.project.name} - {area.name}: "
                      "Geschätzte Anzahl Arbeitsplätze (Orientierungswerte)")
@@ -77,6 +91,9 @@ class JobsInhabitants(Domain):
             diagram.draw(offset_x=i*100+50, offset_y=i*100+50)
 
     def inhabitants_table(self):
+        areas = self.get_living_areas()
+        if not areas:
+            return
         output = ProjectLayer.from_table(
             WohnenProJahr.get_table(), groupname=self.layer_group)
         layer = output.draw(label='Bewohnerschätzung nach Alter und Jahr')
@@ -87,6 +104,9 @@ class JobsInhabitants(Domain):
         utils.iface.showAttributeTable(layer)
 
     def jobs_table(self):
+        areas = self.get_job_areas()
+        if not areas:
+            return
         output = ProjectLayer.from_table(
             ApProJahr.get_table(), groupname=self.layer_group)
         layer = output.draw(label='Arbeitsplätze insgesamt nach Jahr')
