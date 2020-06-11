@@ -14,7 +14,7 @@ version=1.0.1
 author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
 email=franke@ggr-planung.de
 
-about=Mit Projekt-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.
+about=<p>Mit Projekt-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.</p> <p><i>Hinweis: Bitte schließen im Falle eines Updates alle offenen Hilfe-PDFs und starten Sie nach dem Update QGIS neu, damit die Änderungen übernommen werden.</i></p>
 
 tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
