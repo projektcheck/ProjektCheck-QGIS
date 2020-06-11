@@ -31,7 +31,7 @@ class Ecology(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_04-Oeko.ui'
     ui_icon = ('images/iconset_mob/'
                '20190619_iconset_mob_nature_conservation_2.png')
-    layer_group = 'Wirkungsbereich 4 - Ökologie'
+    layer_group = 'Wirkungsbereich 4 - Fläche und Ökologie/Ökologie'
 
     geoserver = 'https://geoserver.ggr-planung.de/geoserver/projektcheck/wms?'
     ioer = 'https://monitor.ioer.de/cgi-bin/wms?'

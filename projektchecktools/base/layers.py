@@ -55,22 +55,15 @@ class Layer(ABC):
         self._layer = layer
 
     @classmethod
-    def add_group(self, groupname, prepend=True):
+    def add_group(cls, groupname, prepend=True):
         groupnames = groupname.split('/')
         root = QgsProject.instance().layerTreeRoot()
         group = nest_groups(root, groupnames, prepend=prepend)
         return group
 
     @classmethod
-    def find(self, label, groupname=''):
-        root = QgsProject.instance().layerTreeRoot()
-        if groupname:
-            groupnames = groupname.split('/')
-            while groupnames:
-                g = groupnames.pop(0)
-                root = root.findGroup(g)
-                if not root:
-                    return []
+    def find(cls, label, groupname=''):
+        root = cls.find_group(groupname)
 
         def deep_find(node, label):
             found = []
@@ -83,6 +76,15 @@ class Layer(ABC):
 
         found = deep_find(root, label)
         return found
+
+    @classmethod
+    def find_group(self, groupname):
+        root = QgsProject.instance().layerTreeRoot()
+        groupnames = groupname.split('/')
+        while groupnames:
+            g = groupnames.pop(0)
+            root = root.findGroup(g)
+        return root
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None, expanded=True, prepend=False, uncheck_siblings=False):

@@ -699,7 +699,7 @@ class MunicipalTaxRevenue(Domain):
     ui_label = 'Kommunale Steuereinnahmen'
     ui_file = 'ProjektCheck_dockwidget_analysis_07-KSt.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_tax_1.png"
-    layer_group = 'Wirkungsbereich 7 - Kommunale Steuereinnahmen'
+    layer_group = 'Wirkungsbereich 6 - Kommunale Steuereinnahmen'
 
     def setupUi(self):
         self.migration_ew = EinwohnerMigration(

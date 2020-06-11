@@ -23,7 +23,8 @@ class LandUse(Domain):
     ui_label = 'Flächeninanspruchnahme'
     ui_file = 'ProjektCheck_dockwidget_analysis_05-Fl.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_landuse_1.png"
-    layer_group = 'Wirkungsbereich 5 - Flächeninanspruchnahme'
+    layer_group = ('Wirkungsbereich 4 - Fläche und Ökologie/'
+                   'Flächeninanspruchnahme')
 
     def setupUi(self):
         self.ui.area_combo.currentIndexChanged.connect(

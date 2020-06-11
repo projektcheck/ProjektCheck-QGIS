@@ -667,7 +667,7 @@ class SupermarketsCompetition(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_08-SKSM.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_supermarkets_1.png"
 
-    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz Supermärkte'
+    layer_group = 'Wirkungsbereich 7 - Standortkonkurrenz Supermärkte'
     nullfall_group = 'Märkte im Nullfall'
     planfall_group = 'Märkte im Planfall'
     study_group = 'Betrachtungsraum'

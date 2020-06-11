@@ -340,6 +340,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 group = ProjectLayer.add_group(domain.layer_group,
                                                prepend=False)
                 group.setItemVisibilityChecked(False)
+                parent = group.parent()
+                # in case parent is sub-group of project group, hide as well
+                if parent.name() != self.project.groupname:
+                    parent.setItemVisibilityChecked(False)
+
 
             # check active project, uncheck other projects
             layer_root = QgsProject.instance().layerTreeRoot()
