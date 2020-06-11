@@ -191,7 +191,8 @@ class Reachabilities(Domain):
         self.stops_layer = output.draw(
             label='Haltestellen',
             style_file='erreichbarkeit_haltestellen.qml',
-            filter='flaechenzugehoerig=1 AND abfahrten>0')
+            filter='flaechenzugehoerig=1 AND abfahrten>0',
+            prepend=True)
         self.feature_picker.set_layer(self.stops_layer)
         if zoom_to:
             output.zoom_to()
@@ -311,10 +312,10 @@ class Reachabilities(Domain):
         layer.triggerRepaint()
 
     def oepnv_map(self):
-        group = ('Hintergrundkarten')
+        group = (f'{self.layer_group}/ÖPNV Hintergrundkarte')
         url = ('type=xyz&url=http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png'
                '&zmax=18&zmin=0&crs=EPSG:{settings.EPSG}')
-        layer = TileLayer(url, groupname=group)
+        layer = TileLayer(url, groupname=group, prepend=False)
         layer.draw('ÖPNVKarte (memomaps.de)')
         layer.layer.setTitle(
             'Karte memomaps.de CC-BY-SA, Kartendaten Openstreetmap ODbL')
