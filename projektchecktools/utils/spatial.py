@@ -68,7 +68,7 @@ def clip_raster(raster_file, bbox):
     clipped = gdal.Translate(clipped_raster, ds,
                              projWin = [p1.x, p2.y, p2.x, p1.y])
     clipped = ds = None
-    return clipped_raster
+    return clipped_raster, int(raster_epsg)
 
 def get_bbox(table):
     layer = QgsVectorLayer(f'{table.workspace.path}|layername={table.name}')

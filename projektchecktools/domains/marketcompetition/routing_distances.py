@@ -133,7 +133,7 @@ class DistanceRouting:
             return distances, beelines
         if bbox is not None:
             p1, p2 = self.add_bbox_edge(bbox)
-            clipped_raster = clip_raster(dist_raster, (p1, p2))
+            clipped_raster, raster_epsg = clip_raster(dist_raster, (p1, p2))
             #os.remove(dist_raster)
             dist_raster = clipped_raster
         start = time.time()

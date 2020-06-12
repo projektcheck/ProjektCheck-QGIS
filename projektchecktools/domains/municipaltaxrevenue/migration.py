@@ -2,7 +2,8 @@
 import processing
 import os
 from qgis.core import (QgsRasterLayer, QgsVectorLayer, QgsFeature,
-                       QgsVectorFileWriter, QgsField)
+                       QgsVectorFileWriter, QgsField,
+                       QgsCoordinateReferenceSystem)
 from qgis.PyQt.Qt import QVariant
 
 from projektchecktools.utils.spatial import create_layer
@@ -93,7 +94,7 @@ class MigrationCalculation(Worker):
                                    self.project.settings.ZENSUS_100_FILE)
 
         bbox = get_bbox(self.gemeinden.table)
-        clipped_raster = clip_raster(zensus_file, bbox)
+        clipped_raster, raster_epsg = clip_raster(zensus_file, bbox)
 
         raster_layer = QgsRasterLayer(clipped_raster)
 
