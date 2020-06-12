@@ -64,6 +64,8 @@ class Layer(ABC):
     @classmethod
     def find(cls, label, groupname=''):
         root = cls.find_group(groupname)
+        if not root:
+            return []
 
         def deep_find(node, label):
             found = []
@@ -84,6 +86,8 @@ class Layer(ABC):
         while groupnames:
             g = groupnames.pop(0)
             root = root.findGroup(g)
+            if not root:
+                return
         return root
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,

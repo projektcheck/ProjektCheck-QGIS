@@ -476,6 +476,8 @@ class ProjectLayer(Layer):
     @classmethod
     def find_group(cls, groupname):
         project = ProjectManager().active_project
+        if not project:
+            return
         groupname = f'{project.groupname}/{groupname}' if groupname \
             else project.groupname if project else None
         return super().find_group(groupname)

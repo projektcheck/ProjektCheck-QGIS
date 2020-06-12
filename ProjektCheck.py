@@ -19,6 +19,8 @@ class ProjektCheck:
     def __init__(self, iface=None):
         # Save reference to the QGIS interface
         self.iface = iface or utils.iface
+        self.toolbar = self.iface.addToolBar(u'Projekt-Check')
+        self.toolbar.setObjectName(u'Projekt-Check')
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -40,9 +42,6 @@ class ProjektCheck:
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Projekt-Check')
-        # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'Projekt-Check')
-        self.toolbar.setObjectName(u'Projekt-Check')
 
         #print "** INITIALIZING ProjektCheck"
 
