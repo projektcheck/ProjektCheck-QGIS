@@ -59,7 +59,6 @@ class Projektwirkung(Worker):
 
     def work(self):
         # check the settings of last calculation
-        self.recalculate = True
         selected_vg = self.centers.filter(auswahl__ne=0, nutzerdefiniert=-1)
         selected_rs = [v.rs for v in selected_vg]
         gemeinden = self.centers.filter(nutzerdefiniert=0)
@@ -155,10 +154,10 @@ class Projektwirkung(Worker):
         clipped_raster, raster_epsg = clip_raster(zensus_file, bbox)
 
         raster_layer = QgsRasterLayer(clipped_raster)
-        # workaround QGIS 3.12: does not set crs correctly when reading raster
-        # file
+        # workaround QGIS 3.10.2+: does not set crs correctly when reading
+        # raster file
         crs = QgsCoordinateReferenceSystem()
-        crs.createFromSrid(epsg)
+        crs.createFromSrid(raster_epsg)
         raster_layer.setCrs(crs)
 
         parameters = {
