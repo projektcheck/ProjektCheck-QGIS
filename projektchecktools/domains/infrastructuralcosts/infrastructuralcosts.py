@@ -510,7 +510,7 @@ class Kostentraeger:
         # initialize empty project 'kostenaufteilungen' with the default ones
         if len(self.kostenaufteilung) == 0:
             for default in self.default_kostenaufteilung.features():
-                rule =self.aufteilungsregeln.get(
+                rule = self.aufteilungsregeln.get(
                     IDAufteilungsregel=default.IDKostenregel)
                 self.kostenaufteilung.add(
                     Anteil_GSB=rule.Anteil_GSB,
