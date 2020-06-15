@@ -80,7 +80,7 @@ def get_bbox(table):
     return bbox
 
 def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
-                 target_epsg=None):
+                 target_epsg=None, buffer=None):
 
     layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{target_epsg or epsg}',
                            name, 'memory')
@@ -96,6 +96,8 @@ def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
     for feature in features:
         f = QgsFeature()
         geom = feature.geom
+        if buffer:
+            geom = geom.buffer(buffer, 10)
         if target_epsg:
             geom.transform(tr)
         if isinstance(feature.geom, QgsPointXY):
@@ -110,7 +112,7 @@ def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
 
 def intersect(input_features, overlay: Union[QgsVectorLayer, list],
               input_fields=['id'],
-              output_fields=[], epsg=4326):
+              output_fields=[], epsg=4326, buffer=None):
     '''
     clips features by geometry, only features within the geometries of the
     overlay remain
@@ -142,7 +144,7 @@ def intersect(input_features, overlay: Union[QgsVectorLayer, list],
     if not isinstance(overlay, QgsVectorLayer):
         overlay = create_layer(overlay, 'Polygon',
                                name='overlay', fields=output_fields,
-                               epsg=epsg)
+                               epsg=epsg, buffer=buffer)
 
     parameters = {'INPUT': input_layer,
                   'OVERLAY': overlay,
@@ -153,7 +155,6 @@ def intersect(input_features, overlay: Union[QgsVectorLayer, list],
     ret = [{i: f.attribute(f.fieldNameIndex(i)) for i in ret_fields}
            for f in output_layer.getFeatures()]
     return ret
-
 
 def closest_point(point, points):
     """get the point out of given points that is closest to the given point,
