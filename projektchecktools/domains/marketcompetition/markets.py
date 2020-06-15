@@ -101,7 +101,8 @@ class ReadMarketsWorker(Worker):
             kette = self.df_chains[self.df_chains['id_kette']
                                    == market.id_kette].name.values[0]
             # set sales area, if not set yet (esp. osm markets)
-            vkfl = market.vkfl or self.betriebstyp_to_vkfl(market)
+            vkfl = market.vkfl or self.betriebstyp_to_vkfl(
+                market.id_betriebstyp, market.id_kette)
             vkfl_nullfall = vkfl if not planfall else 0
             vkfl_planfall = vkfl
             feat = market_feats.add(
@@ -164,21 +165,21 @@ class ReadMarketsWorker(Worker):
                 ].name.values[0]
         return markets
 
-    def betriebstyp_to_vkfl(self, market):
+    def betriebstyp_to_vkfl(self, id_betriebstyp, id_kette):
         """
         return the sales area (vkfl) matching the type of use (betriebstyp)
         of a single market
         """
         # some discounters have (since there is no specific betriebstyp and
         # therefore no hint on possible vkfl for them)
-        if market.id_betriebstyp == 7:
+        if id_betriebstyp == 7:
             default_vkfl = self.df_chains[
-                self.df_chains['id_kette']==market.id_kette]
+                self.df_chains['id_kette']==id_kette]
             if len(default_vkfl) != 0:
                 vkfl = default_vkfl['default_vkfl'].values[0]
                 return vkfl
         # all other vkfl are assigned via betriebstyp (+ unmatched discounters)
-        idx = self.df_bt['id_betriebstyp'] == market.id_betriebstyp
+        idx = self.df_bt['id_betriebstyp'] == id_betriebstyp
         vkfl = self.df_bt[idx]['default_vkfl'].values[0]
         return vkfl
 
@@ -228,7 +229,6 @@ class ReadMarketsWorker(Worker):
     def delete_area_market(self, id_area):
         '''delete the market corresponding to a planned area and the already
         calculated results for this market'''
-        markets = self.folders.get_table('Maerkte')
         where = 'id_teilflaeche={}'.format(id_area)
         rows = self.parent_tbx.query_table(
             'Maerkte', columns=['id'], where=where)

@@ -6,7 +6,7 @@ from qgis.core import QgsProject
 
 from projektchecktools.base.domain import PCDockWidget
 from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
-                                            ProgressDialog)
+                                            ProgressDialog, Dialog)
 from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
                                             TerrestrisBackgroundLayer)
 from projektchecktools.base.database import Workspace
@@ -63,10 +63,13 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 settings = SettingsDialog(self)
                 settings.download_basedata()
         if not self.settings.disclaimer_read:
+            dialog = Dialog(ui_file='disclaimer.ui', parent=self.ui)
+            dialog.exec_()
             pdf = os.path.join(self.settings.HELP_PATH,
                                'Haftungsausschluss.pdf')
             open_file(pdf)
-            self.settings.disclaimer_read = True
+            if dialog.dont_show_on_start_check.isChecked():
+                self.settings.disclaimer_read = True
 
     def show_settings(self):
         settings_dialog = SettingsDialog(self)
@@ -263,8 +266,7 @@ class ProjektCheckMainDockWidget(PCDockWidget):
 
         # Legal notes
         icon_path = 'images/iconset_mob/20190619_iconset_mob_legal_01.png'
-        pdf_path = os.path.join(
-            help_path, 'Haftungsausschluss.pdf')
+        pdf_path = os.path.join(help_path, 'Haftungsausschluss.pdf')
         action = menu.addAction(
             QIcon(os.path.join(current_dir, icon_path)), 'Haftungssausschluss')
         action.triggered.connect(lambda b, p=pdf_path: open_file(p))
@@ -338,6 +340,11 @@ class ProjektCheckMainDockWidget(PCDockWidget):
                 group = ProjectLayer.add_group(domain.layer_group,
                                                prepend=False)
                 group.setItemVisibilityChecked(False)
+                parent = group.parent()
+                # in case parent is sub-group of project group, hide as well
+                if parent.name() != self.project.groupname:
+                    parent.setItemVisibilityChecked(False)
+
 
             # check active project, uncheck other projects
             layer_root = QgsProject.instance().layerTreeRoot()

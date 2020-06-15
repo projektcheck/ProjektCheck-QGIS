@@ -48,7 +48,7 @@ class ProjectInitialization(Worker):
 
         trans_geoms = []
 
-        self.log(f'Füge {len(layer_features)} Flächen hinzu...')
+        self.log(f'Füge {len(layer_features)} Fläche(n) hinzu...')
         tr = QgsCoordinateTransform(
             source_crs, target_crs, QgsProject.instance())
         if not layer_features:

@@ -68,7 +68,7 @@ def clip_raster(raster_file, bbox):
     clipped = gdal.Translate(clipped_raster, ds,
                              projWin = [p1.x, p2.y, p2.x, p1.y])
     clipped = ds = None
-    return clipped_raster
+    return clipped_raster, int(raster_epsg)
 
 def get_bbox(table):
     layer = QgsVectorLayer(f'{table.workspace.path}|layername={table.name}')
@@ -207,6 +207,17 @@ def _get_distances(point, points):
     diff = np.array(points) - np.array(point)
     distances = np.apply_along_axis(np.linalg.norm, 1, diff)
     return distances
+
+def nominatim_geocode(address):
+    url = 'https://nominatim.openstreetmap.org/search'
+    params = {'q': address,
+              'format': 'json'}
+    r = requests.get(url, params=params)
+    results = r.json()
+    if not results:
+        return None, 'nicht gefunden'
+    location = (results[0]['lat'], results[0]['lon'])
+    return location, 'gefunden'
 
 def google_geocode(address, api_key=''):
     url = 'https://maps.googleapis.com/maps/api/geocode/json'

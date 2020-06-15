@@ -25,13 +25,13 @@ from projektchecktools.utils.utils import open_file
 
 class Ecology(Domain):
     """"""
-    MAX_RATING = 20
+    MAX_RATING = 10
 
     ui_label = 'Ökologie'
     ui_file = 'ProjektCheck_dockwidget_analysis_04-Oeko.ui'
     ui_icon = ('images/iconset_mob/'
                '20190619_iconset_mob_nature_conservation_2.png')
-    layer_group = 'Wirkungsbereich 4 - Ökologie'
+    layer_group = 'Wirkungsbereich 4 - Fläche und Ökologie/Ökologie'
 
     geoserver = 'https://geoserver.ggr-planung.de/geoserver/projektcheck/wms?'
     ioer = 'https://monitor.ioer.de/cgi-bin/wms?'
@@ -80,7 +80,6 @@ class Ecology(Domain):
         self.ui.import_nullfall_button.clicked.connect(self.import_nullfall)
 
         for prefix in ['nullfall', 'planfall']:
-            is_planfall = prefix == 'planfall'
             button = getattr(self.ui, f'{prefix}_remove_drawing_button')
             button.clicked.connect(
                 lambda b, p=prefix: self.clear_drawing(planfall=p=='planfall'))
@@ -461,11 +460,14 @@ class Ecology(Domain):
             df_rating = df_rating[columns]
             df_rating = df_rating.sum(axis=0)
             n = self.MAX_RATING
-            # divide the domain (0..1) into n + 1 bins
-            # -> n is the max. rating value
-            bins = np.linspace(0, 1, n+1)
-            rating = np.digitize(df_rating, bins)
-            return rating
+
+            rating = df_rating * self.MAX_RATING
+
+            ## divide the domain (0..1) into n + 1 bins
+            ## -> n is the max. rating value
+            #bins = np.linspace(0, 1, n+1)
+            #rating = np.digitize(df_rating, bins) - 1
+            return rating.round(1)
 
         columns = df_factors.columns[3:]
         df_merged_nf = df_merged[df_merged['planfall']==False]
@@ -490,8 +492,9 @@ class Ecology(Domain):
         diagram = LeistungskennwerteDelta(
             delta=rating_delta, columns=columns,
             categories=categories,
-            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der\n'
-            'Leistungskennwerte im Planfall gegenüber dem Nullfall)')
+            title='Beeinträchtigung durch Planungsvorhaben (= Veränderung der '
+            '\nLeistungskennwerte im Planfall gegenüber dem Nullfall)',
+            max_rating=self.MAX_RATING)
         diagram.draw(offset_x=100, offset_y=100)
 
     def close(self):

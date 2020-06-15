@@ -155,16 +155,22 @@ class Domain(PCDockWidget):
 
     def load_content(self):
         if self.layer_group:
-            tree_layer = ProjectLayer.find(self.layer_group)
-            if tree_layer:
-                tree_layer[0].setItemVisibilityChecked(True)
+            group = ProjectLayer.find_group(self.layer_group)
+            if group:
+                group.setItemVisibilityChecked(True)
+                group.parent().setItemVisibilityChecked(True)
+
 
     def close(self):
         super().close()
         if self.layer_group:
-            tree_layer = ProjectLayer.find(self.layer_group)
-            if tree_layer:
-                tree_layer[0].setItemVisibilityChecked(False)
+            group = ProjectLayer.find_group(self.layer_group)
+            if group:
+                group.setItemVisibilityChecked(False)
+                parent = group.parent()
+                # in case parent is sub-group of project group, hide as well
+                if parent.name() != self.project.groupname:
+                    parent.setItemVisibilityChecked(False)
 
 
 class Worker(QThread):

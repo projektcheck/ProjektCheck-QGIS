@@ -24,6 +24,7 @@ class Layer(ABC):
         self._l = None
         self.groupname = groupname
         self.prepend = prepend
+        self.canvas = iface.mapCanvas()
 
     @property
     def root(self):
@@ -54,22 +55,17 @@ class Layer(ABC):
         self._layer = layer
 
     @classmethod
-    def add_group(self, groupname, prepend=True):
+    def add_group(cls, groupname, prepend=True):
         groupnames = groupname.split('/')
         root = QgsProject.instance().layerTreeRoot()
         group = nest_groups(root, groupnames, prepend=prepend)
         return group
 
     @classmethod
-    def find(self, label, groupname=''):
-        root = QgsProject.instance().layerTreeRoot()
-        if groupname:
-            groupnames = groupname.split('/')
-            while groupnames:
-                g = groupnames.pop(0)
-                root = root.findGroup(g)
-                if not root:
-                    return []
+    def find(cls, label, groupname=''):
+        root = cls.find_group(groupname)
+        if not root:
+            return []
 
         def deep_find(node, label):
             found = []
@@ -82,6 +78,17 @@ class Layer(ABC):
 
         found = deep_find(root, label)
         return found
+
+    @classmethod
+    def find_group(self, groupname):
+        root = QgsProject.instance().layerTreeRoot()
+        groupnames = groupname.split('/')
+        while groupnames:
+            g = groupnames.pop(0)
+            root = root.findGroup(g)
+            if not root:
+                return
+        return root
 
     def draw(self, style_path=None, label='', redraw=True, checked=True,
              filter=None, expanded=True, prepend=False, uncheck_siblings=False):
@@ -102,6 +109,8 @@ class Layer(ABC):
                 self.layer.setName(label)
             QgsProject.instance().addMapLayer(self.layer, False)
             self.layer.loadNamedStyle(style_path)
+        else:
+            self.canvas.refreshAllLayers()
         tree_layer = self.tree_layer
         if not tree_layer:
             tree_layer = self.root.insertLayer(0, self.layer) if prepend else\
@@ -120,14 +129,13 @@ class Layer(ABC):
     def zoom_to(self):
         if not self.layer:
             return
-        canvas = iface.mapCanvas()
         self.layer.updateExtents()
         extent = self.layer.extent()
         if not extent.isEmpty():
             transform = QgsCoordinateTransform(
-                self.layer.crs(), canvas.mapSettings().destinationCrs(),
+                self.layer.crs(), self.canvas.mapSettings().destinationCrs(),
                 QgsProject.instance())
-            canvas.setExtent(transform.transform(extent))
+            self.canvas.setExtent(transform.transform(extent))
 
     def remove(self):
         if not self.layer:

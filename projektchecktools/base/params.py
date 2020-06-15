@@ -79,9 +79,9 @@ class Param(QObject):
 
     def _v_repr(self, value):
         if self.repr_format:
-            return locale.format(self.repr_format, value)
+            return locale.format_string(self.repr_format, value)
         if isinstance(value, float):
-            v_repr = locale.format("%.2f", value, grouping=True)
+            v_repr = locale.format_string("%.2f", value, grouping=True)
         elif isinstance(value, bool):
             v_repr = 'ja' if value == True else 'nein'
         elif isinstance(value, int):
@@ -452,12 +452,13 @@ class Params(QObject):
 
 
 class ParamsDialog(Dialog):
-    def __init__(self, parent=None, title='Parameter einstellen', help_text=None):
+    def __init__(self, parent=None, title='Parameter einstellen',
+                 help_text=None, help_expanded=True):
         super().__init__(modal=True, parent=parent,
                          ui_file='parameter_dialog.ui',
                          title=title)
         self.layout = self.base_layout
-        self.help_widget.setVisible(False)
+        self.help_widget.setVisible(help_expanded)
         if help_text is None:
             self.details_button.setVisible(False)
         else:
@@ -471,6 +472,7 @@ class ParamsDialog(Dialog):
                 self.adjustSize()
                 self.details_button.setText('Hilfe anzeigen >>')
         self.details_button.toggled.connect(toggle)
+        self.details_button.setChecked(help_expanded)
         self.back_button.setCursor(QCursor(Qt.PointingHandCursor))
         self._grid = None
 

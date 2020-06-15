@@ -26,6 +26,7 @@ DEFAULT_SETTINGS = {
     'basedata_path': os.path.join(APPDATA_PATH, 'Basisdaten'),
     'check_data_on_start': True,
     'disclaimer_read': False,
+    'show_result_layer_info': True
 }
 
 
@@ -473,11 +474,13 @@ class ProjectLayer(Layer):
         self.root.setItemVisibilityChecked(True)
 
     @classmethod
-    def find(cls, label, groupname='', project=None):
-        project = project or ProjectManager().active_project
+    def find_group(cls, groupname):
+        project = ProjectManager().active_project
+        if not project:
+            return
         groupname = f'{project.groupname}/{groupname}' if groupname \
             else project.groupname if project else None
-        return Layer.find(label, groupname=groupname)
+        return super().find_group(groupname)
 
     @classmethod
     def add_group(cls, groupname, project=None, prepend=True):

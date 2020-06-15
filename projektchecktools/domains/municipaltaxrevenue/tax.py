@@ -4,6 +4,7 @@ from projektchecktools.domains.definitions.tables import (
 from projektchecktools.domains.municipaltaxrevenue.tables import (
     Gemeindebilanzen, GrundsteuerSettings, EinwohnerWanderung,
     BeschaeftigtenWanderung)
+from projektchecktools.domains.constants import Nutzungsart
 from projektchecktools.domains.definitions.tables import Wohneinheiten
 from projektchecktools.base.domain import Worker
 
@@ -33,7 +34,7 @@ class GrundsteuerCalculation(Worker):
         for gem in self.bilanzen:
             if gem.AGS == self.project_frame.ags:
                 gst = ((messbetrag_wohnen + messbetrag_gewerbe) *
-                       gem.Hebesatz_GewSt)
+                       self.grst_settings.Hebesatz_GrStB / 100)
                 rnd = 1000 if gst >= 500 else 100
                 gst = round(gst/rnd) * rnd
             else:
@@ -42,7 +43,7 @@ class GrundsteuerCalculation(Worker):
             gem.save()
         return True
 
-    def calc_messbetrag_wohnen(self, is_new_bundesland):
+    def calc_messbetrag_wohnen(self, is_new_bl):
         messzahlen = self.project.basedata.get_table(
             'GrSt_Wohnflaeche_und_Steuermesszahlen', 'Einnahmen').features()
         vvf = self.project.basedata.get_table(
@@ -56,19 +57,20 @@ class GrundsteuerCalculation(Worker):
 
         for m_gt in messzahlen:
             geb_typ_id = m_gt.IDGebaeudetyp
-            wohnfl = m_gt.Mittlere_Wohnflaeche
-            aufschlag = m_gt.Aufschlag_Garagen_Carport
-            fn = f'{self.geb_types_suffix[geb_typ_id]}_Rohmiete'
-            rohmiete = self.grst_settings[fn] / 100 if not is_new_bundesland \
-                else 0.46
             # special case for EFH and new bundesland
-            if geb_typ_id == 1 and is_new_bundesland:
-                rohmiete = (24 / 1.95583 * m_gt.Umbauter_Raum_m3 +
-                            550 + self.grst_settings.qm_Grundstueck_pro_WE_EFH *
-                            self.grst_settings.Bodenwert_SWV / 100)
-            vervielf = vvf.get(Gemeindegroessenklasse64=gem_gkl,
-                               IDGebaeudetyp=geb_typ_id).Vervielfaeltiger
-            ewert = (12 * wohnfl * rohmiete + aufschlag) * vervielf
+            if geb_typ_id == 1 and is_new_bl:
+                ewert = (24 / 1.95583 * m_gt.Umbauter_Raum_m3 +
+                        550 + self.grst_settings.qm_Grundstueck_pro_WE_EFH *
+                        self.grst_settings.Bodenwert_SWV / 100)
+            else:
+                wohnfl = m_gt.Mittlere_Wohnflaeche
+                aufschlag = m_gt.Aufschlag_Garagen_Carport
+                fn = f'{self.geb_types_suffix[geb_typ_id]}_Rohmiete'
+                rohmiete = self.grst_settings[fn] / 100 if not is_new_bl \
+                    else 0.46
+                vervielf = vvf.get(Gemeindegroessenklasse64=gem_gkl,
+                                   IDGebaeudetyp=geb_typ_id).Vervielfaeltiger
+                ewert = (12 * wohnfl * rohmiete + aufschlag) * vervielf
             anzahl_we = sum(we.filter(id_gebaeudetyp=geb_typ_id).values('we'))
             betrag = anzahl_we * (
                 min(38346, ewert) * m_gt.Steuermesszahl_bis_38346_EUR +
@@ -113,10 +115,11 @@ class EinkommensteuerCalculation(Worker):
         for gem in self.bilanzen:
             wanderung = self.wanderung.get(AGS=gem.AGS)
             if not wanderung:
-                continue
-            est = est_pro_ew * wanderung.saldo
-            rnd = 1000 if abs(est) >= 500 else 100
-            est = round(est/rnd) * rnd
+                est = 0
+            else:
+                est = est_pro_ew * wanderung.saldo
+                rnd = 1000 if abs(est) >= 500 else 100
+                est = round(est/rnd) * rnd
             gem.einkommensteuer = est
             gem.save()
 
@@ -174,14 +177,15 @@ class GewerbesteuerCalculation(Worker):
         for gem in self.bilanzen:
             wanderung = self.wanderung.get(AGS=gem.AGS)
             if not wanderung:
-                continue
-            saldo = wanderung.saldo
-            if gem.AGS == self.project_frame.ags:
-                saldo += svb_eh
-            gst = (messbetrag_pro_svb * gem.Hebesatz_GewSt / 100 * saldo *
-                   (1 - bvv_plus_lvv_plus_ehz / gem.Hebesatz_GewSt))
-            rnd = 1000 if gst >= 500 else 100
-            gst = round(gst/rnd) * rnd
+                gst = 0
+            else:
+                saldo = wanderung.saldo
+                if gem.AGS == self.project_frame.ags:
+                    saldo += svb_eh
+                gst = (messbetrag_pro_svb * gem.Hebesatz_GewSt / 100 * saldo *
+                       (1 - bvv_plus_lvv_plus_ehz / gem.Hebesatz_GewSt))
+                rnd = 1000 if gst >= 500 else 100
+                gst = round(gst/rnd) * rnd
             gem.gewerbesteuer = gst
             gem.save()
 
@@ -193,7 +197,8 @@ class GewerbesteuerCalculation(Worker):
                 AGS2=self.project_frame.ags[:2])
         messbetrag_sum = 0
         svb_sum = 0
-        for area in self.areas:
+        gewerbe_areas = self.areas.filter(nutzungsart=Nutzungsart.GEWERBE.value)
+        for area in gewerbe_areas:
             anteile = self.gewerbe_anteile.filter(id_teilflaeche=area.id)
             estimated = sum(anteile.values('anzahl_jobs_schaetzung'))
             svb = area.ap_gesamt
@@ -201,10 +206,10 @@ class GewerbesteuerCalculation(Worker):
             cor_factor = svb / estimated if estimated > 0 else 0
             for anteil in anteile:
                 m_bt = messzahlen.get(IDBranche=anteil.id_branche)
-                betrag = (area.ap_gesamt * cor_factor *
+                betrag = (anteil.anzahl_jobs_schaetzung * cor_factor *
                           m_bt.GewStMessbetrag_pro_Arbeitsplatz)
                 messbetrag_sum += betrag
-
+        self.areas.filter()
         return messbetrag_sum, svb_sum
 
     def calc_messbetrag_einzelhandel(self):

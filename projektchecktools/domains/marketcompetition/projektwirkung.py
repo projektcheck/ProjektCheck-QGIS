@@ -85,6 +85,7 @@ class Projektwirkung(Worker):
                          'Siedlungszellen und Distanzen wird ausgeführt.')
                 self.recalculate = True
                 settings.betrachtungsraum = ','.join(cur_ags)
+                settings.save()
 
         # empty result tables (empty indicates need of recalculation later on)
         if self.recalculate:
@@ -150,9 +151,15 @@ class Projektwirkung(Worker):
         zensus_file = os.path.join(self.project.basedata.base_path,
                                    self.project.settings.ZENSUS_500_FILE)
 
-        clipped_raster = clip_raster(zensus_file, bbox)
+        clipped_raster, raster_epsg = clip_raster(zensus_file, bbox)
 
         raster_layer = QgsRasterLayer(clipped_raster)
+        # workaround QGIS 3.10.2+: does not set crs correctly when reading
+        # raster file
+        crs = QgsCoordinateReferenceSystem()
+        crs.createFromSrid(raster_epsg)
+        raster_layer.setCrs(crs)
+
         parameters = {
             'INPUT_RASTER': raster_layer,
             'RASTER_BAND': 1,

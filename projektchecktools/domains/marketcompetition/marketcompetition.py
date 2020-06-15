@@ -1,6 +1,6 @@
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QInputDialog
+from qgis.PyQt.QtWidgets import (QFileDialog, QMessageBox, QInputDialog,
+                                 QCheckBox, QPushButton)
 from qgis.core import QgsCoordinateReferenceSystem
-from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 import os
@@ -28,14 +28,13 @@ class EditMarkets(QObject):
     layer_filter = ''
     layer_style = ''
     filter_args = {}
-    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz und Supermärkte'
     market_label = ''
     suffix = ''
     show_change = False
     changed = pyqtSignal()
 
     def __init__(self, combobox, select_button, param_group, canvas, project,
-                 add_button=None, remove_button=None):
+                 add_button=None, remove_button=None, layer_group=''):
         super().__init__()
         self.combobox = combobox
         self.param_group = param_group
@@ -48,6 +47,9 @@ class EditMarkets(QObject):
         self.output = None
         self.params = None
         self.add_market_tool = None
+        self.layer_group = layer_group
+        # just used for calculating the vkfl
+        self.market_tool = ReadOSMWorker(self.project)
 
     def setupUi(self):
         self.select_tool = FeaturePicker(self.select_button, canvas=self.canvas)
@@ -103,7 +105,7 @@ class EditMarkets(QObject):
             market.id_betriebstyp_nullfall != market.id_betriebstyp_planfall):
             betriebstyp = 'Schließung' if market.id_betriebstyp_planfall == 0 \
                 else market.betriebstyp_planfall
-            label += f' geplant: {betriebstyp}'
+            label = f'-> {label} geplant: {betriebstyp}'
         return label
 
     def fill_combo(self, select=None):
@@ -182,7 +184,8 @@ class EditMarkets(QObject):
             f'Möchten Sie alle {self.market_label} löschen?',
             QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            self.markets.filter(**self.filter_args).delete()
+            # markets on project area can never be deleted
+            self.markets.filter(id_teilflaeche=-1, **self.filter_args).delete()
             self.canvas.refreshAllLayers()
             self.fill_combo()
             self.changed.emit()
@@ -249,6 +252,10 @@ class EditNullfallMarkets(EditMarkets):
             market.betriebstyp_planfall = bt
             market.id_kette = chain_combo.get_data()
             market.kette = self.ketten.get(id_kette=market.id_kette).name
+            vkfl = self.market_tool.betriebstyp_to_vkfl(
+                market.id_betriebstyp_nullfall, market.id_kette)
+            market.vkfl = vkfl
+            market.vkfl_planfall = vkfl
             market.save()
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
@@ -284,6 +291,10 @@ class EditNullfallMarkets(EditMarkets):
             kette=self.ketten.get(id_kette=0).name,
             geom=geom
         )
+        vkfl = self.market_tool.betriebstyp_to_vkfl(
+            market.id_betriebstyp_nullfall, market.id_kette)
+        market.vkfl = vkfl
+        market.vkfl_planfall = vkfl
         crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
         market.AGS = ags.AGS_0
@@ -336,7 +347,7 @@ class EditPlanfallMarkets(EditMarkets):
 
         self.params.typ = Param(
             self.detailed_type_label(market.id_betriebstyp_planfall),
-            type_combo, label='Betriebstyp im Planfall',
+            type_combo, label='Neue Märkte',
             value_label=market.betriebstyp_planfall
         )
 
@@ -348,6 +359,9 @@ class EditPlanfallMarkets(EditMarkets):
             market.betriebstyp_planfall = bt
             market.id_kette = chain_combo.get_data()
             market.kette = self.ketten.get(id_kette=market.id_kette).name
+            vkfl = self.market_tool.betriebstyp_to_vkfl(
+                market.id_betriebstyp_planfall, market.id_kette)
+            market.vkfl_planfall = vkfl
             market.save()
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
@@ -357,18 +371,22 @@ class EditPlanfallMarkets(EditMarkets):
         self.params.show(title='Neuen Markt im Planfall bearbeiten')
         self.params.changed.connect(save)
 
-        last_row = self.params.layout.children()[-1]
-        button = QPushButton()
-        icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
-        icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH, icon_path))
-        button.setText('Markt entfernen')
-        button.setIcon(icon)
-        button.setToolTip(
-            '<p><span style=" font-weight:600;">Markt entfernen</span>'
-            '</p><p>Löscht den aktuell gewählten Markt. '
-            '<br/>Dieser Schritt kann nicht rückgängig gemacht werden. </p>')
-        last_row.insertWidget(0, button)
-        button.clicked.connect(lambda: self.remove_market(market))
+        # markets on project areas can not be deleted
+        if market.id_teilflaeche < 0:
+            last_row = self.params.layout.children()[-1]
+            button = QPushButton()
+            icon_path = 'iconset_mob/20190619_iconset_mob_delete_1.png'
+            icon = QIcon(os.path.join(self.project.settings.IMAGE_PATH,
+                                      icon_path))
+            button.setText('Markt entfernen')
+            button.setIcon(icon)
+            button.setToolTip(
+                '<p><span style=" font-weight:600;">Markt entfernen</span>'
+                '</p><p>Löscht den aktuell gewählten Markt. '
+                '<br/>Dieser Schritt kann nicht rückgängig gemacht '
+                'werden. </p>')
+            last_row.insertWidget(0, button)
+            button.clicked.connect(lambda: self.remove_market(market))
 
     def add_market(self, geom, name='unbenannter geplanter Markt'):
         market = self.markets.add(
@@ -384,6 +402,9 @@ class EditPlanfallMarkets(EditMarkets):
         crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
         market.AGS = ags.AGS_0
+        vkfl = self.market_tool.betriebstyp_to_vkfl(
+            market.id_betriebstyp_planfall, market.id_kette)
+        market.vkfl_planfall = vkfl
         market.save()
         self.changed.emit()
         self.canvas.refreshAllLayers()
@@ -395,23 +416,22 @@ class ChangeMarkets(EditMarkets):
                     'and id_betriebstyp_nullfall > 0')
     layer_style = 'standortkonkurrenz_veraenderte_maerkte.qml'
     filter_args = {'id_betriebstyp_nullfall__gt': 0}
-    market_label = 'veränderte Märkte im Bestand'
+    market_label = 'Veränderte Märkte im Bestand'
     suffix = 'nullfall'
     show_change = True
+
+    def __init__(self, nullfall_edit, combobox, select_button, param_group,
+                 canvas, project, remove_button=None, layer_group=''):
+        super().__init__(combobox, select_button, param_group,
+                         canvas, project, remove_button=remove_button,
+                         layer_group=layer_group)
+        self.nullfall_edit = nullfall_edit
 
     def add_layer(self, zoom_to=False):
         super().add_layer(zoom_to=zoom_to)
         # additionally the nullfall layer is required to select from
-        self.nullfall_output = ProjectLayer.from_table(
-            self.markets.table, groupname=self.layer_group)
-        nullfall_layer = self.nullfall_output.draw(
-            label=EditNullfallMarkets.market_label,
-            style_file=EditNullfallMarkets.layer_style,
-            filter=EditNullfallMarkets.layer_filter
-        )
-        self.select_tool.set_layer(nullfall_layer)
-        if zoom_to:
-            self.nullfall_output.zoom_to()
+        self.nullfall_edit.add_layer(zoom_to)
+        self.select_tool.set_layer(self.nullfall_edit.output.layer)
 
     def setup_params(self, market):
         if self.params:
@@ -470,6 +490,9 @@ class ChangeMarkets(EditMarkets):
             bt = self.typen.get(id_betriebstyp=id_bt).name
             market.id_betriebstyp_planfall = id_bt
             market.betriebstyp_planfall = bt
+            vkfl = self.market_tool.betriebstyp_to_vkfl(
+                market.id_betriebstyp_planfall, market.id_kette)
+            market.vkfl_planfall = vkfl
             market.save()
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
@@ -521,7 +544,6 @@ class EditCenters:
         self.select_tool.feature_picked.connect(self.select_center)
         self.ui.select_center_button.clicked.connect(lambda: self.add_layer())
         self.ui.center_parameter_group.setVisible(False)
-
 
     def load_content(self):
         self.centers = Centers.features()
@@ -645,7 +667,11 @@ class SupermarketsCompetition(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_08-SKSM.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_supermarkets_1.png"
 
-    layer_group = 'Wirkungsbereich 8 - Standortkonkurrenz Supermärkte'
+    layer_group = 'Wirkungsbereich 7 - Standortkonkurrenz Supermärkte'
+    nullfall_group = 'Märkte im Nullfall'
+    planfall_group = 'Märkte im Planfall'
+    study_group = 'Betrachtungsraum'
+    results_group = 'Projektwirkung'
 
     def setupUi(self):
         self.community_picker = FeaturePicker(self.ui.select_communities_button,
@@ -671,9 +697,11 @@ class SupermarketsCompetition(Domain):
             self.canvas,
             self.project,
             remove_button=self.ui.remove_nullfall_markets_button,
-            add_button=self.ui.add_nullfall_market_button
+            add_button=self.ui.add_nullfall_market_button,
+            layer_group=f'{self.layer_group}/{self.nullfall_group}'
         )
         self.nullfall_edit.setupUi()
+        self.nullfall_edit.changed.connect(self.remove_results)
 
         self.planfall_edit = EditPlanfallMarkets(
             self.ui.planfall_market_combo,
@@ -681,22 +709,28 @@ class SupermarketsCompetition(Domain):
             self.ui.planfall_market_parameter_group,
             self.canvas, self.project,
             remove_button=self.ui.remove_planfall_markets_button,
-            add_button=self.ui.add_planfall_market_button
+            add_button=self.ui.add_planfall_market_button,
+            layer_group=f'{self.layer_group}/{self.planfall_group}'
         )
         self.planfall_edit.setupUi()
+        self.planfall_edit.changed.connect(self.remove_results)
 
         self.changed_edit = ChangeMarkets(
+            self.nullfall_edit,
             self.ui.changed_market_combo,
             self.ui.select_changed_market_button,
             self.ui.changed_market_parameter_group,
             self.canvas, self.project,
-            remove_button=self.ui.reset_changed_markets_button
+            remove_button=self.ui.reset_changed_markets_button,
+            layer_group=f'{self.layer_group}/{self.planfall_group}'
         )
         self.changed_edit.setupUi()
         self.nullfall_edit.changed.connect(self.changed_edit.fill_combo)
+        self.changed_edit.changed.connect(self.remove_results)
 
-        self.center_edit = EditCenters(self.ui, self.canvas, self.project,
-                                      layer_group=self.layer_group)
+        self.center_edit = EditCenters(
+            self.ui, self.canvas, self.project,
+            layer_group=f'{self.layer_group}/{self.study_group}')
         self.center_edit.setupUi()
 
         self.ui.calculate_button.clicked.connect(self.calculate)
@@ -710,6 +744,13 @@ class SupermarketsCompetition(Domain):
         self.ui.manual_button.clicked.connect(lambda: open_file(manual_path))
 
     def load_content(self):
+        super().load_content()
+        # add layer-groups in specific order
+        for group_name in [self.nullfall_group, self.planfall_group,
+                           self.results_group, self.study_group]:
+            ProjectLayer.add_group(f'{self.layer_group}/{group_name}',
+                                   prepend=False)
+
         self.centers = Centers.features()
         if len(self.centers.filter(nutzerdefiniert=0)) == 0:
             QMessageBox.warning(
@@ -741,19 +782,21 @@ class SupermarketsCompetition(Domain):
         self.center_edit.add_layer()
 
     def show_communities(self, zoom_to=True):
+        group_name = f'{self.layer_group}/{self.study_group}'
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         self.communities_selected_layer = output.draw(
-            label='Ausgewählte Gemeinden im Betrachtungsraum',
+            label='Ausgewählte Gemeinden/Verw.gemeinschaften im '
+            'Betrachtungsraum',
             style_file='standortkonkurrenz_gemeinden_ausgewaehlt.qml',
             filter='auswahl!=0 AND nutzerdefiniert=-1'
         )
         self.community_picker.set_layer(self.communities_selected_layer)
 
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         self.communities_not_selected_layer = output.draw(
-            label='Nicht ausgewählte Gemeinden',
+            label='Nicht ausgewählte Gemeinden/Verw.gemeinschaften',
             style_file='standortkonkurrenz_gemeinden_nicht_ausgewaehlt.qml',
             filter='auswahl=0 AND nutzerdefiniert=-1'
         )
@@ -768,6 +811,7 @@ class SupermarketsCompetition(Domain):
             return
         center.auswahl = not center.auswahl
         center.save()
+        self.remove_results()
         self.canvas.refreshAllLayers()
 
     def read_template(self):
@@ -782,6 +826,7 @@ class SupermarketsCompetition(Domain):
                 self.nullfall_edit.fill_combo()
                 self.nullfall_edit.add_layer(zoom_to=True)
                 self.changed_edit.fill_combo()
+                self.remove_results()
             job = MarketTemplateImportWorker(path, self.project,
                                              epsg=self.settings.EPSG)
             dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
@@ -796,6 +841,7 @@ class SupermarketsCompetition(Domain):
             self.nullfall_edit.fill_combo()
             self.nullfall_edit.add_layer(zoom_to=True)
             self.changed_edit.fill_combo()
+            self.remove_results()
         dialog = ProgressDialog( job, parent=self.ui, on_success=on_success)
         dialog.show()
 
@@ -810,101 +856,141 @@ class SupermarketsCompetition(Domain):
             self.changed_edit.fill_combo()
             self.canvas.refreshAllLayers()
             self.markets.filter()
+            self.remove_results()
 
     def calculate(self):
+
         job = Projektwirkung(self.project, recalculate=False)
         success, msg = job.validate_inputs()
         if not success:
             QMessageBox.warning(self.ui, 'Fehler', msg)
             return
+        self.remove_results()
 
         def on_success(r):
             self.show_results()
+            if not self.settings.show_result_layer_info:
+                return
+            msg_box = QMessageBox(self.ui)
+            msg_box.setText('Die Ergebnislayer wurden dem QGIS-Layerbaum '
+                            'in der Gruppe "Projektwirkung" hinzugefügt. Nur der'
+                            ' oberste Ergebnislayer ist aktiviert.\n\n'
+                            'Um die anderen Ergebnisse anzuzeigen, '
+                            'aktivieren Sie sie bitte manuell im Layerbaum.\n')
+            check = QCheckBox('nicht wieder anzeigen')
+            msg_box.setCheckBox(check)
+            msg_box.exec()
+            if check.isChecked():
+                self.settings.show_result_layer_info = False
 
         dialog = ProgressDialog(job, parent=self.ui, on_success=on_success)
         dialog.show()
 
     def show_results(self):
+        # hide layers messing up the readability of the results
+        study_output = ProjectLayer.find(self.study_group)
+        if study_output:
+            study_output[0].setItemVisibilityChecked(False)
+        nullfall_output = ProjectLayer.find(self.nullfall_group)
+        if nullfall_output:
+            nullfall_output[0].setItemVisibilityChecked(False)
+
+        group_name = f'{self.layer_group}/{self.results_group}'
         planfall_markets = self.markets.filter(id_betriebstyp_planfall__gt=0)
+        # check first one only
+        checked = True
         for market in planfall_markets:
             if market.id_betriebstyp_nullfall == market.id_betriebstyp_planfall:
                 continue
             output = ProjectLayer.from_table(
-                self.relations.table, groupname=self.layer_group)
+                self.relations.table, groupname=group_name)
             layer_name = f'Kaufkraftbindung {market.name} ({market.id})'
             output.draw(
                 label=layer_name,
                 style_file='standortkonkurrenz_kk_bindung_2.qml',
                 filter=f'id_markt={market.id}',
-                expanded=False
+                expanded=False, checked=checked
             )
+            # zoom to first layer
+            if checked:
+                output.zoom_to()
+            checked = False
         self.markets.filter()
 
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Umsatzveränderung Bestand Zentren',
+            label='Umsatzveränderung der Bestandsmärke nach Zentren',
             style_file='standortkonkurrenz_umsatzveraenderung_zentren.qml',
             filter='nutzerdefiniert=1',
-            expanded=False
+            expanded=False, checked=checked
         )
+        checked = False
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Umsatzveränderung Bestand Verwaltungsgemeinschaften',
+            label='Umsatzveränderung der Bestandsmärke nach Gemeinde/Verw-Gem.',
             style_file='standortkonkurrenz_umsatzveraenderung_vwg.qml',
-            filter='nutzerdefiniert=-1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Zentralität Nullfall',
+            label='Zentralität im Nullfall nach Gemeinde/Verw-Gem.',
             style_file='standortkonkurrenz_zentralitaet_nullfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Zentralität Planfall',
+            label='Zentralität im Planfall nach Gemeinde/Verw-Gem.',
             style_file='standortkonkurrenz_zentralitaet_planfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Entwicklung Zentralität',
+            label='Veränderung der Zentralität im Planfall gegenüber Nullfall',
             style_file='standortkonkurrenz_entwicklung_zentralitaet.qml',
-            filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Verkaufsflächendichte Nullfall',
+            label='Verkaufsflächendichte im Nullfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_nullfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Verkaufsflächendichte Planfall',
+            label='Verkaufsflächendichte im Planfall',
             style_file='standortkonkurrenz_verkaufsflaechendichte_planfall.qml',
-            filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
         output = ProjectLayer.from_table(
-            self.centers.table, groupname=self.layer_group)
+            self.centers.table, groupname=group_name)
         output.draw(
-            label='Entwicklung Verkaufsflächendichte',
+            label='Veränderung der Verkaufsflächendichte im Planfall '
+            'gegenüber Nullfall',
             style_file='standortkonkurrenz_entwicklung_'
             'verkaufsflaechendichte.qml',
-            filter='nutzerdefiniert=0 and auswahl=1',
-            expanded=False
+            filter='nutzerdefiniert=-1 and auswahl!=0',
+            expanded=False, checked=checked
         )
+
+    @classmethod
+    def remove_results(cls):
+        group = ProjectLayer.find(cls.results_group,
+                                  groupname=cls.layer_group)
+        if group:
+            group[0].removeAllChildren()
 
     def close(self):
         self.community_picker.set_active(False)

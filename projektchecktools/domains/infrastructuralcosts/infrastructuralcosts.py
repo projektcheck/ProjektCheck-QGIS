@@ -616,7 +616,7 @@ class InfrastructuralCosts(Domain):
     ui_file = 'ProjektCheck_dockwidget_analysis_06-IFK.ui'
     ui_icon = ('images/iconset_mob/'
                '20190619_iconset_mob_domain_infrstucturalcosts_4.png')
-    layer_group = 'Wirkungsbereich 6 - Infrastrukturfolgekosten'
+    layer_group = 'Wirkungsbereich 5 - Infrastrukturfolgekosten'
 
     def setupUi(self):
         self.drawing = InfrastructureDrawing(self.ui, project=self.project,

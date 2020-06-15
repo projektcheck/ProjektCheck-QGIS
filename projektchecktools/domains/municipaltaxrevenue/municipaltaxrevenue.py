@@ -69,7 +69,7 @@ class EinwohnerMigration(Migration):
         if not self.ui.recalculate_inhabitants_check.isChecked():
             self.add_layer()
             return
-        sum_ew = sum(self.areas.values('ew'))
+        sum_ew = sum(x or 0 for x in self.areas.values('ew'))
         if sum_ew == 0:
             QMessageBox.warning(self.ui, 'Fehler',
                                 'Es wurden keine definierten Teilflächen mit '
@@ -172,7 +172,8 @@ class EinwohnerMigration(Migration):
 
         self.params.add(Param(
             -factor_outer * sum_ew,
-            label='Restliches Bundesgebiet / Ausland'
+            label='Restliches Bundesgebiet / Ausland',
+            unit='Ew'
         ))
 
         def save():
@@ -215,7 +216,7 @@ class BeschaeftigtenMigration(Migration):
         if not self.ui.recalculate_jobs_check.isChecked():
             self.add_layer()
             return
-        sum_ap = sum(self.areas.values('ap_gesamt'))
+        sum_ap = sum(x or 0 for x in self.areas.values('ap_gesamt'))
         if sum_ap == 0:
             # ToDo: actually there are just no jobs
             # (e.g. when manually set to zero)
@@ -331,7 +332,8 @@ class BeschaeftigtenMigration(Migration):
 
         self.params.add(Param(
             -factor_outer * sum_ap,
-            label='Restliches Bundesgebiet / Ausland'
+            label='Restliches Bundesgebiet / Ausland',
+            unit='SvB'
         ))
 
         def save():
@@ -697,7 +699,7 @@ class MunicipalTaxRevenue(Domain):
     ui_label = 'Kommunale Steuereinnahmen'
     ui_file = 'ProjektCheck_dockwidget_analysis_07-KSt.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_tax_1.png"
-    layer_group = 'Wirkungsbereich 7 - Kommunale Steuereinnahmen'
+    layer_group = 'Wirkungsbereich 6 - Kommunale Steuereinnahmen'
 
     def setupUi(self):
         self.migration_ew = EinwohnerMigration(
@@ -743,6 +745,9 @@ class MunicipalTaxRevenue(Domain):
 
     def load_content(self):
         super().load_content()
+        #output = ProjectLayer.find('Projektdefinition')
+        #if output:
+            #output[0].setItemVisibilityChecked(True)
         self.project_frame = Projektrahmendaten.features(
             project=self.project)[0]
         self.gemeinden = Gemeindebilanzen.features(create=True)
@@ -922,6 +927,9 @@ class MunicipalTaxRevenue(Domain):
                                   'einkommensteuer', 'summe_einnahmen'])
 
     def close(self):
+        #output = ProjectLayer.find('Projektdefinition')
+        #if output:
+            #output[0].setItemVisibilityChecked(False)
         self.migration_ew.close()
         self.grundsteuer.close()
         self.migration_svb.close()

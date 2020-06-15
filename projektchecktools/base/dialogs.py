@@ -1,4 +1,5 @@
 from qgis.PyQt import uic
+import re
 from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
@@ -65,7 +66,6 @@ class NewProjectDialog(Dialog):
         hlayout = QHBoxLayout(self)
         label = QLabel('Import der (Teil-)Flächen des Plangebiets')
         self.layer_combo = QgsMapLayerComboBox()
-        self.layer_combo.setCurrentIndex(-1)
         self.layer_combo.setFilters(QgsMapLayerProxyModel.VectorLayer)
 
         self.source = None
@@ -106,6 +106,10 @@ class NewProjectDialog(Dialog):
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
+        if len(self.layer_combo) > 0:
+            set_layer(self.layer_combo.currentLayer())
+        self.layer_combo.setCurrentIndex(0)
+
     def browse_path(self):
         path, sf = QFileDialog.getOpenFileName(
             self, 'Datei wählen', filter="Shapefile(*.shp)",
@@ -113,7 +117,7 @@ class NewProjectDialog(Dialog):
         if path:
             self.path = os.path.split(path)[0]
             self.layer_combo.setAdditionalItems([str(path)])
-            self.layer_combo.selectedindex = self.layer_combo.count() - 1
+            self.layer_combo.setCurrentIndex(self.layer_combo.count()-1)
 
     def show(self):
         confirmed = self.exec_()
@@ -124,16 +128,21 @@ class NewProjectDialog(Dialog):
     def validate(self):
         name = str(self.name_edit.text())
         status_text = ''
-        if name in self.project_names:
+        regexp = re.compile(f'[\\\/\:*?\"\'<>|]')
+        error = False
+        if name and regexp.search(name):
+            status_text = ('Der Projektname darf keines der folgenden Zeichen '
+                           f'enthalten: \/:*?"\'<>|')
+            error = True
+        elif name in self.project_names:
             status_text = (
                 f'Ein Projekt mit dem Namen {name} existiert bereits!\n'
                 'Projektnamen müssen einzigartig sein.')
-            self.ok_button.setEnabled(False)
-            self.status_label.setText(status_text)
-            return
+            error = True
+
         self.status_label.setText(status_text)
 
-        if name and self.source:
+        if not error and (name and self.source):
             self.ok_button.setEnabled(True)
         else:
             self.ok_button.setEnabled(False)

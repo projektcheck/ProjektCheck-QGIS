@@ -24,6 +24,8 @@ from projektchecktools.domains.jobs_inhabitants.tables import (
 from projektchecktools.utils.utils import open_file
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.domains.marketcompetition.tables import Markets
+from projektchecktools.domains.marketcompetition.marketcompetition import (
+    SupermarketsCompetition)
 from projektchecktools.domains.marketcompetition.markets import (
     Supermarket, ReadMarketsWorker)
 from projektchecktools.utils.utils import get_ags
@@ -732,11 +734,13 @@ class Einzelhandel:
             sm = market_tool.vkfl_to_betriebstyp([sm])[0]
             market.id_betriebstyp_planfall = sm.id_betriebstyp
             market.betriebstyp_planfall = sm.betriebstyp
-            # ToDo: betriebstyp text
+            market.vkfl_planfall = vkfl_lebensmittel
             market.save()
+            SupermarketsCompetition.remove_results()
         else:
             if market:
                 market.delete()
+                SupermarketsCompetition.remove_results()
 
         self.set_ways(self.area)
         Traffic.reset()
@@ -747,6 +751,7 @@ class Einzelhandel:
         market = self.markets.get(id_teilflaeche=area.id)
         if market:
             market.delete()
+            SupermarketsCompetition.remove_results()
         self.verkaufsflaechen.filter(id_teilflaeche=area.id).delete()
         area.vf_gesamt = None
         area.save()
