@@ -266,23 +266,24 @@ class InfrastructureDrawing:
 
         self.point_params.add(Seperator(margin=0))
 
-        self.point_params.lebensdauer = Param(
-            point.Lebensdauer, SpinBox(minimum=1, maximum=1000),
-            label='Technische oder wirtschaftliche \n'
-            'Lebensdauer bis zur Erneuerung',
-            unit='Jahr(e)'
-        )
         self.point_params.euro_EH = Param(
             point.Euro_EH, DoubleSpinBox(),
             unit='€', label='Kosten der erstmaligen Herstellung'
+        )
+
+        self.point_params.euro_BU = Param(
+            point.Cent_BU / 100, DoubleSpinBox(),
+            unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung'
         )
         self.point_params.euro_EN = Param(
             point.Euro_EN, DoubleSpinBox(),
             unit='€', label='Erneuerungskosten nach Ablauf der Lebensdauer'
         )
-        self.point_params.euro_BU = Param(
-            point.Cent_BU / 100, DoubleSpinBox(),
-            unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung'
+        self.point_params.lebensdauer = Param(
+            point.Lebensdauer, SpinBox(minimum=1, maximum=1000),
+            label='Technische oder wirtschaftliche \n'
+            'Lebensdauer bis zur Erneuerung',
+            unit='Jahr(e)'
         )
 
         def save():
@@ -433,25 +434,25 @@ class Gesamtkosten:
         self.params = Params(
             layout, help_file='infrastruktur_kostenkennwerte.txt')
 
-        self.params.lebensdauer = Param(
-            net_element.Lebensdauer, SpinBox(minimum=1, maximum=1000),
-            label='Lebensdauer: Jahre zwischen den Erneuerungszyklen',
-            unit='Jahr(e)'
-        )
         self.params.euro_EH = Param(
             net_element.Euro_EH, DoubleSpinBox(),
             unit='€', label='Kosten der erstmaligen Herstellung \n'
             'pro laufenden Meter'
+        )
+        self.params.euro_BU = Param(
+            net_element.Cent_BU / 100, DoubleSpinBox(),
+            unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung \n'
+            'pro laufenden Meter und Jahr'
         )
         self.params.euro_EN = Param(
             net_element.Euro_EN, DoubleSpinBox(),
             unit='€', label='Kosten der Erneuerung \n'
             'pro laufenden Meter und Erneuerungszyklus'
         )
-        self.params.euro_BU = Param(
-            net_element.Cent_BU / 100, DoubleSpinBox(),
-            unit='€', label='Jährliche Kosten für Betrieb und Unterhaltung \n'
-            'pro laufenden Meter und Jahr'
+        self.params.lebensdauer = Param(
+            net_element.Lebensdauer, SpinBox(minimum=1, maximum=1000),
+            label='Lebensdauer: Jahre zwischen den Erneuerungszyklen',
+            unit='Jahr(e)'
         )
 
         self.params.show()
@@ -508,8 +509,16 @@ class Kostentraeger:
 
         # initialize empty project 'kostenaufteilungen' with the default ones
         if len(self.kostenaufteilung) == 0:
-            self.kostenaufteilung.update_pandas(
-                self.default_kostenaufteilung.to_pandas())
+            for default in self.default_kostenaufteilung.features():
+                rule =self.aufteilungsregeln.get(
+                    IDAufteilungsregel=default.IDKostenregel)
+                self.kostenaufteilung.add(
+                    Anteil_GSB=rule.Anteil_GSB,
+                    Anteil_GEM=rule.Anteil_GEM,
+                    Anteil_ALL=rule.Anteil_ALL,
+                    IDNetz=default.IDNetz,
+                    IDKostenphase=default.IDKostenphase
+                )
 
         self.setup_kostenaufteilung(self.net_id)
 
