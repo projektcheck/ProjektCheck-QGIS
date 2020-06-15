@@ -11,7 +11,7 @@ from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import (QgsField, QgsVectorLayer, QgsVectorFileWriter,
                        QgsFeature, QgsProject)
 
-from projektchecktools.utils.spatial import google_geocode
+from projektchecktools.utils.spatial import nominatim_geocode
 from projektchecktools.base.dialogs import Dialog
 from projektchecktools.domains.marketcompetition.markets import (
     Supermarket, ReadMarketsWorker)
@@ -255,7 +255,6 @@ class MarketTemplate(QObject):
 
     def _df_to_markets(self, df):
         markets = []
-        api_key = settings.GOOGLE_API_KEY
         n_rows = len(df)
         for i, (idx, row) in enumerate(df.iterrows()):
             address = ''
@@ -264,7 +263,7 @@ class MarketTemplate(QObject):
                 for field in self._address_fields.keys():
                     address += f' {row[field]}'
                 self.message.emit(f'Geocoding {name} {address}...')
-                location, msg = google_geocode(address, api_key=api_key)
+                location, msg = nominatim_geocode(address)
                 if location is None:
                     self.message.emit(f'Fehler: {msg}')
                     continue
