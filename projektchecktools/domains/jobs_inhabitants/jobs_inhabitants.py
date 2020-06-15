@@ -122,9 +122,3 @@ class JobsInhabitants(Domain):
         table_config.setSortExpression('"id_teilflaeche" || "id_branche"')
         layer.setAttributeTableConfig(table_config)
         utils.iface.showAttributeTable(layer)
-
-    def close(self):
-        output = ProjectLayer.find('Projektdefinition')
-        if output:
-            output[0].setItemVisibilityChecked(False)
-        super().close()

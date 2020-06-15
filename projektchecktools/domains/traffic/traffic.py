@@ -171,9 +171,6 @@ class Traffic(Domain):
         output.zoom_to()
 
     def close(self):
-        output = ProjectLayer.find('Projektdefinition')
-        if output:
-            output[0].setItemVisibilityChecked(False)
         if hasattr(self, 'params'):
             self.params.close()
         super().close()

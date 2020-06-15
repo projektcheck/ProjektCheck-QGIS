@@ -330,7 +330,4 @@ class Reachabilities(Domain):
         if output:
             layer = output[0].layer()
             layer.removeSelection()
-        output = ProjectLayer.find('Projektdefinition')
-        if output:
-            output[0].setItemVisibilityChecked(False)
         super().close()

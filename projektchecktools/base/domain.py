@@ -154,6 +154,11 @@ class Domain(PCDockWidget):
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
 
     def load_content(self):
+        # some domains open the project definition and it is opened after
+        # loading a project, close it by default
+        def_group = ProjectLayer.find_group('Projektdefinition')
+        if def_group:
+            def_group.setItemVisibilityChecked(False)
         if self.layer_group:
             group = ProjectLayer.find_group(self.layer_group)
             if group:
