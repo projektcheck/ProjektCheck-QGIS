@@ -5,7 +5,7 @@ from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
                           QSizePolicy, QTimer, QVariant, QTextCursor)
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.gui import QgsMapLayerComboBox
-from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
+from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer, QgsWkbTypes
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
 import matplotlib.pyplot as plt
@@ -69,18 +69,8 @@ class NewProjectDialog(Dialog):
         self.layer_combo.setFilters(QgsMapLayerProxyModel.VectorLayer)
 
         self.source = None
-        def set_layer(layer):
-            status_text = ''
-            if not layer:
-                path = self.layer_combo.currentText()
-                layer = QgsVectorLayer(path, 'testlayer_shp', 'ogr')
-            if not layer.isValid():
-                layer = None
-                status_text = 'Der Layer ist ungültig.'
-            self.status_label.setText(status_text)
-            self.source = layer
 
-        self.layer_combo.layerChanged.connect(set_layer)
+        self.layer_combo.layerChanged.connect(self.set_layer)
         self.layer_combo.layerChanged.connect(self.validate)
         browse_button = QPushButton('...')
         browse_button.clicked.connect(self.browse_path)
@@ -107,8 +97,15 @@ class NewProjectDialog(Dialog):
         layout.addWidget(buttons)
 
         if len(self.layer_combo) > 0:
-            set_layer(self.layer_combo.currentLayer())
+            self.set_layer(self.layer_combo.currentLayer())
         self.layer_combo.setCurrentIndex(0)
+
+    def set_layer(self, layer):
+        if not layer:
+            path = self.layer_combo.currentText()
+            layer = QgsVectorLayer(path, 'testlayer_shp', 'ogr')
+        self.source = layer
+        self.validate()
 
     def browse_path(self):
         path, sf = QFileDialog.getOpenFileName(
@@ -118,6 +115,7 @@ class NewProjectDialog(Dialog):
             self.path = os.path.split(path)[0]
             self.layer_combo.setAdditionalItems([str(path)])
             self.layer_combo.setCurrentIndex(self.layer_combo.count()-1)
+            self.set_layer(None)
 
     def show(self):
         confirmed = self.exec_()
@@ -139,6 +137,14 @@ class NewProjectDialog(Dialog):
                 f'Ein Projekt mit dem Namen {name} existiert bereits!\n'
                 'Projektnamen müssen einzigartig sein.')
             error = True
+
+        if self.source:
+            if not self.source.isValid():
+                status_text = 'Der Layer ist ungültig.'
+                error = True
+            elif not self.source.geometryType() == QgsWkbTypes.PolygonGeometry:
+                status_text = 'Der Layer hat keine Polygongeometrie.'
+                error = True
 
         self.status_label.setText(status_text)
 
