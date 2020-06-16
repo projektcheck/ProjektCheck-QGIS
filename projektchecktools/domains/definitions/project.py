@@ -4,6 +4,7 @@ from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
 from datetime import datetime
 import numpy as np
 import shutil
+import processing
 
 from projektchecktools.base.project import ProjectManager
 from projektchecktools.base.domain import Worker
@@ -41,7 +42,16 @@ class ProjectInitialization(Worker):
         target_crs = QgsCoordinateReferenceSystem(self.epsg)
         self.project_areas = Teilflaechen.features(project=self.project,
                                                    create=True)
-        layer_features = list(self.area_layer.getFeatures())
+
+        parameters = {
+            'INPUT': self.area_layer,
+            'DROP_Z_VALUES': True,
+            'OUTPUT': 'memory:'
+        }
+        area_layer = processing.run(
+            'native:dropmzvalues', parameters)['OUTPUT']
+
+        layer_features = list(area_layer.getFeatures())
 
         self.log(f'Neues Projekt angelegt im Ordner {self.project.path}')
         self.set_progress(10)
