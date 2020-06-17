@@ -4,6 +4,8 @@ from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer)
 from qgis.PyQt.QtGui import QIcon
 import os
+import sys
+import subprocess
 import pandas as pd
 import functools
 import threading
@@ -167,4 +169,8 @@ def threaded(function):
     return _threaded
 
 def open_file(path):
-    threaded(os.startfile)(path)
+    if sys.platform == 'win32':
+        threaded(os.startfile)(path)
+    else:
+        opener = 'open' if sys.platform == 'darwin' else 'xdg-open'
+        subprocess.call([opener, path])
