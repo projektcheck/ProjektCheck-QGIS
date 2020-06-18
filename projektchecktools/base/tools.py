@@ -15,7 +15,7 @@ from qgis.gui import (QgsMapToolEmitPoint, QgsMapToolIdentify, QgsRubberBand,
 from qgis.PyQt.QtWidgets import QToolTip
 from qgis.core import (QgsFeature, QgsCoordinateTransform, QgsCurvePolygon,
                        QgsProject, QgsCoordinateReferenceSystem, QgsGeometry,
-                       QgsPointXY, QgsWkbTypes)
+                       QgsPointXY, QgsPoint, QgsWkbTypes)
 
 
 class MapTool:
@@ -200,7 +200,7 @@ class LineMapTool(MapTool, QgsMapToolEmitPoint):
         # alternative for MacOS
         else:
             closest = QgsGeometryUtils.closestPoint(
-                self.snap_geometry, point)
+                self.snap_geometry, QgsPoint(point.x(), point.y()))
             p = QgsPointXY(closest.x(), closest.y())
         p = self.transform_to_map(p)
         return p
