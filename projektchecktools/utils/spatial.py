@@ -1,10 +1,9 @@
 import numpy as np
-from pyproj import Proj, transform
 from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsFeature, QgsPolygon, QgsCoordinateTransform,
-                       QgsProject, QgsCoordinateReferenceSystem)
+                       QgsProject, QgsCoordinateReferenceSystem, QgsPoint)
 from qgis.PyQt.Qt import QVariant
-import gdal
+import gdal, osr
 from typing import Union
 import os
 import tempfile
@@ -25,7 +24,6 @@ class Point(object):
         self.y = y
         self._geom = None
         self.epsg = epsg
-        self.proj = Proj(init='epsg:{}'.format(epsg))
 
     def __repr__(self):
         return '{},{}'.format(self.x, self.y)
@@ -39,27 +37,39 @@ class Point(object):
         return QgsPointXY(self.x, self.y)
 
     def transform(self, target_srid, inplace=True):
-        target_srid = str(target_srid).lower()
-        target_srid = target_srid.replace('epsg:', '')
+
         # a little weird to replace it and add it again, but i wanted to keep
         # the api of the old ArcGIS Project
-        target_srs = Proj(init='epsg:{}'.format(target_srid))
-        x, y = transform(self.proj, target_srs, self.x, self.y)
-        epsg = int(target_srid)
+        if isinstance(target_srid, str):
+            target_srid = target_srid.replace('epsg:', '')
+            target_srid = int(target_srid)
+
+        tr = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(self.epsg),
+            QgsCoordinateReferenceSystem(f'epsg:{target_srid}'),
+            QgsProject.instance()
+        )
+        pnt = QgsPoint(self.x, self.y)
+        pnt.transform(tr)
+        x, y = pnt.x(), pnt.y()
         if inplace:
-            self.epsg = epsg
-            self.proj = Proj(init='epsg:{}'.format(self.epsg))
+            self.epsg = target_srid
             self.x = x
             self.y = y
             return (x, y)
         else:
-            return Point(x, y, id=self.id, epsg=epsg)
+            return Point(x, y, id=self.id, epsg=target_srid)
 
 def clip_raster(raster_file, bbox):
     '''clip given raster file with given bbox
     (tuple of upper left and lower right Points)'''
     ds = gdal.OpenEx(raster_file)
-    raster_epsg = ds.GetSpatialRef().GetAttrValue('AUTHORITY', 1)
+    try:
+        ref = ds.GetSpatialRef()
+    # gdal under linux does not seem to have the function above
+    except AttributeError:
+        ref = osr.SpatialReference(wkt=ds.GetProjection())
+    raster_epsg = ref.GetAttrValue('AUTHORITY',1)
     p1, p2 = bbox
     p1 = p1.transform(raster_epsg, inplace=False)
     p2 = p2.transform(raster_epsg, inplace=False)

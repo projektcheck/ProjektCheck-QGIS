@@ -39,7 +39,7 @@ class ProjectInitialization(Worker):
         self.project = self.project_manager.create_project(self.project_name)
         self.project_areas = None
         source_crs = self.area_layer.crs()
-        target_crs = QgsCoordinateReferenceSystem(self.epsg)
+        target_crs = QgsCoordinateReferenceSystem(f'epsg:{self.epsg}')
         self.project_areas = Teilflaechen.features(project=self.project,
                                                    create=True)
 

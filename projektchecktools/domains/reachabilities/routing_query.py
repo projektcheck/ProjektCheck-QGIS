@@ -1,5 +1,6 @@
 import json
-from pyproj import Proj, transform
+from qgis.core import (QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
+                       QgsCoordinateTransform, QgsGeometry)
 import numpy as np
 import json
 import ogr
@@ -14,7 +15,7 @@ from projektchecktools.utils.connection import Request
 requests = Request(synchronous=True)
 
 
-class RoutingQuery:
+class Isochrones(Worker):
     isochrone_url = ('https://projektcheck.ggr-planung.de'
                      '/otp/routers/deutschland/isochrone')
     isochrone_params = {
@@ -28,40 +29,6 @@ class RoutingQuery:
         'offRoadDistanceMeters': 500,
         'bikeSpeed': 5.0,
     }
-
-    epsg = 4326
-
-    def get_isochrone(self, point, mode, time_sec, walk_speed,
-                      target_epsg=None):
-        params = self.isochrone_params.copy()
-        params['cutoffSec'] = int(time_sec)
-        params['mode'] = mode
-        params['walkSpeed'] = walk_speed
-        if point.epsg != self.epsg:
-            point.transform(self.epsg)
-        params['fromPlace'] = '{y},{x}'.format(y = point.y, x = point.x)
-        r = requests.get(self.isochrone_url, params=params)
-        r.raise_for_status()
-        geojson = r.json()
-        geom_json = geojson['features'][0]['geometry']
-        if geom_json and target_epsg:
-            coords = geom_json['coordinates']
-            new_coords = []
-            p1 = Proj(init='epsg:{}'.format(self.epsg))
-            p2 = Proj(init='epsg:{}'.format(target_epsg))
-            for a in coords:
-                new_inner_list = []
-                for b in a:
-                    arr = np.asarray(b)
-                    new_arr = transform(p1, p2, arr[:, 0], arr[:, 1])
-                    new_list = np.array(zip(*new_arr)).tolist()
-                    new_inner_list.append(list(new_list))
-                new_coords.append(new_inner_list)
-            geom_json['coordinates'] = new_coords
-        return geom_json
-
-
-class Isochrones(Worker):
 
     categories = [u'Kita', u'Autobahnanschlussstelle', u'Dienstleistungen',
                   u'Ärzte', 'Freizeit', u'Läden',
@@ -95,19 +62,40 @@ class Isochrones(Worker):
 
         epsg = settings.EPSG
         point = Point(point.x(), point.y(), epsg=epsg)
-        query = RoutingQuery()
         cutoff_step = self.cutoff_sec / self.n_steps
         for i in reversed(range(self.n_steps)):
             sec = int(cutoff_step * (i + 1))
             self.log(f'...maximale Reisezeit von {sec} Sekunden')
-            iso_poly = query.get_isochrone(point, mode, sec, walk_speed,
-                                           target_epsg=epsg)
-            if not iso_poly:
+            json_res = self.get_isochrone(point, mode, sec, walk_speed)
+            if not json_res:
                 continue
-            geom = ogr.CreateGeometryFromJson(json.dumps(iso_poly))
+            iso_poly = ogr.CreateGeometryFromJson(json.dumps(json_res))
+            geom = QgsGeometry.fromWkt(iso_poly.ExportToWkt())
+            tr = QgsCoordinateTransform(
+                QgsCoordinateReferenceSystem('epsg:4326'),
+                QgsCoordinateReferenceSystem(f'epsg:{epsg}'),
+                QgsProject.instance()
+            )
+            geom.transform(tr)
             self.isochronen.add(modus=self.modus,
                                 sekunden=sec,
                                 minuten=round(sec/60, 1),
                                 geom=geom,
                                 id_connector=conn_id)
             self.set_progress(100 * (self.n_steps - i + 1) / self.n_steps)
+
+    def get_isochrone(self, point, mode, time_sec, walk_speed):
+        params = self.isochrone_params.copy()
+        params['cutoffSec'] = int(time_sec)
+        params['mode'] = mode
+        params['walkSpeed'] = walk_speed
+        if point.epsg != 4326:
+            point.transform(4326)
+        params['fromPlace'] = '{y},{x}'.format(y = point.y, x = point.x)
+        r = requests.get(self.isochrone_url, params=params)
+        r.raise_for_status()
+        # always returns a collection with a single feature
+        geo_json = r.json()['features'][0]['geometry']
+        if not geo_json:
+            return
+        return geo_json

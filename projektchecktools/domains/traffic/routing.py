@@ -3,7 +3,6 @@ from qgis.core import QgsPoint, QgsLineString, QgsDistanceArea
 from qgis.core import QgsGeometryUtils
 from qgis.core import (QgsGeometry, QgsPoint, QgsProject,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform)
-from pyproj import Proj, transform
 import math
 import numpy as np
 
@@ -101,11 +100,9 @@ class Routing(Worker):
             destinations = np.concatenate([inner_dest, outer_dest])
             source.transform(otp_router.router_epsg)
 
-            #p2 = Proj(init=f'epsg:{otp_router.router_epsg}')
-            #p1 = Proj(init='epsg:{}'.format(project_epsg))
-
-            source_crs = QgsCoordinateReferenceSystem(otp_router.router_epsg)
-            target_crs = QgsCoordinateReferenceSystem(project_epsg)
+            source_crs = QgsCoordinateReferenceSystem(
+                f'epsg:{otp_router.router_epsg}')
+            target_crs = QgsCoordinateReferenceSystem(f'epsg:{project_epsg}')
             transform = QgsCoordinateTransform(source_crs, target_crs,
                                                QgsProject.instance())
 

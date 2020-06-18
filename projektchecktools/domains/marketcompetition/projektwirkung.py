@@ -193,7 +193,7 @@ class Projektwirkung(Worker):
 
         self.log('Schreibe Siedlungszellen in Datenbank...')
         tr = QgsCoordinateTransform(
-            clipped_w_ags.crs(), QgsCoordinateReferenceSystem(epsg),
+            clipped_w_ags.crs(), QgsCoordinateReferenceSystem(f'epsg:{epsg}'),
             QgsProject.instance()
         )
 

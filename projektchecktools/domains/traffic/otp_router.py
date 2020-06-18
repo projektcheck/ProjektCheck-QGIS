@@ -3,7 +3,8 @@ from pickle import dump, load
 from osgeo import ogr
 from collections import OrderedDict
 from scipy.sparse import csc_matrix
-from pyproj import Proj, transform
+from qgis.core import (QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
+                       QgsCoordinateTransform)
 from scipy.sparse.csgraph import dijkstra
 import numpy as np
 import pandas as pd
@@ -157,8 +158,8 @@ class Nodes(object):
         self.dtype = np.dtype(dict(names=['node_id', 'x', 'y'],
                                    formats=['i4', 'd', 'd']))
         self.epsg = epsg
-        self.p1 = Proj(init='epsg:4326')
-        self.p2 = Proj(init='epsg:{}'.format(self.epsg))
+        self.p1 = 'epsg:4326'
+        self.p2 = f'epsg:{self.epsg}'
         self.coords2nodes = OrderedDict()
         self.id2nodes = OrderedDict()
         self.serial = 0
@@ -233,10 +234,17 @@ class Nodes(object):
 
     def transform(self):
         """Transform"""
-        x, y = transform(self.p1, self.p2, self.nodes.x, self.nodes.y)
+        tr = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(self.p1),
+            QgsCoordinateReferenceSystem(self.p2),
+            QgsProject.instance()
+        )
+
         for i, node in enumerate(self):
-            node.x = x[i]
-            node.y = y[i]
+            pnt = QgsPoint(node.x, node.y)
+            pnt.transform(tr)
+            node.x = pnt.x()
+            node.y = pnt.y()
 
     def __iter__(self):
         """Iterator"""
@@ -383,8 +391,6 @@ class OTPRouter(object):
     def __init__(self, distance=1000, epsg=31467):
         self.epsg = epsg
         self.dist = distance
-        self.p1 = Proj(init=f'epsg:{self.router_epsg}')
-        self.p2 = Proj(init='epsg:{}'.format(epsg))
         self.nodes = Nodes(epsg)
         self.polylines = []
         self.routes = Routes()
