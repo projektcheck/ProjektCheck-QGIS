@@ -13,6 +13,7 @@ from scipy.ndimage import filters
 import tempfile
 import processing
 from osgeo import gdal
+import osr
 
 from projektchecktools.utils.spatial import Point, clip_raster
 from projektchecktools.utils.connection import Request
@@ -59,7 +60,12 @@ class RasterManagement:
     def load(self, raster_file, unreachable=120):
         ds = gdal.OpenEx(raster_file)
         ulx, xres, xskew, uly, yskew, yres = ds.GetGeoTransform()
-        self.srid = int(ds.GetSpatialRef().GetAttrValue('AUTHORITY', 1))
+        try:
+            ref = ds.GetSpatialRef()
+        # gdal under linux does not seem to have the function above
+        except AttributeError:
+            ref = osr.SpatialReference(wkt=ds.GetProjection())
+        self.srid = int(ref.GetAttrValue('AUTHORITY', 1))
         self.raster_origin = Point(ulx, uly, epsg=self.srid)
         self.cellWidth = xres
         self.cellHeight = abs(yres)
