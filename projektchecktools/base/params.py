@@ -303,7 +303,7 @@ class Params(QObject):
                 os.path.join(self.HELP_PATH, help_file)
             if os.path.exists(self.help_file):
                 with open(self.help_file) as json_file:
-                    self.help_dict = yaml.load(json_file)
+                    self.help_dict = yaml.safe_load(json_file)
         # passed help text overrides the one from file
         if help_text or 'beschreibung' not in self.help_dict:
             self.help_dict['beschreibung'] = help_text
