@@ -459,13 +459,12 @@ class Ecology(Domain):
             df_rating = df.multiply(df['anteil']/100, axis='index')
             df_rating = df_rating[columns]
             df_rating = df_rating.sum(axis=0)
-            n = self.MAX_RATING
 
             rating = df_rating * self.MAX_RATING
 
             ## divide the domain (0..1) into n + 1 bins
             ## -> n is the max. rating value
-            #bins = np.linspace(0, 1, n+1)
+            #bins = np.linspace(0, 1, self.MAX_RATING+1)
             #rating = np.digitize(df_rating, bins) - 1
             return rating.round(1)
 
