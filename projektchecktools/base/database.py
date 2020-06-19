@@ -14,10 +14,8 @@
 *   (at your option) any later version.                                   *
 *                                                                         *
 ***************************************************************************
-'''
 
-'''
-generic database interface and features using this interface
+generic database interface and feature classes using this interface
 '''
 
 __author__ = 'Christoph Franke'
@@ -149,7 +147,7 @@ class FeatureCollection:
     workspace : Workspace
         the workspace the features are in
     '''
-    def __init__(self, table: "Table"):
+    def __init__(self, table: 'Table'):
         '''
         Parameters
         ----------
@@ -231,7 +229,7 @@ class FeatureCollection:
         return self.table.values(field_name)
 
     @property
-    def workspace(self) -> Workspace:
+    def workspace(self) -> 'Workspace':
         '''
         workspace of underlying table
         '''
@@ -671,5 +669,3 @@ class Table(ABC):
             number of rows (features)
         '''
         raise NotImplementedError
-
-

@@ -384,7 +384,7 @@ class SettingsDialog(Dialog):
 
 class DiagramDialog(Dialog):
 
-    def __init__(self, figure, title='Diagramm', modal=False):
+    def __init__(self, figure: 'Figure', title='Diagramm', modal=False):
         super().__init__(modal=modal, title=title)
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvasQTAgg(figure)
