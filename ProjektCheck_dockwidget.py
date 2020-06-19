@@ -409,5 +409,5 @@ class ProjektCheckMainDockWidget(PCDockWidget):
         if getattr(self, 'domains', None):
             for domain in self.domains:
                 domain.unload()
-                del(domain)
+                domain.deleteLater()
         super().unload()

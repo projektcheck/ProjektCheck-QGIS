@@ -97,9 +97,13 @@ class PCDockWidget(QObject):
         self.isActive = False
         self.close()
         self.iface.removeDockWidget(self.ui)
+        self.ui.deleteLater()
 
     def closeEvent(self, event):
-        self.closingWidget.emit()
+        try:
+            self.closingWidget.emit()
+        except:
+            pass
         event.accept()
 
     @property
