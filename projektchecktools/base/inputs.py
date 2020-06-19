@@ -1,8 +1,8 @@
-from abc import ABC
 import os
+from typing import List
 from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
                           QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout,
-                          QCheckBox, QPushButton, QSizePolicy)
+                          QCheckBox, QPushButton, QSizePolicy, QLayout)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import pyqtSignal
 
@@ -11,41 +11,79 @@ from settings import settings
 
 class InputType(QObject):
     '''
-    abstract class for an input ui element
+    abstract class for an input-element, wraps QInputs to be used in parameter
+    dialogs and previews
+
+    Attributes
+    ----------
+    changed : pyqtSignal
+        emitted when value of input is changed, current value
+    focus : pyqtSignal
+        emitted when input comes into focus
+    locked : pyqtSignal
+        emitted when lock-status of input is toggled, lock-status
     '''
     changed = pyqtSignal(object)
     focus = pyqtSignal()
     locked = pyqtSignal(bool)
 
-    def __init__(self, hide_in_overview=True):
-        self.hide_in_overview = hide_in_overview
-        super().__init__()
+    def draw(self, layout: QLayout, unit: str = ''):
+        '''
+        add input to the layout
 
-    def draw(self, layout, unit=''):
+        Parameters
+        ----------
+        layout : QLayout
+            layout to add the input to
+        unit : str, optional
+            the unit shown after the value, defaults to no unit
+        '''
         layout.addWidget(self.input)
         if unit:
             layout.addWidget(QLabel(unit))
 
     @property
-    def value(self):
+    def value(self) -> object:
+        '''
+        Returns
+        -------
+        object
+            current value of this input
+        '''
         return self.get_value()
 
     @value.setter
-    def value(self, value):
+    def value(self, value: object):
         self.set_value(value)
 
-    def set_value(self, value):
+    def set_value(self, value: object):
+        '''
+        override this to the set the value of the input
+        '''
         raise NotImplementedError
 
-    def get_value(self):
+    def get_value(self) -> object:
+        '''
+        override this to the get the current value of the input
+        '''
         raise NotImplementedError
 
     @property
-    def is_locked(self):
-        '''override function to implement a locked state'''
+    def is_locked(self) -> bool:
+        '''
+        override function to implement a locked state
+
+        Returns
+        -------
+        bool
+            lock-state of input
+        '''
         return False
 
     def registerFocusEvent(self, input):
+        '''
+        override, emits focus signal
+        '''
         # dirty but works, easier than subclassing all types of inputs just to
         # emit the signal
         focus_base = input.focusInEvent
@@ -59,27 +97,64 @@ class Checkbox(InputType):
     '''
     checkbox input
     '''
-    def __init__(self, width=None, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input = QCheckBox()
         self.input.stateChanged.connect(
             lambda state: self.changed.emit(self.input.isChecked()))
         self.registerFocusEvent(self.input)
 
-    def set_value(self, checked):
+    def set_value(self, checked: bool):
+        '''
+        set the check-state of the checkbox
+
+        Parameters
+        ----------
+        checked : bool
+            check-state
+        '''
         self.input.setChecked(checked or False)
 
-    def get_value(self):
+    def get_value(self) -> bool:
+        '''
+        get current check-state of the checkbox
+
+        Returns
+        -------
+        bool
+            current check-state
+        '''
         return self.input.isChecked()
 
 
 class Slider(InputType):
     '''
-    slider input
+    slider input, displays a slider and a number input next to it, both
+    connected to each other
     '''
 
-    def __init__(self, minimum=0, maximum=100000000, step=1, width=300,
-                 lockable=False, locked=False, **kwargs):
+    def __init__(self, minimum: int = 0, maximum: int = 100000000,
+                 step: int = 1, width: int = 300,
+                 lockable: bool = False, locked: bool = False, **kwargs):
+        '''
+        Parameters
+        ----------
+        width : int, optional
+            width of slider in pixels, defaults to 300 pixels
+        minimum : int, optional
+            minimum value that the user can set
+        maximum : int, optional
+            maximum value that the user can set
+        step : int, optional
+            the tick intervall of the slider and single step of the number
+            input, defaults to 1
+        lockable : bool, optional
+            the slider and number input can be locked by a checkbox that will
+            be displayed next to them if True, defaults to not lockable
+        locked : bool, optional
+            initial lock-state of inputs, only applied if lockable is True,
+            defaults to inputs being not locked
+        '''
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -127,7 +202,15 @@ class Slider(InputType):
             lambda: self.changed.emit(self.get_value())
         )
 
-    def set_value(self, value):
+    def set_value(self, value: int):
+        '''
+        set a number to both the slider and the number input
+
+        Parameters
+        ----------
+        checked : int
+            check-state
+        '''
         for element in [self.slider, self.spinbox]:
             # avoid infinite recursion
             element.blockSignals(True)
@@ -135,12 +218,29 @@ class Slider(InputType):
             element.blockSignals(False)
 
     @property
-    def is_locked(self):
+    def is_locked(self) -> bool:
+        '''
+        Returns
+        -------
+        bool
+            current lock-state of slider and number input
+        '''
         if not self.lockable:
             return False
         return self.lock_button.isChecked()
 
-    def draw(self, layout, unit=''):
+    def draw(self, layout: QLayout, unit: str = ''):
+        '''
+        add slider, the connected number and the lock (if lockable) input
+        to the layout
+
+        Parameters
+        ----------
+        layout : QLayout
+            layout to add the inputs to
+        unit : str, optional
+            the unit shown after the value, defaults to no unit
+        '''
         l = QHBoxLayout()
         l.addWidget(self.slider)
         l.addWidget(self.spinbox)
@@ -150,12 +250,37 @@ class Slider(InputType):
             l.addWidget(self.lock_button)
         layout.addLayout(l)
 
-    def get_value(self):
+    def get_value(self) -> int:
+        '''
+        get the currently set number
+
+        Returns
+        -------
+        int
+            currently set number
+        '''
         return self.slider.value()
 
 
 class ComboBox(InputType):
-    def __init__(self, values=[], data=[], width=None, **kwargs):
+    '''
+    combobox input
+    '''
+    def __init__(self, values: List[str] = [], data: list = [],
+                 width: int = None, **kwargs):
+        '''
+        Parameters
+        ----------
+        values : list, optional
+            list of text items to fill the combobox with, defaults to an empty
+            combobox
+        data : list, optional
+            list of data objects corresponding to the passed values, has to be
+            of same length as those values, will be applied to the items in the
+            same order, defaults to no data
+        width : int, optional
+            width of combobox in pixels, defaults flexible width
+        '''
         super().__init__(**kwargs)
         self.input = QComboBox()
         self.registerFocusEvent(self.input)
@@ -170,21 +295,64 @@ class ComboBox(InputType):
             self.add_value(*args)
         self.registerFocusEvent(self.input)
 
-    def add_value(self, value, data=None):
+    def add_value(self, value: str, data: object = None):
+        '''
+        add an item to the combobox
+
+        Parameters
+        ----------
+        value : str
+            text of the item
+        data : object, optional
+            data object of the item, defaults to no data
+        '''
         self.input.addItem(value, userData=data)
 
-    def set_value(self, value):
+    def set_value(self, value: str):
+        '''
+        set the selected item
+
+        Parameters
+        ----------
+        value : str
+            text of item to select
+        '''
         self.input.setCurrentText(str(value))
 
-    def get_value(self):
+    def get_value(self) -> str:
+        '''
+        get currently selected item text
+
+        Returns
+        -------
+        value : str
+            text of selected item
+        '''
         return self.input.currentText()
 
     def get_data(self):
+        '''
+        get data of currently selected item
+
+        Returns
+        -------
+        value : object
+            data of selected item
+        '''
         return self.input.currentData()
 
 
 class LineEdit(InputType):
-    def __init__(self, width=None, **kwargs):
+    '''
+    text input
+    '''
+    def __init__(self, width: int = None, **kwargs):
+        '''
+        Parameters
+        ----------
+        width : int, optional
+            width of text input in pixels, defaults flexible width
+        '''
         super().__init__(**kwargs)
         self.input = QLineEdit()
         if width is not None:
@@ -192,17 +360,57 @@ class LineEdit(InputType):
         self.input.textChanged.connect(self.changed.emit)
         self.registerFocusEvent(self.input)
 
-    def set_value(self, value):
+    def set_value(self, value: str):
+        '''
+        set the text of the line input
+
+        Parameters
+        ----------
+        value : str
+            text
+        '''
         self.input.setText(str(value or ''))
 
-    def get_value(self):
+    def get_value(self) -> str:
+        '''
+        get the current text of the line input
+
+        Returns
+        -------
+        value : str
+            text
+        '''
         return self.input.text()
 
 
 class SpinBox(InputType):
+    '''
+    spinbox integer number input
+    '''
     InputClass = QSpinBox
     def __init__(self, minimum=0, maximum=100000000, step=1,
                  lockable=False, locked=False, reversed_lock=False, **kwargs):
+        '''
+        Parameters
+        ----------
+        minimum : int, optional
+            minimum value that the user can set
+        maximum : int, optional
+            maximum value that the user can set
+        step : int, optional
+            the single step of the number input when changing values,
+            defaults to 1
+        lockable : bool, optional
+            the number input can be locked by a checkbox that will
+            be displayed next to it if True, defaults to not lockable
+        locked : bool, optional
+            initial lock-state of input, only applied if lockable is True,
+            defaults to input being not locked
+        reversed_lock : bool, optional
+            reverses the locking logic, if True checking the lock will enable
+            the inputs instead of disabling them, defaults to normal lock
+            behaviour (disabling inputs when setting lock-state to True)
+        '''
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -235,19 +443,51 @@ class SpinBox(InputType):
             toggle_icon(emit=False)
             self.lock_button.clicked.connect(lambda: toggle_icon(emit=True))
 
-    def set_value(self, value):
+    def set_value(self, value: int):
+        '''
+        set the value of the input
+
+        Parameters
+        ----------
+        value : int
+            value to set
+        '''
         self.input.setValue(value or 0)
 
-    def get_value(self):
+    def get_value(self) -> int:
+        '''
+        get the current value of the input
+
+        Returns
+        -------
+        value : int
+            current value of input
+        '''
         return self.input.value()
 
     @property
-    def is_locked(self):
+    def is_locked(self) -> bool:
+        '''
+        Returns
+        -------
+        bool
+            current lock-state of number input
+        '''
         if not self.lockable:
             return False
         return self.lock_button.isChecked()
 
-    def draw(self, layout, unit=''):
+    def draw(self, layout: QLayout, unit: str = ''):
+        '''
+        add number input and the lock (if lockable) to the layout
+
+        Parameters
+        ----------
+        layout : QLayout
+            layout to add the inputs to
+        unit : str, optional
+            the unit shown after the value, defaults to no unit
+        '''
         l = QHBoxLayout()
         l.addWidget(self.input)
         if unit:
@@ -258,4 +498,9 @@ class SpinBox(InputType):
 
 
 class DoubleSpinBox(SpinBox):
+    '''
+    spinbox float number input
+
+    same as SpinBox, but with floats instead of integers
+    '''
     InputClass = QDoubleSpinBox

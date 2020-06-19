@@ -41,6 +41,7 @@ def classFactory(iface):  # pylint: disable=invalid-name
     # append this path to system, so that subfolders are recognized as
     # packages
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    # initialize the settings
     from .settings import settings
     from .ProjektCheck import ProjektCheck
     return ProjektCheck(iface)

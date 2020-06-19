@@ -216,11 +216,25 @@ class FeatureCollection:
         for id in ids:
             self.table.delete(id)
 
-    def values(self, field_name):
+    def values(self, field_name: str) -> list:
+        '''
+        Parameters
+        ----------
+        field_name : str
+            name of the field
+
+        Returns
+        -------
+        list
+            values of the given field in all features of this collection
+        '''
         return self.table.values(field_name)
 
     @property
-    def workspace(self):
+    def workspace(self) -> Workspace:
+        '''
+        workspace of underlying table
+        '''
         return self.table.workspace
 
     def get(self, **kwargs):
@@ -547,12 +561,18 @@ class Workspace:
 
     @classmethod
     def get_instances(cls):
+        '''
+        iterator over all instances of Workspaces
+        '''
         for inst_ref in cls.__refs__:
             inst = inst_ref()
             if inst is not None:
                 yield inst
 
     def close(self):
+        '''
+        close connection of workspace to source
+        '''
         # remove this workspace from collected workspace references
         if weakref.ref(self) in self.__refs__:
             self.__refs__.remove(weakref.ref(self))
@@ -583,6 +603,9 @@ class Table(ABC):
 
     @property
     def where(self):
+        '''
+        currently active filter expression
+        '''
         return self._where
 
     @where.setter
@@ -649,8 +672,4 @@ class Table(ABC):
         '''
         raise NotImplementedError
 
-    def update(self):
-        raise NotImplementedError
 
-    def create(self):
-        raise NotImplementedError
