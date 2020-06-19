@@ -2,12 +2,12 @@ from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
                           QLabel, QGridLayout, QDialogButtonBox, QWidget,
-                          QScrollArea, QGroupBox)
+                          QScrollArea, QGroupBox, QLayout, QBoxLayout)
 from projektchecktools.utils.utils import clear_layout
 from qgis.PyQt.QtGui import QIcon, QCursor
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
                                  QPushButton, QLayoutItem)
-from typing import Union
+from typing import Union, List
 from collections import OrderedDict
 import math
 import os
@@ -23,6 +23,14 @@ from settings import settings
 
 
 class ClickableWidget(QWidget):
+    '''
+    extend widgets to emit a signal on click
+
+    Attributes
+    ----------
+    clicked : pyqtSignal
+        emitted when widget is clicked
+    '''
     clicked = pyqtSignal(object)
     def mousePressEvent(self, evt):
         self.clicked.emit(evt)
@@ -70,14 +78,25 @@ class Param(QObject):
         self.help_text = help_text
 
     @property
-    def is_locked(self):
+    def is_locked(self) -> bool:
+        '''
+        lock-state of input of the parameter
+        '''
+        if not self.input:
+            return False
         return self.input.is_locked
 
     @property
-    def value(self):
+    def value(self) -> object:
+        '''
+        current value
+        '''
         return self._value
 
-    def _v_repr(self, value):
+    def _v_repr(self, value: object):
+        '''
+        formatted string representation of the value
+        '''
         if self.repr_format:
             return locale.format_string(self.repr_format, value)
         if isinstance(value, float):
@@ -93,14 +112,18 @@ class Param(QObject):
         return v_repr
 
     @value.setter
-    def value(self, value):
+    def value(self, value: object):
+        '''
+        set the value of the parameter,
+        will be applied to the input as well
+        '''
         self._value = value
         self._value_label.setText(self._v_repr(value))
         if self.input:
             self.input.value = value
         self.changed.emit(value)
 
-    def draw(self, layout, edit=False):
+    def draw(self, layout: QLayout, edit: bool = False):
         '''
         draw parameter in given layout
 
@@ -137,31 +160,76 @@ class Param(QObject):
 
 class Dependency(ABC):
     '''
-    base class for dependencies between fields
+    base abstract class for dependencies between fields
     '''
-    def __init__(self, params=[]):
+    def __init__(self, params: List[Param] = []):
+        '''
+        Parameters
+        ----------
+        params : list, optional
+            list of Params that share the dependency, defaults to no depending
+            parameters
+        '''
         self._params = []
         for param in params:
             self.add(param)
 
-    def add(self, param):
+    def add(self, param: Param):
+        '''
+        add a parameter to the dependency list
+
+        Parameters
+        ----------
+        param : Param
+            a Param object to add to this dependency
+        '''
         param.input.changed.connect(lambda: self.on_change(param))
         self._params.append(param)
 
-    def on_change(self, param):
+    def on_change(self, param: Param):
+        '''
+        override this to implement how the parameters in a dependency are
+        treated when a parameter is changed by user
+
+        Parameters
+        ----------
+        param : Param
+            the parameter that was changed
+        '''
         raise NotImplementedError
 
 
 class SumDependency(Dependency):
     '''
-    all dependent fields add up to a total value
+    all values of depending parameters have to add up to a total value
     '''
-    def __init__(self, total, params=[], decimals=0):
+    def __init__(self, total: Union[int, float], params: List[Param] = [],
+                 decimals: int = 0):
+        '''
+        Parameters
+        ----------
+        total : int or float
+            the value the parameter values always have to add up to
+        params : list, optional
+            list of Params that share the dependency, defaults to no depending
+            parameters
+        decimals : int, optional
+            number of decimals allowed, defaults to no decimals allowed
+        '''
         super().__init__(params=params)
         self.total = total
         self.decimals = decimals
 
-    def on_change(self, param):
+    def on_change(self, param: Param):
+        '''
+        distribute the change of the param to the other params to match
+        the total
+
+        Parameters
+        ----------
+        param : Param
+            the parameter that was changed
+        '''
 
         def distribute(value, equally=True):
             '''distribute given value to other (excl. the one currently changed)
@@ -208,14 +276,20 @@ class SumDependency(Dependency):
 
 
 class Seperator:
+    '''
+    horizontal seperating line appendable to ui layout
+    '''
 
-    def __init__(self, margin=3):
+    def __init__(self, margin: int = 3):
+        '''
+        Parameters
+        ----------
+        margin : int, optional
+            top and bottom margin of the line in pixels, defaults to 3 pixels
+        '''
         self.margin = margin
 
-    '''
-    seperator appendable to ui layout
-    '''
-    def draw(self, layout):
+    def draw(self, layout: QBoxLayout):
         '''
         draw seperator in given layout (appended)
 
@@ -240,12 +314,20 @@ class Title:
     '''
     title label appendable to ui layout
     '''
-    def __init__(self, title, fontsize=8, bold=True):
+    def __init__(self, title, fontsize: int = 8, bold: bool = True):
+        '''
+        Parameters
+        ----------
+        fontsize : int, optional
+            font size of the title label in points (pt), defaults to 8pt
+        bold : int, optional
+            display bold label if True, defaults to not bold
+        '''
         self.title = title
         self.fontsize = fontsize
         self.bold = bold
 
-    def draw(self, layout):
+    def draw(self, layout: QBoxLayout):
         '''
         draw title in given layout (appended)
 
@@ -265,7 +347,7 @@ class Title:
 class Params(QObject):
     '''
     collection of parameters, single parameters can be added by setting
-    them as attributes
+    them as attributes. supports dict-like access of the parameters by name
 
     Attributes
     ----------
@@ -277,13 +359,26 @@ class Params(QObject):
 
     def __init__(self, parent: QObject = None,
                  button_label: str = 'Editieren', editable: bool = True,
-                 help_text='', help_file=None):
+                 help_text: str = '', help_file: str = None):
         '''
         Parameters
         ----------
         parent : QObject, optional
             ui element to draw the parameters in, can't be drawn if parent is
-            None
+            None, defaults to no parent
+        button_label : parent, optional
+            label of the edit button in the parameter preview, defaults to
+            'Editieren'
+        editable : bool, optional
+            parameters are editable. if not, no edit button will be shown in the
+            preview, defaults to editable parameters
+        help_file : str, optional
+            json-style text file containing help texts for each parameter,
+            will be automatically created if not existing, defaults to no help
+            file
+        help_text : str, optional
+            the general help displayed in the parameter dialog, overrides the
+            description in the help file if given, defaults no help text
         '''
         super().__init__()
         self._params = OrderedDict()
@@ -309,10 +404,18 @@ class Params(QObject):
             self.help_dict['beschreibung'] = help_text
 
     def add(self, element: Union[Param, Seperator, Title, QLayoutItem],
-            name=''):
+            name: str = ''):
         '''
         add an element (parameter or style element)
         elements will be rendered in order of addition
+
+        Parameters
+        ----------
+        element : object
+            parameter or style element to add
+        name : str, optional
+            name of parameter to add, parameter can be adressed by that name.
+            ignored when element is not a parameter, defaults to no name
 
         '''
         self._elements.append(element)
@@ -325,13 +428,17 @@ class Params(QObject):
                     element.help_text = self.help_dict[name]
 
     @property
-    def params(self):
+    def params(self) -> List[Param]:
+        '''
+        Returns
+        -------
+        list
+            a list of all parameters
+        '''
         return self._params.values()
 
-    def load(self):
-        pass
-
-    def show(self, *args, title='Parameter einstellen', scrollable=False):
+    def show(self, *args, title: str = 'Parameter einstellen',
+             scrollable: bool = False):
         '''
         render parameters and elements in parent
 
@@ -340,6 +447,12 @@ class Params(QObject):
         args : optional
             arguments for appending parameter layout to parent
             (like x, y if parent is grid layout)
+        title : str, optional
+            title of the parameter dialog, defaults to 'Parameter einstellen'
+        scrollable : bool, optional
+            a scrollbar will be added to both preview and dialog if True,
+            recommended if there are a lot of parameters, defaults to not
+            scrollable
         '''
         if self.parent is None:
             raise Exception("can't render Params object with no parent set")
@@ -380,7 +493,6 @@ class Params(QObject):
                 element.draw(layout)
             self.dialog.draw(element)
 
-
         if not self.editable:
             return
 
@@ -400,7 +512,15 @@ class Params(QObject):
 
         button.clicked.connect(self.show_dialog)
 
-    def get(self, name):
+    def get(self, name: str) -> Param:
+        '''
+        get a parameter by name
+
+        Returns
+        -------
+        Param
+            the parameter matching the name or None if not found
+        '''
         return self._params.get(name, None)
 
     def close(self):
@@ -452,8 +572,25 @@ class Params(QObject):
 
 
 class ParamsDialog(Dialog):
-    def __init__(self, parent=None, title='Parameter einstellen',
-                 help_text=None, help_expanded=True):
+    '''
+    dialog to edit parameters
+    '''
+    def __init__(self, parent: QObject = None,
+                 title: str = 'Parameter einstellen',
+                 help_text: str = None, help_expanded: bool = True):
+        '''
+        Parameters
+        ----------
+        parent : QObject, optional
+            parent object of dialog
+        title : str, optional
+            title of the parameter dialog, defaults to 'Parameter einstellen'
+        help_text : str, optional
+            the general help displayed in the dialog, defaults to no help text
+        help_expanded : bool, optional
+            whether the help section is expanded or collapsed initially,
+            defaults to expanded
+        '''
         super().__init__(modal=True, parent=parent,
                          ui_file='parameter_dialog.ui',
                          title=title)
@@ -477,6 +614,9 @@ class ParamsDialog(Dialog):
         self._grid = None
 
     def exec_(self):
+        '''
+        overide, adjusts size of dialog before showing it
+        '''
         min_width = self.base_layout.minimumSize().width() + 50
         self.param_widget.setMinimumWidth(min_width)
         min_height = self.base_layout.minimumSize().height()
@@ -484,7 +624,15 @@ class ParamsDialog(Dialog):
         self.param_widget.setMinimumHeight(self.min_height)
         return super().exec_()
 
-    def draw(self, element):
+    def draw(self, element: Union[Param, Seperator, Title, QLayoutItem]):
+        '''
+        add an element (parameter or style element) to the dialog and draw it
+
+        Parameters
+        ----------
+        element : object
+            parameter or style element to draw
+        '''
         self.inputs = []
         # put param objects into grid, else added to the base layout
         if isinstance(element, Param):
@@ -517,7 +665,20 @@ class ParamsDialog(Dialog):
                 element.draw(self.layout)
         self.adjustSize()
 
-    def show_help(self, text, hide_back=False, expand=False):
+    def show_help(self, text, hide_back: bool = False, expand: bool = False):
+        '''
+        display an help text in the help section
+
+        Parameters
+        ----------
+        text : str
+            the help text to display
+        hide_back : bool, optional
+            hide or show the back-link leading to the general help on click,
+            defaults to showing it
+        expand : bool, optional
+            expand or collapse the help section, defaults to expanding it
+        '''
         if not text:
             return
         self.help_text_edit.setText(text)
@@ -526,21 +687,9 @@ class ParamsDialog(Dialog):
         self.back_button.setVisible(not hide_back)
 
     def close(self):
+        '''
+        override, removes inputs on close
+        '''
         for input in self.inputs:
             input.remove()
         super().close()
-
-
-class ParamCluster(Params):
-    '''
-    logical unit of params, that trigger sth if one of them is changed
-    '''
-    views = []
-
-    def add(self, view):
-        pass
-
-    def trigger(self):
-        pass
-
-
