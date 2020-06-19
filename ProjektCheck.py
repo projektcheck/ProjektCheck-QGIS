@@ -107,7 +107,7 @@ class ProjektCheck:
         """Cleanup necessary items here when plugin dockwidget is closed"""
 
         # disconnects
-        self.mainwidget.closingWidget.disconnect(self.onClosePlugin)
+        self.mainwidget.closing_widget.disconnect(self.onClosePlugin)
         self.mainwidget.close()
 
         self.pluginIsActive = False
@@ -147,7 +147,7 @@ class ProjektCheck:
                 iface=self.iface, position=Qt.TopDockWidgetArea)
 
         # connect to provide cleanup on closing of dockwidget
-        self.mainwidget.closingWidget.connect(self.onClosePlugin)
+        self.mainwidget.closing_widget.connect(self.onClosePlugin)
 
         # show the dockwidget
         self.mainwidget.show()

@@ -1,9 +1,12 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject, QThread
 from qgis import utils
+from qgis.gui import QgisInterface, QgsMapCanvas
 import os
 
-from projektchecktools.base.project import ProjectManager, ProjectLayer
+from projektchecktools.base.project import (ProjectManager, ProjectLayer,
+                                            Project, Settings)
+from projektchecktools.base.database import Database
 
 UI_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'ui')
 
@@ -28,22 +31,28 @@ class PCDockWidget(QObject):
         projekt-check related settings
     projectdata : Database,
         database of the active project
-    basedata :
+    basedata : Database,
         database with all base data
+    project_manager : ProjectManager
+        ProjectManager instance
     '''
     ui_file = None
-    closingWidget = pyqtSignal()
+    closing_widget = pyqtSignal()
     project_manager = ProjectManager()
 
-    def __init__(self, iface=None, canvas=None,
-                 position=Qt.RightDockWidgetArea):
+    def __init__(self, iface: QgisInterface = None, canvas: QgsMapCanvas = None,
+                 position: int = Qt.RightDockWidgetArea):
         '''
         Parameters
         ----------
-        iface : QgisInterface
-            instance of QGIS interface
+        iface : QgisInterface, optional
+            instance of QGIS interface, defaults to the interface of the QGIS
+            instance in use
+        canvas : QgsMapCanvas, optional
+            the map canvas, defaults to the canvas of the interface
         position : int, optional
-            dock widget area to add widget to, by default Qt.RightDockWidgetArea
+            dock widget area to add the dock widget to, defaults to attach the
+            widget in the right section of QGIS (Qt.RightDockWidgetArea)
         '''
         super().__init__()
         self.iface = iface or utils.iface
@@ -59,67 +68,78 @@ class PCDockWidget(QObject):
             #Qt.TopDockWidgetArea | Qt.BottomDockWidgetArea
         #)
         self.ui.closeEvent = self.closeEvent
-        self.isActive = False
+        self.is_active = False
         self.setupUi()
 
     def setupUi(self):
         '''
-        setup ui, called when widget is initially set uo
+        setup ui, called when widget is initially set up
         override in sub classes to setup the ui elements of the widget
         '''
         pass
 
     def load_content(self):
         '''
-        loads ui content, called when widget is shown
+        load ui content, called when widget is shown
         '''
         pass
 
     def close(self):
-        self.isActive = False
+        '''
+        override, set inactive on close
+        '''
+        self.is_active = False
         self.ui.close()
 
     def show(self):
         '''
         show the widget inside QGIS
         '''
-        if self.isActive:
+        if self.is_active:
             self.ui.show()
             return
         self.load_content()
         self.iface.addDockWidget(self.initial_position, self.ui)
-        self.isActive = True
+        self.is_active = True
 
     def unload(self):
         '''
         unload the widget
         '''
-        self.isActive = False
+        self.is_active = False
         self.close()
         self.iface.removeDockWidget(self.ui)
         self.ui.deleteLater()
 
     def closeEvent(self, event):
+        '''
+        override, emits closing signal on close
+        '''
         try:
-            self.closingWidget.emit()
+            self.closing_widget.emit()
         except:
             pass
         event.accept()
 
     @property
-    def project(self):
+    def project(self) -> Project:
+        '''
+        the project currently active
+        '''
         return self.project_manager.active_project
 
     @property
-    def settings(self):
+    def settings(self) -> Settings:
+        '''
+        the settings of Projekt-Check
+        '''
         return self.project_manager.settings
 
     @property
-    def projectdata(self):
-        return self.project_manager.projectdata
-
-    @property
-    def basedata(self):
+    def basedata(self) -> Database:
+        '''
+        the database with the base data of Projekt-Check
+        '''
         return self.project_manager.basedata
 
 
@@ -152,12 +172,27 @@ class Domain(PCDockWidget):
     ui_icon = ""
     layer_group = ''
 
-    def __init__(self, iface=None, canvas=None,
-                 position=Qt.RightDockWidgetArea):
+    def __init__(self, iface: QgisInterface = None, canvas: QgsMapCanvas = None,
+                 position: int = Qt.RightDockWidgetArea):
+        '''
+        Parameters
+        ----------
+        iface : QgisInterface, optional
+            instance of QGIS interface, defaults to the interface of the QGIS
+            instance in use
+        canvas : QgsMapCanvas, optional
+            the map canvas, defaults to the canvas of the interface
+        position : int, optional
+            dock widget area to add the dock widget to, defaults to attach the
+            widget in the right section of QGIS (Qt.RightDockWidgetArea)
+        '''
         super().__init__(iface=iface, canvas=canvas, position=position)
         self.ui.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
 
     def load_content(self):
+        '''
+        override, show domain group when opening domain
+        '''
         # some domains open the project definition and it is opened after
         # loading a project, close it by default
         def_group = ProjectLayer.find_group('Projektdefinition')
@@ -169,8 +204,10 @@ class Domain(PCDockWidget):
                 group.setItemVisibilityChecked(True)
                 group.parent().setItemVisibilityChecked(True)
 
-
     def close(self):
+        '''
+        override, hide domain group on close
+        '''
         super().close()
         if self.layer_group:
             group = ProjectLayer.find_group(self.layer_group)
@@ -185,6 +222,17 @@ class Domain(PCDockWidget):
 class Worker(QThread):
     '''
     abstract worker
+
+    Attributes
+    ----------
+    finished : pyqtSignal
+        emitted when all tasks are finished, success True/False
+    error : pyqtSignal
+        emitted on error while working, error message text
+    message : pyqtSignal
+        emitted when a message is send, message text
+    progress : pyqtSignal
+        emitted on progress, progress in percent
     '''
 
     # available signals to be used in the concrete worker
@@ -193,11 +241,17 @@ class Worker(QThread):
     message = pyqtSignal(str)
     progress = pyqtSignal(float)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject = None):
+        '''
+        Parameters
+        ----------
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         #parent = parent or utils.iface.mainWindow()
         super().__init__(parent=parent)
 
-    def run(self, on_success=None):
+    def run(self, on_success: object = None):
         '''
         runs code defined in self.work
         emits self.finished on success and self.error on exception
@@ -206,7 +260,7 @@ class Worker(QThread):
         Parameters
         ----------
         on_success : function
-            function to executed on success
+            function to execute on success
         '''
         try:
             result = self.work()
@@ -216,7 +270,7 @@ class Worker(QThread):
         except Exception as e:
             self.error.emit(str(e))
 
-    def work(self):
+    def work(self) -> object:
         '''
         override
         code to be executed when running worker
@@ -238,7 +292,7 @@ class Worker(QThread):
         '''
         self.message.emit(str(message))
 
-    def set_progress(self, progress):
+    def set_progress(self, progress: int):
         '''
         emits progress
 
