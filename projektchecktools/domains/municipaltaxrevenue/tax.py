@@ -169,13 +169,13 @@ class GewerbesteuerCalculation(Worker):
         messbetrag_eh, svb_eh = self.calc_messbetrag_einzelhandel()
         messbetrag_pro_svb = (messbetrag_g + messbetrag_eh) / (svb_g + svb_eh)
 
-        bvv_plus_lvv_plus_ehz = self.project.basedata.get_table(
-            'GewSt_Umlage_Vervielfaeltiger', 'Einnahmen').features().get(
-                AGS_Land=self.project_frame.ags[:2]
-            ).Summe_BVV_LVV_EHZ
-
         for gem in self.bilanzen:
             wanderung = self.wanderung.get(AGS=gem.AGS)
+            bvv_plus_lvv_plus_ehz = self.project.basedata.get_table(
+                'GewSt_Umlage_Vervielfaeltiger', 'Einnahmen').features().get(
+                    AGS_Land=gem.AGS[:2]
+                ).Summe_BVV_LVV_EHZ
+
             if not wanderung:
                 gst = 0
             else:
