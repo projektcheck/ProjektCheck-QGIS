@@ -28,7 +28,7 @@ import os
 from osgeo import ogr, osr
 from qgis.core import QgsGeometry
 import pandas as pd
-from typing import Union
+from typing import Union, List
 from collections import OrderedDict
 import numpy as np
 import datetime
@@ -60,7 +60,7 @@ class GeopackageWorkspace(Workspace):
     wkb_types : list
         names of available ogr geometry types
     '''
-    def __init__(self, name: str, database):
+    def __init__(self, name: str, database: Database):
         '''
         Parameters
         ----------
@@ -80,7 +80,7 @@ class GeopackageWorkspace(Workspace):
         self._conn = None
 
     @property
-    def conn(self):
+    def conn(self) -> ogr.DataSource:
         ''' ogr connection '''
         if not(self._conn):
             self._conn = ogr.Open(
@@ -88,7 +88,7 @@ class GeopackageWorkspace(Workspace):
         return self._conn
 
     @staticmethod
-    def _fn(database, name):
+    def _fn(database: Database, name: str) -> str:
         '''
         path to geopackage file (incl. file name and ".gpkg" extension)
         '''
@@ -98,7 +98,8 @@ class GeopackageWorkspace(Workspace):
         return fn
 
     @classmethod
-    def get_or_create(cls, name, database):
+    def get_or_create(cls, name: str, database: Database
+                      ) -> 'GeopackageWorkspace':
         '''
         get workspace in database, create it if not existing (creates also the
         geopackage file with same name + "gpkg" extension)
@@ -120,7 +121,8 @@ class GeopackageWorkspace(Workspace):
         return GeopackageWorkspace(name, database)
 
     @classmethod
-    def create(cls, name, database, overwrite=False):
+    def create(cls, name: str, database: Database,
+               overwrite: bool = False) -> 'GeopackageWorkspace':
         '''
         create workspace in database, creates the geopackage file name +
         "gpkg" extension in base path of database
@@ -143,12 +145,14 @@ class GeopackageWorkspace(Workspace):
         return GeopackageWorkspace(name, database)
 
     @property
-    def tables(self):
-        ''' available tables '''
+    def tables(self) -> List[str]:
+        '''
+        names of available tables
+        '''
         tables = [l.GetName() for l in self.conn]
         return tables
 
-    def get_table(self, name: str, field_names: list=None):
+    def get_table(self, name: str, field_names: list=None) -> 'GeopackageTable':
         '''
         get table from workspace
 
@@ -168,8 +172,9 @@ class GeopackageWorkspace(Workspace):
             raise FileNotFoundError(f'layer {name} not found')
         return GeopackageTable(name, self, field_names=field_names)
 
-    def create_table(self, name: str, fields: dict, geometry_type: str=None,
-                     overwrite: bool=False, defaults={}, epsg=None):
+    def create_table(self, name: str, fields: dict, geometry_type: str = None,
+                     overwrite: bool = False, defaults={},
+                     epsg: int = None) -> 'GeopackageTable':
         '''
         creates table in workspace (geopackage)
 
@@ -182,14 +187,15 @@ class GeopackageWorkspace(Workspace):
             data types as values
         defaults : dict, optional
             default values for given fields with field names as keys and
-            default values as values
+            default values as values, defaults to no defaults
         geometry_type: str, optional
             adds geometry to layer, wkb geometry type string
         epsg : int, optional
-            epsg code, defaults to None
-            sets srs of geometry field in geopackage table
+            epsg code, sets srs of geometry field in geopackage table,
+            defaults to no specific code
         overwrite : bool
-            True - overwrites file if already exists
+            overwrites file if already exists if True, defaults to not
+            overwriting
 
         Returns
         -------
@@ -226,7 +232,7 @@ class GeopackageWorkspace(Workspace):
         return self.get_table(name)
 
     @property
-    def wkb_types(self):
+    def wkb_types(self) -> List[str]:
         ''' ogr geometry types '''
         return [a for a in ogr.__dict__.keys() if a.startswith('wkb')]
 
@@ -257,8 +263,8 @@ class GeopackageTable(Table):
     id_field = 'fid' # ogr default feature id field name
     geom_field = 'geom' # ogr default geometry field name
 
-    def __init__(self, name, workspace: GeopackageWorkspace,
-                 field_names: list=None, filters: dict={}):
+    def __init__(self, name: str, workspace: GeopackageWorkspace,
+                 field_names: list = None, filters: dict = {}):
         '''
         Parameters
         ----------
@@ -290,7 +296,7 @@ class GeopackageTable(Table):
         self._filters = {}
         self.filter(**filters)
 
-    def copy(self):
+    def copy(self) -> 'GeopackageTable':
         '''
         copies this table, uses same ogr connection (via workspace)
 
@@ -302,7 +308,7 @@ class GeopackageTable(Table):
                                field_names=self.field_names,
                                filters=self._filters)
 
-    def _ogr_feat_to_row(self, feat):
+    def _ogr_feat_to_row(self, feat: ogr.Feature) -> dict:
         ''' ogr feature to table row (dict with field names as keys and field
         values as values) '''
         if self.field_names is not None:
@@ -344,7 +350,7 @@ class GeopackageTable(Table):
 
     def reset(self):
         '''
-        reset the filters (-> no filters)
+        reset the filters (removes all filters)
         '''
         self._filters = {}
         self.where = ''
@@ -435,7 +441,7 @@ class GeopackageTable(Table):
             #where = f'({self.where}) and ({where})'
         self.where = where
 
-    def spatial_filter(self, wkt=None):
+    def spatial_filter(self, wkt: str = None):
         '''
         sets spatial filter, features that do not geometrically intersect
         the filter geometry will be filtered out
@@ -452,13 +458,27 @@ class GeopackageTable(Table):
         self._layer.SetSpatialFilter(wkt)
 
     @property
-    def filters(self):
-        ''' active filters '''
+    def filters(self) -> dict:
+        '''
+        active filters
+
+        Returns
+        -------
+        dict
+            filter expressions (django style)
+        '''
         return self._filters
 
     @property
-    def where(self):
-        ''' active ogr filter string '''
+    def where(self) -> str:
+        '''
+        active ogr filter string
+
+        Returns
+        -------
+        str
+            filter string (ogr database style)
+        '''
         return self._where
 
     @where.setter
@@ -468,7 +488,7 @@ class GeopackageTable(Table):
         self._layer = self.workspace.conn.GetLayerByName(self.name)
         self._layer.SetAttributeFilter(value)
 
-    def fields(self, cached=True):
+    def fields(self, cached: bool = True) -> List[Field]:
         '''
         all table fields with their types and defaults
 
@@ -507,7 +527,7 @@ class GeopackageTable(Table):
             fields.append(Field(datatype, name=name, default=default))
         return fields
 
-    def add(self, **kwargs):
+    def add(self, **kwargs) -> dict:
         '''
         add a new row to the table, sets id if "fid" is passed
 
@@ -552,7 +572,7 @@ class GeopackageTable(Table):
                             f'Ogr declined creation with error code {ret}')
         return self._ogr_feat_to_row(feature)
 
-    def add_field(self, field):
+    def add_field(self, field: Field):
         '''
         add a field to the table, will be created if not existing
 
@@ -584,22 +604,40 @@ class GeopackageTable(Table):
             self._fields.append(field)
         # self.field_names.append(name)
 
-    def delete(self, id):
+    def delete(self, id: int):
         '''
         delete row with given id
+
+        Parameters
+        ----------
+        id : int
+            id (as given by ogr) of feature to delete
         '''
         self._layer.DeleteFeature(id)
 
     def truncate(self):
+        '''
+        truncate the table removing all features in it
+        '''
         for feat in self._layer:
             self._layer.DeleteFeature(feat.GetFID())
 
-    def values(self, field):
+    def values(self, field: Field) -> List[object]:
+        '''
+        Parameters
+        ----------
+        field : Field
+            the field to return values of
+
+        Returns
+        -------
+        list
+            values of the given field in all features of this collection
+        '''
         values = [f[field] for f in self._layer]
         return values
 
-
-    def set(self, id, **kwargs):
+    def set(self, id: int, **kwargs) -> bool:
         '''
         sets given values to fields of row with given id
 
@@ -626,7 +664,7 @@ class GeopackageTable(Table):
         self._layer.SetFeature(feature)
         return True
 
-    def get(self, id):
+    def get(self, id: int) -> dict:
         '''
         get row by id
 
@@ -639,7 +677,7 @@ class GeopackageTable(Table):
         feat = self._layer.GetFeature(id)
         return self._ogr_feat_to_row(feat)
 
-    def delete_rows(self, **kwargs):
+    def delete_rows(self, **kwargs) -> int:
         '''
         deletes rows matching given filters (in addition to already existing
         filters)
@@ -686,9 +724,15 @@ class GeopackageTable(Table):
             self._cursor.SetField(field_name, value)
         self._layer.SetFeature(self._cursor)
 
-    def to_pandas(self, columns=[]):
+    def to_pandas(self, columns: List[str] = []) -> pd.DataFrame:
         '''
         pandas representation of this (filtered) table
+
+        Parameters
+        ----------
+        columns : list
+            names of columns (fields) the returned dataframe should contain,
+            defaults to all fields of table being represented as columns
 
         Returns
         -------
@@ -703,7 +747,7 @@ class GeopackageTable(Table):
         df = pd.DataFrame.from_records(rows, columns=columns)
         return df
 
-    def update_pandas(self, dataframe, pkeys=None):
+    def update_pandas(self, dataframe: pd.DataFrame, pkeys: List[str] = None):
         '''
         updates table with data in given dataframe. columns of dataframe
         should match the field names, otherwise they will be ignored.
@@ -756,12 +800,12 @@ class GeopackageTable(Table):
             else:
                 self.add(**items)
 
-    def __len__(self):
+    def __len__(self) -> int:
         count = self._layer.GetFeatureCount()
         return 0 if count < 0 else count
 
     def __repr__(self):
-        return f"GeopackageTable {self.name} {self._layer}"
+        return f'GeopackageTable {self.name} {self._layer}'
 
 
 class Geopackage(Database):
@@ -792,7 +836,8 @@ class Geopackage(Database):
         self.read_only = read_only
         self._workspaces = {}
 
-    def create_workspace(self, name, overwrite=False):
+    def create_workspace(self, name: str, overwrite: bool = False
+                         ) -> GeopackageWorkspace:
         '''
         create a workspace, creates a file with the given name
         (file extension ".gpkg" will be added) in the configured base path
@@ -820,7 +865,7 @@ class Geopackage(Database):
         self._workspaces[name] = workspace
         return workspace
 
-    def remove_workspace(self, name):
+    def remove_workspace(self, name: str):
         '''
         remove the workspace and the file it links to
 
@@ -842,7 +887,8 @@ class Geopackage(Database):
             self._workspaces[name].close()
         os.remove(os.path.join(self.base_path, name))
 
-    def get_table(self, name: str, workspace: str = '', fields=None):
+    def get_table(self, name: str, workspace: str = '',
+                  fields: List[str] = None) -> GeopackageTable:
         '''
         get table from database
 
@@ -853,6 +899,9 @@ class Geopackage(Database):
         workspace : str, optional
             name of workspace (file name without extension),
             by default no workspace
+        fields : str, optional
+            names of the fields the table should contain, defaults to all fields
+            that are present in the source
 
         Returns
         -------
@@ -864,7 +913,7 @@ class Geopackage(Database):
                             'tables without workspaces')
         return self.get_workspace(workspace).get_table(name, field_names=fields)
 
-    def get_or_create_workspace(self, name):
+    def get_or_create_workspace(self, name: str) -> GeopackageWorkspace:
         '''
         get workspace by name, if it not exists it will be created (including
         file with same name with ".gpkg" extension in the base path)
@@ -876,7 +925,7 @@ class Geopackage(Database):
 
         Returns
         -------
-        Workspace
+        GeopackageWorkspace
             the workspace with given name
 
         Raises
@@ -891,7 +940,7 @@ class Geopackage(Database):
         self._workspaces[name] = workspace
         return workspace
 
-    def get_workspace(self, name):
+    def get_workspace(self, name: str) -> GeopackageWorkspace:
         '''
         get workspace by name, workspace links to geopackage file with same
         name (".gpkg" file extension)
@@ -914,7 +963,7 @@ class Geopackage(Database):
         return workspace
 
     @property
-    def workspaces(self):
+    def workspaces(self) -> List[str]:
         ''' names of available workspaces'''
         workspaces = [f.rstrip('.gpkg') for f in os.listdir(self.base_path)
                       if os.path.isfile(os.path.join(self.base_path, f)) and

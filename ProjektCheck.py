@@ -9,7 +9,7 @@ from qgis import utils
 from projektchecktools.ui.resources_rc import *
 
 # Import the code for the DockWidget
-from ProjektCheck_dockwidget import ProjektCheckMainDockWidget
+from ProjektCheck_dockwidget import ProjektCheckControl
 import os.path
 
 
@@ -143,7 +143,7 @@ class ProjektCheck:
         # initialize and show main widget
         if not self.mainwidget:
             # Create the dockwidget (after translation) and keep reference
-            self.mainwidget = ProjektCheckMainDockWidget(
+            self.mainwidget = ProjektCheckControl(
                 iface=self.iface, position=Qt.TopDockWidgetArea)
 
         # connect to provide cleanup on closing of dockwidget

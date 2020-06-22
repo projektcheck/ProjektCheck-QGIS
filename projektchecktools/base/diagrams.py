@@ -41,10 +41,10 @@ class MatplotDiagram(ABC):
         Parameters
         ----------
         offset_x: int, optional
-            offset the dialog position on the x-axis by this amount in pixels,
+            offset of dialog position on the x-axis by this amount in pixels,
             defaults to no offset
         offset_y: int, optional
-            offset the dialog position on the y-axis by this amount in pixels,
+            offset of dialog position on the y-axis by this amount in pixels,
             defaults to no offset
         '''
         if not self.dialog:

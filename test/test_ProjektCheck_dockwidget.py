@@ -15,7 +15,7 @@ __copyright__ = 'Copyright 2019, GGR'
 import unittest
 
 from settings import settings
-from ProjektCheck_dockwidget import ProjektCheckMainDockWidget
+from ProjektCheck_dockwidget import ProjektCheckControl
 
 from .utilities import get_qgis_app
 
@@ -27,7 +27,7 @@ class ProjektCheckDockWidgetTest(unittest.TestCase):
 
     def setUp(self):
         """Runs before each test."""
-        self.dockwidget = ProjektCheckMainDockWidget(None)
+        self.dockwidget = ProjektCheckControl(None)
 
     def tearDown(self):
         """Runs after each test."""

@@ -21,7 +21,7 @@ from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
 
-class ProjektCheckMainDockWidget(PCDockWidget):
+class ProjektCheckControl(PCDockWidget):
 
     ui_file = 'ProjektCheck_dockwidget_base.ui'
 
