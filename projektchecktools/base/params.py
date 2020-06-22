@@ -615,7 +615,7 @@ class ParamsDialog(Dialog):
 
     def exec_(self):
         '''
-        overide, adjusts size of dialog before showing it
+        override, adjusts size of dialog before showing it
         '''
         min_width = self.base_layout.minimumSize().width() + 50
         self.param_widget.setMinimumWidth(min_width)

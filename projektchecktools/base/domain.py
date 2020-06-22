@@ -142,6 +142,15 @@ class PCDockWidget(QObject):
         '''
         return self.project_manager.basedata
 
+    @property
+    def projectdata(self) -> Database:
+        '''
+        the database with the base data of Projekt-Check
+        '''
+        if not self.project_manager.active_project:
+            return
+        return self.project_manager.active_project.data
+
 
 class Domain(PCDockWidget):
     '''

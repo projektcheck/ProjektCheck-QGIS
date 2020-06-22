@@ -6,9 +6,11 @@ import shutil
 import sys
 from collections import OrderedDict
 from operator import itemgetter
+from typing import Tuple, List
 
 from projektchecktools.utils.singleton import Singleton
-from projektchecktools.base.database import Field
+from projektchecktools.base.database import (Field, Table, FeatureCollection,
+                                             Workspace)
 from projektchecktools.base.geopackage import Geopackage
 from projektchecktools.base.layers import Layer, TileLayer
 from projektchecktools.utils.connection import Request
@@ -45,7 +47,7 @@ class Settings(metaclass=Singleton):
     # write changed config instantly to file
     _write_instantly = True
 
-    def __init__(self, filename='projektcheck-config.txt'):
+    def __init__(self, filename: str = 'projektcheck-config.txt'):
         '''
         Parameters
         ----------
@@ -75,7 +77,7 @@ class Settings(metaclass=Singleton):
             self._settings = DEFAULT_SETTINGS.copy()
             self.write()
 
-    def read(self, config_file=None):
+    def read(self, config_file: str = None):
         '''
         read settings from file
 
@@ -84,6 +86,11 @@ class Settings(metaclass=Singleton):
         config_file : str, optional
             path to file with settings, self.config_file used if None,
             by default None
+
+        Raises
+        ----------
+        Exception
+            file could not be read (e.g. wrong format, not existing)
         '''
         if config_file is None:
             config_file = self.config_file
@@ -94,7 +101,7 @@ class Settings(metaclass=Singleton):
             self._settings = DEFAULT_SETTINGS.copy()
             print('Error while loading config. Using default values.')
 
-    def write(self, config_file=None):
+    def write(self, config_file: str = None):
         '''
         write current settings to file
 
@@ -113,14 +120,14 @@ class Settings(metaclass=Singleton):
             json.dump(config_copy, f, indent=4, separators=(',', ': '))
 
     # access stored config entries like fields
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         if name in self.__dict__:
             return self.__dict__[name]
         elif name in self._settings:
             return self._settings[name]
         raise AttributeError
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: object):
         if name in self._settings:
             self._settings[name] = value
             if self._write_instantly:
@@ -140,15 +147,35 @@ class Settings(metaclass=Singleton):
         ret.extend([f'{v} - {k}' for k, v in self._settings.items()])
         return '\n'.join(ret)
 
-    def __contains__(self, item):
+    def __contains__(self, item: str):
         return item in self.__dict__ or item in self._settings
 
-    def on_change(self, attribute, callback):
+    def on_change(self, attribute: str, callback: object):
+        '''
+        register callback function to be called on configuration
+        attribute change
+
+        Parameters
+        ----------
+        attribute : str
+            name of the attribute
+        callback : function
+            function to call if value of attribute has changed,
+            function should expect the value as a parameter
+        '''
         if attribute not in self._callbacks:
             self._callbacks[attribute] = []
         self._callbacks[attribute].append(callback)
 
-    def remove_listeners(self, attribute):
+    def remove_listeners(self, attribute: str):
+        '''
+        remove all callback functions of an configuration attribute
+
+        Parameters
+        ----------
+        attribute : str
+            name of the attribute
+        '''
         if attribute in self._callbacks:
             self._callbacks.pop(attribute)
 
@@ -157,11 +184,27 @@ settings = Settings()
 
 class Project:
     '''
-    single project
+    single project holding paths to base and project data
+
+    Attributes
+    ----------
+    path : str
+        the full path to the local project folder containing the project data
     '''
     settings = settings
 
-    def __init__(self, name, path=''):
+
+    def __init__(self, name: str, path: str = ''):
+        '''
+        Parameters
+        ----------
+        name : str
+            name of the project, equals the name of folder so make sure
+            it only contains characters supported by the OS for folders
+        path : str, optional
+            the path to the project, the full path will be path + name, defaults
+            to the project path in the settings
+        '''
         self.name = name
         self.groupname = f'Projekt "{self.name}"'
         path = path or settings.project_path
@@ -169,14 +212,31 @@ class Project:
 
     @property
     def basedata(self):
+        '''
+        the base data (same for all projects)
+        '''
         return ProjectManager().basedata
 
+    @property
+    def data(self):
+        '''
+        the project data
+        '''
+        return Geopackage(base_path=self.path, read_only=False)
+
     def remove(self):
+        '''
+        remove the project and its folder
+        '''
         self.close()
         if os.path.exists(self.path):
             shutil.rmtree(self.path)
 
     def close(self):
+        '''
+        close the project
+        '''
+        # ToDo: is there anything to do on closing a project?
         pass
 
     def __repr__(self):
@@ -213,7 +273,7 @@ class ProjectManager(metaclass=Singleton):
 
     def load(self):
         '''
-        load settings and projects
+        load settings and list of projects
         '''
         if self.settings.project_path:
             project_path = self.settings.project_path
@@ -226,12 +286,24 @@ class ProjectManager(metaclass=Singleton):
                 self.settings.project_path = project_path = ''
         self.reset_projects()
 
-    def check_basedata(self, path=None):
+    def check_basedata(self, path: str = None) -> Tuple[int, str]:
         '''
-        -1 - connection error
-        0 - no local data
-        1 - local data outdated
-        2 - local data up to date
+        validate the local base data
+
+        Parameters
+        ----------
+        path : str, optional
+            base data path to check, defaults to the currently set path
+
+        Returns
+        ----------
+        (int, str)
+            status code and validation message
+            codes:
+            -1 - connection error
+             0 - no local data
+             1 - local data outdated
+             2 - local data up to date
         '''
         # ToDo: check if all files are there
         if not self.server_versions:
@@ -255,18 +327,40 @@ class ProjectManager(metaclass=Singleton):
         return 2, ('Die Basisdaten sind auf dem neuesten Stand '
                    f'(v{newest_local_v["version"]} {newest_local_v["date"]})')
 
-    def add_local_version(self, version, path=None):
+    def add_local_version(self, version_meta: dict, path: str = None):
+        '''
+        register a new local base data version, creates a
+        folder path + version number
+
+        Parameters
+        ----------
+        version_meta : dict
+            metadata of version as dictionary as supplied by server,
+            containing properties:
+            version - number of version
+            date - original date of creation of base data
+            file - file name on server
+        '''
         path = path or self.settings.basedata_path
-        p = os.path.join(path, str(version['version']))
+        p = os.path.join(path, str(version_meta['version']))
         if not os.path.exists(p):
             os.makedirs(p)
         fp = os.path.join(p, 'basedata.json')
         with open(fp, 'w') as f:
-            json.dump(version, f, indent=4, separators=(',', ': '))
+            json.dump(version_meta, f, indent=4, separators=(',', ': '))
 
-    def local_versions(self, path):
+    def local_versions(self, path: str) -> List[dict]:
         '''
-        returns list of dicts
+        get metadata of all local base data versions
+
+        Returns
+        -------
+        list
+            metadata of each found base data version as dictionaries,
+            sorted by version number (newest first), containing properties:
+            version - number of version
+            date - original date of creation of base data
+            file - file name on server
         '''
         if not os.path.exists(path):
             return
@@ -285,14 +379,30 @@ class ProjectManager(metaclass=Singleton):
         return sorted(versions, key=itemgetter('version'), reverse=True)
 
     @property
-    def server_versions(self):
+    def server_versions(self) -> List[dict]:
         '''
-        raises ConnectionError
+        request server for available base data version
+
+        Returns
+        -------
+        list
+            metadata of each found base data version as dictionaries,
+            sorted by version number (newest first), containing properties:
+            version - number of version
+            date - original date of creation of base data
+            file - file name on server
+
+        Raises
+        -------
+        ConnectionError
+            can't establish connection to server or metadata file is not
+            available
         '''
         if self._server_versions:
             return self._server_versions
         try:
             request = Request(synchronous=True)
+            # metadata url
             res = request.get(f'{settings.BASEDATA_URL}/v_basedata.json')
         except ConnectionError:
             return
@@ -300,7 +410,21 @@ class ProjectManager(metaclass=Singleton):
             return
         return sorted(res.json(), key=itemgetter('version'), reverse=True)
 
-    def load_basedata(self, version=None):
+    def load_basedata(self, version: int = None) -> bool:
+        '''
+        set base data with version number active
+
+        Parameters
+        ----------
+        version : int, optional
+            number of version to load, defaults to newest available version
+            (by number)
+
+        Returns
+        ----------
+        bool
+            whether loading was successful or not
+        '''
         if version is not None and version == self.basedata_version:
             return True
         self.basedata = None
@@ -323,7 +447,7 @@ class ProjectManager(metaclass=Singleton):
         self.basedata_version = local_version['version']
         return True
 
-    def create_project(self, name, create_folder=True):
+    def create_project(self, name: str, create_folder: bool = True):
         '''
         create a new project
 
@@ -331,6 +455,9 @@ class ProjectManager(metaclass=Singleton):
         ----------
         name : str
             name of the project
+        create_folder : bool, optional
+            create a folder for the project data if True, defaults to creating
+            a folder
         '''
         if not self.settings.project_path:
             return
@@ -343,7 +470,10 @@ class ProjectManager(metaclass=Singleton):
             os.mkdir(target_folder)
         return project
 
-    def remove_project(self, project):
+    def remove_project(self, project: Project):
+        '''
+        remove a project physically
+        '''
         #self.active_project = None
         if isinstance(project, str):
             project = self._projects[project]
@@ -351,7 +481,10 @@ class ProjectManager(metaclass=Singleton):
         if project.name in self._projects:
             del(self._projects[project.name])
 
-    def _get_projects(self):
+    def _get_projects(self) -> str:
+        '''
+        get list of project names in project path
+        '''
         base_path = self.settings.project_path
         if not os.path.exists(base_path):
             return []
@@ -360,10 +493,16 @@ class ProjectManager(metaclass=Singleton):
         return sorted(project_folders)
 
     @property
-    def projects(self):
+    def projects(self) -> List[Project]:
+        '''
+        list of available projects
+        '''
         return list(self._projects.values())
 
     def reset_projects(self):
+        '''
+        reloads the project list in currently set project folder
+        '''
         self._projects = {}
         for name in self._get_projects():
             project = Project(name)
@@ -371,6 +510,10 @@ class ProjectManager(metaclass=Singleton):
 
     @property
     def active_project(self):
+        '''
+        active project, if not defined else, all read/write access of project
+        data will be done in this project
+        '''
         if self.settings.active_project:
             return self._projects.get(self.settings.active_project, None)
         return None
@@ -384,15 +527,54 @@ class ProjectManager(metaclass=Singleton):
 
 class ProjectTable:
     '''
-    manages project related database tables
+    manages project-related database tables (django-style),
+    Tables defined this way will be automatically created with defined fields
+    (defined by class attributes), ids are created automatically
 
-    auto created
-    define fields
-    define Meta
+    possible meta data (defined by Meta class):
+        workspace - name of the workspace, defaults to 'default'
+        name      - name of the table, defaults to class name in lower case
+        database  - type of database, defaults to Geopackage
+        geom      - geometry type (wkb geometry type string e.g. Polygon,
+                    LineString), defaults to unspecified (decided when
+                    saving geometries)
+
+    e.g.
+
+    class Example(ProjectTable):
+        name = Field(str, 0)
+        number = Field()
+
+        class Meta:
+            name = 'example name'
+            workspace = 'examples'
+            geom = 'Point'
     '''
 
     @classmethod
-    def get_table(cls, project=None, create=False):
+    def get_table(cls, project: Project = None, create: bool = False) -> Table:
+        '''
+        get a table defined in the ProjectTable style
+
+        Parameters
+        ----------
+        project : Project, optional
+            the project the table belongs to, defaults to the active project
+        create : bool, optional
+            create the table if not existing, defaults to not creating the table
+            but raising an error if not found
+
+        Returns
+        ----------
+        Table
+            the table matching project and definition resp. the newly created
+            table (create == True)
+
+        Raises
+        ----------
+        FileNotFoundError
+            table not found (create == False)
+        '''
         project = project or ProjectManager().active_project
         Database = getattr(cls.Meta, 'database', Geopackage)
         workspace_name = getattr(cls.Meta, 'workspace', 'default')
@@ -420,11 +602,25 @@ class ProjectTable:
         pass
 
     @classmethod
-    def features(cls, project=None, create=False):
+    def features(cls, project: Project = None, create: bool = False
+                 ) -> FeatureCollection:
+        '''
+        get rows of the table as feature collection
+
+        Parameters
+        ----------
+        project : Project, optional
+            the project the table belongs to, defaults to active project
+        create : bool, optional
+            create the table if not existing, defaults to not creating the table
+        '''
         return cls.get_table(project=project, create=create).features()
 
     @classmethod
-    def _fields(cls):
+    def _fields(cls) -> Tuple[dict, dict]:
+        '''
+        datatypes and default values of fields
+        '''
         cls.extra()
         types = OrderedDict()
         defaults = OrderedDict()
@@ -440,7 +636,11 @@ class ProjectTable:
         return types, defaults
 
     @classmethod
-    def _create(cls, name, workspace, geometry_type=None):
+    def _create(cls, name: str, workspace: Workspace,
+                geometry_type: str = None):
+        '''
+        create a table with field defined by class attributes
+        '''
         types, defaults = cls._fields()
         return workspace.create_table(name, fields=types,
                                       defaults=defaults,
@@ -456,10 +656,14 @@ class ProjectTable:
 
     class Meta:
         '''
-        workspace - name of workspace
-        name - name of table
-        database - type of database, by default Geopackage
-        geom - type of geometry (Polygon, LineString)
+        metadata of table
+
+        workspace - name of the workspace, defaults to 'default'
+        name      - name of the table, defaults to class name in lower case
+        database  - type of database, defaults to Geopackage
+        geom      - geometry type (wkb geometry type string e.g. Polygon,
+                    LineString), defaults to unspecified (decided when
+                    saving geometries)
         '''
 
 
@@ -471,7 +675,7 @@ class ProjectLayer(Layer):
             else self.project.groupname
         super().__init__(layername, data_path, prepend=prepend,
                          groupname=groupname)
-        self.root.setItemVisibilityChecked(True)
+        self.parent.setItemVisibilityChecked(True)
 
     @classmethod
     def find_group(cls, groupname):
