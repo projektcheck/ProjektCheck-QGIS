@@ -131,9 +131,14 @@ class MapTool:
             self.canvas.setCursor(self.cursor)
         else:
             self.canvas.unsetMapTool(self)
-            self.ui_element.blockSignals(True)
-            self.ui_element.setChecked(False)
-            self.ui_element.blockSignals(False)
+            try:
+                self.ui_element.blockSignals(True)
+                self.ui_element.setChecked(False)
+                self.ui_element.blockSignals(False)
+            # ui element might already have been deleted by QGIS on changing
+            # projects
+            except RuntimeError:
+                pass
 
     def disconnect(self, **kwargs):
         '''
