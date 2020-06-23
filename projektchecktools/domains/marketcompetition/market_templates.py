@@ -263,13 +263,19 @@ class MarketTemplate(QObject):
                 for field in self._address_fields.keys():
                     address += f' {row[field]}'
                 self.message.emit(f'Geocoding {name} {address}...')
-                location, msg = nominatim_geocode(address)
+                location, msg = nominatim_geocode(
+                    street=f'{row["Straße"]} {row["Hausnummer"]}',
+                    city=row['Ort'], postalcode='PLZ'
+                )
                 if location is None:
-                    self.message.emit(f'Fehler: {msg}')
-                    continue
+                    # try again with merging everything in one address parameter
+                    location, msg = nominatim_geocode(address=address)
+                    if location is None:
+                        self.message.emit(f'Fehler: {msg}')
+                        continue
                 lat, lon = location
-                market = Supermarket(i, lon, lat, name, kette, vkfl=vkfl,
-                                     adresse=address, epsg=4326)
+                market = Supermarket(i, float(lon), float(lat), name, kette,
+                                     vkfl=vkfl, adresse=address, epsg=4326)
                 market.transform(self.epsg)
             else:
                 x, y = row['SHAPE']

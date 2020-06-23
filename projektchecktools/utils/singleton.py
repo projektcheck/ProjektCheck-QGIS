@@ -3,6 +3,9 @@ from abc import ABCMeta
 
 
 class Singleton(type):
+    '''
+    singleton meta class
+    '''
     _instances = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
@@ -12,6 +15,9 @@ class Singleton(type):
 
 
 class SingletonABCMeta(ABCMeta):
+    '''
+    singleton abstract meta class
+    '''
     _instances = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

@@ -4,21 +4,38 @@ from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsProject, QgsCoordinateReferenceSystem, QgsPoint)
 from qgis.PyQt.Qt import QVariant
 import gdal, osr
-from typing import Union
+from typing import Union, Tuple
 import os
 import tempfile
 import processing
 
 from projektchecktools.utils.connection import Request
+from projektchecktools.base.database import Table
 
 requests = Request(synchronous=True)
 
 
 class Point(object):
-    """A Point object
-    taken from ProjektCheck Profi for ArcGIS to be able to use same interface
-    """
-    def __init__(self, x, y, id=None, epsg=4326):
+    '''
+    A Point object with same interface as code taken from ProjektCheck Profi
+    for ArcGIS (doing some weird inplace transformations)
+
+    ToDo: replace this with QGIS geometries in code originating from
+    ArcGIS-version entirely
+    '''
+    def __init__(self, x: float, y: float, id: int = None, epsg: int = 4326):
+        '''
+        Parameters
+        ----------
+        x : float
+            x coordinate
+        y : float
+            y coordinate
+        id : int, optional
+            unique identifier, defaults to no id
+        epsg : int, optional
+            epsg code of projection coordinates are in, defaults to 4326
+        '''
         self.id = id
         self.x = x
         self.y = y
@@ -32,12 +49,30 @@ class Point(object):
         return hash((self.x, self.y))
 
     @property
-    def geom(self):
-        """Create geometry from coordinates"""
+    def geom(self) -> QgsPointXY:
+        '''
+        coordinates as QGIS-geometry
+        '''
         return QgsPointXY(self.x, self.y)
 
-    def transform(self, target_srid, inplace=True):
+    def transform(self, target_srid: Union[str, int], inplace: bool = True
+                  ) -> 'Point':
+        '''
+        transform point into different projection
 
+        Parameters
+        ----------
+        target_srid : str or int
+            epsg code to transform to
+        inplace : bool, optional
+            transform x and y in place if True, return new Point if False and
+            keep x and y of this as is, returns to inplace transformation
+
+        Returns
+        ----------
+        Point
+            transformed point if inplace, else None
+        '''
         # a little weird to replace it and add it again, but i wanted to keep
         # the api of the old ArcGIS Project
         if isinstance(target_srid, str):
@@ -60,9 +95,22 @@ class Point(object):
         else:
             return Point(x, y, id=self.id, epsg=target_srid)
 
-def clip_raster(raster_file, bbox):
-    '''clip given raster file with given bbox
-    (tuple of upper left and lower right Points)'''
+def clip_raster(raster_file: str, bbox: Tuple[Point, Point]) -> Tuple[str, int]:
+    '''
+    clip a raster file with given bbox
+
+    Parameters
+    ----------
+    raster_file : str
+        full path to raster file
+    bbox : tuple
+        upper left and lower right Points
+
+    Returns
+    ----------
+    tuple
+        path to clipped output raster file and epsg code of its projection
+    '''
     ds = gdal.OpenEx(raster_file)
     try:
         ref = ds.GetSpatialRef()
@@ -80,7 +128,20 @@ def clip_raster(raster_file, bbox):
     clipped = ds = None
     return clipped_raster, int(raster_epsg)
 
-def get_bbox(table):
+def get_bbox(table: Table) -> Tuple[Point, Point]:
+    '''
+    get the minimal bounding box covering all features in table
+
+    Parameters
+    ----------
+    table : Table
+        table with features to be in bounding box
+
+    Returns
+    ----------
+    tuple
+        upper left and lower right Points spanning the bounding box
+    '''
     layer = QgsVectorLayer(f'{table.workspace.path}|layername={table.name}')
     layer.dataProvider().updateExtents()
     ex = layer.extent()
@@ -132,7 +193,7 @@ def intersect(input_features, overlay: Union[QgsVectorLayer, list],
     input_features : list
         list of QgsFeatures with Point geometry to be clipped
     overlay_features : list or layer
-        list of QgsFeatures with Polygon geometry or layer with Polygon geom.
+        list of QgsFeatures with Polygon geometry or layer with Polygon geometry
     input_fields : list, optional
         list of names of fields in input_features to return, defaults to [id]
     output_fields : list, optional
@@ -219,10 +280,17 @@ def _get_distances(point, points):
     distances = np.apply_along_axis(np.linalg.norm, 1, diff)
     return distances
 
-def nominatim_geocode(address):
+def nominatim_geocode(address='', **kwargs):
+    '''
+    street (incl. number), city, postalcode, country, county, state
+    '''
     url = 'https://nominatim.openstreetmap.org/search'
-    params = {'q': address,
-              'format': 'json'}
+    params = {'format': 'json'}
+    if address:
+        params['q'] = address
+    for k, v in kwargs.items():
+        if v:
+            params[k] = v
     r = requests.get(url, params=params)
     results = r.json()
     if not results:
