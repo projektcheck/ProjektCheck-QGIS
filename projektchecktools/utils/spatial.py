@@ -1,24 +1,25 @@
 import numpy as np
 from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsFeature, QgsPolygon, QgsCoordinateTransform,
-                       QgsProject, QgsCoordinateReferenceSystem, QgsPoint)
+                       QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
+                       QgsFeatureIterator)
 from qgis.PyQt.Qt import QVariant
 import gdal, osr
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 import os
 import tempfile
 import processing
 
 from projektchecktools.utils.connection import Request
-from projektchecktools.base.database import Table
+from projektchecktools.base.database import Table, Feature, FeatureCollection
 
 requests = Request(synchronous=True)
 
 
 class Point(object):
     '''
-    A Point object with same interface as code taken from ProjektCheck Profi
-    for ArcGIS (doing some weird inplace transformations)
+    A Point object with same interface as required in code taken from
+    ProjektCheck Profi for ArcGIS (doing some weird inplace transformations)
 
     ToDo: replace this with QGIS geometries in code originating from
     ArcGIS-version entirely
@@ -150,9 +151,35 @@ def get_bbox(table: Table) -> Tuple[Point, Point]:
             Point(ex.xMaximum(), ex.yMaximum(), epsg=epsg))
     return bbox
 
-def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
-                 target_epsg=None, buffer=None):
+def create_layer(features: Union[List[QgsFeature], QgsFeatureIterator],
+                 geom_type: str, fields: List[str] = [], name: str = 'temp',
+                 epsg: int = 4326, target_epsg: int = None,
+                 buffer: float = None) -> QgsVectorLayer:
+    '''
+    create a vector layer containing given features
 
+    Parameters
+    ----------
+    features : QgsFeature or QgsFeatureIterator
+        features to put into new layer
+    geom_type : str
+        type of geometry e.g. Point, Polygon
+    fields : list, optional
+        field names the new layer contains, should match the fields of the
+        input features, defaults to no fields
+    name : str, optional
+        name of the layer, defaults to 'temp'
+    epsg : int, optional
+        epsg code of projection of the geometries of the input features,
+        defaults to 4326
+    target_epsg : int, optional
+        epsg code of projection of the new layer, defaults to input epsg
+        (see parameter 'epsg')
+    buffer : float, optional
+        buffer around the geometries of the features, metric depends on
+        projection of input features (e.g. meter if Gauss-Krueger),
+        defaults to no buffer
+    '''
     layer = QgsVectorLayer(f'{geom_type}?crs=EPSG:{target_epsg or epsg}',
                            name, 'memory')
     pr = layer.dataProvider()
@@ -181,9 +208,11 @@ def create_layer(features, geom_type, fields=[], name='temp', epsg=4326,
         pr.addFeature(f)
     return layer
 
-def intersect(input_features, overlay: Union[QgsVectorLayer, list],
-              input_fields=['id'],
-              output_fields=[], epsg=4326, buffer=None):
+def intersect(input_features: Union[List[QgsFeature], QgsFeatureIterator],
+              overlay: Union[QgsVectorLayer,
+                             Union[List[QgsFeature], QgsFeatureIterator]],
+              input_fields=['id'], output_fields=[], epsg: int = 4326,
+              buffer: float = None) -> dict:
     '''
     clips features by geometry, only features within the geometries of the
     overlay remain
@@ -201,6 +230,10 @@ def intersect(input_features, overlay: Union[QgsVectorLayer, list],
         (resp. overlay layer) to return, empty by default
     epsg : int, optional
         epsg code of input and overlay features (should be the same)
+    buffer : float, optional
+        buffer around the geometries of the overlay features, metric depends on
+        projection of overlay features (e.g. meter if Gauss-Krueger),
+        defaults to no buffer
 
     Returns
     -------
@@ -227,8 +260,10 @@ def intersect(input_features, overlay: Union[QgsVectorLayer, list],
            for f in output_layer.getFeatures()]
     return ret
 
-def closest_point(point, points):
-    """get the point out of given points that is closest to the given point,
+def closest_point(point: Tuple[float, float], points: List[Tuple[float, float]]
+                  ) -> Tuple[int, Tuple[float, float]]:
+    '''
+    get the point out of given points that is closest to the given point,
     points have to be passed as tuples of x, y (z optional) coordinates
 
     Parameters
@@ -240,17 +275,18 @@ def closest_point(point, points):
 
     Returns
     -------
-    index : int
-        index of closest point in points
     point : tuple
-        x, y of closest point
-    """
+        index of closest point in points and x, y coordinates of closest point
+    '''
     distances = _get_distances(point, points)
     closest_idx = distances.argmin()
     return closest_idx, tuple(points[closest_idx])
 
-def points_within(center_point, points, radius):
-    """get the points within a radius around a given center_point,
+def points_within(center_point: Union[tuple, Point],
+                  points: Union[List[tuple], List[Point]], radius: float
+                  ) -> Tuple[np.ndarray, np.ndarray]:
+    '''
+    get the points within a radius around a given center_point,
     points have to be passed as tuples of x, y (z optional) coordinates
 
     Parameters
@@ -259,30 +295,49 @@ def points_within(center_point, points, radius):
         x, y (, z) coordinates of center-point of circle
     points : list of tuples or list of Points
         x, y (, z) coordinates of points
-    radius : int
+    radius : float
         radius of circle,
         metric depends on projection of points (e.g. meter if Gauss-Krueger)
 
     Returns
     -------
     points : list of tuples
-        points within radius
-    indices : list of bool
-        True if point is wihtin radius
-    """
+        array of x, y coordinates of points within radius and array of booleans
+        indicating if coordinates are within given radius
+    '''
     distances = _get_distances(center_point, points)
     is_within = distances <= radius
     return np.array(points)[is_within], is_within
 
-def _get_distances(point, points):
+def _get_distances(point: Union[tuple, Point],
+                   points: Union[List[tuple], List[Point]]) -> np.ndarray:
+    '''
+    get distances between point and each point in list of points
+    '''
     points = [np.array(p) for p in points]
     diff = np.array(points) - np.array(point)
     distances = np.apply_along_axis(np.linalg.norm, 1, diff)
     return distances
 
-def nominatim_geocode(address='', **kwargs):
+def nominatim_geocode(address: str = '', **kwargs
+                      ) -> Tuple[Tuple[str, str], str]:
     '''
-    street (incl. number), city, postalcode, country, county, state
+    geocode address with Nominatim API (nominatim.openstreetmap.org)
+
+    Parameters
+    ----------
+    address : str, optional
+        query string containing whole address (unordered),
+        defaults to no address
+    **kwargs
+        nominatim-specific query parameters:
+        street (incl. number), city, postalcode, country, county, state
+
+    Returns
+    -------
+    tuple
+        coordinates (latitude, longitude) and message,
+        coordinates are None if geocoding was not succesful
     '''
     url = 'https://nominatim.openstreetmap.org/search'
     params = {'format': 'json'}
@@ -299,6 +354,20 @@ def nominatim_geocode(address='', **kwargs):
     return location, 'gefunden'
 
 def google_geocode(address, api_key=''):
+    '''
+    geocode address with Google Geocoding API (nominatim.openstreetmap.org)
+
+    Parameters
+    ----------
+    address : str
+        query string containing whole address (unordered)
+
+    Returns
+    -------
+    tuple
+        coordinates (latitude, longitude) and message,
+        coordinates are None if geocoding was not succesful
+    '''
     url = 'https://maps.googleapis.com/maps/api/geocode/json'
     params = {'sensor': 'false', 'address': address}
     if api_key:
@@ -314,7 +383,20 @@ def google_geocode(address, api_key=''):
     location = results[0]['geometry']['location']
     return (location['lat'], location['lng']), msg
 
-def minimal_bounding_poly(geometries):
+def minimal_bounding_poly(geometries: List[QgsGeometry]) -> QgsGeometry:
+    '''
+    find minimal bounding polygon covering all given geometries
+
+    Parameters
+    ----------
+    geometries : list
+        list of geometries
+
+    Returns
+    -------
+    QgsGeometry
+        minimal bounding polygon
+    '''
     hulls = []
     for geom in geometries:
         if geom.isMultipart():
@@ -328,11 +410,26 @@ def minimal_bounding_poly(geometries):
         multi_poly = multi_poly.combine(hull)
     return multi_poly
 
-def remove_duplicates(features, match_field='', where='', distance=100):
-    '''remove point features matched by where clause from the given feature-class
-    if other features are within given distance
-    match_field - optional, only delete feature, if points within distance have
-                  same value in this field
+def remove_duplicates(features: Union[List[Feature], FeatureCollection],
+                      match_field: str = '', distance: float = 100) -> int:
+    '''
+    remove point features from database if other features are within given distance
+
+    Parameters
+    ----------
+    features : list or QgsFeatureIterator
+        features to remove duplicates from
+    distance : float, optional
+        only delete duplicate feature if it is within this range,
+        metric depends on projection of features, defaults to 100
+    match_field : str, optional
+        only delete features in range if those have same value in this field,
+        defaults to delete all in range
+
+    Returns
+    -------
+    int
+        number of removed duplicates
     '''
     add = match_field or 'id'
     all_r = [(f.id, (f.geom.asPoint().x(), f.geom.asPoint().y()),
