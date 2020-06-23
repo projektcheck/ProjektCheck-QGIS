@@ -319,4 +319,3 @@ class TileLayer(Layer):
                 else self.parent.addLayer(self.layer)
             l.setItemVisibilityChecked(checked)
             l.setExpanded(expanded)
-        return l
