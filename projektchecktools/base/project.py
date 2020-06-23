@@ -7,6 +7,7 @@ import sys
 from collections import OrderedDict
 from operator import itemgetter
 from typing import Tuple, List
+from qgis.core import QgsVectorLayer, QgsLayerTreeGroup
 
 from projektchecktools.utils.singleton import Singleton
 from projektchecktools.base.database import (Field, Table, FeatureCollection,
@@ -19,6 +20,7 @@ if sys.platform in ['win32', 'win64']:
     p = os.getenv('LOCALAPPDATA')
 # Mac OS and Linux
 else:
+    # ToDo: is there a env. path to the documents folder?
     p = os.path.expanduser('~')# , 'Library/Application Support/')
 APPDATA_PATH = os.path.join(p, 'Projekt-Check-QGIS')
 
@@ -668,8 +670,28 @@ class ProjectTable:
 
 
 class ProjectLayer(Layer):
-    def __init__(self, layername, data_path, groupname='', project=None,
-                 prepend=True):
+    '''
+    wrapper of a vector layer in the QGIS layer tree belonging to a specific
+    project. Projects are organized in seperate groups in the layer tree
+    '''
+    def __init__(self, layername: str, data_path: str, groupname: str = '',
+                 project: Project = None, prepend: bool = True):
+        '''
+        Parameters
+        ----------
+        layername : str
+            name the layer gets inside the layer tree
+        data_path : str
+            path to the data source of the layer
+        groupname : str, optional
+            name of the parent group the layer will be added to, will be created
+            if not existing, can be nested by joining groups with '/',
+            defaults to add layer to the root of the project group inside
+            the layer tree
+        prepend : bool
+            prepend the group of the layer if True (prepends each group if
+            nested), append if False, defaults to prepending the group
+        '''
         self.project = project or ProjectManager().active_project
         groupname = f'{self.project.groupname}/{groupname}' if groupname \
             else self.project.groupname
@@ -678,7 +700,16 @@ class ProjectLayer(Layer):
         self.parent.setItemVisibilityChecked(True)
 
     @classmethod
-    def find_group(cls, groupname):
+    def find_group(cls, groupname) -> QgsLayerTreeGroup:
+        '''
+        find a group in the project group inside the layer tree by name
+
+        Parameters
+        ----------
+        groupname : str
+            name of the group to search, can be nested by joining groups with
+            '/'
+        '''
         project = ProjectManager().active_project
         if not project:
             return
@@ -687,14 +718,68 @@ class ProjectLayer(Layer):
         return super().find_group(groupname)
 
     @classmethod
-    def add_group(cls, groupname, project=None, prepend=True):
+    def add_group(cls, groupname, project=None, prepend=True
+                  ) -> QgsLayerTreeGroup:
+        '''
+        add a group to the layer tree
+
+        Parameters
+        ----------
+        groupname : str
+            name of the group that will be created inside the project group,
+            can be nested by joining groups with '/'
+        prepend : bool, optional
+            prepend the group if True (prepends each group if nested),
+            append if False, defaults to prepending the group
+
+        Returns
+        ----------
+        QgsLayerTreeGroup
+            the created group (the deepest one in hierarchy if nested)
+        '''
         project = project or ProjectManager().active_project
         groupname = f'{project.groupname}/{groupname}'
         return Layer.add_group(groupname, prepend=prepend)
 
-    def draw(self, style_file=None, label='', checked=True, filter=None,
-             read_only=True, redraw=True, prepend=False, expanded=True,
-             uncheck_siblings=False):
+    def draw(self, style_file: str = None, label: str = '', redraw: str = True,
+             checked: bool = True, filter: str = None, expanded: bool = True,
+             read_only: bool = True, prepend: bool = False,
+             uncheck_siblings: bool = False) -> QgsVectorLayer:
+        '''
+        load the data into a vector layer, draw it and add it to the layer tree
+
+        Parameters
+        ----------
+        label : str, optional
+            label of the layer, defaults to layer name this is initialized with
+        style_file : str, optional
+            a QGIS style (.qml) can be applied to the layer, the path can either
+            be a full path or the name of a file that will be looked for in the
+            default style path, defaults to no style applied
+        redraw : bool, optional
+            replace old layer with same name in same group if True,
+            only create if not existing if set to False, else it is refreshed,
+            defaults to redrawing the layer
+        checked: bool, optional
+            set check state of layer in layer tree, defaults to being checked
+        filter: str, optional
+            QGIS filter expression to filter the layer, defaults to no filtering
+        expanded: str, optional
+            sets the legend to expanded or not, defaults to an expanded legend
+        prepend: bool, optional
+            prepend the layer to the other layers in its group if True,
+            append it if False, defaults to appending the layer
+        uncheck_siblings: bool, optional
+            uncheck other layers in same group, defaults to leave their
+            check-state as is
+        read_only: bool, optional
+            layer can not be altered by the user if True, defaults to read only
+
+        Returns
+        ----------
+        QgsVectorLayer
+            the created, replaced or refreshed vector layer
+        '''
         style_path = os.path.join(settings.TEMPLATE_PATH, 'styles', style_file)\
             if style_file else None
         layer = super().draw(style_path=style_path, label=label,
@@ -705,27 +790,60 @@ class ProjectLayer(Layer):
         return layer
 
     @classmethod
-    def from_table(cls, table, groupname='', prepend=True):
+    def from_table(cls, table: Table, groupname: str = '', prepend: bool = True
+                   ) -> 'ProjectLayer':
+        '''
+        create a layer with table data as a source
+
+        Parameters
+        ----------
+        table : Table
+            the table whose source will serve as a data source to the layer
+        groupname : str, optional
+            name of the parent group the layer will be added to, will be created
+            if not existing, can be nested by joining groups with '/',
+            defaults to add layer to the root of the project group inside
+            the layer tree
+        prepend : bool
+            prepend the group of the layer if True (prepends each group if
+            nested), append if False, defaults to prepending the group
+
+        Returns
+        ----------
+        ProjectLayer
+            the created project layer
+        '''
         data_path = f'{table.workspace.path}|layername={table.name}'
         return ProjectLayer(table.name, data_path=data_path,
                             groupname=groupname, prepend=prepend)
 
 
 class OSMBackgroundLayer(TileLayer):
+    '''
+    colored background tile-layer with OSM map data
+    provided by openstreetmap.org (openstreetmap.org/copyright)
+    '''
 
-    def __init__(self, groupname='', prepend=False):
-
+    def __init__(self, groupname: str = '', prepend: bool = False):
         url = ('type=xyz&url=https://a.tile.openstreetmap.org//{z}/{x}/{y}.png'
                f'&crs=EPSG{settings.EPSG}')
         super().__init__(url, groupname=groupname, prepend=prepend)
 
     def draw(self, checked=True):
-        super().draw('OpenStreetMap', checked=checked)
+        super().draw('OpenStreetMap © OpenStreetMap-Mitwirkende',
+                     checked=checked)
+        self.layer.setTitle(
+            'Karte openstreetmap.org CC-BY-SA (openstreetmap.org/'
+            'copyright), Kartendaten Openstreetmap ODbL')
 
 
 class TerrestrisBackgroundLayer(TileLayer):
+    '''
+    grey background WMS-layer with OSM map data
+    provided by terrestris.de (openstreetmap.org/copyright)
+    '''
 
-    def __init__(self, groupname='', prepend=False):
+    def __init__(self, groupname: str = '', prepend: bool = False):
 
         url = (f'crs=EPSG:{settings.EPSG}&dpiMode=7&format=image/png'
                '&layers=OSM-WMS&styles=&url=http://ows.terrestris.de/osm-gray/'
@@ -733,4 +851,8 @@ class TerrestrisBackgroundLayer(TileLayer):
         super().__init__(url, groupname=groupname, prepend=prepend)
 
     def draw(self, checked=True):
-        super().draw('Terrestris', checked=checked, expanded=False)
+        super().draw('Terrestris © OpenStreetMap-Mitwirkende',
+                     checked=checked, expanded=False)
+        self.layer.setTitle(
+            'Karte terrestris.de CC-BY-SA (openstreetmap.org/copyright), '
+            'Kartendaten Openstreetmap ODbL')

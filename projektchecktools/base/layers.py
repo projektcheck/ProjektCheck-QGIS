@@ -33,8 +33,9 @@ class Layer(ABC):
         data_path : str
             path to the data source of the layer
         groupname : str, optional
-            name of the parent group, will be created if not existing, can be
-            nested by joining groups with '/' e.g. 'Projekt/Hintergrundkarten',
+            name of the parent group the layer will be added to, will be created
+            if not existing, can be nested by joining groups with '/'
+            e.g. 'Projekt/Hintergrundkarten',
             defaults to add layer to the root of the layer tree
         prepend : bool
             prepend the group of the layer if True (prepends each group if
@@ -94,8 +95,8 @@ class Layer(ABC):
         Parameters
         ----------
         groupname : str
-            name of the parent group, will be created if not existing, can be
-            nested by joining groups with '/' e.g. 'Projekt/Hintergrundkarten'
+            name of the group that will be created, can be nested by joining
+            groups with '/' e.g. 'Projekt/Hintergrundkarten'
         prepend : bool, optional
             prepend the group if True (prepends each group if nested),
             append if False, defaults to prepending the group
@@ -318,3 +319,4 @@ class TileLayer(Layer):
                 else self.parent.addLayer(self.layer)
             l.setItemVisibilityChecked(checked)
             l.setExpanded(expanded)
+        return l

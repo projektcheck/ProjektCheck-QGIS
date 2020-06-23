@@ -316,9 +316,10 @@ class Reachabilities(Domain):
         url = ('type=xyz&url=http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png'
                '&zmax=18&zmin=0&crs=EPSG:{settings.EPSG}')
         layer = TileLayer(url, groupname=group, prepend=False)
-        layer.draw('ÖPNVKarte (memomaps.de)')
+        layer.draw('ÖPNVKarte (memomaps.de) © OpenStreetMap-Mitwirkende')
         layer.layer.setTitle(
-            'Karte memomaps.de CC-BY-SA, Kartendaten Openstreetmap ODbL')
+            'Karte memomaps.de CC-BY-SA (openstreetmap.org/copyright), '
+            'Kartendaten Openstreetmap ODbL')
 
     def close(self):
         self.feature_picker.set_active(False)
