@@ -256,6 +256,7 @@ class MarketTemplate(QObject):
     def _df_to_markets(self, df):
         markets = []
         n_rows = len(df)
+        n_errors = 0
         for i, (idx, row) in enumerate(df.iterrows()):
             address = ''
             name, kette, vkfl = row['Name'], row['Kette'], row['Vkfl_m²']
@@ -272,6 +273,7 @@ class MarketTemplate(QObject):
                     location, msg = nominatim_geocode(address=address)
                     if location is None:
                         self.message.emit(f'Fehler: {msg}')
+                        n_errors += 1
                         continue
                 lat, lon = location
                 market = Supermarket(i, float(lon), float(lat), name, kette,
@@ -284,4 +286,5 @@ class MarketTemplate(QObject):
                                      epsg=self.epsg)
             markets.append(market)
             self.progress.emit(100*i/n_rows)
+        self.message.emit(f'{n_errors} Fehler bei der Geokodierung')
         return markets
