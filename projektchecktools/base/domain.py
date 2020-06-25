@@ -89,7 +89,11 @@ class PCDockWidget(QObject):
         override, set inactive on close
         '''
         self.is_active = False
-        self.ui.close()
+        try:
+            self.ui.close()
+        # ui might already be deleted by QGIS
+        except RuntimeError:
+            pass
 
     def show(self):
         '''
