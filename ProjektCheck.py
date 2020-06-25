@@ -9,7 +9,7 @@ from qgis import utils
 from projektchecktools.ui.resources_rc import *
 
 # Import the code for the DockWidget
-from ProjektCheck_dockwidget import ProjektCheckControl
+from main_widget import ProjektCheckControl
 import os.path
 
 

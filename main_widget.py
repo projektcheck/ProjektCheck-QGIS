@@ -23,7 +23,7 @@ from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
 class ProjektCheckControl(PCDockWidget):
 
-    ui_file = 'ProjektCheck_dockwidget_base.ui'
+    ui_file = '_base.ui'
 
     def setupUi(self):
         #self.ui.pandas_button.clicked.connect(self.install_pandas)

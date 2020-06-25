@@ -15,7 +15,7 @@ __copyright__ = 'Copyright 2019, GGR'
 import unittest
 
 from settings import settings
-from ProjektCheck_dockwidget import ProjektCheckControl
+from main_widget import ProjektCheckControl
 
 from .utilities import get_qgis_app
 

@@ -28,7 +28,7 @@ class Ecology(Domain):
     MAX_RATING = 10
 
     ui_label = 'Ökologie'
-    ui_file = 'ProjektCheck_dockwidget_analysis_04-Oeko.ui'
+    ui_file = 'domain_04-Oeko.ui'
     ui_icon = ('images/iconset_mob/'
                '20190619_iconset_mob_nature_conservation_2.png')
     layer_group = 'Wirkungsbereich 4 - Fläche und Ökologie/Ökologie'

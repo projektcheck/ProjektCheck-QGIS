@@ -1,7 +1,6 @@
 import json
-from qgis.core import (QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
+from qgis.core import (QgsProject, QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsGeometry, QgsWkbTypes)
-import numpy as np
 import json
 import ogr
 

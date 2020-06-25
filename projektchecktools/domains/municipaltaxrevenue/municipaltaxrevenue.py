@@ -697,7 +697,7 @@ class MunicipalTaxRevenue(Domain):
     radius = 25000
 
     ui_label = 'Kommunale Steuereinnahmen'
-    ui_file = 'ProjektCheck_dockwidget_analysis_07-KSt.ui'
+    ui_file = 'domain_07-KSt.ui'
     ui_icon = "images/iconset_mob/20190619_iconset_mob_domain_tax_1.png"
     layer_group = 'Wirkungsbereich 6 - Kommunale Steuereinnahmen'
 
