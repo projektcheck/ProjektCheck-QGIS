@@ -31,7 +31,7 @@ class ProjectInitialization(Worker):
         except Exception as e:
             if self.project_areas is not None:
                 self.project_areas.workspace.close()
-            self.project.remove()
+            self.project_manager.remove_project(self.project)
             self.log('Projekt nach Fehler wieder entfernt.')
             raise e
 

@@ -238,8 +238,7 @@ class Project:
         '''
         close the project
         '''
-        # ToDo: is there anything to do on closing a project?
-        pass
+        self.data.close()
 
     def __repr__(self):
         return f'Project {self.name}'

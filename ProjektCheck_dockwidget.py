@@ -101,9 +101,17 @@ class ProjektCheckControl(PCDockWidget):
                 self.ui.project_combo.addItem(project.name, project)
                 self.ui.project_combo.setCurrentIndex(
                     self.ui.project_combo.count() - 1)
+            def on_close():
+                if not dialog.success:
+                    # ToDo: after stopping the creation of a project the
+                    # connection often can't be closed anymore
+                    try:
+                        self.project_manager.remove_project(job.project)
+                    except PermissionError:
+                        pass
 
-            dialog = ProgressDialog(job, parent=self.ui,
-                                    on_success=on_success)
+            dialog = ProgressDialog(job, parent=self.ui, on_success=on_success,
+                                    on_close=on_close)
             dialog.show()
 
     def clone_project(self):
