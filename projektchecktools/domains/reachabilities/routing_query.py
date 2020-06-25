@@ -1,6 +1,6 @@
 import json
 from qgis.core import (QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
-                       QgsCoordinateTransform, QgsGeometry)
+                       QgsCoordinateTransform, QgsGeometry, QgsWkbTypes)
 import numpy as np
 import json
 import ogr
@@ -77,6 +77,12 @@ class Isochrones(Worker):
                 QgsProject.instance()
             )
             geom.transform(tr)
+            # the router sometimes returns broken geometries
+            if not geom.isGeosValid():
+                geom = geom.makeValid()
+                # the junk is appended to a collection, discard it
+                if geom.wkbType() == QgsWkbTypes.GeometryCollection:
+                    geom = geom.asGeometryCollection()[0]
             self.isochronen.add(modus=self.modus,
                                 sekunden=sec,
                                 minuten=round(sec/60, 1),
