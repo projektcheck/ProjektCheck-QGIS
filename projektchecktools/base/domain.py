@@ -204,7 +204,9 @@ class Domain(PCDockWidget):
 
     def load_content(self):
         '''
-        override, show domain group when opening domain
+        Called when domain is opened by user. Shows domain group when opening
+        domain. Extend to load input data for domain and set the content of to
+        the UI elements
         '''
         # some domains open the project definition and it is opened after
         # loading a project, close it by default

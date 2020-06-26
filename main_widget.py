@@ -1,4 +1,27 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    main_widget.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+widget for managing the projects. leading to definitions and calculations
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import os
 from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
@@ -22,10 +45,16 @@ from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
 
 class ProjektCheckControl(PCDockWidget):
-
+    '''
+    Main widget controlling user inputs, the projects and the access to the
+    data. entry point to the domains (analytics)
+    '''
     ui_file = 'base.ui'
 
     def setupUi(self):
+        '''
+        sets up the main widget, its controls and the available projects
+        '''
         #self.ui.pandas_button.clicked.connect(self.install_pandas)
         self.domains = []
         self.active_dockwidget = None
@@ -45,6 +74,9 @@ class ProjektCheckControl(PCDockWidget):
         self.setup_projects()
 
     def show(self):
+        '''
+        show the main widget
+        '''
         super().show()
         valid, msg = self.project_manager.check_basedata()
         if valid == -1:
@@ -62,6 +94,7 @@ class ProjektCheckControl(PCDockWidget):
             if reply == QMessageBox.Yes:
                 settings = SettingsDialog(self)
                 settings.download_basedata()
+        # open a disclaimer on first use (or if checkbox left unchecked)
         if not self.settings.disclaimer_read:
             dialog = Dialog(ui_file='disclaimer.ui', parent=self.ui)
             dialog.exec_()
@@ -72,6 +105,10 @@ class ProjektCheckControl(PCDockWidget):
                 self.settings.disclaimer_read = True
 
     def show_settings(self):
+        '''
+        Open a dialog for changing the basic configuration of the
+        ProjektCheck-plugin
+        '''
         settings_dialog = SettingsDialog(self)
         prev_path = self.settings.project_path
         confirmed = settings_dialog.exec()
@@ -83,6 +120,11 @@ class ProjektCheckControl(PCDockWidget):
                 self.setup_projects()
 
     def create_project(self):
+        '''
+        Open a dialog for setting up a new project and create the project
+        based on this setup. Automatically set the new project as active project
+        if successfully created
+        '''
         status, msg = self.project_manager.check_basedata()
         if status == 0:
             QMessageBox.warning(self.ui, 'Hinweis', msg)
@@ -115,6 +157,9 @@ class ProjektCheckControl(PCDockWidget):
             dialog.show()
 
     def clone_project(self):
+        '''
+        clone the currently selected project
+        '''
         project = self.project_manager.active_project
         if not project:
             return
@@ -145,6 +190,9 @@ class ProjektCheckControl(PCDockWidget):
             break
 
     def remove_project(self):
+        '''
+        remove the currently selected project
+        '''
         project = self.project_manager.active_project
         if not project:
             return
@@ -187,7 +235,6 @@ class ProjektCheckControl(PCDockWidget):
     def setup_projects(self):
         '''
         fill project combobox with available projects
-        load active project? (or later after setting up domains?)
         '''
         self.project_manager.active_project = None
 
@@ -205,14 +252,18 @@ class ProjektCheckControl(PCDockWidget):
         self.ui.project_combo.blockSignals(False)
 
     def setup_definitions(self):
-        '''setup project definitions widget'''
+        '''
+        set up project definitions widget
+        '''
         self.project_definitions = ProjectDefinitions()
         #self.project_definitions.reset()
         self.ui.definition_button.clicked.connect(
             lambda: self.show_dockwidget(self.project_definitions))
 
     def setup_domains(self):
-        '''setup the domain widgets'''
+        '''
+        set up the domains widgets and the access to them
+        '''
 
         self.domains = []
 
@@ -252,6 +303,9 @@ class ProjektCheckControl(PCDockWidget):
         self.ui.domain_button.setMenu(menu)
 
     def setup_help(self):
+        '''
+        set up help buttons
+        '''
         menu = QMenu()
         help_path = self.settings.HELP_PATH
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -282,6 +336,10 @@ class ProjektCheckControl(PCDockWidget):
         self.ui.help_button.setMenu(menu)
 
     def show_dockwidget(self, widget):
+        '''
+        Show a dock-widget (domain or definition). Only one can be active at a
+        time
+        '''
         if self.active_dockwidget:
             self.active_dockwidget.close()
         else:
@@ -292,6 +350,10 @@ class ProjektCheckControl(PCDockWidget):
         widget.show()
 
     def change_project(self, project):
+        '''
+        set given project as the active project. Only one project can be active
+        at a time. Reloads the definition and domain widgets.
+        '''
         if not project:
             self.ui.domain_button.setEnabled(False)
             self.ui.definition_button.setEnabled(False)
@@ -299,6 +361,7 @@ class ProjektCheckControl(PCDockWidget):
         projektrahmendaten = Projektrahmendaten.features(project=project)[0]
         version = projektrahmendaten.basisdaten_version
         success = self.project_manager.load_basedata(version=version)
+        # check the availability of the base data the project was created with
         if not success:
             server_versions = self.project_manager.server_versions
             available = [v['version'] for v in server_versions]
@@ -384,10 +447,16 @@ class ProjektCheckControl(PCDockWidget):
             message.exec_()
 
     def close(self):
+        '''
+        override, closes all projects on closing this widget
+        '''
         self.close_all_projects()
         super().close()
 
     def close_all_projects(self):
+        '''
+        remove all project-related layers and try to close all workspaces
+        '''
         if getattr(self, 'project_definitions', None):
             self.project_definitions.close()
         if getattr(self, 'domains', None):
@@ -409,6 +478,9 @@ class ProjektCheckControl(PCDockWidget):
         self.canvas.refreshAllLayers()
 
     def unload(self):
+        '''
+        unload the widget
+        '''
         print('unloading Projekt-Check')
         self.close()
         if getattr(self, 'project_definitions', None):

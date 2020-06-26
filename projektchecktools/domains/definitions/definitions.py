@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    definitions.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the basic setup of the project areas
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import pandas as pd
 import numpy as np
 import os
@@ -32,23 +56,34 @@ from projektchecktools.utils.utils import get_ags
 
 
 class TrafficConnectors:
+    '''
+    sub-domain of project area definitions. sets up the connectors of the areas
+    to the street network
+    '''
     layer_group = 'Projektdefinition'
 
     def __init__(self, ui, canvas, project):
         self.project = project
         self.canvas = canvas
+        # connector is placed by clicking on map
         self.connector_tool = MapClickedTool(ui.connector_button,
                                              canvas=canvas,
                                              target_epsg=project.settings.EPSG)
-        self.connector_tool.map_clicked.connect(self.map_clicked)
+        self.connector_tool.map_clicked.connect(self.set_geometry)
 
     def load_content(self, area):
+        '''
+        load connector related to given area
+        '''
         self.connectors = Connectors.features(create=False,
                                               project=self.project)
         self.show_connectors()
         self.toggle_connector(area)
 
     def show_connectors(self):
+        '''
+        add layer showing the connectors
+        '''
         self.output = ProjectLayer.from_table(
             Connectors.get_table(), groupname=self.layer_group)
         self.output.draw(
@@ -56,6 +91,9 @@ class TrafficConnectors:
             style_file='verkehr_anbindungspunkte.qml', prepend=True)
 
     def toggle_connector(self, area=None):
+        '''
+        set active connector related to given area and highlight it
+        '''
         self.connector = None
         layer = self.output.layer
         if not layer:
@@ -65,7 +103,10 @@ class TrafficConnectors:
             self.connector = self.connectors.get(id_teilflaeche=area.id)
             layer.select(self.connector.id)
 
-    def map_clicked(self, geom):
+    def set_geometry(self, geom):
+        '''
+        set geometry of current connector to given geometry
+        '''
         if not self.connector:
             return
         self.connector.geom = geom
@@ -73,6 +114,9 @@ class TrafficConnectors:
         self.connector.save()
 
     def close(self):
+        '''
+        deactivate map tool
+        '''
         self.connector_tool.set_active(False)
         if hasattr(self, 'output'):
             layer = self.output.layer
@@ -81,6 +125,11 @@ class TrafficConnectors:
 
 
 class WohnenDevelopment(Worker):
+    '''
+    worker for calculating the population development in specific project
+    living area
+    '''
+    # analysis period
     BETRACHTUNGSZEITRAUM_JAHRE = 25
 
     def __init__(self, basedata, area, parent=None):
@@ -104,6 +153,9 @@ class WohnenDevelopment(Worker):
         self.set_ways()
 
     def set_development(self):
+        '''
+        calculate and store the population development
+        '''
         begin = self.area.beginn_nutzung
         duration = self.area.aufsiedlungsdauer
         end = begin + self.BETRACHTUNGSZEITRAUM_JAHRE - 1
@@ -208,6 +260,9 @@ class WohnenDevelopment(Worker):
 
 
     def set_ways(self):
+        '''
+        calculate and store the daily ways done by the inhabitants of the area
+        '''
         df_wohneinheiten = self.wohneinheiten.filter(
             id_teilflaeche=self.area.id).to_pandas()
         df_gebaeudetypen = self.gebaeudetypen_base.to_pandas()
@@ -227,7 +282,10 @@ class WohnenDevelopment(Worker):
 
 
 class Wohnen:
-
+    '''
+    sub-domain of project area definitions. Set up the structure of a project
+    area with living as the type of use
+    '''
     def __init__(self, project, layout):
         self.basedata = project.basedata
         self.gebaeudetypen_base = self.basedata.get_table(
@@ -240,6 +298,9 @@ class Wohnen:
         self.layout = layout
 
     def setup_params(self, area):
+        '''
+        set the parameters according to the data of the given area
+        '''
         self.area = area
         clear_layout(self.layout)
         self.params = Params(self.layout,
@@ -256,6 +317,7 @@ class Wohnen:
 
         self.params.add(Title('Anzahl Wohneinheiten nach Gebäudetypen'))
 
+        # load the building presets to select from
         preset_names, idx = np.unique(self.df_presets['Gebietstyp'].values,
                                      return_index=True)
         idx.sort()
@@ -270,6 +332,7 @@ class Wohnen:
         self.params.add(
             QSpacerItem(0, 3, QSizePolicy.Fixed, QSizePolicy.Minimum))
 
+        # preset is selected
         def preset_changed(gebietstyp):
             presets = self.df_presets[self.df_presets['Gebietstyp']==gebietstyp]
             for idx, preset in presets.iterrows():
@@ -277,7 +340,6 @@ class Wohnen:
                 bt = self.gebaeudetypen_base.get(id=id_bt)
                 param = self.params.get(bt.param_we)
                 param.input.value = self.area.area * preset['WE_pro_Hektar']
-
         self.preset_combo.changed.connect(preset_changed)
 
         for bt in self.gebaeudetypen_base:
@@ -315,6 +377,7 @@ class Wohnen:
 
         self.params.add(Title('Anteil der Bewohner unter 18 Jahre'))
 
+        # load the age presets to select from
         for bt in self.gebaeudetypen_base:
             param_name = bt.param_anteil_u18
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
@@ -333,6 +396,9 @@ class Wohnen:
             'Haushaltsstrukturen')
 
     def save(self):
+        '''
+        write the current parameter values to the database
+        '''
         we_sum = 0
         for bt in self.gebaeudetypen_base:
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
@@ -369,6 +435,9 @@ class Wohnen:
         dialog.show()
 
     def clear(self, area):
+        '''
+        clear all data related to living as the type of use of the given area
+        '''
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
         area.we_gesamt = None
         area.ew = 0
@@ -376,13 +445,21 @@ class Wohnen:
         MunicipalTaxRevenue.reset_wohnen()
 
     def close(self):
+        '''
+        close parameters
+        '''
         if hasattr(self, 'params'):
             self.params.close()
 
 
 class Gewerbe:
+    '''
+    sub-domain of project area definitions. Set up the structure of a project
+    area with industry as the type of use
+    '''
     # Default Gewerbegebietstyp
     DEFAULT_INDUSTRY_ID = 2
+    # analysis period
     BETRACHTUNGSZEITRAUM_JAHRE = 15
 
     def __init__(self, project, layout):
@@ -417,7 +494,9 @@ class Gewerbe:
             default_idx, 'Name_Gewerbegebietstyp'] += ' (default)'
 
     def set_industry_presets(self, preset_id):
-        """set all branche values to db-presets of given gewerbe-id"""
+        '''
+        set all sector values to database presets of given industry id
+        '''
         if preset_id == -1:
             return
         idx = self.df_presets_base['IDGewerbegebietstyp'] == preset_id
@@ -429,8 +508,10 @@ class Gewerbe:
             param.value = preset
 
     def estimate_jobs(self):
-        """calculate estimation of number of jobs
-        sets estimated jobs to branchen"""
+        '''
+        calculate estimation of number of jobs
+        set estimated jobs to sectors of industry
+        '''
         gemeindetyp = self.area.gemeinde_typ
         df_kennwerte = self.df_density_base[
             self.df_density_base['Gemeindetyp_ProjektCheck'] == gemeindetyp]
@@ -449,6 +530,9 @@ class Gewerbe:
         return jobs_sum
 
     def setup_params(self, area):
+        '''
+        set the parameters according to the data of the given area
+        '''
         self.area = area
         clear_layout(self.layout)
         self.params = Params(self.layout,
@@ -557,6 +641,9 @@ class Gewerbe:
             title='Gewerbe: Bezugszeitraum und Maß der baulichen Nutzung')
 
     def save(self):
+        '''
+        write the current parameter values to the database
+        '''
         for branche in self.branchen:
             feature = self.gewerbeanteile.get(id_branche=branche.id,
                                               id_teilflaeche=self.area.id)
@@ -593,6 +680,9 @@ class Gewerbe:
         MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
 
     def clear(self, area):
+        '''
+        clear all data related to industry as the type of use of the given area
+        '''
         MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
         self.gewerbeanteile.filter(id_teilflaeche=area.id).delete()
         self.ap_nach_jahr.filter(id_teilflaeche=area.id).delete()
@@ -600,7 +690,9 @@ class Gewerbe:
         area.save()
 
     def set_growth(self, area):
-
+        '''
+        calculate and store the development of the number of employees
+        '''
         n_jobs = area.ap_gesamt
         begin = area.beginn_nutzung
         duration = area.aufsiedlungsdauer
@@ -623,8 +715,10 @@ class Gewerbe:
             )
 
     def set_percentages(self, area):
-        '''this already could have done when saving,
-        but is here based on the old code'''
+        '''
+        this already could have done when saving,
+        but is here based on the old ArcGIS code
+        '''
         df = self.gewerbeanteile.filter(id_teilflaeche=area.id).to_pandas()
         df['anteil_branche'] = df['anteil_definition'] * df['dichtekennwert']
         df['anteil_branche'] /= df['anteil_branche'].sum()
@@ -633,6 +727,9 @@ class Gewerbe:
         self.gewerbeanteile.update_pandas(df)
 
     def set_ways(self, area):
+        '''
+        calculate and store the daily ways done by the employees of the area
+        '''
         df_anteile = self.gewerbeanteile.filter(
             id_teilflaeche=area.id).to_pandas()
         df_basedata = (self.basedata.get_table(
@@ -654,11 +751,18 @@ class Gewerbe:
         area.save()
 
     def close(self):
+        '''
+        close parameters
+        '''
         if hasattr(self, 'params'):
             self.params.close()
 
 
 class Einzelhandel:
+    '''
+    sub-domain of project area definitions. Set up the structure of a project
+    area with retail trade as the type of use
+    '''
     def __init__(self, project, layout):
         self.project = project
         self.basedata = project.basedata
@@ -670,6 +774,9 @@ class Einzelhandel:
         self.markets = Markets.features(create=True)
 
     def setup_params(self, area):
+        '''
+        set the parameters according to the data of the given area
+        '''
         self.area = area
         clear_layout(self.layout)
         self.params = Params(self.layout,
@@ -692,6 +799,10 @@ class Einzelhandel:
             title='Einzelhandel: Bezugszeitraum und Maß der baulichen Nutzung')
 
     def save(self):
+        '''
+        write the current parameter values to the database. Create/change
+        supermarket based on the settings for area of food retailing.
+        '''
         vkfl_sum = 0
         vkfl_lebensmittel = 0
         # id of food
@@ -747,6 +858,10 @@ class Einzelhandel:
         MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
 
     def clear(self, area):
+        '''
+        clear all data related to retail trade as the type of use of the given
+        area
+        '''
         # remove existing market
         market = self.markets.get(id_teilflaeche=area.id)
         if market:
@@ -758,6 +873,10 @@ class Einzelhandel:
         MunicipalTaxRevenue.reset_gewerbe_einzelhandel()
 
     def set_ways(self, area):
+        '''
+        calculate and store the daily ways done by the employees and customers
+        of the area
+        '''
         df_verkaufsflaechen = self.verkaufsflaechen.filter(
             id_teilflaeche=area.id).to_pandas()
         default_branche = self.basedata.get_table(
@@ -786,17 +905,25 @@ class Einzelhandel:
         area.save()
 
     def close(self):
+        '''
+        close parameters
+        '''
         if hasattr(self, 'params'):
             self.params.close()
 
 
 class ProjectDefinitions(Domain):
-    """"""
+    '''
+    widget for the basic setup of the project areas (type of use etc.)
+    '''
     ui_label = 'Projektdefinition'
     ui_file = 'definitions.ui'
     layer_group = 'Projektdefinition'
 
     def setupUi(self):
+        '''
+        set up possible user interactions and the sub-domains
+        '''
         self.ui.area_combo.currentIndexChanged.connect(
             lambda: self.change_area())
 
@@ -818,6 +945,9 @@ class ProjectDefinitions(Domain):
         self.ui.manual_button.clicked.connect(lambda: open_file(pdf_path))
 
     def load_content(self):
+        '''
+        load the areas and data
+        '''
         super().load_content()
         self.areas = Teilflaechen.features()
         self.connectors = Connectors.features()
@@ -838,7 +968,9 @@ class ProjectDefinitions(Domain):
         self.change_area()
 
     def change_area(self):
-
+        '''
+        change selected area and reload parameters
+        '''
         self.area = self.ui.area_combo.itemData(
             self.ui.area_combo.currentIndex())
 
@@ -853,6 +985,9 @@ class ProjectDefinitions(Domain):
         self.setup_type_params()
 
     def show_outputs(self, zoom=False):
+        '''
+        show the definition layers (planning areas with type of use)
+        '''
         table = Teilflaechen.get_table()
         self.tou_output = ProjectLayer.from_table(
             table, groupname=self.layer_group)
@@ -866,6 +1001,9 @@ class ProjectDefinitions(Domain):
         self.connector_setter.show_connectors()
 
     def setup_type(self):
+        '''
+        set up basic parameters (name, type of use)
+        '''
         layout = self.ui.parameter_group.layout()
         clear_layout(layout)
         self.params = Params(layout,
@@ -885,6 +1023,7 @@ class ProjectDefinitions(Domain):
             label='Nutzungsart'
         )
 
+        # user changed type of use
         def type_changed():
             name = self.params.name.value
             type_labels = [t[0] for t in self.types]
@@ -910,6 +1049,9 @@ class ProjectDefinitions(Domain):
         self.params.show(title='Teilfläche definieren')
 
     def setup_type_params(self):
+        '''
+        set up detailled parameters depending on current type of use
+        '''
         tou_label = self.types[self.area.nutzungsart][0]
         title = f'Maß der baulichen Nutzung ({tou_label})'
         self.ui.type_parameter_group.setTitle(title)
@@ -926,6 +1068,9 @@ class ProjectDefinitions(Domain):
         self.typ.params.changed.connect(lambda: self.canvas.refreshAllLayers())
 
     def close(self):
+        '''
+        close sub-domains and parameters
+        '''
         self.connector_setter.close()
         layer = self.tou_output.layer
         if layer:

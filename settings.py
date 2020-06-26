@@ -1,3 +1,7 @@
+'''
+Basic settings of the plugin. Change but do not remove any of these properties!
+'''
+
 from projektchecktools.base.project import settings
 
 import os

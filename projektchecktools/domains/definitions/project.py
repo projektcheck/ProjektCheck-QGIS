@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    project.py
+    ---------------------
+    Date                 : October 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+workers for project creation and cloning
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '04/10/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
                        QgsCoordinateTransform, QgsProject,
                        QgsGeometry)
@@ -18,6 +42,10 @@ from settings import settings
 
 
 class ProjectInitialization(Worker):
+    '''
+    worker for creating a new project with some basic setup depending on
+    location and size of the included areas
+    '''
     def __init__(self, project_name, area_layer, epsg, parent=None):
         super().__init__(parent=parent)
         self.project_name = project_name
@@ -200,6 +228,9 @@ class ProjectInitialization(Worker):
 
 
 class CloneProject(Worker):
+    '''
+    worker for cloning a project
+    '''
     def __init__(self, project_name, project, parent=None):
         super().__init__(parent=parent)
         self.project_name = project_name
