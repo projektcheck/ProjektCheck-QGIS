@@ -1,3 +1,28 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    ProjektCheck.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the analysis of the ecological impact of the planning areas
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
+
 from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
@@ -11,8 +36,8 @@ from projektchecktools.base.layers import TileLayer
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.tools import PolygonMapTool
 from projektchecktools.domains.ecology.tables import (BodenbedeckungNullfall,
-                                                 BodenbedeckungPlanfall,
-                                                 BodenbedeckungAnteile)
+                                                      BodenbedeckungPlanfall,
+                                                      BodenbedeckungAnteile)
 from projektchecktools.domains.definitions.tables import Teilflaechen
 from projektchecktools.domains.ecology.diagrams import (
     Leistungskennwerte, LeistungskennwerteDelta)
@@ -22,9 +47,13 @@ from projektchecktools.base.inputs import Slider
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.utils.utils import open_file
 
+from settings import settings
+
 
 class Ecology(Domain):
-    """"""
+    '''
+    domain-widget for the analysis of the ecological impact of the planning areas
+    '''
     MAX_RATING = 10
 
     ui_label = 'Ökologie'
@@ -33,8 +62,12 @@ class Ecology(Domain):
                '20190619_iconset_mob_nature_conservation_2.png')
     layer_group = 'Wirkungsbereich 4 - Fläche und Ökologie/Ökologie'
 
-    geoserver = 'https://geoserver.ggr-planung.de/geoserver/projektcheck/wms?'
+    # ProjektCheck geoserver
+    geoserver = settings.GEOSERVER_URL + '/wms?'
+    # IÖR wms service
     ioer = 'https://monitor.ioer.de/cgi-bin/wms?'
+
+    # ProjektCheck layers
     nature_layers = [
         ('Naturschutzgebiete', f'url={geoserver}&layers=nsg_2017'),
         ('Nationalparke', f'url={geoserver}&layers=nlp2019'),
@@ -48,6 +81,8 @@ class Ecology(Domain):
         ('Biosphärenreservate', f'url={geoserver}&layers=bio2019'),
         ('Naturparke', f'url={geoserver}&layers=naturparke2019')
     ]
+
+    # IÖR layers
     spaces_layers = [
         ('Unzerschnittene Freiräume > 100m²',
         f'url={ioer}MAP=U04RG_wms&layers=U04RG_2014_100m'),
@@ -56,7 +91,6 @@ class Ecology(Domain):
         ('Anteil Freiraumfläche an Gebietsfläche',
         f'url={ioer}MAP=F01RG_wms&layers=F01RG_2018_100m')
     ]
-
     wood_layers = [
         ('Unzerschnittene Wälder > 50m²',
         f'url={ioer}MAP=U07RG_wms&layers=U07RG_2014_100m'),
@@ -64,6 +98,9 @@ class Ecology(Domain):
     ]
 
     def setupUi(self):
+        '''
+        set up user interactions and drawing tools
+        '''
         self.setup_layers()
         self.setup_drawing_tools()
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
@@ -121,17 +158,21 @@ class Ecology(Domain):
         hide_widgets()
 
     def add_power_lines(self):
+        '''
+        add power-lines layer
+        '''
         group = (f'{self.project.groupname}/{self.layer_group}')
-        geoserver = ('https://geoserver.ggr-planung.de/geoserver/'
-                     'projektcheck/wms?')
         layername = '51005_ax_leitung'
-        url = (f'url={geoserver}&layers={layername}'
+        url = (f'url={self.geoserver}&layers={layername}'
                f'&crs=EPSG:{self.settings.EPSG}'
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
         layer.draw('Hochspannungsleitungen')
 
     def load_content(self):
+        '''
+        load data
+        '''
         super().load_content()
         areas = Teilflaechen.features()
         self.area = None
@@ -159,7 +200,10 @@ class Ecology(Domain):
         self.setup_params()
 
     def setup_params(self):
-
+        '''
+        set up the parameter for setting the percentages of ground cover in
+        status quo and prognosis
+        '''
         self.params_nullfall = Params(
             self.ui.param_nullfall_tab.layout(),
             help_file='oekologie_bodenbedeckung_nullfall.txt')
@@ -203,7 +247,9 @@ class Ecology(Domain):
             button.clicked.connect(func)
 
     def setup_layers(self):
-
+        '''
+        add ProjektCheck geoserver and IÖR layers
+        '''
         def add_layer_from_dict(layers, parent_group):
             for name, url in layers:
                 self.add_wms_layer( name, url, parent_group=parent_group)
@@ -245,6 +291,10 @@ class Ecology(Domain):
         )
 
     def setup_drawing_tools(self):
+        '''
+        set up the tools for drawing the ground cover in status quo and
+        prognosis
+        '''
         self._tools = []
         self.drawing_tools = {
             'draw_builtup_button': 1,
@@ -278,6 +328,9 @@ class Ecology(Domain):
 
     def add_geom(self, geom, typ, unite=True, in_area_only=True,
                  difference=True, planfall=True):
+        '''
+        add a geometry to the database belonging to a specific ground cover type
+        '''
         if not geom.isGeosValid():
             geom = geom.makeValid()
         if geom.isEmpty() or geom.isNull() or typ is None:
@@ -315,6 +368,9 @@ class Ecology(Domain):
             self.add_output()
 
     def remove_type(self, typ, planfall=True):
+        '''
+        remove all geometries of a specific ground cover type from database
+        '''
         if not typ:
             return
         features = self.boden_planfall if planfall else self.boden_nullfall
@@ -325,6 +381,10 @@ class Ecology(Domain):
         self.canvas.refreshAllLayers()
 
     def save(self, prefix):
+        '''
+        save ground cover shares set by user for status quo ('nullfall') or
+        prognosis ('planfall')
+        '''
         planfall = prefix == 'planfall'
         params = self.params_planfall if planfall else self.params_nullfall
         for bb_typ in self.bb_types.features():
@@ -339,6 +399,9 @@ class Ecology(Domain):
             feature.save()
 
     def import_nullfall(self):
+        '''
+        import drawing of status quo into prognosis
+        '''
         if len(self.boden_planfall) > 0:
             reply = QMessageBox.question(
                 self.ui, 'Nullfall in Planfall importieren',
@@ -356,6 +419,9 @@ class Ecology(Domain):
         self.add_output()
 
     def get_selected_type(self, prefix):
+        '''
+        currently selected ground cover type
+        '''
         for button_name, typ in self.drawing_tools.items():
             button = getattr(self.ui, f'{prefix}_{button_name}')
             if button.isChecked():
@@ -363,6 +429,9 @@ class Ecology(Domain):
         return None
 
     def analyse_shares(self, planfall=True):
+        '''
+        calculate the share per ground cover type out of the drawing
+        '''
         features = self.boden_planfall if planfall else self.boden_nullfall
         df = features.to_pandas()
         grouped = df.groupby('IDBodenbedeckung')
@@ -373,6 +442,9 @@ class Ecology(Domain):
         return shares
 
     def apply_drawing(self, planfall=True):
+        '''
+        calculate ground cover shares and write them to database
+        '''
         shares = self.analyse_shares(planfall)
         params = self.params_planfall if planfall else self.params_nullfall
         prefix = 'planfall' if planfall else 'nullfall'
@@ -382,6 +454,9 @@ class Ecology(Domain):
         self.save(prefix)
 
     def show_drawing_analysis(self, planfall=True):
+        '''
+        open shares of ground cover in dialog with table
+        '''
         shares = self.analyse_shares(planfall)
         l = 'Planfall' if planfall else 'Nullfall'
         dialog = Dialog(
@@ -409,6 +484,9 @@ class Ecology(Domain):
         dialog.show()
 
     def clear_drawing(self, planfall=True):
+        '''
+        remove all drawn elements
+        '''
         l = 'Planfall' if planfall else 'Nullfall'
         reply = QMessageBox.question(
             self.ui, 'Zeichnung löschen',
@@ -427,6 +505,9 @@ class Ecology(Domain):
         self.canvas.refreshAllLayers()
 
     def add_output(self):
+        '''
+        add drawings as layer
+        '''
         planfall = self.ui.drawing_tab_widget.currentIndex() == 1
         label = 'Bodenbedeckung '
         label += 'Planfall' if planfall else 'Nullfall'
@@ -442,6 +523,9 @@ class Ecology(Domain):
             disabled_out.set_visibility(False)
 
     def add_wms_layer(self, name, url, parent_group=None):
+        '''
+        add a wms layer
+        '''
         group = (f'{self.project.groupname}/{self.layer_group}')
         if parent_group:
             group += f'/{parent_group}'
@@ -451,6 +535,10 @@ class Ecology(Domain):
         layer.draw(name)
 
     def calculate_rating(self):
+        '''
+        calculate the ratings based on the ground covers for status quo and
+        prognosis. Plot the results in diagrams
+        '''
         df_factors = self.faktoren.to_pandas()
         df_shares = self.anteile.to_pandas()
         df_merged = df_shares.merge(df_factors, on='IDBodenbedeckung')
@@ -497,6 +585,9 @@ class Ecology(Domain):
         diagram.draw(offset_x=100, offset_y=100)
 
     def close(self):
+        '''
+        close parameters and drawing tools
+        '''
         if hasattr(self, 'params_nullfall'):
             self.params_nullfall.close()
         if hasattr(self, 'params_planfall'):

@@ -257,7 +257,7 @@ class ProjectManager(metaclass=Singleton):
     '''
     _projects = {}
     settings = settings
-    _required_settings = ['BASEDATA_URL', 'EPSG']
+    _required_settings = ['BASEDATA_URL', 'GEOSERVER_URL', 'EPSG']
 
     def __init__(self):
         # check settings

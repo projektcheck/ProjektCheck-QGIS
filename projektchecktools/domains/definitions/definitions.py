@@ -914,7 +914,7 @@ class Einzelhandel:
 
 class ProjectDefinitions(Domain):
     '''
-    widget for the basic setup of the project areas (type of use etc.)
+    domain-widget for the basic setup of the project areas (type of use etc.)
     '''
     ui_label = 'Projektdefinition'
     ui_file = 'definitions.ui'

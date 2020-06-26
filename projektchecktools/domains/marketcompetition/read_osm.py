@@ -9,6 +9,7 @@ from projektchecktools.utils.spatial import (Point, minimal_bounding_poly,
                                              remove_duplicates, intersect)
 from projektchecktools.domains.marketcompetition.tables import Centers, Markets
 from projektchecktools.utils.connection import Request
+from settings import settings
 
 requests = Request(synchronous=True)
 
@@ -87,8 +88,7 @@ class OSMShopsReader(object):
     geoserver_epsg = 3035
 
     def __init__(self, epsg=31467):
-        self.url = (r'https://geoserver.ggr-planung.de/'
-                    r'geoserver/projektcheck/wfs?')
+        self.url = settings.GEOSERVER_URL + '/wfs?'
         self.wfs_params = dict(service='WFS',
                                request='GetFeature',
                                version='2.0.0',
