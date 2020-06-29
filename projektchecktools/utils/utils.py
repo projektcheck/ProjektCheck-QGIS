@@ -181,14 +181,18 @@ def clear_layout(layout: QLayout):
     layout : QLayout
         the layout to empty
     '''
-    while layout.count():
-        child = layout.takeAt(0)
-        if not child:
-            continue
-        if child.widget():
-            child.widget().deleteLater()
-        elif child.layout() is not None:
-            clear_layout(child.layout())
+    try:
+        while layout.count():
+            child = layout.takeAt(0)
+            if not child:
+                continue
+            if child.widget():
+                child.widget().deleteLater()
+            elif child.layout() is not None:
+                clear_layout(child.layout())
+    # wrapped layout may already have been removed by QGIS
+    except RuntimeError:
+        pass
 
 def round_df_to(df: pd.DataFrame, rounding_factor: int) -> pd.DataFrame:
     """
