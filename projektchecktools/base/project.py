@@ -409,7 +409,9 @@ class ProjectManager(metaclass=Singleton):
             return
         if res.status_code != 200:
             return
-        return sorted(res.json(), key=itemgetter('version'), reverse=True)
+        self._server_versions = sorted(res.json(), key=itemgetter('version'),
+                                       reverse=True)
+        return self._server_versions
 
     def load_basedata(self, version: int = None) -> bool:
         '''
