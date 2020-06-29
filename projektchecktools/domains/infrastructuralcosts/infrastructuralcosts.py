@@ -660,7 +660,9 @@ class InfrastructuralCosts(Domain):
     def kostenvergleich(self):
         types_of_use = [area.nutzungsart for area in self.areas
                         if area.nutzungsart != Nutzungsart.UNDEFINIERT.value]
-        if len(np.unique(types_of_use)) != 1:
+        if ((Nutzungsart.WOHNEN.value not in types_of_use and
+            Nutzungsart.GEWERBE.value not in types_of_use) or
+            len(np.unique(types_of_use)) != 1):
             QMessageBox.warning(
                 self.ui, 'Hinweis', 'Die Funktion steht nur für Projekte zur '
                 'Verfügung, bei denen alle Teilflächen '
