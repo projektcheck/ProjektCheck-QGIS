@@ -1,16 +1,40 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    diagrams.py
+    ---------------------
+    Date                 : January 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+diagrams showing results of calculations in the ecology domain
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '17/01/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
+
 import numpy as np
 import matplotlib
 import locale
 matplotlib.use('agg')
-import matplotlib.ticker as mticker
-import pandas as pd
 import matplotlib.pyplot as plt
 
 from projektchecktools.base.diagrams import MatplotDiagram
 
 
 def horizontal_label_values(bars, ax, force_signum=False):
+    '''
+    place labels at bars of an axis
+    '''
     for bar in bars:
         width = bar.get_width()
         r_format = '%.1f' if not force_signum else '%+.1f'
@@ -33,7 +57,18 @@ def u_categories(categories):
 
 
 class Leistungskennwerte(MatplotDiagram):
-    def create(self, **kwargs):
+    '''
+    ratings of ground cover in status quo and prognosis as bar charts
+    '''
+    def create(self, **kwargs) -> 'Figure':
+        '''
+        Parameters
+        ----------
+        nullfall : list
+            values for rating in status quo
+        planfall : list
+            values for rating in prognosis
+        '''
         labels = kwargs['columns']
 
         y = np.arange(len(labels))
@@ -74,7 +109,17 @@ class Leistungskennwerte(MatplotDiagram):
 
 
 class LeistungskennwerteDelta(MatplotDiagram):
-    def create(self, **kwargs):
+    '''
+    difference of ratings of ground cover in prognosis to the ones in status quo
+    as bar charts
+    '''
+    def create(self, **kwargs) -> 'Figure':
+        '''
+        Parameters
+        ----------
+        delta : list
+            values of delta between rating in prognosis and status quo
+        '''
         labels = kwargs['columns']
 
         y = np.arange(len(labels))

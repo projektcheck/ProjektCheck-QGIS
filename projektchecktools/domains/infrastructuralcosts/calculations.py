@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    calculations.py
+    ---------------------
+    Date                 : February 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+workers for calculations in the infrastructural costs domain
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '06/02/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
+
 from projektchecktools.base.domain import Worker
 from projektchecktools.utils.utils import round_df_to
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
@@ -14,10 +38,6 @@ def apply_kostenkennwerte(project):
     """
     Copy from Netze_und_Netzelemente (only if Shape == Line) and
     multiply by interest- and time-factor
-
-    Parameters
-    ----------
-    project : project, Project
     """
     kk_features = KostenkennwerteLinienelemente.features(create=True)
     kk_features.delete()
@@ -57,6 +77,10 @@ def apply_kostenkennwerte(project):
 
 
 class GesamtkostenErmitteln(Worker):
+    '''
+    worker for estimating the total (gross) costs of the infrastucture network
+    '''
+    # period of estimation
     years = 25
 
     def __init__(self, project, parent=None):
@@ -101,7 +125,9 @@ class GesamtkostenErmitteln(Worker):
         self.costs_results.update_pandas(df_results)
 
     def calculate_phases(self):
-
+        '''
+        calculate costs of each phase
+        '''
         df_results = self.costs_results.to_pandas()
 
         # points and lines have same columns and calc. basis is same as well
@@ -142,6 +168,9 @@ class GesamtkostenErmitteln(Worker):
 
 
 class KostentraegerAuswerten(Worker):
+    '''
+    worker for calculating the infrastuctural costs per payer
+    '''
     def __init__(self, project, parent=None):
         super().__init__(parent=parent)
         self.project = project
@@ -170,6 +199,9 @@ class KostentraegerAuswerten(Worker):
         self.shares_results.update_pandas(df_results)
 
     def calculate_shares(self):
+        '''
+        calculate shares of costs per payer
+        '''
         df_costs = Gesamtkosten.features(project=self.project).to_pandas()
         joined = df_costs.merge(self.df_shares,
                                 on=['IDNetz', 'IDKostenphase'],

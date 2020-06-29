@@ -1,4 +1,26 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    diagrams.py
+    ---------------------
+    Date                 : February 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+diagrams showing results of calculations in the infrastructural costs domain
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '06/02/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,6 +38,9 @@ from projektchecktools.domains.definitions.tables import Teilflaechen
 
 
 class NetzlaengenDiagramm(MatplotDiagram):
+    '''
+    diagram of network lenghts of infrastructure as bar chart
+    '''
     def create(self, **kwargs):
         project = kwargs.get('project', ProjectManager().active_project)
 
@@ -74,6 +99,9 @@ class NetzlaengenDiagramm(MatplotDiagram):
 
 
 class MassnahmenKostenDiagramm(MatplotDiagram):
+    '''
+    costs of point measures as bar chart
+    '''
 
     def create(self, **kwargs):
         project = kwargs.get('project', ProjectManager().active_project)
@@ -131,6 +159,9 @@ class MassnahmenKostenDiagramm(MatplotDiagram):
 
 
 class GesamtkostenDiagramm(MatplotDiagram):
+    '''
+    costs of phases of building infrastructure as bar chart
+    '''
 
     def create(self, **kwargs):
         years = kwargs.get('years', 20)
@@ -195,6 +226,9 @@ class GesamtkostenDiagramm(MatplotDiagram):
 
 
 class KostentraegerDiagramm(MatplotDiagram):
+    '''
+    infrastructural costs per payer as pie chart
+    '''
     colors = ['#005CE6', '#002673', '#894444', '#73FFDF', '#FFFF00']
 
     def create(self, **kwargs):
@@ -262,6 +296,9 @@ class KostentraegerDiagramm(MatplotDiagram):
 
 
 class VergleichsDiagramm(MatplotDiagram):
+    '''
+    abstract class for comparison of infrastructural costs
+    '''
     _column = None
     _type_of_use = Nutzungsart.UNDEFINIERT
 
@@ -330,12 +367,19 @@ class VergleichsDiagramm(MatplotDiagram):
 
 
 class VergleichWEDiagramm(VergleichsDiagramm):
+    '''
+    comparison of infrastructural costs per living unit with mean value as bar
+    chart
+    '''
     _column = 'we_gesamt'
     _type_of_use = Nutzungsart.WOHNEN
     _unit = 'Wohneinheit'
 
 
 class VergleichAPDiagramm(VergleichsDiagramm):
+    '''
+    comparison of infrastructural costs per job with mean value
+    '''
     _column = 'ap_gesamt'
     _type_of_use = Nutzungsart.GEWERBE
     _unit = 'Arbeitsplatz'

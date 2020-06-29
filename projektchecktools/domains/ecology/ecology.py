@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
 ***************************************************************************
-    ProjektCheck.py
+    ecology.py
     ---------------------
     Date                 : July 2019
     Copyright            : (C) 2019 by Christoph Franke
