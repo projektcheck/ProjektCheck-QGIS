@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
 ***************************************************************************
-    ecology.py
+    infrastructuralcosts.py
     ---------------------
     Date                 : October 2019
     Copyright            : (C) 2019 by Christoph Franke
@@ -776,7 +776,7 @@ class InfrastructuralCosts(Domain):
         '''
         calculate the total costs and show a comparison to mean values as a bar
         chart.
-        only executable if all areas have either living or commerce as type of
+        only executable if all areas have either housing or commerce as type of
         use
         '''
         types_of_use = [area.nutzungsart for area in self.areas

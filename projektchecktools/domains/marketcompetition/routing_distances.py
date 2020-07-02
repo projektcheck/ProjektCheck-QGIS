@@ -4,8 +4,6 @@
 #from rpctools.utils.spatial_lib import Point
 
 import os
-import shutil
-import sys
 import time
 import numpy as np
 import math

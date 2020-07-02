@@ -1,3 +1,28 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    markets.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke, Max Bohnet
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the definition of the market-distribution in the study area and
+defining scenarios to analyse the change of market income
+'''
+
+__author__ = 'Christoph Franke, Max Bohnet'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import re
 # from qgis.core import QgsVectorLayer
 

@@ -127,7 +127,7 @@ class TrafficConnectors:
 class WohnenDevelopment(Worker):
     '''
     worker for calculating the population development in specific project
-    living area
+    residential area
     '''
     # analysis period
     BETRACHTUNGSZEITRAUM_JAHRE = 25
@@ -283,8 +283,8 @@ class WohnenDevelopment(Worker):
 
 class Wohnen:
     '''
-    sub-domain of project area definitions. Set up the structure of a project
-    area with living as the type of use
+    sub-domain of project area definitions. Set up the structure of a
+    residential project area
     '''
     def __init__(self, project, layout):
         self.basedata = project.basedata
@@ -436,7 +436,7 @@ class Wohnen:
 
     def clear(self, area):
         '''
-        clear all data related to living as the type of use of the given area
+        clear all data related to residential use of the given area
         '''
         self.wohneinheiten.filter(id_teilflaeche=area.id).delete()
         area.we_gesamt = None

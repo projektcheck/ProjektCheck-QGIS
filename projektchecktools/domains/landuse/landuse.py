@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    jobs_inhabitants.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the analysis of landuse
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import os
 
 from projektchecktools.base.domain import Domain
@@ -18,7 +42,10 @@ from projektchecktools.utils.utils import open_file
 
 
 class LandUse(Domain):
-    """"""
+    '''
+    domain-widget calculating and visualizing the residential density and the
+    integrated position of the planning area
+    '''
 
     ui_label = 'Flächeninanspruchnahme'
     ui_file = 'domain_05-Fl.ui'
@@ -53,7 +80,7 @@ class LandUse(Domain):
             'Wohnen_Gebaeudetypen', 'Definition_Projekt'
         )
         self.areas = Teilflaechen.features()
-        self.living_areas = Teilflaechen.features().filter(
+        self.residential_areas = Teilflaechen.features().filter(
             nutzungsart=Nutzungsart.WOHNEN.value)
         self.wohnbauland_anteile = WohnbaulandAnteile.features(create=True)
         self.wohnflaeche = WohnflaecheGebaeudetyp.features(create=True)
@@ -70,7 +97,7 @@ class LandUse(Domain):
 
         self.ui.area_combo.blockSignals(True)
         self.ui.area_combo.clear()
-        for area in self.living_areas:
+        for area in self.residential_areas:
             self.ui.area_combo.addItem(area.name, area)
         self.ui.area_combo.blockSignals(False)
 
@@ -87,6 +114,12 @@ class LandUse(Domain):
         self.bordertool.set_snap_geometry(self.area_union)
 
     def setup_params(self):
+        '''
+        set up the parameters for editing the mean residential area per
+        appartment and the net share of residential building land in the active
+        area
+        '''
+
         anteil = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         value = anteil.nettoflaeche if anteil else 85
         clear_layout(self.layout)
@@ -129,7 +162,9 @@ class LandUse(Domain):
         self.save()
 
     def save(self):
-
+        '''
+        save the current settings of the parameters
+        '''
         feature = self.wohnbauland_anteile.get(id_teilflaeche=self.area.id)
         # ToDo: get_or_create
         if not feature:
@@ -148,7 +183,9 @@ class LandUse(Domain):
             feature.save()
 
     def change_area(self):
-
+        '''
+        set currently selected area as active area
+        '''
         self.area = self.ui.area_combo.itemData(
             self.ui.area_combo.currentIndex())
         if not self.area:
@@ -163,6 +200,9 @@ class LandUse(Domain):
         self.setup_params()
 
     def calculate_wohndichte(self):
+        '''
+        calculate residential density and show chart of results
+        '''
         if not self.area:
             return
         # calculation for area
@@ -195,6 +235,9 @@ class LandUse(Domain):
         chart.draw()
 
     def calculate_wohnflaechendichte(self):
+        '''
+        calculate density of living areas and show results as chart
+        '''
         if not self.area:
             return
         # calculation for area
@@ -237,7 +280,10 @@ class LandUse(Domain):
         )
         chart.draw()
 
-    def get_kreis_data(self):
+    def get_kreis_data(self) -> tuple:
+        '''
+        get comparable data of muncipality of planning area
+        '''
         ags5 = str(self.rahmendaten.ags)[0:5]
         kreis = self.wohndichte_kreis.features().get(AGS5=ags5)
         kreistyp_id = kreis.Siedlungsstruktureller_Kreistyp
@@ -248,6 +294,9 @@ class LandUse(Domain):
         return kreis, kreisname, kreistyp, typname
 
     def add_border(self, geom):
+        '''
+        add a geometry to the drawn border
+        '''
         self.borders.add(geom=geom)
         # workaround: layer style is not applied correctly
         # with empty features -> redraw on first geometry
@@ -256,10 +305,16 @@ class LandUse(Domain):
         self.canvas.refreshAllLayers()
 
     def remove_borders(self):
+        '''
+        remove drawn border
+        '''
         self.borders.delete()
         self.canvas.refreshAllLayers()
 
     def add_border_output(self):
+        '''
+        add layer to visualize drawn border
+        '''
         self.output_border = ProjectLayer.from_table(
             self.borders.table, groupname=self.layer_group,
             prepend=True)
@@ -269,6 +324,10 @@ class LandUse(Domain):
         )
 
     def calculate_integration(self):
+        '''
+        calculate integration shares from drawing and show results in a
+        pie chart
+        '''
         area_outer_border = self.area_union.length()
         drawn_borders = sum([line.geom.length() for line in self.borders])
         shared_border = round(100 * drawn_borders / area_outer_border)
@@ -286,13 +345,16 @@ class LandUse(Domain):
         chart.draw()
 
     def close(self):
+        '''
+        close parameters and drawing tools
+        '''
         # ToDo: implement this in project (collecting all used workscpaces)
         output = ProjectLayer.find('Umriss des Plangebiets')
         if output:
             layer = output[0].layer()
             layer.removeSelection()
         if hasattr(self, 'areas'):
-            self.living_areas.table.workspace.close()
+            self.residential_areas.table.workspace.close()
         if hasattr(self, 'params'):
             self.params.close()
         self.bordertool.set_active(False)

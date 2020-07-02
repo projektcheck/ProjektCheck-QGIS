@@ -1,8 +1,31 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    params.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+parameters to store user inputs and their fronted visualization
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+
 from abc import ABC
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject,
-                          QLabel, QGridLayout, QDialogButtonBox, QWidget,
-                          QScrollArea, QGroupBox, QLayout, QBoxLayout)
+from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject, QLabel,
+                          QGridLayout, QWidget, QScrollArea, QLayout,
+                          QBoxLayout)
 from projektchecktools.utils.utils import clear_layout
 from qgis.PyQt.QtGui import QIcon, QCursor
 from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
@@ -38,7 +61,7 @@ class ClickableWidget(QWidget):
 
 class Param(QObject):
     '''
-    single parameter for setting up domain calculations
+    parameter to hold user inputs
 
     Attributes
     ----------

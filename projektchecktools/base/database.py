@@ -20,7 +20,6 @@ generic database interface and feature classes using this interface
 
 __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
-__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 from abc import ABC
 from typing import Union

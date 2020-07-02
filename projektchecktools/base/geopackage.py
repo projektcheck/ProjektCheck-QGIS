@@ -14,15 +14,12 @@
 *   (at your option) any later version.                                   *
 *                                                                         *
 ***************************************************************************
-'''
 
-'''
-geopackage database implementing the database interface
+geopackage database connection implementing the database interface
 '''
 
 __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
-__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 import os
 from osgeo import ogr, osr

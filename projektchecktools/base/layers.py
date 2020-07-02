@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    layers.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+layer wrappers to organize layers in the layer tree
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+
 from abc import ABC
 from qgis.core import (QgsProject, QgsVectorLayer, QgsRasterLayer,
                        QgsCoordinateTransform, QgsLayerTreeGroup,
@@ -6,7 +29,8 @@ from qgis.utils import iface
 from typing import List
 
 
-def nest_groups(parent, groupnames, prepend=True):
+def nest_groups(parent: QgsLayerTreeGroup, groupnames: List[str],
+                prepend: bool=True) -> QgsLayerTreeGroup:
     '''recursively nests groups in order of groupnames'''
     if len(groupnames) == 0:
         return parent
@@ -20,7 +44,7 @@ def nest_groups(parent, groupnames, prepend=True):
 class Layer(ABC):
     '''
     wrapper of a vector layer in the QGIS layer tree with some
-    convenient functions. Can be grouped and addressed by its name.
+    convenience functions. Can be grouped and addressed by its name.
     '''
 
     def __init__(self, layername: str, data_path: str, groupname: str = '',

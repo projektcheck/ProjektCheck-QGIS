@@ -58,7 +58,7 @@ def u_categories(categories):
 
 class Leistungskennwerte(MatplotDiagram):
     '''
-    ratings of ground cover in status quo and prognosis as bar charts
+    ratings of ground cover in status quo and scenarios as bar charts
     '''
     def create(self, **kwargs) -> 'Figure':
         '''
@@ -67,7 +67,7 @@ class Leistungskennwerte(MatplotDiagram):
         nullfall : list
             values for rating in status quo
         planfall : list
-            values for rating in prognosis
+            values for rating in the scenario
         '''
         labels = kwargs['columns']
 
@@ -110,15 +110,15 @@ class Leistungskennwerte(MatplotDiagram):
 
 class LeistungskennwerteDelta(MatplotDiagram):
     '''
-    difference of ratings of ground cover in prognosis to the ones in status quo
-    as bar charts
+    difference of ratings of ground cover in the scenario to the ones in status
+    quo as bar charts
     '''
     def create(self, **kwargs) -> 'Figure':
         '''
         Parameters
         ----------
         delta : list
-            values of delta between rating in prognosis and status quo
+            values of delta between rating in the scenario and status quo
         '''
         labels = kwargs['columns']
 

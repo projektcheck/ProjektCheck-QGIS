@@ -368,8 +368,8 @@ class VergleichsDiagramm(MatplotDiagram):
 
 class VergleichWEDiagramm(VergleichsDiagramm):
     '''
-    comparison of infrastructural costs per living unit with mean value as bar
-    chart
+    comparison of infrastructural costs per housing unit with mean value as
+    bar chart
     '''
     _column = 'we_gesamt'
     _type_of_use = Nutzungsart.WOHNEN

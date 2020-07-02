@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    jobs_inhabitants.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the analysis of job and population development
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import os
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import utils
@@ -15,7 +39,9 @@ from projektchecktools.domains.jobs_inhabitants.tables import (
 
 
 class JobsInhabitants(Domain):
-    """"""
+    '''
+    domain-widget visualizing the development of jobs and inhabitants
+    '''
     ui_label = 'Bewohner und Arbeitsplätze'
     ui_file = 'domain_01-BA.ui'
     ui_icon = 'images/iconset_mob/20190619_iconset_mob_people_1.png'
@@ -37,7 +63,10 @@ class JobsInhabitants(Domain):
         if output:
             output[0].setItemVisibilityChecked(True)
 
-    def get_living_areas(self):
+    def get_residential_areas(self):
+        '''
+        validate and return residential areas
+        '''
         areas = Teilflaechen.features().filter(
             nutzungsart=Nutzungsart.WOHNEN.value,
             we_gesamt__gt=0
@@ -52,6 +81,9 @@ class JobsInhabitants(Domain):
         return areas
 
     def get_job_areas(self):
+        '''
+        validate and return commercial areas
+        '''
         areas = Teilflaechen.features().filter(
             nutzungsart=Nutzungsart.GEWERBE.value,
             ap_gesamt__gt=0
@@ -66,7 +98,10 @@ class JobsInhabitants(Domain):
         return areas
 
     def inhabitants_diagram(self):
-        areas = self.get_living_areas()
+        '''
+        show chart of population development
+        '''
+        areas = self.get_residential_areas()
         if not areas:
             return
         for i, area in enumerate(areas):
@@ -76,6 +111,9 @@ class JobsInhabitants(Domain):
             diagram.draw(offset_x=i*100, offset_y=i*100)
 
     def jobs_diagram(self):
+        '''
+        show chart of job development
+        '''
         areas = self.get_job_areas()
         if not areas:
             return
@@ -91,7 +129,10 @@ class JobsInhabitants(Domain):
             diagram.draw(offset_x=i*100+50, offset_y=i*100+50)
 
     def inhabitants_table(self):
-        areas = self.get_living_areas()
+        '''
+        show population development in a table a dialog
+        '''
+        areas = self.get_residential_areas()
         if not areas:
             return
         output = ProjectLayer.from_table(
@@ -104,6 +145,9 @@ class JobsInhabitants(Domain):
         utils.iface.showAttributeTable(layer)
 
     def jobs_table(self):
+        '''
+        show job development in a table a dialog
+        '''
         areas = self.get_job_areas()
         if not areas:
             return

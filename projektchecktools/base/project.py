@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    project.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+organization of data in projects
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+
 import os
 from glob import glob
 import sys

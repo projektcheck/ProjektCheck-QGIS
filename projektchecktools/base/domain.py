@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    domain.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+widgets representing different "areas of knowledge"
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject, QThread
 from qgis import utils

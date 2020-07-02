@@ -1,10 +1,34 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    marketcompetition.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the definition of the market-distribution in the study area and
+defining scenarios to analyse the change of market income
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from qgis.PyQt.QtWidgets import (QFileDialog, QMessageBox, QInputDialog,
                                  QCheckBox, QPushButton)
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 import os
-import numpy as np
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.base.project import ProjectLayer
@@ -25,12 +49,23 @@ from projektchecktools.domains.marketcompetition.projektwirkung import (
 
 
 class EditMarkets(QObject):
+    '''
+    abstract class for setting markets on the map, setting up their parameters
+    to edit their properties and to visualize them on the map
+    '''
+    # QGIS layer filter
     layer_filter = ''
+    # style for output layer
     layer_style = ''
+    # backend feature filter
     filter_args = {}
+    # label for market type
     market_label = ''
+    # 'nullfall' or 'planfall'
     suffix = ''
+    # show type change from status quo to scenario
     show_change = False
+    # emitted when the market data is changed
     changed = pyqtSignal()
 
     def __init__(self, combobox, select_button, param_group, canvas, project,
@@ -81,7 +116,10 @@ class EditMarkets(QObject):
         self.markets = Markets.features(create=True)
         self.fill_combo()
 
-    def detailed_type_label(self, id_betriebstyp):
+    def detailed_type_label(self, id_betriebstyp) -> str:
+        '''
+        pretty label for a type of business
+        '''
         typ = self.typen.get(id_betriebstyp=id_betriebstyp)
         details = ''
         lower = typ.von_m2
@@ -95,7 +133,10 @@ class EditMarkets(QObject):
         label = f'{typ.name} {details}'
         return label
 
-    def detailed_market_label(self, market, show_change=False):
+    def detailed_market_label(self, market, show_change=False) -> str:
+        '''
+        pretty label for a market
+        '''
         typ = market[f'betriebstyp_{self.suffix}']
         osm = ' OSM' if market.is_osm else ''
         kette = market.kette if market.kette != 'nicht aufgeführt' \
@@ -108,7 +149,10 @@ class EditMarkets(QObject):
             label = f'-> {label} geplant: {betriebstyp}'
         return label
 
-    def fill_combo(self, select=None):
+    def fill_combo(self, select: 'Feature'=None):
+        '''
+        fill combobox with available markets, preselect given market
+        '''
         self.combobox.blockSignals(True)
         self.combobox.clear()
         self.combobox.addItem('nichts ausgewählt')
@@ -126,6 +170,9 @@ class EditMarkets(QObject):
         self.toggle_market(self.combobox.currentData())
 
     def select_market(self, feature):
+        '''
+        highlight (select) given market in market layer
+        '''
         if not self.output or not self.output.layer:
             return
         self.output.layer.removeSelection()
@@ -138,6 +185,9 @@ class EditMarkets(QObject):
         self.combobox.setCurrentIndex(idx)
 
     def toggle_market(self, market, center_on_point=False):
+        '''
+        set up given market
+        '''
         if market and self.output and self.output.layer:
             self.output.layer.removeSelection()
             self.output.layer.select(market.id)
@@ -147,9 +197,15 @@ class EditMarkets(QObject):
         self.setup_params(market)
 
     def setup_params(self, market):
+        '''
+        override to set up parameters for given market
+        '''
         raise NotImplementedError
 
     def add_layer(self, zoom_to=False):
+        '''
+        add output layer showing markets
+        '''
         self.output = ProjectLayer.from_table(
             self.markets.table, groupname=self.layer_group)
         self.output.draw(
@@ -162,9 +218,15 @@ class EditMarkets(QObject):
             self.output.zoom_to()
 
     def add_market(self, geom):
+        '''
+        override to add a market with given geometry (point) to the database
+        '''
         raise NotImplementedError
 
     def remove_market(self, market):
+        '''
+        remove given market from database
+        '''
         if not market:
             return
         reply = QMessageBox.question(
@@ -179,6 +241,10 @@ class EditMarkets(QObject):
             self.changed.emit()
 
     def remove_markets(self):
+        '''
+        remove all markets (filtered by self.filter_args) except the
+        automatically created ones
+        '''
         reply = QMessageBox.question(
             self.param_group, f'{self.market_label} löschen',
             f'Möchten Sie alle {self.market_label} löschen?',
@@ -191,6 +257,9 @@ class EditMarkets(QObject):
             self.changed.emit()
 
     def close(self):
+        '''
+        deactivate drawing tool and close parameters
+        '''
         if self.add_market_tool:
             self.add_market_tool.set_active(False)
         if self.params:
@@ -198,6 +267,10 @@ class EditMarkets(QObject):
 
 
 class EditNullfallMarkets(EditMarkets):
+    '''
+    abstract class for setting markets on the map, setting up their parameters
+    to edit their properties and to visualize them on the map
+    '''
     layer_filter = 'id_betriebstyp_nullfall > 0'
     layer_style = 'standortkonkurrenz_maerkte_im_bestand.qml'
     filter_args = {'id_betriebstyp_nullfall__gt': 0}

@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    inputs.py
+    ---------------------
+    Date                 : April 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+various inputs to edit project parameters
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '17/04/2019'
+
 import os
 from typing import List
 from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
@@ -12,7 +35,7 @@ from settings import settings
 class InputType(QObject):
     '''
     abstract class for an input-element, wraps QInputs to be used in parameter
-    dialogs and previews
+    dialogs and parameter previews
 
     Attributes
     ----------

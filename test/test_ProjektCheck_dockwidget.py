@@ -10,7 +10,6 @@
 
 __author__ = 'franke@ggr-planung.de'
 __date__ = '2019-02-21'
-__copyright__ = 'Copyright 2019, GGR'
 
 import unittest
 

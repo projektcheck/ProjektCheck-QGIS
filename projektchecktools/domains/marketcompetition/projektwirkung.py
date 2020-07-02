@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 import os
 import pandas as pd
 import numpy as np
 import pandas as pd
 from collections import Counter
 import processing
-from qgis.core import (QgsCoordinateTransform, QgsProject, QgsVectorLayer,
-                       QgsCoordinateReferenceSystem, QgsRasterLayer)
+from qgis.core import (QgsCoordinateTransform, QgsProject, QgsRasterLayer,
+                       QgsCoordinateReferenceSystem)
 
 from projektchecktools.domains.marketcompetition.tables import (
     Centers, Markets, MarketCellRelations, Settings, SettlementCells)

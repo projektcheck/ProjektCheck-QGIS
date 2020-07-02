@@ -202,7 +202,7 @@ class Ecology(Domain):
     def setup_params(self):
         '''
         set up the parameter for setting the percentages of ground cover in
-        status quo and prognosis
+        status quo and the scenario
         '''
         self.params_nullfall = Params(
             self.ui.param_nullfall_tab.layout(),
@@ -293,7 +293,7 @@ class Ecology(Domain):
     def setup_drawing_tools(self):
         '''
         set up the tools for drawing the ground cover in status quo and
-        prognosis
+        the scenario
         '''
         self._tools = []
         self.drawing_tools = {
@@ -383,7 +383,7 @@ class Ecology(Domain):
     def save(self, prefix):
         '''
         save ground cover shares set by user for status quo ('nullfall') or
-        prognosis ('planfall')
+        the scenario ('planfall')
         '''
         planfall = prefix == 'planfall'
         params = self.params_planfall if planfall else self.params_nullfall
@@ -400,7 +400,7 @@ class Ecology(Domain):
 
     def import_nullfall(self):
         '''
-        import drawing of status quo into prognosis
+        import drawing of status quo into the scenario
         '''
         if len(self.boden_planfall) > 0:
             reply = QMessageBox.question(
@@ -537,7 +537,7 @@ class Ecology(Domain):
     def calculate_rating(self):
         '''
         calculate the ratings based on the ground covers for status quo and
-        prognosis. Plot the results in diagrams
+        the scenario. Plot the results in diagrams
         '''
         df_factors = self.faktoren.to_pandas()
         df_shares = self.anteile.to_pandas()

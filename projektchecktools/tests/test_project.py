@@ -2,7 +2,6 @@
 # coding=utf-8
 __author__ = 'Christoph Franke'
 __license__ = 'GPL'
-__copyright__ = 'Copyright 2019, GGR Planungsbuero'
 
 import unittest
 import os

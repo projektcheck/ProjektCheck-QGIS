@@ -1,10 +1,28 @@
 # -*- coding: utf-8 -*-
-#from rpctools.utils.config import Folders, Config
-#from rpctools.utils.spatial_lib import clip_raster
-#from rpctools.utils.spatial_lib import Point
-#from rpctools.utils.params import DummyTbx
+'''
+***************************************************************************
+    markets.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke, Stefaan Hessmann
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
 
-import os
+domain for the definition of the market-distribution in the study area and
+defining scenarios to analyse the change of market income
+'''
+
+__author__ = 'Christoph Franke, Stefaan Hessmann'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import numpy as np
 import pandas as pd
 

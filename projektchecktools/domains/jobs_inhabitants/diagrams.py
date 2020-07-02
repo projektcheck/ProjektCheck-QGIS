@@ -38,6 +38,9 @@ from projektchecktools.domains.jobs_inhabitants.tables import (WohnenProJahr,
 
 
 class BewohnerEntwicklung(MatplotDiagram):
+    '''
+    bar chart showing the development of the population and age groups over time
+    '''
     def create(self, **kwargs):
         area = kwargs['area']
 
@@ -72,6 +75,9 @@ class BewohnerEntwicklung(MatplotDiagram):
 
 
 class ArbeitsplatzEntwicklung(MatplotDiagram):
+    '''
+    line chart showing the development of the jobs
+    '''
     def create(self, **kwargs):
 
         area = kwargs['area']
@@ -94,6 +100,9 @@ class ArbeitsplatzEntwicklung(MatplotDiagram):
 
 
 class BranchenAnteile(MatplotDiagram):
+    '''
+    pie chart showing the shares of branches of industry
+    '''
     def create(self, **kwargs):
 
         area = kwargs['area']
