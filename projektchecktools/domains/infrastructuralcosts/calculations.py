@@ -23,6 +23,7 @@ __date__ = '06/02/2020'
 __copyright__ = 'Copyright 2020, HafenCity University Hamburg'
 
 from projektchecktools.base.domain import Worker
+from projektchecktools.base.project import Project
 from projektchecktools.utils.utils import round_df_to
 from projektchecktools.domains.definitions.tables import Projektrahmendaten
 
@@ -34,11 +35,11 @@ import time
 import pandas as pd
 import numpy as np
 
-def apply_kostenkennwerte(project):
-    """
-    Copy from Netze_und_Netzelemente (only if Shape == Line) and
-    multiply by interest- and time-factor
-    """
+def init_kostenkennwerte(project: Project) -> pd.DataFrame:
+    '''
+    fills the project table holding the costs of line elements with defaults
+    based on region and year
+    '''
     kk_features = KostenkennwerteLinienelemente.features(create=True)
     kk_features.delete()
 
@@ -91,7 +92,7 @@ class GesamtkostenErmitteln(Worker):
         self.log('Bereite Ausgangsdaten auf...')
         kk_features = KostenkennwerteLinienelemente.features(create=True)
         if len(kk_features) == 0:
-            apply_kostenkennwerte(self.project)
+            init_kostenkennwerte(self.project)
         self.df_costs = kk_features.to_pandas()
         del self.df_costs['IDNetz']
         self.df_lines = ErschliessungsnetzLinien.features(

@@ -1,3 +1,28 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    ecology.py
+    ---------------------
+    Date                 : October 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the analysis of the infrastructure and its costs needed for
+support of the planning areas
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '18/10/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from qgis.PyQt.Qt import QRadioButton, QPushButton
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -19,7 +44,7 @@ from .diagrams import (GesamtkostenDiagramm, KostentraegerDiagramm,
                        NetzlaengenDiagramm, VergleichWEDiagramm,
                        VergleichAPDiagramm, MassnahmenKostenDiagramm)
 from .calculations import (GesamtkostenErmitteln, KostentraegerAuswerten,
-                           apply_kostenkennwerte)
+                           init_kostenkennwerte)
 from .tables import (ErschliessungsnetzLinienZeichnung,
                      ErschliessungsnetzPunkte, ErschliessungsnetzLinien,
                      Kostenaufteilung, KostenkennwerteLinienelemente)
@@ -29,7 +54,9 @@ from projektchecktools.utils.utils import open_file
 
 
 class InfrastructureDrawing:
-
+    '''
+    drawing tools and amounts of infrastructure
+    '''
     def __init__(self, ui, project, canvas, layer_group):
         self.ui = ui
         self.layer_group = layer_group
@@ -71,7 +98,11 @@ class InfrastructureDrawing:
         self.fill_points_combo()
         self.setup_line_params()
 
-    def fill_points_combo(self, select=None):
+    def fill_points_combo(self, select: 'Feature'=None):
+        '''
+        fill the combobox with all drawn point measures, preselect given point
+        measure
+        '''
         self.ui.points_combo.blockSignals(True)
         self.ui.points_combo.clear()
         points = [point for point in self.points]
@@ -92,6 +123,9 @@ class InfrastructureDrawing:
         self.toggle_point()
 
     def setup_tools(self):
+        '''
+        set up the drawing tools
+        '''
         self._tools = []
         self.line_tools = {
             self.ui.anliegerstrasse_innere_button: 11,
@@ -116,7 +150,7 @@ class InfrastructureDrawing:
             self.ui.select_lines_button, canvas=self.canvas)
         self.ui.select_lines_button.clicked.connect(
             lambda: self.draw_output('line'))
-        self.select_lines_tool.feature_picked.connect(self.line_selected)
+        self.select_lines_tool.feature_picked.connect(self.select_line)
         self.ui.remove_lines_button.clicked.connect(
             self.remove_selected_lines)
         self.ui.remove_drawing_button.clicked.connect(
@@ -129,14 +163,19 @@ class InfrastructureDrawing:
         self.draw_point_tool.map_clicked.connect(self.add_point)
         self.select_point_tool = FeaturePicker(
             self.ui.select_point_button, canvas=self.canvas)
-        self.select_point_tool.feature_picked.connect(self.point_selected)
+        self.select_point_tool.feature_picked.connect(self.select_point)
         self.ui.select_point_button.clicked.connect(
             lambda: self.draw_output('point'))
         self.ui.add_point_button.clicked.connect(
             lambda: self.draw_output('point'))
         self._tools.append(self.draw_point_tool)
 
-    def add_geom(self, geom, net_id, geom_typ='line'):
+    def add_geom(self, geom: 'QgsGeometry', net_id: int,
+                 geom_typ: str='line') -> 'Feature':
+        '''
+        add a geometry to the database with the id of network element and the
+        type ('line' or 'point')
+        '''
         features = self.drawn_lines if geom_typ == 'line' \
             else self.points
         typ = self.netzelemente.get(IDNetzelement=net_id)
@@ -151,7 +190,11 @@ class InfrastructureDrawing:
         self.canvas.refreshAllLayers()
         return feature
 
-    def draw_output(self, geom_typ='line', redraw=False):
+    def draw_output(self, geom_typ: str='line', redraw: bool=False):
+        '''
+        add either the point measures or line measures as a layer depending on
+        given geom_type ('line' or 'point')
+        '''
         label = 'Erschließungsnetz'
         if geom_typ == 'point':
             label += ' - punktuelle Maßnahmen'
@@ -163,7 +206,10 @@ class InfrastructureDrawing:
             else self.select_point_tool
         tool.set_layer(output.layer)
 
-    def line_selected(self, feature):
+    def select_line(self, feature: 'Feature'):
+        '''
+        select the line measure in output layer
+        '''
         layer = self.output_lines.layer
         selected = [f.id() for f in layer.selectedFeatures()]
         if feature.id() not in selected:
@@ -173,6 +219,9 @@ class InfrastructureDrawing:
             layer.selectByIds([fid for fid in selected if fid != feature.id()])
 
     def remove_selected_lines(self):
+        '''
+        remove all line measures selected in the line output layer
+        '''
         layer = self.output_lines.layer
         if not layer:
             return
@@ -183,6 +232,9 @@ class InfrastructureDrawing:
         self.canvas.refreshAllLayers()
 
     def remove_drawing(self):
+        '''
+        remove all line measures
+        '''
         reply = QMessageBox.question(
             self.ui, 'Zeichnung löschen',
             f'Sollen alle gezeichneten Linienelemente gelöscht werden?',
@@ -193,13 +245,19 @@ class InfrastructureDrawing:
         self.drawn_lines.delete()
         self.canvas.refreshAllLayers()
 
-    def add_point(self, geom):
+    def add_point(self, geom: 'QgsGeometry'):
+        '''
+        add a point measure
+        '''
         point = self.add_geom(geom, 0, geom_typ='point')
         point.bezeichnung = 'unbenannte Maßnahme'
         point.save()
         self.fill_points_combo(select=point)
 
     def remove_point(self):
+        '''
+        remove point measure currently selected in the point combobox
+        '''
         point = self.ui.points_combo.currentData()
         if not point:
             return
@@ -212,7 +270,10 @@ class InfrastructureDrawing:
             point.delete()
             self.fill_points_combo()
 
-    def point_selected(self, feature):
+    def select_point(self, feature: 'Feature'):
+        '''
+        select the point measure in output layer
+        '''
         if not self.output_points.layer:
             return
         self.output_points.layer.removeSelection()
@@ -224,7 +285,11 @@ class InfrastructureDrawing:
                 break
         self.ui.points_combo.setCurrentIndex(idx)
 
-    def toggle_point(self, point=None):
+    def toggle_point(self, point: 'Feature'=None):
+        '''
+        toggle selection of point measure, draws layers and groups for
+        displaying the point measure
+        '''
         if self.output_points.layer:
             self.output_points.layer.removeSelection()
         if not point:
@@ -238,7 +303,10 @@ class InfrastructureDrawing:
         self.output_points.layer.select(point.id)
         self.setup_point_params(point)
 
-    def setup_point_params(self, point):
+    def setup_point_params(self, point: 'Feature'):
+        '''
+        set up the parameters in the UI to edit the given point measure
+        '''
         if self.point_params:
             self.point_params.close()
         ui_group = self.ui.point_parameter_group
@@ -316,6 +384,9 @@ class InfrastructureDrawing:
         button.clicked.connect(self.remove_point)
 
     def init_lines(self):
+        '''
+        initialize the line table in the database
+        '''
         line_elements = self.netzelemente.filter(Typ='Linie')
         df_line_elements = line_elements.to_pandas()
         del(df_line_elements['fid'])
@@ -324,6 +395,9 @@ class InfrastructureDrawing:
         self.netzelemente.filter()
 
     def setup_line_params(self):
+        '''
+        set up the parameters to edit the lengths of the line measures
+        '''
         layout = self.ui.mengen_params_group.layout()
         clear_layout(layout)
         if len(self.line_elements) == 0:
@@ -352,6 +426,10 @@ class InfrastructureDrawing:
         button.clicked.connect(self.apply_drawing)
 
     def apply_drawing(self):
+        '''
+        analyse the drawing and apply the lengths of line measures to the line
+        parameters
+        '''
         df_drawing = self.drawn_lines.to_pandas()
         for element in self.line_elements:
             param = self.line_params[f'netzelement_{element.IDNetzelement}']
@@ -363,6 +441,9 @@ class InfrastructureDrawing:
             element.save()
 
     def infrastrukturmengen(self):
+        '''
+        show the infrastructure amounts as diagrams
+        '''
         diagram = NetzlaengenDiagramm(project=self.project)
         diagram.draw()
 
@@ -370,6 +451,9 @@ class InfrastructureDrawing:
         diagram.draw(offset_x=100, offset_y=100)
 
     def close(self):
+        '''
+        close parameters and tools
+        '''
         for tool in self._tools:
             tool.set_active(False)
         if self.point_params:
@@ -379,7 +463,9 @@ class InfrastructureDrawing:
 
 
 class Gesamtkosten:
-
+    '''
+    edit cost parameters and calculation of costs
+    '''
     def __init__(self, ui, project):
         self.ui = ui
         self.project = project
@@ -404,10 +490,13 @@ class Gesamtkosten:
         self.kostenkennwerte = KostenkennwerteLinienelemente.features(
             create=True)
         if len(self.kostenkennwerte) == 0:
-            apply_kostenkennwerte(self.project)
+            init_kostenkennwerte(self.project)
         self.setup_net_element(self.net_element_id)
 
     def calculate_gesamtkosten(self):
+        '''
+        calculate total costs of infrastructure and show diagram of results
+        '''
         job = GesamtkostenErmitteln(self.project)
 
         def on_close():
@@ -422,6 +511,9 @@ class Gesamtkosten:
         self.dialog.show()
 
     def setup_net_element(self, net_element_id):
+        '''
+        set up parameters to edit the costs per element and phase
+        '''
         self.net_element_id = net_element_id
         ui_group = self.ui.kostenkennwerte_params_group
         net_element_name = self.netzelemente.get(
@@ -460,6 +552,9 @@ class Gesamtkosten:
 
 
     def save(self, net_element_id):
+        '''
+        write the current values of the parameters to database
+        '''
         net_element = self.kostenkennwerte.get(IDNetzelement=net_element_id)
         net_element.Euro_EH = self.params.euro_EH.value
         net_element.Lebensdauer = self.params.lebensdauer.value
@@ -469,6 +564,10 @@ class Gesamtkosten:
 
 
 class Kostentraeger:
+    '''
+    parameters and calculations of shares of infrastructural costs between
+    different payers
+    '''
 
     def __init__(self, ui, project):
         self.ui = ui
@@ -523,6 +622,9 @@ class Kostentraeger:
         self.setup_kostenaufteilung(self.net_id)
 
     def calculate_kostentraeger(self):
+        '''
+        calculations of cost shares
+        '''
         job = KostentraegerAuswerten(self.project)
 
         def on_close():
@@ -538,6 +640,9 @@ class Kostentraeger:
         self.dialog.show()
 
     def setup_kostenaufteilung(self, net_id):
+        '''
+        set up parameters to edit shares for a specific type of infrastructure
+        '''
         self.net_id = net_id
         ui_group = self.ui.kostenaufteilung_params_group
         net_name = self.netzelemente.filter(IDNetz=net_id)[0].Netz
@@ -593,7 +698,11 @@ class Kostentraeger:
         self.params.show(title='Kostenaufteilung festlegen')
         self.params.changed.connect(lambda: self.save(net_id))
 
-    def create_presets(self, net_id, phase_id):
+    def create_presets(self, net_id: int, phase_id: int) -> tuple:
+        '''
+        create a combobox with presets for shares for a specific phase and type
+        of infrastructure element
+        '''
         applyable_rules = self.applyable_aufteilungsregeln.filter(
             IDNetz=net_id, IDPhase=phase_id)
         rules = []
@@ -609,6 +718,10 @@ class Kostentraeger:
         return preset_combo, options
 
     def save(self, net_id):
+        '''
+        write the current settings of paramaters for a specific type of
+        infrastructure element
+        '''
         for phase in self.kostenphasen:
             feature = self.kostenaufteilung.get(
                 IDKostenphase=phase.IDKostenphase, IDNetz=net_id)
@@ -619,7 +732,9 @@ class Kostentraeger:
 
 
 class InfrastructuralCosts(Domain):
-    """"""
+    '''
+    domain-widget for the analysis of required infrastructure and its cost
+    '''
 
     ui_label = 'Infrastrukturfolgekosten'
     ui_file = 'domain_06-IFK.ui'
@@ -658,6 +773,12 @@ class InfrastructuralCosts(Domain):
         self.gesamtkosten.load_content()
 
     def kostenvergleich(self):
+        '''
+        calculate the total costs and show a comparison to mean values as a bar
+        chart.
+        only executable if all areas have either living or commerce as type of
+        use
+        '''
         types_of_use = [area.nutzungsart for area in self.areas
                         if area.nutzungsart != Nutzungsart.UNDEFINIERT.value]
         if ((Nutzungsart.WOHNEN.value not in types_of_use and
@@ -687,6 +808,9 @@ class InfrastructuralCosts(Domain):
 
 
     def close(self):
+        '''
+        close all parameters and drawing tools
+        '''
         if hasattr(self.kostenaufteilung, 'params'):
             self.kostenaufteilung.params.close()
         if hasattr(self.gesamtkosten, 'params'):
