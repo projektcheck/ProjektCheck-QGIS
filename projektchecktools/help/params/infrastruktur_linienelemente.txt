@@ -1,13 +1,13 @@
 {
     "tooltip": "Parameter editieren",
-    "beschreibung": "",
-    "netzelement_11": "",
-    "netzelement_12": "",
-    "netzelement_21": "",
-    "netzelement_22": "",
-    "netzelement_31": "",
-    "netzelement_32": "",
-    "netzelement_33": "",
-    "netzelement_41": "",
-    "netzelement_51": ""
+    "beschreibung": "<b>Mit diesem Werkzeug können die Infrastrukturmengen, welche für die weiteren Auswertungen verwendet werden sollen, bestimmt werden.</b><p>Hierzu können die regulären Infrastrukturmengen, welche zuvor in das Plangebiet eingezeichnet und unter »aus Zeichnung übernehmen« importiert wurden nachbeareitet oder gänzlich neu manuell angegeben werden.<p>",
+    "netzelement_11": "<b>Bearbeiten Sie hier die Gesamtlänge der Anliegerstraßen (innere Erschließung).<b>",
+    "netzelement_12": "<b>Bearbeiten Sie hier die Gesamtlänge der Sammelstraßen (innere Erschließung).<b>",
+    "netzelement_21": "<b>Bearbeiten Sie hier die Gesamtlänge der Anliegerstraßen (äußere Erschließung).<b>",
+    "netzelement_22": "<b>Bearbeiten Sie hier die Gesamtlänge der Sammelstraßen (äußere Erschließung).<b>",
+    "netzelement_31": "<b>Bearbeiten Sie hier die Gesamtlänge der Kanäle (Trennsystem).<b>",
+    "netzelement_32": "<b>Bearbeiten Sie hier die Gesamtlänge der Kanäle (Mischsystem).<b>",
+    "netzelement_33": "<b>Bearbeiten Sie hier die Gesamtlänge der Kanäle (nur Schmutzwasser).<b>",
+    "netzelement_41": "<b>Bearbeiten Sie hier die Gesamtlänge der Trinkwasserleitungen.<b>",
+    "netzelement_51": "<b>Bearbeiten Sie hier die Gesamtlänge der Stromleitungen.<b>"
 }
