@@ -60,7 +60,7 @@ class ProjektCheck:
         action = QAction(icon, 'Projekt-Check', self.iface.mainWindow())
         action.triggered.connect(lambda: self.run())
         self.toolbar.addAction(action)
-        self.iface.addPluginToMenu('Geokodierung', action)
+        self.iface.addPluginToMenu('Projekt-Check', action)
 
     def onClosePlugin(self):
         '''
