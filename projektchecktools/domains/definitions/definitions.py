@@ -347,7 +347,7 @@ class Wohnen:
             feature = self.wohneinheiten.get(id_gebaeudetyp=bt.id,
                                              id_teilflaeche=self.area.id)
             value = feature.we if feature else 0
-            slider = Slider(maximum=999)
+            slider = Slider(maximum=2000)
             self.params.add(Param(
                 value, slider,
                 label=f'... in {bt.display_name}'),
