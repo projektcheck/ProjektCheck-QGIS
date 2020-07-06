@@ -248,8 +248,10 @@ class Projektwirkung(Worker):
             cell.save()
 
     def calculate_distances(self, progress_start=0, progress_end=100):
-        '''calculate distances between settlement points and markets and
-        write them to the database'''
+        '''
+        calculate distances between settlement points and markets and
+        write them to the database
+        '''
 
         # calculate bounding box
         bbox = get_bbox(self.cells.table)
@@ -290,7 +292,9 @@ class Projektwirkung(Worker):
                                  beelines)
 
     def sales_to_db(self, kk_nullfall, kk_planfall):
-        '''store the sales matrices in database'''
+        '''
+        store the sales matrices in database
+        '''
         # sum up sales join them on index to dataframe, replace missing entries
         # (e.g. no entries for planned markets in nullfall -> sales = 0)
         sales_nullfall = kk_nullfall.sum(axis=1)
@@ -355,7 +359,9 @@ class Projektwirkung(Worker):
         self.relations.update_pandas(df_relations)
 
     def get_markets_in_user_centers(self):
-        ''' find markets in user defined centers by spatial joining '''
+        '''
+        find markets in user defined centers by spatial joining
+        '''
         centers = self.centers.filter(nutzerdefiniert=1)
         mapping = {}
         for center in centers:
@@ -365,7 +371,9 @@ class Projektwirkung(Worker):
         return mapping
 
     def update_centers(self):
-        '''calculate the sales of the defined centers'''
+        '''
+        calculate the sales of the defined centers
+        '''
 
         df_markets = self.markets.to_pandas().rename(columns={'AGS': 'ags'})
 

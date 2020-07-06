@@ -72,7 +72,6 @@ class ReadOSMWorker(ReadMarketsWorker):
 
         self.markets_to_db(parsed,
                            truncate=False,  # already truncated osm markets
-                           is_buffer=False,
                            is_osm=True)
 
         self.set_progress(60)

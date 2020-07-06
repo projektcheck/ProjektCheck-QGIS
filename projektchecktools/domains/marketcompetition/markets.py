@@ -3,8 +3,8 @@
 ***************************************************************************
     markets.py
     ---------------------
-    Date                 : July 2019
-    Copyright            : (C) 2019 by Christoph Franke, Max Bohnet
+    Date                 : May 2019
+    Copyright            : (C) 2019 by Christoph Franke
     Email                : franke at ggr-planung dot de
 ***************************************************************************
 *                                                                         *
@@ -19,8 +19,8 @@ domain for the definition of the market-distribution in the study area and
 defining scenarios to analyse the change of market income
 '''
 
-__author__ = 'Christoph Franke, Max Bohnet'
-__date__ = '16/07/2019'
+__author__ = 'Christoph Franke'
+__date__ = '04/05/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 import re
@@ -32,12 +32,18 @@ from projektchecktools.utils.connection import Request
 from projektchecktools.domains.marketcompetition.tables import (
     Markets, MarketCellRelations)
 from projektchecktools.utils.utils import get_ags
+from typing import List, Union
 
 requests = Request(synchronous=True)
 
 
 class Supermarket(Point):
-    """A Supermarket"""
+    '''
+    representation of a supermarket, taken from ArcGIS-version to keep the
+    interface used in some auxiliary functions in this domain
+
+    ToDo: replace this with the actual Feature
+    '''
     def __init__(self, id, x, y, name, kette, betriebstyp='', shop=None,
                  typ=None, vkfl=None, id_betriebstyp=1, epsg=4326,
                  id_teilflaeche=-1, id_kette=0, adresse='', **kwargs):
@@ -58,7 +64,9 @@ class Supermarket(Point):
 
 
 class ReadMarketsWorker(Worker):
-
+    '''
+    abstract worker for parsing, converting and writing markets to the database
+    '''
     def __init__(self, project, epsg=4326, parent=None):
         super().__init__(parent=parent)
         self.project = project
@@ -79,30 +87,23 @@ class ReadMarketsWorker(Worker):
     def work(self):
         ''''''
 
-    def add_outputs(self):
-        group_layer = ("standortkonkurrenz")
-        fc = 'Maerkte'
-        folder = 'Standortkonkurrenz'
-        layer_nullfall = 'Märkte im Bestand'
-        layer_changed = 'veränderte Märkte im Bestand'
-        layer_planfall = 'geplante Märkte'
+    def markets_to_db(self, markets: List[Supermarket], truncate: bool = False,
+                      planfall: bool = False, is_osm: bool = False):
+        '''
+        write markets to the database
 
-        self.output.add_layer(group_layer, layer_nullfall, fc,
-                              template_folder=folder, zoom=False)
-        self.output.add_layer(group_layer, layer_changed, fc,
-                              template_folder=folder, zoom=False)
-        self.output.add_layer(group_layer, layer_planfall, fc,
-                              template_folder=folder, zoom=False)
+        Parameters
+        ----------
+        truncate : bool, optional
+            remove existing status quo markets (keeping planned ones) and
+            results, defaults to keep existing markets and results
+        planfall : bool, optional
+            markets are planned (scenario), defaults to status quo markets
+        is_osm : bool, optional
+            markets are tagged as retrieved by OSM, defaults to normal markets
 
-        self.output.hide_layer('projektdefinition')
-
-    def markets_to_db(self, markets, truncate=False,
-                      planfall=False, is_buffer=False, start_id=None,
-                      is_osm=False):
-        """Create the point-features for supermarkets"""
-
+        '''
         market_feats = Markets.features(project=self.project)
-
         # delete markets of nullfall ( and ALL results (easiest way)
         if truncate:
             # markets of nullfall (having a "betriebstyp" in nullfall, but not
@@ -139,7 +140,6 @@ class ReadMarketsWorker(Worker):
                 betriebstyp_planfall=bt_planfall,
                 kette=kette,
                 id_teilflaeche=market.id_teilflaeche,
-                is_buffer=is_buffer,
                 is_osm=is_osm,
                 vkfl=vkfl_nullfall,
                 vkfl_planfall=vkfl_planfall,
@@ -149,27 +149,21 @@ class ReadMarketsWorker(Worker):
             created.append(feat)
         return created
 
-    def set_ags(self, markets):
-        """
-        Assign community size to supermarkets
-        """
-        #gemeinden = self.project.basedata.get_table(
-            #'bkg_gemeinden', 'Basisdaten_deutschland')
-        #overlay = QgsVectorLayer(gemeinden.workspace.path,
-                                 #gemeinden.name, "ogr")
-        #ret = intersect(markets, overlay, input_fields=['id'],
-                        #output_fields=['AGS'], epsg=self.epsg)
+    def set_ags(self, markets: Union[List['Feature']]):
+        '''
+        assign community size to markets
+        '''
         gem = get_ags(markets, self.project.basedata)
         for i, market in enumerate(markets):
             market.AGS = gem[i].AGS_0
             market.save()
 
-    def vkfl_to_betriebstyp(self, markets):
-        """
+    def vkfl_to_betriebstyp(self, markets: List[Supermarket]):
+        '''
         set types of use (betriebstyp) matching the sales area (vkfl)
         of all given markets
         returns the markets with set types of use
-        """
+        '''
         for market in markets:
             if market.id_kette > 0:
                 idx = self.df_chains['id_kette'] == market.id_kette
@@ -190,11 +184,11 @@ class ReadMarketsWorker(Worker):
                 ].name.values[0]
         return markets
 
-    def betriebstyp_to_vkfl(self, id_betriebstyp, id_kette):
-        """
+    def betriebstyp_to_vkfl(self, id_betriebstyp: int, id_kette: int):
+        '''
         return the sales area (vkfl) matching the type of use (betriebstyp)
         of a single market
-        """
+        '''
         # some discounters have (since there is no specific betriebstyp and
         # therefore no hint on possible vkfl for them)
         if id_betriebstyp == 7:
@@ -208,11 +202,11 @@ class ReadMarketsWorker(Worker):
         vkfl = self.df_bt[idx]['default_vkfl'].values[0]
         return vkfl
 
-    def parse_meta(self, markets, field='name'):
-        """
+    def parse_meta(self, markets: List[Supermarket], field: str = 'name'):
+        '''
         use the name of the markets to parse and assign chain-ids and
         betriebstyps
-        """
+        '''
 
         ret_markets = []
 
@@ -251,9 +245,11 @@ class ReadMarketsWorker(Worker):
                 ret_markets.append(market)
         return ret_markets
 
-    def delete_area_market(self, id_area):
-        '''delete the market corresponding to a planned area and the already
-        calculated results for this market'''
+    def delete_area_market(self, id_area: int):
+        '''
+        delete the market corresponding to a planned area and the already
+        calculated results for this market
+        '''
         where = 'id_teilflaeche={}'.format(id_area)
         rows = self.parent_tbx.query_table(
             'Maerkte', columns=['id'], where=where)

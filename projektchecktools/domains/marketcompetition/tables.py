@@ -65,7 +65,6 @@ class Markets(ProjectTable):
     umsatz_nullfall = Field(float, 0)
     umsatz_planfall = Field(float, 0)
     umsatz_differenz = Field(float, 0)
-    is_buffer = Field(bool, False)
     is_osm = Field(bool, False)
     vkfl = Field(int, 0)
     vkfl_planfall = Field(int, 0)

@@ -171,7 +171,7 @@ class EditMarkets(QObject):
 
     def select_market(self, feature):
         '''
-        highlight (select) given market in market layer
+        select and highlight given market
         '''
         if not self.output or not self.output.layer:
             return
@@ -268,8 +268,7 @@ class EditMarkets(QObject):
 
 class EditNullfallMarkets(EditMarkets):
     '''
-    abstract class for setting markets on the map, setting up their parameters
-    to edit their properties and to visualize them on the map
+    nullfall (status quo) market control
     '''
     layer_filter = 'id_betriebstyp_nullfall > 0'
     layer_style = 'standortkonkurrenz_maerkte_im_bestand.qml'
@@ -278,6 +277,9 @@ class EditNullfallMarkets(EditMarkets):
     suffix = 'nullfall'
 
     def setup_params(self, market):
+        '''
+        set up the parameters to edit the given status quo market
+        '''
         if self.params:
             self.params.close()
         layout = self.param_group.layout()
@@ -352,6 +354,9 @@ class EditNullfallMarkets(EditMarkets):
         button.clicked.connect(lambda: self.remove_market(market))
 
     def add_market(self, geom, name='unbenannter Markt im Bestand'):
+        '''
+        add a status quo market to the database
+        '''
         id_bt = 1
         bt = self.typen.get(id_betriebstyp=id_bt).name
         market = self.markets.add(
@@ -378,6 +383,9 @@ class EditNullfallMarkets(EditMarkets):
 
 
 class EditPlanfallMarkets(EditMarkets):
+    '''
+    planfall (scenario) market control
+    '''
     layer_filter = 'id_betriebstyp_nullfall = 0'
     layer_style = 'standortkonkurrenz_geplante_maerkte.qml'
     filter_args = {'id_betriebstyp_nullfall': 0}
@@ -385,6 +393,9 @@ class EditPlanfallMarkets(EditMarkets):
     suffix = 'planfall'
 
     def setup_params(self, market):
+        '''
+        set up the parameters to edit the given scenario market
+        '''
         # ToDo: that's mostly the same as in EditNullfallMarkets,
         # might be merged
         if self.params:
@@ -398,9 +409,8 @@ class EditPlanfallMarkets(EditMarkets):
         self.params = Params(
             layout, help_file='standortkonkurrenz_geplante_maerkte.txt')
 
-        self.params.name = Param(
-            market.name, LineEdit(width=300),
-            label='Name')
+        self.params.name = Param(market.name, LineEdit(width=300),
+                                 label='Name')
 
         self.params.add(Seperator(margin=0))
 
@@ -462,6 +472,9 @@ class EditPlanfallMarkets(EditMarkets):
             button.clicked.connect(lambda: self.remove_market(market))
 
     def add_market(self, geom, name='unbenannter geplanter Markt'):
+        '''
+        add a scenario market to the database
+        '''
         market = self.markets.add(
             name=name,
             id_betriebstyp_nullfall=0,
@@ -485,6 +498,10 @@ class EditPlanfallMarkets(EditMarkets):
 
 
 class ChangeMarkets(EditMarkets):
+    '''
+    control markets already existing in status quo but are changed in the
+    scenario
+    '''
     layer_filter = ('id_betriebstyp_nullfall != id_betriebstyp_planfall '
                     'and id_betriebstyp_nullfall > 0')
     layer_style = 'standortkonkurrenz_veraenderte_maerkte.qml'
@@ -501,12 +518,19 @@ class ChangeMarkets(EditMarkets):
         self.nullfall_edit = nullfall_edit
 
     def add_layer(self, zoom_to=False):
+        '''
+        add the nullfall layer in addition to layer showing the changed markets
+        '''
         super().add_layer(zoom_to=zoom_to)
-        # additionally the nullfall layer is required to select from
         self.nullfall_edit.add_layer(zoom_to)
         self.select_tool.set_layer(self.nullfall_edit.output.layer)
 
     def setup_params(self, market):
+        '''
+        set up the parameters to change attributes of the given status quo
+        market in the scenario
+        '''
+
         if self.params:
             self.params.close()
         layout = self.param_group.layout()
@@ -576,6 +600,9 @@ class ChangeMarkets(EditMarkets):
         self.params.changed.connect(save)
 
     def remove_markets(self):
+        '''
+        reset all changes made to status quo markets in the scenario
+        '''
         reply = QMessageBox.question(
             self.param_group, f'Veränderungen zurücksetzen',
             'Möchten Sie alle Veränderungen der bestehenden Märkte '
@@ -591,7 +618,10 @@ class ChangeMarkets(EditMarkets):
 
 
 class EditCenters:
-
+    '''
+    controls centers drawn by users, centers will be evaluated seperately during
+    the calculation of the "Projektwirkung"
+    '''
     def __init__(self, ui, canvas, project, layer_group=''):
         self.ui = ui
         self.canvas = canvas
@@ -623,6 +653,9 @@ class EditCenters:
         self.fill_combo()
 
     def fill_combo(self, select=None):
+        '''
+        fill the center combobox with all drawn centers
+        '''
         self.ui.centers_combo.blockSignals(True)
         self.ui.centers_combo.clear()
         self.ui.centers_combo.addItem('nichts ausgewählt')
@@ -638,6 +671,9 @@ class EditCenters:
         self.toggle_center(self.ui.centers_combo.currentData())
 
     def add_center(self, geom):
+        '''
+        add a new center with default name and given geometry
+        '''
         center = self.centers.add(
             nutzerdefiniert=1,
             name='unbenanntes Zentrum',
@@ -647,6 +683,9 @@ class EditCenters:
         self.fill_combo(select=center)
 
     def toggle_center(self, center, center_on_point=False):
+        '''
+        change active center
+        '''
         if self.output and self.output.layer and center:
             self.output.layer.removeSelection()
             self.output.layer.select(center.id)
@@ -656,6 +695,9 @@ class EditCenters:
         self.setup_params(center)
 
     def add_layer(self, zoom_to=True):
+        '''
+        show the centers in a layer
+        '''
         self.output = ProjectLayer.from_table(
             self.centers.table, groupname=self.layer_group)
         self.output.draw(
@@ -666,6 +708,9 @@ class EditCenters:
         self.select_tool.set_layer(self.output.layer)
 
     def setup_params(self, center):
+        '''
+        set up the parameters to edit the given center
+        '''
         if self.params:
             self.params.close()
         layout = self.ui.center_parameter_group.layout()
@@ -701,6 +746,9 @@ class EditCenters:
         button.clicked.connect(lambda: self.remove_center(center))
 
     def remove_center(self, center):
+        '''
+        remove the given center from the database
+        '''
         if not center:
             return
         reply = QMessageBox.question(
@@ -713,6 +761,9 @@ class EditCenters:
             self.fill_combo()
 
     def select_center(self, feature):
+        '''
+        select and highlight given center
+        '''
         if not self.output or not self.output.layer:
             return
         self.output.layer.removeSelection()
@@ -725,6 +776,9 @@ class EditCenters:
         self.ui.centers_combo.setCurrentIndex(idx)
 
     def close(self):
+        '''
+        close tools and parameters
+        '''
         if self.drawing_tool:
             self.drawing_tool.set_active(False)
         if self.select_tool:
@@ -734,7 +788,10 @@ class EditCenters:
 
 
 class SupermarketsCompetition(Domain):
-    """"""
+    '''
+    domain-widget for planning new markets/changes to existing markets in the
+    study area and calculating the impact on the status quo
+    '''
 
     ui_label = 'Standortkonkurrenz Supermärkte'
     ui_file = 'domain_08-SKSM.ui'
@@ -749,13 +806,13 @@ class SupermarketsCompetition(Domain):
     def setupUi(self):
         self.community_picker = FeaturePicker(self.ui.select_communities_button,
                                               canvas=self.canvas)
-        self.community_picker.feature_picked.connect(self.community_picked)
+        self.community_picker.feature_picked.connect(self.add_to_study_area)
 
         self.ui.create_template_button.clicked.connect(
             lambda: MarketTemplateCreateDialog().show())
         self.ui.read_template_button.clicked.connect(self.read_template)
         self.ui.select_communities_button.clicked.connect(
-            lambda: self.show_communities(
+            lambda: self.show_study_area(
                 zoom_to=self.ui.select_communities_button.isChecked()))
         self.ui.show_markets_button.clicked.connect(
             lambda: self.show_markets_and_centers(zoom_to=True))
@@ -839,6 +896,10 @@ class SupermarketsCompetition(Domain):
         self.center_edit.load_content()
 
     def show_template_help(self):
+        '''
+        let the user select a template type in a dialog and show the associated
+        pdf help file
+        '''
         types = MarketTemplate.template_types.keys()
         typ, ok = QInputDialog.getItem(
             self.ui, 'Ausfüllhilfe anzeigen',
@@ -849,12 +910,19 @@ class SupermarketsCompetition(Domain):
             open_file(fn)
 
     def show_markets_and_centers(self, zoom_to=True):
+        '''
+        add layers of markets in status quo and scenario and the user-defined
+        centers
+        '''
         self.planfall_edit.add_layer()
         self.changed_edit.add_layer()
         self.nullfall_edit.add_layer(zoom_to=zoom_to)
         self.center_edit.add_layer()
 
-    def show_communities(self, zoom_to=True):
+    def show_study_area(self, zoom_to=True):
+        '''
+        add layers with communities selectable to be in the study area
+        '''
         group_name = f'{self.layer_group}/{self.study_group}'
         output = ProjectLayer.from_table(
             self.centers.table, groupname=group_name)
@@ -877,8 +945,11 @@ class SupermarketsCompetition(Domain):
         if zoom_to:
             output.zoom_to()
 
-    def community_picked(self, feature):
-        center = self.centers.get(id=feature.id())
+    def add_to_study_area(self, community):
+        '''
+        add given community to the study area
+        '''
+        center = self.centers.get(id=community.id())
         # -1 indicates the project community, deselection not allowed
         if center.auswahl == -1:
             return
@@ -888,6 +959,10 @@ class SupermarketsCompetition(Domain):
         self.canvas.refreshAllLayers()
 
     def read_template(self):
+        '''
+        let the user select a template and load its entries to the status quo
+        markets
+        '''
         filters = [f'*{ext[0]}' for ext
                    in MarketTemplate.template_types.values()]
         path, f = QFileDialog.getOpenFileName(
@@ -906,6 +981,10 @@ class SupermarketsCompetition(Domain):
             dialog.show()
 
     def read_osm(self):
+        '''
+        query geoserver for markets in the study area and add them to the
+        status quo markets
+        '''
         buffer = self.ui.osm_buffer_input.value() \
             if self.ui.osm_buffer_check.isChecked() else 0
         job = ReadOSMWorker(self.project, epsg=self.settings.EPSG,
@@ -919,6 +998,9 @@ class SupermarketsCompetition(Domain):
         dialog.show()
 
     def remove_osm(self):
+        '''
+        remove all markets that were added by a query of the geoserver
+        '''
         reply = QMessageBox.question(
             self.ui, 'OSM-Märkte löschen',
             f'Möchten Sie alle OSM-Märkte löschen?',
@@ -932,7 +1014,10 @@ class SupermarketsCompetition(Domain):
             self.remove_results()
 
     def calculate(self):
-
+        '''
+        calculate the impact of the changes to status quo and show the results
+        as layers
+        '''
         job = Projektwirkung(self.project, recalculate=False)
         success, msg = job.validate_inputs()
         if not success:
@@ -960,6 +1045,9 @@ class SupermarketsCompetition(Domain):
         dialog.show()
 
     def show_results(self):
+        '''
+        show the results from "Projektwirkung" as layers
+        '''
         # hide layers messing up the readability of the results
         study_output = ProjectLayer.find(self.study_group)
         if study_output:
@@ -1060,12 +1148,19 @@ class SupermarketsCompetition(Domain):
 
     @classmethod
     def remove_results(cls):
+        '''
+        remove result layers
+        '''
+        # ToDo: remove results from database (?)
         group = ProjectLayer.find(cls.results_group,
                                   groupname=cls.layer_group)
         if group:
             group[0].removeAllChildren()
 
     def close(self):
+        '''
+        close tools and parameters
+        '''
         self.community_picker.set_active(False)
         self.nullfall_edit.close()
         self.planfall_edit.close()
