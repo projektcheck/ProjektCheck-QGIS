@@ -28,6 +28,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
                                  QTableWidget, QTableWidgetItem,
                                  QAbstractScrollArea)
+from qgis.core import QgsGeometry, QgsWkbTypes, QgsMultiPolygon
 import numpy as np
 import os
 
@@ -122,9 +123,8 @@ class Ecology(Domain):
                 lambda b, p=prefix: self.clear_drawing(planfall=p=='planfall'))
             button = getattr(self.ui, f'{prefix}_apply_type_button')
             button.clicked.connect(
-                lambda b, p=prefix: self.add_geom(
-                    self.area, self.get_selected_type(p),
-                    planfall=p=='planfall'))
+                lambda b, p=prefix: self.fill_area(
+                    self.get_selected_type(p), planfall=p=='planfall'))
             button = getattr(self.ui, f'{prefix}_remove_type_button')
             button.clicked.connect(
                 lambda b, p=prefix: self.remove_type(
@@ -333,12 +333,30 @@ class Ecology(Domain):
         '''
         if not geom.isGeosValid() or typ is None:
             return
+
+        def repair(poly):
+            if poly.isGeosValid():
+                return poly
+            poly = poly.makeValid()
+            if poly.isEmpty() or poly.isNull():
+                return
+            # remove the junk
+            if poly.wkbType() == QgsWkbTypes.MultiPolygon:
+                mp = poly.asGeometryCollection()
+                keep = None
+                # just keep the big polygons, the rest is junk
+                for p in mp:
+                    if p.area() > 1:
+                        if not keep:
+                            keep = p
+                        else:
+                            keep = keep.combine(p)
+                return keep
+            return poly
+
         if in_area_only:
             geom = geom.intersection(self.area)
-        if not geom.isGeosValid():
-            geom = geom.makeValid()
-        if geom.isEmpty() or geom.isNull():
-            return
+        geom = repair(geom)
         features = self.boden_planfall if planfall else self.boden_nullfall
         if not unite:
             features.add(geom=geom, IDBodenbedeckung=typ, area=geom.area())
@@ -350,10 +368,9 @@ class Ecology(Domain):
                              area=geom.area())
             else:
                 merged = ex_feat.geom.combine(geom)
-                if not merged.isGeosValid():
-                    merged = merged.makeValid()
+                merged = repair(merged)
                 # ignore geometry if it can not be merged
-                if merged.isEmpty() or merged.isNull():
+                if not merged:
                     return
                 ex_feat.geom = merged
                 ex_feat.area = ex_feat.geom.area()
@@ -364,8 +381,9 @@ class Ecology(Domain):
                 if feature.IDBodenbedeckung == typ:
                     continue
                 difference = feature.geom.difference(geom)
-                # ignore broken geometry
-                if difference.isNull() or difference.isEmpty():
+                difference = repair(difference)
+                # ignore unfixable geometry
+                if not difference:
                     continue
                 feature.geom = difference
                 feature.area = difference.area()
@@ -374,6 +392,10 @@ class Ecology(Domain):
 
         if len(features) == 1:
             self.add_output()
+
+    def fill_area(self, typ, planfall=True):
+        #self.clear_drawing(planfall=planfall)
+        self.add_geom(self.area, typ, planfall=planfall)
 
     def remove_type(self, typ, planfall=True):
         '''
