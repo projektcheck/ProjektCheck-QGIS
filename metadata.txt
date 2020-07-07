@@ -32,6 +32,9 @@ changelog=
       - genauere Validierung der Inputs bei der Projekterstellung
       - diverse Fehler in der Projekterstellung behoben
       - Abstürze beim Wechsel der Projekte behoben
+      Ökologie
+      - Fehler beim Zeichnen der Bodenbedeckung behoben
+      - Zeichnung selbst-überschneidender Flächen nicht mehr erlaubt
       Erreichbarkeit
       - Fehler in der Erzeugung der Isochronen behoben
       - Darstellung der Haltestellen überarbeitet

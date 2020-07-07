@@ -317,6 +317,8 @@ class GeopackageTable(Table):
         geom = feat.geometry()
         if geom:
             geom = QgsGeometry.fromWkt(geom.ExportToWkt())
+            if not geom.isGeosValid():
+                geom = geom.makeValid()
         items[self.geom_field] = geom
         return items
 
@@ -562,7 +564,7 @@ class GeopackageTable(Table):
                 if not isinstance(geom, str):
                     geom = geom.asWkt()
                 geom = ogr.CreateGeometryFromWkt(geom)
-            feature.SetGeometry(geom)
+            ret = feature.SetGeometry(geom)
         ret = self._layer.CreateFeature(feature)
         if ret != 0:
             raise Exception(f'Feature could not be created in table {self.name}. '
