@@ -24,6 +24,7 @@ __date__ = '04/05/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 import re
+import pandas as pd
 # from qgis.core import QgsVectorLayer
 
 from projektchecktools.utils.spatial import Point# , intersect
@@ -88,7 +89,8 @@ class ReadMarketsWorker(Worker):
         ''''''
 
     def markets_to_db(self, markets: List[Supermarket], truncate: bool = False,
-                      planfall: bool = False, is_osm: bool = False):
+                      planfall: bool = False, is_osm: bool = False
+                      ) -> 'Feature':
         '''
         write markets to the database
 
@@ -102,6 +104,10 @@ class ReadMarketsWorker(Worker):
         is_osm : bool, optional
             markets are tagged as retrieved by OSM, defaults to normal markets
 
+        Returns
+        -------
+        Feature
+            the created feature
         '''
         market_feats = Markets.features(project=self.project)
         # delete markets of nullfall ( and ALL results (easiest way)
@@ -158,7 +164,8 @@ class ReadMarketsWorker(Worker):
             market.AGS = gem[i].AGS_0
             market.save()
 
-    def vkfl_to_betriebstyp(self, markets: List[Supermarket]):
+    def vkfl_to_betriebstyp(self, markets: List[Supermarket]
+                            ) -> markets: List[Supermarket]:
         '''
         set types of use (betriebstyp) matching the sales area (vkfl)
         of all given markets
@@ -184,7 +191,8 @@ class ReadMarketsWorker(Worker):
                 ].name.values[0]
         return markets
 
-    def betriebstyp_to_vkfl(self, id_betriebstyp: int, id_kette: int):
+    def betriebstyp_to_vkfl(self, id_betriebstyp: int, id_kette: int
+                            ) -> pd.DataFrame:
         '''
         return the sales area (vkfl) matching the type of use (betriebstyp)
         of a single market
@@ -202,7 +210,8 @@ class ReadMarketsWorker(Worker):
         vkfl = self.df_bt[idx]['default_vkfl'].values[0]
         return vkfl
 
-    def parse_meta(self, markets: List[Supermarket], field: str = 'name'):
+    def parse_meta(self, markets: List[Supermarket], field: str = 'name'
+                   ) -> List[Supermarket]:
         '''
         use the name of the markets to parse and assign chain-ids and
         betriebstyps
