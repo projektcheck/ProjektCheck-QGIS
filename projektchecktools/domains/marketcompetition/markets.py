@@ -165,7 +165,7 @@ class ReadMarketsWorker(Worker):
             market.save()
 
     def vkfl_to_betriebstyp(self, markets: List[Supermarket]
-                            ) -> markets: List[Supermarket]:
+                            ) -> List[Supermarket]:
         '''
         set types of use (betriebstyp) matching the sales area (vkfl)
         of all given markets

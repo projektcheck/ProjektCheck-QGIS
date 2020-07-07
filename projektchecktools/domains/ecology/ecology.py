@@ -331,39 +331,47 @@ class Ecology(Domain):
         '''
         add a geometry to the database belonging to a specific ground cover type
         '''
-        if not geom.isGeosValid():
-            geom = geom.makeValid()
-        if geom.isEmpty() or geom.isNull() or typ is None:
+        if not geom.isGeosValid() or typ is None:
             return
         if in_area_only:
             geom = geom.intersection(self.area)
+        if not geom.isGeosValid():
+            geom = geom.makeValid()
+        if geom.isEmpty() or geom.isNull():
+            return
         features = self.boden_planfall if planfall else self.boden_nullfall
         if not unite:
             features.add(geom=geom, IDBodenbedeckung=typ, area=geom.area())
+        # merge with existing geometries of same type
         else:
             ex_feat = features.get(IDBodenbedeckung=typ)
             if not ex_feat:
                 features.add(geom=geom, IDBodenbedeckung=typ,
                              area=geom.area())
             else:
-                ex_feat.geom = ex_feat.geom.combine(geom)
+                merged = ex_feat.geom.combine(geom)
+                if not merged.isGeosValid():
+                    merged = merged.makeValid()
+                # ignore geometry if it can not be merged
+                if merged.isEmpty() or merged.isNull():
+                    return
+                ex_feat.geom = merged
                 ex_feat.area = ex_feat.geom.area()
                 ex_feat.save()
+        # cut existing geometries of a different type at same place
         if difference:
             for feature in features:
                 if feature.IDBodenbedeckung == typ:
                     continue
                 difference = feature.geom.difference(geom)
-                # ToDo: handle invalid and null geometries instead of ignoring
+                # ignore broken geometry
                 if difference.isNull() or difference.isEmpty():
-                    feature.delete()
-                else:
-                    feature.geom = difference
-                    feature.area = difference.area()
-                    feature.save()
+                    continue
+                feature.geom = difference
+                feature.area = difference.area()
+                feature.save()
         self.canvas.refreshAllLayers()
-        # workaround: layer style is not applied correctly
-        # with empty features -> redraw on first geometry
+
         if len(features) == 1:
             self.add_output()
 
