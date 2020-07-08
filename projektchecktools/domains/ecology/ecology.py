@@ -375,6 +375,7 @@ class Ecology(Domain):
                 ex_feat.save()
         # cut existing geometries of a different type at same place
         if difference:
+            marked_for_deletion = []
             for feature in features:
                 if feature.IDBodenbedeckung == typ:
                     continue
@@ -384,11 +385,13 @@ class Ecology(Domain):
                 difference = remove_junk(difference)
                 if (not difference or difference.isNull() or
                     difference.isEmpty()):
-                    feature.delete()
+                    marked_for_deletion.append(feature)
                     continue
                 feature.geom = difference
                 feature.area = difference.area()
                 feature.save()
+            for feature in marked_for_deletion:
+                feature.delete()
         self.canvas.refreshAllLayers()
 
         if len(features) == 1:
