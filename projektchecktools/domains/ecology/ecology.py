@@ -51,17 +51,17 @@ from projektchecktools.utils.utils import open_file
 from settings import settings
 
 
-def collection_to_poly(geom):
-    if geom.wkbType() != QgsWkbTypes.GeometryCollection:
-        return geom
+def remove_junk(geom):
+    #if geom.wkbType() != QgsWkbTypes.GeometryCollection:
+        #return geom
     mp = None
     for el in geom.asGeometryCollection():
-        if el.wkbType() == QgsWkbTypes.LineString:
+        if el.wkbType() == QgsWkbTypes.LineString or el.area() < 1:
             continue
         if not mp:
             mp = el
         else:
-            mp.combine(el)
+            mp = mp.combine(el)
     return mp
 
 
@@ -366,10 +366,10 @@ class Ecology(Domain):
                 merged = ex_feat.geom.combine(geom)
                 if not merged.isGeosValid():
                     merged = merged.makeValid()
+                merged = remove_junk(merged)
                 # ignore geometry if it can not be merged
-                if merged.isEmpty() or merged.isNull():
+                if not merged or merged.isEmpty() or merged.isNull():
                     return
-                merged = collection_to_poly(merged)
                 ex_feat.geom = merged
                 ex_feat.area = ex_feat.geom.area()
                 ex_feat.save()
@@ -381,10 +381,11 @@ class Ecology(Domain):
                 difference = feature.geom.difference(geom)
                 if not difference.isGeosValid():
                     difference = difference.makeValid()
-                # ignore broken geometry
-                if difference.isNull() or difference.isEmpty():
+                difference = remove_junk(difference)
+                if (not difference or difference.isNull() or
+                    difference.isEmpty()):
+                    feature.delete()
                     continue
-                difference = collection_to_poly(difference)
                 feature.geom = difference
                 feature.area = difference.area()
                 feature.save()
@@ -544,7 +545,7 @@ class Ecology(Domain):
         output = self.output_planfall if planfall else self.output_nullfall
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
-        output.draw(label=label, style_file=style)
+        output.draw(label=label, style_file=style, redraw=False)
         setattr(self, 'output_planfall' if planfall else 'output_nullfall',
                 output)
         disabled_out = self.output_nullfall if planfall \
