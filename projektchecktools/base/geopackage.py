@@ -316,9 +316,11 @@ class GeopackageTable(Table):
         items[self.id_field] = feat.GetFID()
         geom = feat.geometry()
         if geom:
-            geom = QgsGeometry.fromWkt(geom.ExportToWkt())
-            if not geom.isGeosValid():
-                geom = geom.makeValid()
+            qgeom = QgsGeometry()
+            qgeom.fromWkb(geom.ExportToWkb())
+            if not qgeom.isGeosValid():
+                qgeom = qgeom.makeValid()
+            geom = qgeom
         items[self.geom_field] = geom
         return items
 
@@ -561,10 +563,19 @@ class GeopackageTable(Table):
             ret = feature.SetField(field, value)
         if geom:
             if not isinstance(geom, ogr.Geometry):
-                if not isinstance(geom, str):
+                # geometries as bytes are preferable
+                if hasattr(geom, 'asWkb'):
+                    geom = geom.asWkb().data()
+                # some qgis geometries only support export to wkt
+                elif hasattr(geom, 'asWkt'):
                     geom = geom.asWkt()
-                geom = ogr.CreateGeometryFromWkt(geom)
-            ret = feature.SetGeometry(geom)
+                if isinstance(geom, str):
+                    geom = ogr.CreateGeometryFromWkt(geom)
+                elif isinstance(geom, bytes):
+                    geom = ogr.CreateGeometryFromWkb(geom)
+                else:
+                    raise Exception('unsupported geometry type')
+            feature.SetGeometry(geom)
         ret = self._layer.CreateFeature(feature)
         if ret != 0:
             raise Exception(f'Feature could not be created in table {self.name}. '
