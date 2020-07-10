@@ -1,14 +1,15 @@
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.Qt import (QSpacerItem, QSizePolicy,
-                          QVBoxLayout, QWidget)
+from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
+from qgis.PyQt.QtWidgets import QMessageBox
 import os
+import numpy as np
 
 from projektchecktools.base.domain import Domain
 from projektchecktools.utils.utils import clear_layout
 from projektchecktools.base.project import ProjectLayer
 from projektchecktools.base.dialogs import ProgressDialog
 from projektchecktools.domains.traffic.tables import (
-    Links, Itineraries, TransferNodes, Ways)
+    Links, Itineraries, TransferNodes, Ways, Connectors)
 from projektchecktools.domains.traffic.routing import Routing
 from projektchecktools.base.params import (Params, Param, Title,
                                            Seperator, SumDependency)
@@ -54,6 +55,7 @@ class Traffic(Domain):
         self.itineraries = Itineraries.features(project=self.project,
                                                 create=True)
         self.ways = Ways.features(project=self.project, create=True)
+        self.connectors = Connectors.features(project=self.project, create=True)
 
         self.ui.distance_frame.setVisible(False)
         if len(self.transfer_nodes) == 0:
@@ -133,6 +135,26 @@ class Traffic(Domain):
         dialog.show()
 
     def calculate_traffic(self):
+
+        max_dist = getattr(self.settings, 'MAX_AREA_DISTANCE', None)
+        points = [c.geom.asPoint() for c in self.connectors]
+        xs = [p.x() for p in points]
+        ys = [p.y() for p in points]
+        if max_dist is not None:
+            distances = []
+            for i in range(len(points)):
+                for j in range(i):
+                    dist = np.linalg.norm(
+                        np.subtract((xs[i], ys[i]), (xs[j], ys[j])))
+                    distances.append(dist)
+            if distances and max(distances) > max_dist:
+                QMessageBox.warning(
+                    self.ui, 'Hinweis',
+                    'Der Abstand zwischen den Anbindungspunkten ist zu groß. '
+                    'Er darf für die Schätzung der Verkehrsbelastung jeweils '
+                    f'nicht größer als {max_dist} m sein!')
+                return
+
         distance = self.ui.distance_input.value()
         recalculate = self.ui.recalculate_check.isChecked()
         if recalculate:
