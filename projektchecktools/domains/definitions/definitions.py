@@ -109,6 +109,7 @@ class TrafficConnectors:
         '''
         if not self.connector:
             return
+        Traffic.reset()
         self.connector.geom = geom
         self.canvas.refreshAllLayers()
         self.connector.save()

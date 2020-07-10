@@ -30,8 +30,9 @@ class Traffic(Domain):
     def reset(cls, project=None):
         if not project:
             project = cls.project_manager.active_project
-        nodes = TransferNodes.features(project=project, create=True)
-        nodes.delete()
+        TransferNodes.features(project=project, create=True).delete()
+        Itineraries.features(project=project, create=True).delete()
+        Links.features(project=project, create=True).delete()
 
     def setupUi(self):
         self.ui.calculate_traffic_button.clicked.connect(
@@ -50,7 +51,8 @@ class Traffic(Domain):
         self.links = Links.features(project=self.project, create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
                                                      create=True)
-        self.itineraries = Itineraries.features(project=self.project, create=True)
+        self.itineraries = Itineraries.features(project=self.project,
+                                                create=True)
         self.ways = Ways.features(project=self.project, create=True)
 
         self.ui.distance_frame.setVisible(False)
