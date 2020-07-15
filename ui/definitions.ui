@@ -256,8 +256,8 @@
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_replace_point_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_replace_point_1.png</normalon>../images/iconset_mob/20190619_iconset_mob_replace_point_2.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -352,7 +352,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>

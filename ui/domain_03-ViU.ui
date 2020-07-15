@@ -103,7 +103,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>
@@ -162,7 +162,7 @@ padding: 2px;
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
+              <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
             </property>
            </widget>
           </item>

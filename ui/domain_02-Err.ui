@@ -166,8 +166,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_04.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_01.png</normalon>../../images/iconset_mob/20190619_iconset_mob_oepnvkarte_04.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_oepnvkarte_04.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_oepnvkarte_01.png</normalon>../images/iconset_mob/20190619_iconset_mob_oepnvkarte_04.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -224,7 +224,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -297,7 +297,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_get_stops_1.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -501,8 +501,8 @@ padding: 2px;
                     </property>
                     <property name="icon">
                      <iconset>
-                      <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                      <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                      <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                      <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                     </property>
                     <property name="iconSize">
                      <size>
@@ -562,7 +562,7 @@ padding: 2px;
                   </property>
                   <property name="icon">
                    <iconset>
-                    <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_departures_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_departures_2.png</iconset>
+                    <normaloff>../images/iconset_mob/20190619_iconset_mob_get_departures_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_get_departures_2.png</iconset>
                   </property>
                  </widget>
                 </item>
@@ -610,7 +610,7 @@ padding: 2px;
                     </property>
                     <property name="icon">
                      <iconset>
-                      <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
+                      <normaloff>../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_get_time_stop2central_2.png</iconset>
                     </property>
                    </widget>
                   </item>
@@ -800,7 +800,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_create_isochrones_3.png</iconset>
                </property>
               </widget>
              </item>
@@ -942,7 +942,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_get_features_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_get_features_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_get_features_1.png</iconset>
                </property>
                <property name="checkable">
                 <bool>false</bool>
@@ -1053,7 +1053,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>

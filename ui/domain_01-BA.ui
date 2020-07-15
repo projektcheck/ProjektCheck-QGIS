@@ -135,7 +135,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_people_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_people_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_people_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -162,7 +162,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_list_01.png</normaloff>../images/iconset_mob/20190619_iconset_mob_list_01.png</iconset>
                </property>
               </widget>
              </item>
@@ -214,7 +214,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_work_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_work_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_work_1.png</iconset>
                </property>
                <property name="flat">
                 <bool>false</bool>
@@ -244,7 +244,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_list_01.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_list_01.png</normaloff>../images/iconset_mob/20190619_iconset_mob_list_01.png</iconset>
                </property>
               </widget>
              </item>
@@ -304,7 +304,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>

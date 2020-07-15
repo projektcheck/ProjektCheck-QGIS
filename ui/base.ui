@@ -99,14 +99,14 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget[objectName=&quot;dockWidgetContents&quot;]{	
+   <string notr="true">QWidget[objectName=&quot;dockWidgetContents&quot;]{
 	background-image: url(:/images/images/banner_anamorphic.png);
-	background-size:  cover; 
-	background-position: center center; 
+	background-size:  cover;
+	background-position: center center;
 }
 QFrame[objectName=&quot;mainframe&quot;]{
 	background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 rgba(240, 240, 240, 60%), stop: 0.6 rgba(240, 240, 240, 60%), 
+                stop:0 rgba(240, 240, 240, 60%), stop: 0.6 rgba(240, 240, 240, 60%),
                 stop:1 rgba(240, 240, 240, 100%))
 }
 QLabel{
@@ -288,7 +288,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
                <enum>Qt::AutoText</enum>
               </property>
               <property name="pixmap">
-               <pixmap>../../images/ProjektCheck_Logo.png</pixmap>
+               <pixmap>../images/ProjektCheck_Logo.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -305,7 +305,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>../../images/iconset_mob/20190619_iconset_mob_settings_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_settings_2.png</iconset>
+                <normaloff>../images/iconset_mob/20190619_iconset_mob_settings_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_settings_2.png</iconset>
               </property>
              </widget>
             </item>
@@ -391,7 +391,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>../../images/iconset_mob/20190619_iconset_mob_file_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_file_delete_1.png</iconset>
+                <normaloff>../images/iconset_mob/20190619_iconset_mob_file_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_file_delete_1.png</iconset>
               </property>
              </widget>
             </item>
@@ -422,7 +422,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>../../images/iconset_mob/20190619_iconset_mob_file_create_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_file_create_1.png</iconset>
+                <normaloff>../images/iconset_mob/20190619_iconset_mob_file_create_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_file_create_1.png</iconset>
               </property>
              </widget>
             </item>
@@ -447,7 +447,7 @@ QFrame[objectName=&quot;buttonframe&quot;]{
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>../../images/iconset_mob/20190619_iconset_mob_file_duplicate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_file_duplicate_1.png</iconset>
+                <normaloff>../images/iconset_mob/20190619_iconset_mob_file_duplicate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_file_duplicate_1.png</iconset>
               </property>
              </widget>
             </item>

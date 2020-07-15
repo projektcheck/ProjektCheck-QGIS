@@ -211,8 +211,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -249,8 +249,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_road_residential_inner_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -288,8 +288,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_road_collector_inner_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -327,8 +327,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_road_residential_inner_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_road_residential_inner_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -366,8 +366,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_road_collector_inner_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_road_collector_inner_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -405,8 +405,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_seperate_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_seperate_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_seperate_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_canal_seperate_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_canal_seperate_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_canal_seperate_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -444,8 +444,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_combined_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_combined_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_combined_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_canal_combined_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_canal_combined_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_canal_combined_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -483,8 +483,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_sewage_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_sewage_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_sewage_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_canal_sewage_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_canal_sewage_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_canal_sewage_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -522,8 +522,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_canal_potable_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_canal_potable_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_canal_potable_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_canal_potable_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_canal_potable_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_canal_potable_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -561,8 +561,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_powerline_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_powerline_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_powerline_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_powerline_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_powerline_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_powerline_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -618,8 +618,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -664,7 +664,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normalon>
                 </iconset>
                </property>
               </widget>
@@ -701,7 +701,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -802,8 +802,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -842,8 +842,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_new_point_2.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_new_point_1.png</normalon>../../images/iconset_mob/20190619_iconset_mob_new_point_2.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_new_point_2.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_new_point_1.png</normalon>../images/iconset_mob/20190619_iconset_mob_new_point_2.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -918,8 +918,8 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -1039,7 +1039,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_values_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1078,7 +1078,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_specify_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_specify_2.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -1147,7 +1147,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1215,7 +1215,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_diagram_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_specify_diagram_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_specify_diagram_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_specify_diagram_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -1281,7 +1281,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_diagram_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1343,7 +1343,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_statistics_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_statistics_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1413,7 +1413,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>

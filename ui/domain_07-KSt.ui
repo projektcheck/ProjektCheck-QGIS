@@ -112,7 +112,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -201,7 +201,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -363,7 +363,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -412,7 +412,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -458,7 +458,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -526,7 +526,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -575,7 +575,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -621,7 +621,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_sum_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_sum_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_sum_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_sum_1.png</iconset>
              </property>
              <property name="checkable">
               <bool>false</bool>
@@ -662,7 +662,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
                </property>
               </widget>
              </item>
@@ -734,7 +734,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>

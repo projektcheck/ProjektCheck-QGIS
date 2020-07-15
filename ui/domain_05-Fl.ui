@@ -173,7 +173,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -196,7 +196,7 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_dwelling_statistics_1.png</iconset>
              </property>
              <property name="flat">
               <bool>false</bool>
@@ -247,8 +247,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_2_checkable.png</normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_draw_polygon_2_checkable.png</normalon>../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -304,7 +304,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
                <property name="checkable">
                 <bool>false</bool>
@@ -363,7 +363,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -448,7 +448,7 @@ padding: 2px;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>

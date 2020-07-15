@@ -109,8 +109,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -154,8 +154,8 @@ padding: 2px;
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -220,7 +220,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_create_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_template_create_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_template_create_1.png</iconset>
                </property>
                <property name="checkable">
                 <bool>false</bool>
@@ -262,7 +262,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
                </property>
                <property name="checkable">
                 <bool>false</bool>
@@ -291,7 +291,7 @@ padding: 2px;
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
                </property>
                <property name="checkable">
                 <bool>false</bool>
@@ -340,12 +340,12 @@ padding: 2px;
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenStreetMap-Daten verwenden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OpenStreetMap-Daten zu Lebensmittelgeschäften aus dem Internet laden, aufbereiten und in der Karte anzeigen. Diese Daten müssen anschließend i.d.R. noch nachbearbeitet werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Betrachtungsraum mit Märkten 
+                <string>Betrachtungsraum mit Märkten
 aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -435,7 +435,7 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -480,8 +480,8 @@ aus OSM ergänzen</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -557,8 +557,8 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -626,7 +626,7 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -698,8 +698,8 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -767,7 +767,7 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_2.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_2.png</iconset>
                </property>
               </widget>
              </item>
@@ -812,8 +812,8 @@ aus OSM ergänzen</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -873,8 +873,8 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -942,7 +942,7 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
                </property>
               </widget>
              </item>
@@ -979,8 +979,8 @@ aus OSM ergänzen</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</normaloff>
-               <normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_2_checkable.png</normalon>../../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_draw_polygon_2_checkable.png</normalon>../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1040,8 +1040,8 @@ aus OSM ergänzen</string>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
-                 <normalon>../../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -1106,7 +1106,7 @@ aus OSM ergänzen</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
              </property>
             </widget>
            </item>
@@ -1176,7 +1176,7 @@ aus OSM ergänzen</string>
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
         </property>
        </widget>
       </item>
