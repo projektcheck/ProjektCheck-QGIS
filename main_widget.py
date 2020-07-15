@@ -27,21 +27,20 @@ from qgis.PyQt.QtWidgets import QMenu, QInputDialog, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProject
 
-from projektchecktools.base.domain import PCDockWidget
-from projektchecktools.base.dialogs import (SettingsDialog, NewProjectDialog,
-                                            ProgressDialog, Dialog)
-from projektchecktools.base.project import (ProjectLayer, OSMBackgroundLayer,
-                                            TerrestrisBackgroundLayer)
-from projektchecktools.base.database import Workspace
-from projektchecktools.domains.definitions.project import (
-    ProjectInitialization, CloneProject)
-from projektchecktools.utils.utils import open_file
-from projektchecktools.domains import (JobsInhabitants, ProjectDefinitions,
-                                       Traffic, Reachabilities, Ecology,
-                                       LandUse, InfrastructuralCosts,
-                                       MunicipalTaxRevenue,
-                                       SupermarketsCompetition)
-from projektchecktools.domains.definitions.tables import Projektrahmendaten
+from projektcheck.base.domain import PCDockWidget
+from projektcheck.base.dialogs import (SettingsDialog, NewProjectDialog,
+                                       ProgressDialog, Dialog)
+from projektcheck.base.project import (ProjectLayer, OSMBackgroundLayer,
+                                       TerrestrisBackgroundLayer)
+from projektcheck.base.database import Workspace
+from projektcheck.domains.definitions.project import (ProjectInitialization,
+                                                      CloneProject)
+from projektcheck.utils.utils import open_file
+from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
+                                  Traffic, Reachabilities, Ecology,
+                                  LandUse, InfrastructuralCosts,
+                                  MunicipalTaxRevenue, SupermarketsCompetition)
+from projektcheck.domains.definitions.tables import Projektrahmendaten
 
 
 class ProjektCheckControl(PCDockWidget):

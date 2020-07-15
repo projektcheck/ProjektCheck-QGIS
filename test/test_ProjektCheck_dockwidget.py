@@ -13,8 +13,8 @@ __date__ = '2019-02-21'
 
 import unittest
 
-from settings import settings
-from main_widget import ProjektCheckControl
+from projektcheck.settings import settings
+from projektcheck.main_widget import ProjektCheckControl
 
 from .utilities import get_qgis_app
 

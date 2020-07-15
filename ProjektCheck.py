@@ -28,8 +28,8 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis import utils
 
 # init resources
-from projektchecktools.ui.resources_rc import *
-from main_widget import ProjektCheckControl
+from projektcheck.ui.resources_rc import *
+from .main_widget import ProjektCheckControl
 
 
 class ProjektCheck:
