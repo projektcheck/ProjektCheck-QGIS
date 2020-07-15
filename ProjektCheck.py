@@ -57,10 +57,10 @@ class ProjektCheck:
 
         icon_path = ':/images/images/icon.png'
         icon = QIcon(icon_path)
-        action = QAction(icon, 'Projekt-Check', self.iface.mainWindow())
-        action.triggered.connect(lambda: self.run())
-        self.toolbar.addAction(action)
-        self.iface.addPluginToMenu('Projekt-Check', action)
+        self.action = QAction(icon, 'Projekt-Check', self.iface.mainWindow())
+        self.action.triggered.connect(lambda: self.run())
+        self.toolbar.addAction(self.action)
+        self.iface.addPluginToMenu('Projekt-Check', self.action)
 
     def onClosePlugin(self):
         '''
@@ -78,9 +78,8 @@ class ProjektCheck:
         remove the plugin and its UI from the QGIS interface
         '''
 
-        for action in self.actions:
-            self.iface.removePluginMenu('Projekt-Check', action)
-            self.iface.removeToolBarIcon(action)
+        self.iface.removePluginMenu('Projekt-Check', self.action)
+        self.iface.removeToolBarIcon(self.action)
         # remove the toolbar
         if self.toolbar:
             del self.toolbar

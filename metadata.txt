@@ -16,7 +16,7 @@ email=gis@ggr-planung.de
 
 about=Mit Projekt-Check Profi-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.
 
-      Hinweis: Bitte schließen im Falle eines Updates alle offenen Hilfe-PDFs und starten Sie nach dem Update QGIS neu, damit die Änderungen übernommen werden.
+      Hinweis: Bitte schließen im Falle eines Updates alle offenen Hilfe-PDFs. Falls dennoch eine Fehlermeldung auftritt, starten Sie bitte QGIS neu und führen Sie das Update erneut ohne geöffnetes Projekt-Check-Plugin aus.
       Benötigt lxml- and pandas-Bibliotheken (ab QGIS 3.10+ standardmäßig enthalten)
 
 tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
@@ -32,9 +32,10 @@ changelog=
       - genauere Validierung der Inputs bei der Projekterstellung
       - diverse Fehler in der Projekterstellung behoben
       - Abstürze beim Wechsel der Projekte behoben
+      - Fehler nach Update des Plugins behoben
       Ökologie
-      - Fehler beim Zeichnen der Bodenbedeckung behoben
-      - Zeichnung selbst-überschneidender Flächen nicht mehr erlaubt
+      - Fehler beim Zeichnen der Bodenbedeckungen behoben
+      - Zeichnung von Flächen, die sich selbst überschneiden, nicht mehr erlaubt
       Erreichbarkeit
       - Fehler in der Erzeugung der Isochronen behoben
       - Darstellung der Haltestellen überarbeitet
