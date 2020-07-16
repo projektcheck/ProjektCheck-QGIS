@@ -3,7 +3,6 @@ from projektcheck.base.database import Field
 
 
 class Connectors(ProjectTable):
-
     id_teilflaeche = Field(int, 0)
     name_teilflaeche = Field(str, '')
 
@@ -20,13 +19,17 @@ class Ways(ProjectTable):
         workspace = 'traffic'
 
 
-class Links(ProjectTable):
-    link_id = Field(int, 0)
+class WeightedLinks(ProjectTable):
     weight = Field(float, 0)
-    distance_from_source = Field(float, 0)
 
     class Meta:
         workspace = 'traffic'
+
+
+class Links(ProjectTable):
+    weight = Field(float, 0)
+    from_node_id = Field(int, 0)
+    to_node_id = Field(int, 0)
 
 
 class Itineraries(ProjectTable):
@@ -37,8 +40,15 @@ class Itineraries(ProjectTable):
         workspace = 'traffic'
 
 
+class Routes(ProjectTable):
+    node_ids = Field(str, '')
+    source_id = Field(int, 0)
+
+    class Meta:
+        workspace = 'traffic'
+
+
 class Nodes(ProjectTable):
-    node_id = Field(int, 0)
 
     class Meta:
         workspace = 'traffic'

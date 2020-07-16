@@ -1,4 +1,3 @@
-from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
 from qgis.PyQt.QtWidgets import QMessageBox
 import os
@@ -12,7 +11,7 @@ from projektcheck.domains.traffic.tables import (
     Links, Itineraries, TransferNodes, Ways, Connectors)
 from projektcheck.domains.traffic.routing import Routing
 from projektcheck.base.params import (Params, Param, Title,
-                                           Seperator, SumDependency)
+                                      Seperator, SumDependency)
 from projektcheck.base.inputs import (SpinBox, Slider)
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.utils.utils import open_file
