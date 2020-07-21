@@ -33,6 +33,9 @@ changelog=
       - diverse Fehler in der Projekterstellung behoben
       - Abstürze beim Wechsel der Projekte behoben
       - Fehler nach Update des Plugins behoben
+      Verkehr im Umfeld
+      - überarbeitete Belastungsschätzung
+      - Berücksichtigung der Rückrichtung zu den Flächen
       Ökologie
       - Fehler beim Zeichnen der Bodenbedeckungen behoben
       - Zeichnung von Flächen, die sich selbst überschneiden, nicht mehr erlaubt

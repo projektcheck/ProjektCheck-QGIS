@@ -159,12 +159,13 @@ class Routing(Worker):
                         continue
                     for link in route.links:
                         geom = QgsGeometry()
-                        geom.fromWkb(link.get_geom().ExportToWkb())
-                        geom.transform(transform)
                         from_id = link.from_node.node_id
                         to_id = link.to_node.node_id
-                        if from_id == to_id:
+                        lg = link.get_geom()
+                        if from_id == to_id or not lg:
                             continue
+                        geom.fromWkb(lg.ExportToWkb())
+                        geom.transform(transform)
                         self.links.add(from_node_id=from_id, to_node_id=to_id,
                                        transfer_node_id=transfer_node.id,
                                        area_id=area.id, geom=geom)
