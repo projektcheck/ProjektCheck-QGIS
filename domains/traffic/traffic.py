@@ -8,7 +8,7 @@ from projektcheck.utils.utils import clear_layout
 from projektcheck.base.project import ProjectLayer
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.domains.traffic.tables import (
-    Links, Itineraries, TransferNodes, Ways, Connectors)
+    TrafficLoadLinks, Itineraries, TransferNodes, Ways, Connectors)
 from projektcheck.domains.traffic.routing import Routing
 from projektcheck.base.params import (Params, Param, Title,
                                       Seperator, SumDependency)
@@ -32,7 +32,7 @@ class Traffic(Domain):
             project = cls.project_manager.active_project
         TransferNodes.features(project=project, create=True).delete()
         Itineraries.features(project=project, create=True).delete()
-        Links.features(project=project, create=True).delete()
+        TrafficLoadLinks.features(project=project, create=True).delete()
 
     def setupUi(self):
         self.ui.calculate_traffic_button.clicked.connect(
@@ -48,7 +48,8 @@ class Traffic(Domain):
         output = ProjectLayer.find('Projektdefinition')
         if output:
             output[0].setItemVisibilityChecked(True)
-        self.links = Links.features(project=self.project, create=True)
+        self.traffic_load = TrafficLoadLinks.features(project=self.project,
+                                                      create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
                                                      create=True)
         self.itineraries = Itineraries.features(project=self.project,
@@ -70,8 +71,6 @@ class Traffic(Domain):
             self.params.close()
         layout = self.ui.settings_group.layout()
         clear_layout(layout)
-        #QWidget().setLayout(layout)
-        #layout = QVBoxLayout(self.ui.settings_group)
         self.params = Params(parent=layout, button_label='Annahmen verändern',
                              help_file='verkehr_wege_gewichtungen.txt')
 
@@ -134,7 +133,6 @@ class Traffic(Domain):
         dialog.show()
 
     def calculate_traffic(self):
-
         max_dist = getattr(self.settings, 'MAX_AREA_DISTANCE', None)
         points = [c.geom.asPoint() for c in self.connectors]
         xs = [p.x() for p in points]
@@ -181,10 +179,11 @@ class Traffic(Domain):
         output.draw(label='Zielpunkte',
                     style_file='verkehr_zielpunkte.qml')
 
-        output = ProjectLayer.from_table(self.links.table,
+        output = ProjectLayer.from_table(self.traffic_load.table,
                                          groupname=self.layer_group)
         output.draw(label='Zusätzliche PKW-Fahrten',
-                    style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml')
+                    style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml',
+                    filter=f'trips > 0')
 
         output = ProjectLayer.from_table(self.itineraries.table,
                                          groupname=self.layer_group)

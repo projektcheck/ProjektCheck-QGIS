@@ -11,7 +11,7 @@ from projektcheck.domains.traffic.otp_router import OTPRouter
 from projektcheck.base.domain import Worker
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.traffic.tables import (
-    Connectors, Links, Nodes, Itineraries, TransferNodes, Ways)
+    Connectors, RouteLinks, Ways, Itineraries, TransferNodes, TrafficLoadLinks)
 
 from projektcheck.settings import settings
 
@@ -28,20 +28,51 @@ class Routing(Worker):
         self.areas = Teilflaechen.features(project=project)
         self.connectors = Connectors.features(project=project)
         self.itineraries = Itineraries.features(project=project, create=True)
-        self.links = Links.features(project=project, create=True)
-        self.ways = Ways.features(project=project, create=True)
-        self.nodes = Nodes.features(project=project, create=True)
+        self.links = RouteLinks.features(project=project, create=True)
+        self.traffic_load = TrafficLoadLinks.features(project=project,
+                                                      create=True)
         self.transfer_nodes = TransferNodes.features(project=project,
                                                      create=True)
+        self.ways = Ways.features(project=project, create=True)
         self._recalculate = recalculate
 
     def work(self):
         if not self._recalculate:
             self.calculate_transfer_nodes()
+            self.set_progress(40)
+            self.calculate_ways()
+            self.set_progress(50)
+            self.route_transfer_nodes()
+            self.set_progress(90)
+            self.calculate_traffic_load()
         else:
-            self.recalculate()
+            self.calculate_traffic_load()
+
+    def calculate_ways(self):
+        # get ways per type of use
+        ways_tou = {}
+        self.ways.delete()
+        self.log('Prüfe Wege...')
+        for area in self.areas:
+            if area.nutzungsart == 0:
+                continue
+            entry = ways_tou.get(area.nutzungsart)
+            if not entry:
+                entry = ways_tou[area.nutzungsart] = [0, 0]
+            entry[0] += area.wege_gesamt
+            entry[1] += area.wege_miv
+        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
+            if wege_gesamt == 0:
+                continue
+            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
+                # if wege_gesamt > 0 else 0
+            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
+                          miv_anteil=miv_anteil)
 
     def calculate_transfer_nodes(self):
+        '''
+        calculate the position and weights of the initial transfer nodes
+        '''
         # tbx settings
         inner_circle = self.distance
         mid_circle = inner_circle + 500
@@ -51,43 +82,12 @@ class Routing(Worker):
         project_epsg = settings.EPSG
         otp_router = OTPRouter(distance=inner_circle, epsg=project_epsg)
 
-        ## get ways per type of use
-        #ways_tou = {}
-        #self.ways.delete()
-        #self.log('Prüfe Wege ')
-        #for area in self.areas:
-            #if area.nutzungsart == 0:
-                #continue
-            #entry = ways_tou.get(area.nutzungsart)
-            #if not entry:
-                #entry = ways_tou[area.nutzungsart] = [0, 0]
-            #entry[0] += area.wege_gesamt
-            #entry[1] += area.wege_miv
-        #for tou, (wege_gesamt, wege_miv) in ways_tou.items():
-            #if wege_gesamt == 0:
-                #continue
-            #miv_anteil = round(100 * wege_miv / wege_gesamt) # \
-                ## if wege_gesamt > 0 else 0
-            #self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
-                          #miv_anteil=miv_anteil)
-        #if len(ways_tou) == 0:
-            #self.error.emit(
-                #'Die Zahl der ermittelten Wege beträgt 0. <br>'
-                #'Bitte prüfen Sie die Definition der Nutzungen '
-                #'auf den Teilflächen.')
-            #return
-
         self.itineraries.delete()
 
         for i, area in enumerate(self.areas):
-            self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
-            #if area.wege_miv == 0:
-                #self.log('...wird übersprungen, da keine Wege im '
-                         #'MIV zurückgelegt werden')
-                #continue
+            self.log(f'Suche Routen ausgehend von Teilfläche {area.name}...')
             connector = self.connectors.get(id_teilflaeche=area.id)
             qpoint = connector.geom.asPoint()
-            #otp_router.areas.add_area(area.id, trips=area.wege_miv)
             source = Point(id=area.id, x=qpoint.x(), y=qpoint.y(),
                            epsg=project_epsg)
 
@@ -104,14 +104,12 @@ class Routing(Worker):
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 otp_router.route(source, destination)
-            self.set_progress(60 * (i + 1) / len(self.areas))
+            #self.set_progress(60 * (i + 1) / len(self.areas))
 
-        self.set_progress(60)
-
-        otp_router.build_graph(meters=inner_circle)
+        otp_router.build_graph(distance=inner_circle)
         otp_router.remove_redundancies()
 
-        self.log("berechne Zielknoten...")
+        self.log('Berechne Herkunfts- und Zielpunkte aus den Routen...')
         otp_router.transfer_nodes.calc_initial_weight()
 
         transfer_nodes_df = otp_router.get_transfer_node_features()
@@ -123,106 +121,86 @@ class Routing(Worker):
             tn_idx = transfer_nodes_df['node_id'] == transfer_node.node_id
             tn_id = transfer_nodes_df[tn_idx]['fid'].values[0]
             for route in transfer_node.routes.values():
-                nodes = [otp_router.nodes.get_node(node_id)
-                         for node_id in route.node_ids]
-                points = [QgsPoint(node.x, node.y) for node in nodes]
+                points = [QgsPoint(node.x, node.y) for node in route.nodes]
                 polyline = QgsGeometry.fromPolyline(points)
                 self.itineraries.add(geom=polyline, route_id=route.route_id,
                                      transfer_node_id=tn_id)
 
-        self.set_progress(70)
-
-        # ToDo: routen
-        #self.route_back_forth()
-
-        # ToDo: schreiben
-
-        # ToDo: Funktion zur Berechnung der Trips je link anhand der aktuellen
-        # Gewichte, da setzt auch recalculate direkt ein
-
-    def route_back_forth(self):
+    def route_transfer_nodes(self):
+        '''
+        routing between transfer nodes and area connectors
+        '''
+        self.links.delete()
+        project_epsg = settings.EPSG
+        #route_ids = {}
+        otp_router = OTPRouter(epsg=project_epsg)
+        transform = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(OTPRouter.router_epsg),
+            QgsCoordinateReferenceSystem(project_epsg),
+            QgsProject.instance()
+        )
         for i, area in enumerate(self.areas):
-            self.log(f"Suche Routen ausgehend von Teilfläche {area.name}...")
-            #if area.wege_miv == 0:
-                #self.log('...wird übersprungen, da keine Wege im '
-                         #'MIV zurückgelegt werden')
-                #continue
+            self.log(f'Suche Routen zwischen Teilfläche {area.name} und den '
+                     'Herkunfts- und Zielpunkten...')
             connector = self.connectors.get(id_teilflaeche=area.id)
             qpoint = connector.geom.asPoint()
-            otp_router.areas.add_area(area.id, trips=area.wege_miv)
-            source = Point(x=qpoint.x(), y=qpoint.y(), epsg=project_epsg)
-            for node in self.transfer_nodes:
-                pass
+            pcon = Point(id=area.id, x=qpoint.x(), y=qpoint.y(),
+                         epsg=project_epsg)
+            pcon.transform(OTPRouter.router_epsg)
+            for transfer_node in self.transfer_nodes:
+                qpoint = transfer_node.geom.asPoint()
+                pnode = Point(id=transfer_node.id, x=qpoint.x(), y=qpoint.y(),
+                              epsg=project_epsg)
+                pnode.transform(otp_router.router_epsg)
+                out_route = otp_router.route(pcon, pnode)
+                in_route = otp_router.route(pnode, pcon)
+                for route in out_route, in_route:
+                    if not route:
+                        continue
+                    for link in route.links:
+                        geom = QgsGeometry()
+                        geom.fromWkb(link.get_geom().ExportToWkb())
+                        geom.transform(transform)
+                        from_id = link.from_node.node_id
+                        to_id = link.to_node.node_id
+                        if from_id == to_id:
+                            continue
+                        self.links.add(from_node_id=from_id, to_node_id=to_id,
+                                       transfer_node_id=transfer_node.id,
+                                       area_id=area.id, geom=geom)
 
-        #self.log("berechne Gewichte...")
+    def calculate_traffic_load(self):
+        self.traffic_load.delete()
 
-        #otp_router.calc_vertex_weights()
+        self.log('Verteile das Verkehrsaufkommen...')
 
-        #self.log("schreibe Ergebnisse...")
-        #links_df = otp_router.get_polyline_features()
-        #self.links.delete()
-        #self.links.update_pandas(links_df)
-        #nodes_df = otp_router.get_node_features()
-        #self.nodes.delete()
-        #self.nodes.update_pandas(nodes_df)
-        #transfer_nodes_df = otp_router.get_transfer_node_features()
-        #self.transfer_nodes.delete()
-        #transfer_nodes_df['fid'] = range(1, len(transfer_nodes_df) + 1)
-        #self.transfer_nodes.update_pandas(transfer_nodes_df)
-        #self.set_progress(90)
+        df_links = self.links.to_pandas()
+        df_links['wege_miv'] = 0
 
-        #self.log("Ordne Routen den Zielknoten zu...")
-        #transfer_points = [n.geom.asPoint() for n in self.transfer_nodes]
-        #transfer_points = [QgsPoint(n.x(), n.y()) for n in transfer_points]
-        #transfer_ids = [node.id for node in self.transfer_nodes]
-        #distance = QgsDistanceArea()
-        #for itinerary in self.itineraries:
-            #line = QgsLineString()
-            #line.fromWkt(itinerary.geom.asWkt())
-            #distances = []
-            #for point in transfer_points:
-                #closest =  QgsGeometryUtils.closestPoint(line, point)
-                #distance = math.sqrt((closest.x() - point.x())**2 +
-                                     #(closest.y() - point.y())**2)
-                #distances.append(distance)
-            #idx = distances.index(min(distances))
-            #node_id = transfer_ids[idx]
-            #itinerary.transfer_node_id = node_id
-            #itinerary.save()
-        #otp_router.dump(self.otp_pickle_file)
+        for way in self.ways:
+            nutzungsart = way.nutzungsart
+            miv_gesamt_new = way.miv_anteil * way.wege_gesamt / 100
+            areas_tou = self.areas.filter(nutzungsart=nutzungsart)
+            miv_gesamt_old = sum(area.wege_miv for area in areas_tou)
+            if miv_gesamt_old == 0:
+                continue
+            for area in areas_tou:
+                idx = df_links['area_id'] == area.id
+                df_links.loc[idx, 'wege_miv'] = (miv_gesamt_new * area.wege_miv
+                                                 / miv_gesamt_old)
 
-    #def recalculate(self):
-        ## das kann direkt in der neuen Version einsetzen
-        #self.log('lade gespeicherte Routen...')
-        #otp_router = OTPRouter.from_dump(self.otp_pickle_file)
-
-        #o_trans_nodes = otp_router.transfer_nodes
-        #for transfer_node in self.transfer_nodes:
-            #new_weight = transfer_node.weight / 100
-            #o_trans_nodes[transfer_node.node_id].weight = new_weight
-
-        #self.log("verteile Verkehrsaufkommen...")
-        #self.set_progress(50)
-        #for way in self.ways:
-            #nutzungsart = way.nutzungsart
-            #miv_gesamt_new = way.miv_anteil * way.wege_gesamt / 100
-            #areas_tou = self.areas.filter(nutzungsart=nutzungsart)
-            #miv_gesamt_old = sum(area.wege_miv for area in areas_tou)
-            #if miv_gesamt_old == 0:
-                #continue
-            #for area in areas_tou:
-                #miv_new = miv_gesamt_new * area.wege_miv / miv_gesamt_old
-                #otp_router.areas[area.id].trips = miv_new
-
-        #self.log("berechne Neugewichtung...")
-        #self.set_progress(60)
-        #o_trans_nodes.assign_weights_to_routes()
-        #otp_router.calc_vertex_weights()
-        #self.log("schreibe Ergebnisse...")
-        #self.set_progress(70)
-        #links_df = otp_router.get_polyline_features()
-        #self.links.delete()
-        #self.links.update_pandas(links_df)
-        #otp_router.nodes_have_been_weighted = True
-        #self._extent = otp_router.extent
-        #otp_router.dump(self.otp_pickle_file)
+        df_transfer = self.transfer_nodes.to_pandas(columns=['fid', 'weight'])
+        df_weighted = df_links.merge(
+            df_transfer, how='left', left_on='transfer_node_id', right_on='fid')
+        # ways include back and forth
+        df_weighted['wege_miv'] /= 2
+        df_weighted['weight'] /= 100
+        df_weighted['trips'] = df_weighted['wege_miv'] * df_weighted['weight']
+        # linked nodes without direction
+        df_weighted['dirless'] = ['{}-{}'.format(*sorted(t))
+                                  for t in zip(df_weighted['from_node_id'],
+                                               df_weighted['to_node_id'])]
+        df_grouped = df_weighted.groupby('dirless')
+        for i, group in df_grouped:
+            self.traffic_load.add(trips=group['trips'].sum(),
+                                  geom=group['geom'].values[0])

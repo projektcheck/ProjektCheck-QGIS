@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from pickle import dump, load
 from osgeo import ogr
 from collections import OrderedDict
 from scipy.sparse import csc_matrix
@@ -19,7 +18,7 @@ requests = Request(synchronous=True)
 class Route(object):
     """Route to a destination"""
 
-    def __init__(self, route_id, source_id):
+    def __init__(self, route_id, source_id, nodes=[]):
         """
         Parameters
         ----------
@@ -27,15 +26,33 @@ class Route(object):
         """
         self.route_id = route_id
         self.source_id = source_id
-        self.node_ids = np.array([], dtype='i4')
+        self.nodes = nodes
         self.weight = 0
 
     @property
     def source_node(self):
-        if not len(self.node_ids):
+        if not len(self.nodes):
             return None
-        return self.node_ids[0]
+        return self.nodes[0]
 
+    @property
+    def destination_node(self):
+        if not len(self.nodes):
+            return None
+        return self.nodes[-1]
+
+    @property
+    def node_ids(self):
+        return [node.node_id for node in self.nodes]
+
+    @property
+    def links(self):
+        links = []
+        for i in range(len(self.nodes)):
+            if i < len(self.nodes) - 1:
+                link = Link(self.nodes[i], self.nodes[i+1], i)
+                links.append(link)
+        return links
 
 class Routes(OrderedDict):
     """Routes-object"""
@@ -55,12 +72,12 @@ class Routes(OrderedDict):
         route
         """
         for route in self.values():
-            if (source.node_id == route.node_ids[0] and
-                destination.node_id == route.node_ids[-1]):
+            if (source.node_id == route.nodes[0].node_id and
+                destination.node_id == route.nodes[-1].node_id):
                 return route
         return None
 
-    def add_route(self, route_id, source_id):
+    def add_route(self, route_id, source_id, nodes=[]):
         """
         add  route with given route_id
 
@@ -76,7 +93,7 @@ class Routes(OrderedDict):
         """
         route = self.get(route_id)
         if route is None:
-            route = Route(route_id, source_id)
+            route = Route(route_id, source_id, nodes)
             self[route_id] = route
         return route
 
@@ -89,7 +106,7 @@ class Routes(OrderedDict):
         -------
         np.array()
         """
-        return np.unique(np.array([route.source_node
+        return np.unique(np.array([route.source_node.node_id
                          for route in self.values()], dtype='i4'))
 
     def get_n_routes(self, source_id):
@@ -322,30 +339,30 @@ class Links(object):
 
 class Link(object):
     """A Vertex"""
-    def __init__(self, node1, node2, vertex_id):
-        self.node1 = node1
-        self.node2 = node2
+    def __init__(self, from_node, to_node, vertex_id):
+        self.from_node = from_node
+        self.to_node = to_node
         self.link_id = vertex_id
         self.routes = set()
         self.weight = 0.0
         self.distance_from_source = 9999999
 
     def __repr__(self):
-        return '->'.join([repr(self.node1), repr(self.node2)])
+        return '->'.join([repr(self.from_node), repr(self.to_node)])
 
     def __hash__(self):
-        return hash(((self.node1.x, self.node1.y),
-                     (self.node2.x, self.node2.y)))
+        return hash(((self.from_node.x, self.from_node.y),
+                     (self.to_node.x, self.to_node.y)))
 
     @property
     def length(self):
-        meter = np.sqrt((self.node2.x - self.node1.x) ** 2 +
-                         (self.node2.y - self.node1.y) **2)
+        meter = np.sqrt((self.to_node.x - self.from_node.x) ** 2 +
+                         (self.to_node.y - self.from_node.y) ** 2)
         return meter
 
     @property
     def node_ids(self):
-        return (self.node1.node_id, self.node2.node_id)
+        return (self.from_node.node_id, self.to_node.node_id)
 
     def add_route(self, route_id):
         """add route_id to route"""
@@ -354,8 +371,8 @@ class Link(object):
     def get_geom(self):
         """Create polyline from geometry"""
         if self.length:
-            n1 = self.node1
-            n2 = self.node2
+            n1 = self.from_node
+            n2 = self.to_node
             coord_list = [(n1.x, n1.y), (n2.x, n2.y)]
             line = ogr.Geometry(ogr.wkbLineString)
             for coords in coord_list:
@@ -368,7 +385,7 @@ class OTPRouter(object):
     router = 'deutschland'
     router_epsg = 4326
 
-    def __init__(self, distance=1000, epsg=31467):
+    def __init__(self, distance=None, epsg=31467):
         self.epsg = epsg
         self.dist = distance
         self.nodes = Nodes(epsg)
@@ -380,27 +397,14 @@ class OTPRouter(object):
         self.extent = (0.0, 0.0, 0.0, 0.0)
         self.route_counter = 0
 
-    def dump(self, filename):
-        """write myself to dumpfile"""
-        with open(filename, 'wb') as f:
-            dump(self, f, protocol=-1)
-
-    @classmethod
-    def from_dump(cls, filename, workspace=''):
-        """"""
-        with open(filename, 'rb') as f:
-            self = load(f)
-        if workspace:
-            self.ws = workspace
-        return self
-
     def __repr__(self):
         """A string representation"""
         text = 'OTPRouter with {n} nodes, {r} routes and {t} transfer nodes'
         return text.format(n=len(self.nodes), r=len(self.routes), t=len(
             self.transfer_nodes))
 
-    def route(self, source, destination, mode='CAR'):
+    def route(self, source, destination, source_id=None, route_id=None,
+              mode='CAR'):
         """
         get a routing requset for route from source to destination
 
@@ -422,10 +426,12 @@ class OTPRouter(object):
                       maxPreTransitTime=1200)
         r = requests.get(self.url, params=params, timeout=60000)
         r.raise_for_status()
-        route = self.add_route(r.json(), source_id=source.id)
+        if source_id is None:
+            source_id = source.id
+        route = self.add_route(r.json(), source_id=source_id, route_id=route_id)
         return route
 
-    def add_route(self, json, source_id=0):
+    def add_route(self, json, source_id=0, route_id=None):
         """
         Parse the geometry from a json
 
@@ -454,10 +460,10 @@ class OTPRouter(object):
         route = self.routes.get_route(source_node, destination_node)
 
         if not route:
-            route = self.routes.add_route(self.route_counter, source_id)
-
-            node_ids = [n.node_id for n in nodes]
-            route.node_ids = np.array(node_ids, dtype='i4')
+            route = self.routes.add_route(
+                route_id if route_id is not None else self.route_counter,
+                source_id, nodes=nodes
+            )
             previous_node = None
             for node in nodes:
                 if previous_node:
@@ -505,11 +511,11 @@ class OTPRouter(object):
         transfer_node : Node
         """
         route = self.routes[route_id]
-        route_nodes = route.node_ids
-        route_dist_vector = dist_vector[route_nodes]
+        node_ids = route.node_ids
+        route_dist_vector = dist_vector[node_ids]
 
         idx = np.argmax(route_dist_vector)
-        node_id = route_nodes[idx]
+        node_id = node_ids[idx]
         node = self.nodes.get_node(node_id)
         transfer_node = self.transfer_nodes.get_node(node, route)
         transfer_node.dist = route_dist_vector[idx]
@@ -523,7 +529,7 @@ class OTPRouter(object):
             transfer_node = self.get_max_node_for_route(dist_vector,
                                                         route.route_id)
 
-    def build_graph(self, meters=600):
+    def build_graph(self, distance=None):
         """Convert nodes and links to graph"""
         self.nodes.transform()
         data = self.links.link_length
@@ -539,7 +545,8 @@ class OTPRouter(object):
                                )
         dist_vector = dist_matrix.min(axis=0)
         self.set_link_distance(dist_vector)
-        dist_vector[dist_vector > meters] = np.NINF
+        if distance:
+            dist_vector[dist_vector > distance] = np.NINF
         self.get_max_nodes(dist_vector)
 
     def remove_redundancies(self):
@@ -559,7 +566,7 @@ class OTPRouter(object):
                     # transfer node is part of the route of
                     # another transfer node
                     in_route = np.in1d(transfer_node.node_id,
-                                       route.node_ids[:-1]).sum() != 0
+                                       route.nodes[:-1]).sum() != 0
                     if in_route:
                         redundant_nodes.append(transfer_node)
                         is_redundant = True
@@ -578,7 +585,7 @@ class OTPRouter(object):
     def set_link_distance(self, dist_vector):
         """set distance to plangebiet for each link"""
         for link in self.links:
-            node_id = link.node2.node_id
+            node_id = link.to_node.node_id
             dist = dist_vector[node_id]
             link.distance_from_source = dist
 
@@ -589,7 +596,9 @@ class OTPRouter(object):
         i = 0
         for link in self.links:
             geom = link.get_geom()
-            if geom and link.distance_from_source <= self.dist:
+            if self.dist and link.distance_from_source >= self.dist:
+                continue
+            if geom:
                 df.loc[i] = [link.link_id, link.weight,
                              link.distance_from_source, geom]
                 i += 1

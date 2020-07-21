@@ -19,36 +19,26 @@ class Ways(ProjectTable):
         workspace = 'traffic'
 
 
-class WeightedLinks(ProjectTable):
-    weight = Field(float, 0)
+class TrafficLoadLinks(ProjectTable):
+    trips = Field(int, 0)
 
     class Meta:
         workspace = 'traffic'
 
 
-class Links(ProjectTable):
-    weight = Field(float, 0)
+class RouteLinks(ProjectTable):
     from_node_id = Field(int, 0)
     to_node_id = Field(int, 0)
+    transfer_node_id = Field(int, 0)
+    area_id = Field(int, 0)
+
+    class Meta:
+        workspace = 'traffic'
 
 
 class Itineraries(ProjectTable):
     transfer_node_id = Field(int, 0)
     route_id = Field(int, 0)
-
-    class Meta:
-        workspace = 'traffic'
-
-
-class Routes(ProjectTable):
-    node_ids = Field(str, '')
-    source_id = Field(int, 0)
-
-    class Meta:
-        workspace = 'traffic'
-
-
-class Nodes(ProjectTable):
 
     class Meta:
         workspace = 'traffic'

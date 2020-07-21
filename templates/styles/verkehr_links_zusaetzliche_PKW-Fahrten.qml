@@ -26,7 +26,7 @@
               <Option type="Map" name="properties">
                 <Option type="Map" name="outlineWidth">
                   <Option type="bool" name="active" value="true"/>
-                  <Option type="QString" name="expression" value="scale_linear(  &quot;weight&quot; , 0, maximum( &quot;weight&quot;),0.2,8)"/>
+                  <Option type="QString" name="expression" value="scale_linear(  &quot;trips&quot; , 0, maximum( &quot;trips&quot;),0.2,8)"/>
                   <Option type="int" name="type" value="3"/>
                 </Option>
               </Option>
@@ -41,7 +41,7 @@
   </renderer-v2>
   <labeling type="simple">
     <settings calloutType="simple">
-      <text-style fieldName="round( &quot;weight&quot;)" fontWeight="50" fontLetterSpacing="0" fontItalic="0" fontFamily="MS Shell Dlg 2" fontKerning="1" fontUnderline="0" previewBkgrdColor="255,255,255,255" fontSize="10" multilineHeight="1" textOrientation="horizontal" textOpacity="1" isExpression="1" textColor="0,0,0,255" fontSizeMapUnitScale="3x:0,0,0,0,0,0" fontCapitals="0" fontSizeUnit="Point" fontStrikeout="0" fontWordSpacing="0" namedStyle="Standard" blendMode="0" useSubstitutions="0">
+      <text-style fieldName="round( &quot;trips&quot;)" fontWeight="50" fontLetterSpacing="0" fontItalic="0" fontFamily="MS Shell Dlg 2" fontKerning="1" fontUnderline="0" previewBkgrdColor="255,255,255,255" fontSize="10" multilineHeight="1" textOrientation="horizontal" textOpacity="1" isExpression="1" textColor="0,0,0,255" fontSizeMapUnitScale="3x:0,0,0,0,0,0" fontCapitals="0" fontSizeUnit="Point" fontStrikeout="0" fontWordSpacing="0" namedStyle="Standard" blendMode="0" useSubstitutions="0">
         <text-buffer bufferSizeUnits="MM" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferOpacity="1" bufferDraw="1" bufferJoinStyle="128" bufferSize="1" bufferColor="255,255,255,255" bufferBlendMode="0" bufferNoFill="1"/>
         <background shapeSizeType="0" shapeSizeUnit="MM" shapeSVGFile="" shapeOffsetUnit="MM" shapeBorderColor="128,128,128,255" shapeJoinStyle="64" shapeRadiiUnit="MM" shapeType="0" shapeRadiiX="0" shapeOffsetX="0" shapeBlendMode="0" shapeRadiiY="0" shapeOffsetY="0" shapeDraw="0" shapeOffsetMapUnitScale="3x:0,0,0,0,0,0" shapeRadiiMapUnitScale="3x:0,0,0,0,0,0" shapeFillColor="255,255,255,255" shapeRotation="0" shapeBorderWidthUnit="MM" shapeSizeMapUnitScale="3x:0,0,0,0,0,0" shapeSizeY="0" shapeBorderWidthMapUnitScale="3x:0,0,0,0,0,0" shapeSizeX="0" shapeOpacity="1" shapeBorderWidth="0" shapeRotationType="0">
           <symbol alpha="1" type="marker" name="markerSymbol" force_rhr="0" clip_to_extent="1">
