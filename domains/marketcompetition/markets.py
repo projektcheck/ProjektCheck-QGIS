@@ -15,8 +15,7 @@
 *                                                                         *
 ***************************************************************************
 
-domain for the definition of the market-distribution in the study area and
-defining scenarios to analyse the change of market income
+base classes for importing markets
 '''
 
 __author__ = 'Christoph Franke'
@@ -67,6 +66,16 @@ class ReadMarketsWorker(Worker):
     abstract worker for parsing, converting and writing markets to the database
     '''
     def __init__(self, project, epsg=4326, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project to add the markets to
+        epsg : int, optional
+            epsg code of projection of markets, defaults to 4326
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.epsg = epsg

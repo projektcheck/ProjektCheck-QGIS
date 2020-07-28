@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 '''
 ***************************************************************************
-    markets.py
+    sales.py
     ---------------------
-    Date                 : July 2019
-    Copyright            : (C) 2019 by Christoph Franke, Stefaan Hessmann
+    Date                 : May 2020
+    Copyright            : (C) 2020 by Christoph Franke, Stefaan Hessmann
     Email                : franke at ggr-planung dot de
 ***************************************************************************
 *                                                                         *
@@ -15,40 +15,64 @@
 *                                                                         *
 ***************************************************************************
 
-domain for the definition of the market-distribution in the study area and
-defining scenarios to analyse the change of market income
+calculations of sales and competition between markets
 '''
 
 __author__ = 'Christoph Franke, Stefaan Hessmann'
-__date__ = '16/07/2019'
-__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+__date__ = '14/05/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
 
 import numpy as np
 import pandas as pd
 
 
 class Sales:
+    '''
+    calculations of sales and competition between markets
+    '''
     NULLFALL = 0
     PLANFALL = 1
-    # time to separate same markets into 'Umfeld' and 'Abstand'
-    # example: cut_off_time = 5 min
-    #          nearest market = 4 min drive -> 'Umfeld'
-    #          second market = 7 min drive -> 'Umfeld'
-    #          third market = 12 min drive -> 'Abstand'
-    # Note: switched from times to km -> cutoff is > 1 km
-    relation_dist = 1  # km
+    relation_dist = 1  # cut off distance in km
 
-    def __init__(self, basedata, df_relations, df_markets, df_cells,
-                 debug=False):
+    def __init__(self, basedata, df_relations, df_markets, df_cells):
+        '''
+        Parameters
+        ----------
+        basedata : Database
+            database containing the base data
+        df_relations : Dataframe
+            relations (distances and beelines) between markets and
+            settlement cells
+        df_markets : Dataframe
+            markets and their properties
+        df_cells : Dataframe
+            settlement cells and their properties
+        '''
         self.basedata = basedata
         self.df_relations = df_relations
         self.df_markets = df_markets
         self.df_cells = df_cells
 
     def calculate_nullfall(self):
+        '''
+        calculate the status quo sales
+
+        Returns
+        -------
+        Dataframe
+            dataframe containing purchase power flows between markets and cells
+        '''
         return self._calculate_sales(self.NULLFALL)
 
     def calculate_planfall(self):
+        '''
+        calculate the scenario sales
+
+        Returns
+        -------
+        Dataframe
+            dataframe containing purchase power flows between markets and cells
+        '''
         return self._calculate_sales(self.PLANFALL)
 
     def _calculate_sales(self, setting):
@@ -143,20 +167,6 @@ class Sales:
         competitor_matrix = big_comp_matrix
         competitor_matrix[dist_matrix < 0] = 0
 
-        #if self.debug:
-            #setting_str = 'Nullfall' if setting == self.NULLFALL else 'Planfall'
-            #self.log('DEBUG: Schreibe Zwischenergebnisse')
-            #if setting == self.NULLFALL:
-                #self.write_intermediate_results(dist_matrix.transpose(),
-                                                #'Distanzmatrix')
-            #self.write_intermediate_results(
-                #attraction_matrix.transpose(),
-                #u'{}_erstes_Zwischenergebnis_KK_Anteile_Wahrsch'.format(setting_str))
-            #self.write_intermediate_results(
-                #competitor_matrix.transpose(),
-                #u'{}_zweites_Zwischenergebnis_Attraktivitaet'.format(setting_str))
-            #self.log('DEBUG: Berechnung')
-
         # include competition between same market types in attraction_matrix
         attraction_matrix *= competitor_matrix.values
 
@@ -164,30 +174,12 @@ class Sales:
         kk_flow = probabilities * kk_matrix
         kk_flow = kk_flow.fillna(0)
 
-        #if self.debug:
-            #self.log('DEBUG: Schreibe weitere Zwischenergebnisse')
-            #self.write_intermediate_results(
-                #attraction_matrix.transpose(),
-                #u'{}_drittes_Zwischenergebnis_Verteilungsmassstab_erster_Schritt'.format(setting_str))
-            #self.write_intermediate_results(
-                #probabilities.transpose(),
-                #u'{}_viertes_Zwischenergebnis_Verteilungsmassstab_zweiter_Schritt'.format(setting_str))
-            #self.write_intermediate_results(
-                #kk_flow.transpose(),
-                #u'{}_fuenftes_Zwischenergebnis_Kaufkraftstroeme'.format(setting_str))
-
         return kk_flow
 
-    #def write_intermediate_results(self, dataframe, table):
-        #self.tbx.insert_dataframe_in_table(
-            #table, dataframe.reset_index(),
-            #workspace='FGDB_Standortkonkurrenz_Supermaerkte.gdb',
-            #create=True)
-
     def calc_competitors(self, masked_dist_matrix, df_markets):
-        """
-        account competition through other markets of the same brand
-        """
+        '''
+        calculate competition between markets of the same brand
+        '''
         cutoff_dist = self.relation_dist
         results = pd.DataFrame(data=1., index=masked_dist_matrix.index,
                                columns=masked_dist_matrix.columns)
@@ -272,6 +264,9 @@ class Sales:
         return res
 
     def get_dist_matrix(self):
+        '''
+        distances between markets and cells
+        '''
         # Dataframe for distances
         dist_matrix = self.df_relations.pivot(index='id_markt',
                                            columns='id_siedlungszelle',
@@ -279,9 +274,6 @@ class Sales:
         return dist_matrix
 
     def _prepare_markets(self, df_markets, setting):
-        """
-        setting - nullfall or planfall
-        """
         betriebstyp_col = 'id_betriebstyp_nullfall' \
             if setting == self.NULLFALL else 'id_betriebstyp_planfall'
 

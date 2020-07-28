@@ -113,7 +113,7 @@ class RasterManagement:
 
 class DistanceRouting:
     '''
-
+    fast routing between an origin and several destinations
     '''
     ROUTER = 'deutschland'
     RASTER_FILE_PATTERN = 'raster_{id}.tif'
@@ -160,7 +160,20 @@ class DistanceRouting:
 
     def get_distances(self, origin, destinations, bbox=None):
         '''
+        estimate the distances between an origin and multiple destinations
 
+        Parameters
+        ----------
+        origin : Point
+        destinations : list of Points
+        bbox : tuple of Points, optional
+            bounding box to clip the server response (faster)
+
+        Returns
+        -------
+        tuple
+            list of distances of origin to destinations by car and list
+            of euclidian distances (both in meters)
         '''
         kmh = 12
         distances = np.ones(len(destinations), dtype=int)
@@ -194,7 +207,6 @@ class DistanceRouting:
             # euclidian distance
             beelines[i] = math.sqrt(math.pow(o[0] - dest.x, 2) +
                                     math.pow(o[1] - dest.y, 2))
-        print('mapping {}s'.format(time.time() - start))
 
         #os.remove(dist_raster)
         return distances, beelines

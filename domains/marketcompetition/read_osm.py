@@ -1,7 +1,26 @@
 # -*- coding: utf-8 -*-
-#
-#from qgis.core import (QgsVectorLayer, QgsField, QgsFeature, QgsGeometry,
-                       #QgsApplication)
+'''
+***************************************************************************
+    market_templates.py
+    ---------------------
+    Date                 : May 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+request and import markets from OSM data
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '04/05/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
 
 from projektcheck.utils.spatial import (Point, minimal_bounding_poly,
                                         remove_duplicates, intersect)
@@ -14,19 +33,36 @@ requests = Request(synchronous=True)
 
 
 class ReadOSMWorker(ReadMarketsWorker):
+    '''
+    worker for importing markets from osm into the study area
+    '''
     _markets_table = 'Maerkte'
     _max_count = 3000  # max number of markets
 
     def __init__(self, project, epsg=4326, truncate=False, buffer=0,
                  parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project to add the markets to
+        epsg : int, optional
+            epsg code of projection of markets, defaults to 4326
+        truncate : bool, optional
+            remove existing osm markets, defaults to keeping markets
+        buffer : int, optional
+            buffer around the selected study area to find markets in, defaults
+            to no buffer
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(project=project, parent=parent)
         self.epsg = epsg
         self.buffer = buffer
         self.truncate = truncate
 
     def work(self):
-        # get amrkets in minimal bounding polygon (in fact multiple rectangles,
-        # as always there is no basic function for minimal bounding polygon)
+        # get markets in minimal bounding polygon
         communities = Centers.features(project=self.project).filter(
             auswahl__ne=0, nutzerdefiniert=-1)
         geometries = [f.geom for f in communities]
@@ -83,9 +119,18 @@ class ReadOSMWorker(ReadMarketsWorker):
 
 
 class OSMShopsReader(object):
+    '''
+    request osm markets from geoserver
+    '''
     geoserver_epsg = 3035
 
     def __init__(self, epsg=31467):
+        '''
+        Parameters
+        ----------
+        epsg : int
+            epsg code of projection the markets will be in
+        '''
         self.url = settings.GEOSERVER_URL + '/wfs?'
         self.wfs_params = dict(service='WFS',
                                request='GetFeature',
@@ -96,21 +141,23 @@ class OSMShopsReader(object):
 
 
     def get_shops(self, polygon, count=1000):
-        """
-        get shops from osm
+        '''
+        get shops from osm in the given area
 
         Parameters
         ----------
-        source : Point
-        distance : float
-            the distance in meters
+        polygon : list
+            list of points spanning the area the markets should be in
+        count : int, optional
+            max. number of returned markets, defaults to 1000
 
         Returns
         -------
-        json
-        """
+        list
+            list of Supermarkets
+        '''
         query = 'INTERSECTS(geom,POLYGON(({})))'
-        # weird that the geoserver expects a polygon in a different projection
+        # weird: the geoserver expects a polygon in a different projection
         # (always 3035) than the passed srs
         poly_trans = [p.transform(self.geoserver_epsg) for p in polygon]
         str_poly = ', '.join(('{} {}'.format(pnt[1], pnt[0])
@@ -127,22 +174,6 @@ class OSMShopsReader(object):
         return self._decode_json(json)
 
     def _decode_json(self, json):
-        """
-        Parse the geometry from a json
-
-        Parameters
-        ----------
-        json : json-instance
-
-        route_id : int
-
-        source_id : int, optional(default=0)
-
-        Returns
-        -------
-        supermarkets : list
-            a list with all supermarkets found
-        """
         try:
             features = json['features']
         except KeyError:

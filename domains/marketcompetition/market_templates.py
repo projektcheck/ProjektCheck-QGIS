@@ -1,4 +1,27 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    market_templates.py
+    ---------------------
+    Date                 : April 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+classes for creating and reading markets from template files
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '30/04/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
+
 import subprocess
 import os
 import sys
@@ -16,14 +39,31 @@ from projektcheck.base.dialogs import Dialog
 from projektcheck.settings import settings
 from .markets import Supermarket, ReadMarketsWorker
 
-
+# default file name
 DEFAULT_NAME = 'maerkte_vorlage'
 
 
 class MarketTemplateImportWorker(ReadMarketsWorker):
+    '''
+    worker for importing markets from a template file
+    '''
 
     def __init__(self, file_path, project, epsg=4326, truncate=False,
                  parent=None):
+        '''
+        Parameters
+        ----------
+        file_path : str
+            path to template file
+        project : Poject
+            the project to add the markets to
+        epsg : int, optional
+            epsg code of projection of markets, defaults to 4326
+        truncate : bool, optional
+            remove existing status quo markets, defaults to keeping markets
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(project=project, parent=parent, epsg=epsg)
         self.file_path = file_path
         self.truncate = truncate
@@ -48,6 +88,10 @@ class MarketTemplateImportWorker(ReadMarketsWorker):
 
 
 class MarketTemplateCreateDialog(Dialog):
+    '''
+    dialog to select template type and folder to write an empty market template
+    file to
+    '''
     ui_file = 'create_template.ui'
 
     def __init__(self):
@@ -61,6 +105,9 @@ class MarketTemplateCreateDialog(Dialog):
         self.cancel_button.clicked.connect(self.reject)
 
     def create_template(self):
+        '''
+        write template file
+        '''
         typ = self.template_type_combo.currentText()
         template = MarketTemplate(typ, self.path_edit.text(),
                                   epsg=settings.EPSG)
@@ -75,6 +122,9 @@ class MarketTemplateCreateDialog(Dialog):
                 'Bitte prüfen Sie die Schreibrechte im gewählten Ordner')
 
     def browse_path(self):
+        '''
+        select path to template file
+        '''
         typ = self.template_type_combo.currentText()
         ext = MarketTemplate.template_types[typ][0]
         path, f = QFileDialog.getSaveFileName(

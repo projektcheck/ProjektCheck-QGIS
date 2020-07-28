@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    projektwirkung.py
+    ---------------------
+    Date                 : May 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+calculation of the impact of additional/changed markets in the study area
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '14/05/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
+
 import os
 import pandas as pd
 import numpy as np
@@ -9,7 +33,7 @@ from qgis.core import (QgsCoordinateTransform, QgsProject, QgsRasterLayer,
 
 from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.utils.spatial import (Point, create_layer, intersect,
-                                             clip_raster, get_bbox)
+                                        clip_raster, get_bbox)
 from projektcheck.base.domain import Worker
 from .sales import Sales
 from .routing_distances import DistanceRouting
@@ -20,9 +44,21 @@ DEBUG = False
 
 
 class Projektwirkung(Worker):
-
-    def __init__(self, project, recalculate=False, settlement_buffer=3000,
-                 markets_buffer=6000, parent=None):
+    '''
+    calculation of the impact of additional/changed markets in the study area
+    '''
+    def __init__(self, project, recalculate=False, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project the study area and markets are in
+        recalculate : bool, optional
+            recalculate the settlement cells and the distances to the markets,
+            is auto triggered when the selection of the study area was changed
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.areas = Teilflaechen.features(project=project)
         self.markets = Markets.features(project=project)
@@ -33,10 +69,11 @@ class Projektwirkung(Worker):
         self.settings = Settings.features(project=project, create=True)
         self.project = project
         self.recalculate = recalculate
-        self.markets_buffer = markets_buffer
-        self.settlement_buffer = settlement_buffer
 
     def validate_inputs(self):
+        '''
+        check if project data is valid for the calculation
+        '''
         df_markets = self.markets.to_pandas()
         id_nullfall = df_markets['id_betriebstyp_nullfall']
         id_planfall = df_markets['id_betriebstyp_planfall']
@@ -137,10 +174,10 @@ class Projektwirkung(Worker):
         self.update_centers()
 
     def calculate_zensus(self, gemeinden, default_kk_index, base_kk):
-        """
+        '''
         return the centroids of the zensus cells as points inside the
         given area
-        """
+        '''
         self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
         epsg = self.project.settings.EPSG
 
@@ -232,6 +269,9 @@ class Projektwirkung(Worker):
             gem.save()
 
     def update_areas(self, default_kk_index, base_kk):
+        '''
+        update the settlement cells created by the areas
+        '''
         for area in self.areas:
             cell = self.cells.get(id_teilflaeche=area.id)
             if not cell:
@@ -452,6 +492,9 @@ class Projektwirkung(Worker):
         self.centers.update_pandas(df_centers_res)
 
     def distances_to_db(self, market_id, destinations, distances, beelines):
+        '''
+        store calculated distances in database
+        '''
         for i, dest in enumerate(destinations):
             self.relations.add(
                 id_siedlungszelle=dest.id,
