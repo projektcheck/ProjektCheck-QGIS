@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    reachabilities.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for calculating and visualizing the reachabilties of the project areas
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import webbrowser
 import os
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -15,11 +39,14 @@ from .bahn_query import BahnQuery, StopScraper, BahnRouter, next_working_day
 from .tables import (Haltestellen, ErreichbarkeitenOEPNV, Einrichtungen,
                      Isochronen)
 from .geoserver_query import EinrichtungenQuery
-from .routing_query import Isochrones
+from .isochrones import Isochrones
 
 
 class Reachabilities(Domain):
-    """"""
+    '''
+    domain-widget for calculating and visualizing the reachabilties of the
+    project areas
+    '''
 
     ui_label = 'Erreichbarkeit'
     ui_file = 'domain_02-Err.ui'
@@ -78,6 +105,9 @@ class Reachabilities(Domain):
         self.fill_connectors()
 
     def feature_picked(self, feature):
+        '''
+        set given public stop as selected
+        '''
         self.stops_layer.removeSelection()
         self.stops_layer.select(feature.id())
         fid = feature.id()
@@ -87,6 +117,9 @@ class Reachabilities(Domain):
         self.ui.stops_combo.setCurrentIndex(idx)
 
     def toggle_connector(self):
+        '''
+        change active traffic connector
+        '''
         connector = self.ui.connector_combo.currentData()
 
         area_output = ProjectLayer.find('Nutzungen des Plangebiets')
@@ -113,6 +146,9 @@ class Reachabilities(Domain):
             connector_layer.select(connector.id)
 
     def toggle_stop(self, stop=None):
+        '''
+        change active public stop
+        '''
         if not stop:
             stop = self.ui.stops_combo.currentData()
         if not stop:
@@ -129,6 +165,10 @@ class Reachabilities(Domain):
             self.stops_layer.select(stop.id)
 
     def query_stops(self):
+        '''
+        query public stops, only shows them if already queried and checkbox is
+        unchecked
+        '''
         if not self.ui.recalculatestops_check.isChecked():
             self.draw_haltestellen()
             return
@@ -151,6 +191,9 @@ class Reachabilities(Domain):
         dialog.show()
 
     def fill_haltestellen(self):
+        '''
+        fill combobox with available public stops
+        '''
         last_calc = self.project_frame.haltestellen_berechnet
         already_calculated = (last_calc not in ['', '""']
                               and last_calc is not None)
@@ -173,6 +216,9 @@ class Reachabilities(Domain):
         self.toggle_stop()
 
     def fill_connectors(self):
+        '''
+        fill combobox with available traffic connectors
+        '''
         self.ui.connector_combo.blockSignals(True)
         self.ui.connector_combo.clear()
         self.ui.connector_combo.addItem('nichts ausgewählt')
@@ -183,6 +229,9 @@ class Reachabilities(Domain):
         self.toggle_connector()
 
     def draw_haltestellen(self, zoom_to=True):
+        '''
+        show layer of public stops
+        '''
         output = ProjectLayer.from_table(
             self.haltestellen.table, groupname=self.layer_group)
         self.stops_layer = output.draw(
@@ -196,6 +245,9 @@ class Reachabilities(Domain):
         self.toggle_stop()
 
     def show_time_table(self):
+        '''
+        open time table of currently selected public stop in browser
+        '''
         stop = self.ui.stops_combo.currentData()
         if not stop:
             return
@@ -212,6 +264,10 @@ class Reachabilities(Domain):
         webbrowser.open(url, new=1, autoraise=True)
 
     def calculate_time(self):
+        '''
+        calculate durations of connections between currently selected public
+        stop and central places
+        '''
         stop = self.ui.stops_combo.currentData()
         if not stop:
             return
@@ -238,6 +294,10 @@ class Reachabilities(Domain):
         dialog.show()
 
     def draw_erreichbarkeiten(self, stop):
+        '''
+        show layer with durations of connections between currently selected
+        public stop and central places
+        '''
         sub_group = u'Erreichbarkeiten ÖPNV'
 
         label = f'ab {stop.name}'
@@ -251,6 +311,10 @@ class Reachabilities(Domain):
         output.zoom_to()
 
     def get_isochrones(self):
+        '''
+        calculate isochrones around currently selected connector with currently
+        selected mode and selected cutoff times
+        '''
         modus = 'zu Fuß' if self.ui.walk_radio.isChecked() \
             else 'Fahrrad' if self.ui.bike_radio.isChecked() \
             else 'Auto'
@@ -271,6 +335,9 @@ class Reachabilities(Domain):
         dialog.show()
 
     def get_einrichtungen(self):
+        '''
+        query locations of interest around project areas
+        '''
         radius = self.ui.radius_input.value()
         job = EinrichtungenQuery(self.project, radius=radius, parent=self.ui)
         dialog = ProgressDialog(
@@ -278,6 +345,9 @@ class Reachabilities(Domain):
         dialog.show()
 
     def draw_einrichtungen(self):
+        '''
+        show layer with locations of interest
+        '''
         output = ProjectLayer.from_table(
             self.einrichtungen.table, groupname=self.layer_group)
         output.draw(label='Einrichtungen',
@@ -286,6 +356,9 @@ class Reachabilities(Domain):
         output.zoom_to()
 
     def draw_isochrones(self, modus, connector):
+        '''
+        draw isochrones around given connector with given mode
+        '''
         sub_group = f'Erreichbarkeiten'
 
         output = ProjectLayer.from_table(
@@ -309,6 +382,9 @@ class Reachabilities(Domain):
         layer.triggerRepaint()
 
     def oepnv_map(self):
+        '''
+        add ÖPNVKarte as background layer
+        '''
         group = (f'{self.layer_group}/ÖPNV Hintergrundkarte')
         url = ('type=xyz&url=http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png'
                '&zmax=18&zmin=0&crs=EPSG:{settings.EPSG}')

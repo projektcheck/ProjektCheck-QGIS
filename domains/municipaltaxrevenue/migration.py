@@ -1,9 +1,31 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    municipaltaxrevenue.py
+    ----------------------
+    Date                 : May 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+calculations of migration of jobs and inhabitants
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '18/05/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
+
 import processing
 import os
 from qgis.core import (QgsRasterLayer, QgsVectorLayer, QgsFeature,
-                       QgsVectorFileWriter, QgsField,
-                       QgsCoordinateReferenceSystem)
+                       QgsVectorFileWriter, QgsField)
 from qgis.PyQt.Qt import QVariant
 
 from projektcheck.utils.spatial import create_layer
@@ -18,9 +40,21 @@ import numpy as np
 
 
 class MigrationCalculation(Worker):
+    '''
+    base worker for calculation of migration
+    '''
+    # distance rings
     rings = [1500, 2500, 3500, 4500, 6500, 8500, 11500, 14500, 18500, 25000]
 
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.areas = Teilflaechen.features(project=project)
@@ -30,8 +64,6 @@ class MigrationCalculation(Worker):
         self.project_frame = Projektrahmendaten.features()[0]
 
     def work(self):
-        #p = self.zensus_layer.dataProvider()
-        #p.truncate()
         if not self.zensus_layer.isValid() or len(self.zensus_layer) == 0:
             self.zensus_layer = self.create_zensus_rings()
         else:
@@ -68,6 +100,9 @@ class MigrationCalculation(Worker):
 
     @staticmethod
     def calculate_saldi(df_wanderung, wanderungs_factor, project_ags):
+        '''
+        calculate the delta of migration; takes fixed values into account
+        '''
         project_idx = df_wanderung['AGS'] == project_ags
         project_row = df_wanderung[project_idx]
         zuzug = project_row['zuzug'].values[0]
@@ -88,6 +123,9 @@ class MigrationCalculation(Worker):
         return df_wanderung
 
     def create_zensus_rings(self):
+        '''
+        intersect study area with zensus raster
+        '''
         self.log('Extrahiere Siedlungszellen aus Zensusdaten...')
         epsg = self.project.settings.EPSG
         zensus_file = os.path.join(self.project.basedata.base_path,
@@ -174,7 +212,8 @@ class MigrationCalculation(Worker):
             'native:intersection', parameters)['OUTPUT']
 
         options = QgsVectorFileWriter.SaveVectorOptions()
-        options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
+        options.actionOnExistingFile = \
+            QgsVectorFileWriter.CreateOrOverwriteLayer
         options.layerName = 'zensus_rings'
         QgsVectorFileWriter.writeAsVectorFormat(
             clipped_w_ags, self.gemeinden.workspace.path, options)
@@ -183,8 +222,18 @@ class MigrationCalculation(Worker):
 
 
 class EwMigrationCalculation(MigrationCalculation):
-
+    '''
+    calculation of migration of inhabitants
+    '''
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(project, parent=parent)
         self.wanderung = EinwohnerWanderung.features(project=project)
 
@@ -219,9 +268,19 @@ class EwMigrationCalculation(MigrationCalculation):
 
 
 class SvBMigrationCalculation(MigrationCalculation):
-    ''''''
+    '''
+    calculation of migration of jobs
+    '''
 
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(project, parent=parent)
         self.wanderung = BeschaeftigtenWanderung.features(project=project)
 

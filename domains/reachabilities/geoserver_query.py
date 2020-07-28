@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    geoserver_query.py
+    ---------------------
+    Date                 : November 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+geoserver feature queries
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '01/11/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 from projektcheck.base.domain import Worker
 from projektcheck.utils.spatial import Point
@@ -9,6 +33,12 @@ requests = Request(synchronous=True)
 
 
 class Feature(Point):
+    '''
+    representation of a geoserver feature, taken from ArcGIS-version to keep the
+    interface used in some auxiliary functions in this domain
+
+    ToDo: replace this with the actual Feature
+    '''
     def __init__(self, x, y, name, category, id=None, epsg=4326):
         super(Feature, self).__init__(x, y, id, epsg)
         self.name = name
@@ -16,8 +46,12 @@ class Feature(Point):
 
 
 class GeoserverQuery(object):
+    '''
+    geoserver feature query
+    '''
     feature_url = settings.GEOSERVER_URL + '/wfs'
 
+    # default request parameters
     feature_params = {
         'service': 'WFS',
         'request': 'GetFeature',
@@ -29,11 +63,29 @@ class GeoserverQuery(object):
         'srsname': 'EPSG:4326'
     }
 
-    epsg = 3035
-
+    epsg = 3035 # default geoserver projection
 
     def get_features(self, point, radius, categories, target_epsg):
-        '''return list of Features within given radius around point'''
+        '''
+        get features within given radius around point
+
+        Parameters
+        ----------
+        point : Point
+            center of area to get features in
+        radius : int
+            radius spanning area around center point to get features in
+        categories : list
+            list of categories (strings) of the features, corresponds to the
+            tags the features have in the geoserver db
+        target_epsg : int
+            epsg codes of the returned features
+
+        Returns
+        -------
+        list
+             list of Features
+        '''
         if point.epsg != self.epsg:
             point.transform(self.epsg)
         params = self.feature_params.copy()
@@ -64,13 +116,26 @@ class GeoserverQuery(object):
 
 
 class EinrichtungenQuery(Worker):
-    cutoff = None
+    '''
+    worker to query locations of interest
+    '''
 
+    # feature tags
     categories = [u'Kita', u'Autobahnanschlussstelle', u'Dienstleistungen',
                   u'Ärzte', 'Freizeit', u'Läden',
                   u'Supermarkt/Einkaufszentrum', 'Schule']
 
     def __init__(self, project, radius=1, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Project
+            the project
+        radius : int, optional
+            the radius in km around the project areas to query locations in
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.einrichtungen = Einrichtungen.features(project=project)
         self.project_frame = Projektrahmendaten.features(project=project)[0]

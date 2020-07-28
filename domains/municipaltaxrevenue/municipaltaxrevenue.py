@@ -1,3 +1,28 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    municipaltaxrevenue.py
+    ----------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for the calculation of changes in tax revenue in the project muncipality
+caused by additional jobs and inhabitants
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 import numpy as np
@@ -25,6 +50,14 @@ from projektcheck.utils.utils import open_file
 
 
 class Migration(QObject):
+    '''
+    base class for migration
+
+    Attributes
+    ----------
+    changed : pyqtSignal
+        emitted when parameters are changed
+    '''
     changed = pyqtSignal()
 
     def __init__(self, project, ui, layer_group, canvas):
@@ -48,7 +81,9 @@ class Migration(QObject):
 
 
 class EinwohnerMigration(Migration):
-
+    '''
+    migration of inhabitants
+    '''
     def __init__(self, project, ui, layer_group, canvas):
         super().__init__(project, ui, layer_group, canvas)
         self.ui.migration_inhabitants_button.clicked.connect(self.calculate)
@@ -66,6 +101,9 @@ class EinwohnerMigration(Migration):
             self.setup_params()
 
     def calculate(self):
+        '''
+        calculate the migration
+        '''
         if not self.ui.recalculate_inhabitants_check.isChecked():
             self.add_layer()
             return
@@ -94,6 +132,9 @@ class EinwohnerMigration(Migration):
         self.dialog.show()
 
     def setup_params(self):
+        '''
+        set up migration settings for each muncipality in study area
+        '''
         if self.params:
             self.params.close()
         self.ui.einwohner_parameter_group.setVisible(True)
@@ -186,6 +227,9 @@ class EinwohnerMigration(Migration):
         self.params.changed.connect(save)
 
     def add_layer(self):
+        '''
+        show layer with migration of inhabitants
+        '''
         self.output = ProjectLayer.from_table(
             self.wanderung.table, groupname=self.layer_group)
         self.output.draw(
@@ -197,7 +241,10 @@ class EinwohnerMigration(Migration):
 
 
 class BeschaeftigtenMigration(Migration):
-
+    '''
+    migration of jobs
+    (resp. the employees, "Sozialversichungspflichtig Beschäftigte")
+    '''
     def __init__(self, project, ui, layer_group, canvas):
         super().__init__(project, ui, layer_group, canvas)
         self.ui.migration_jobs_button.clicked.connect(self.calculate)
@@ -213,6 +260,9 @@ class BeschaeftigtenMigration(Migration):
             self.setup_params()
 
     def calculate(self):
+        '''
+        calculate migration of jobs
+        '''
         if not self.ui.recalculate_jobs_check.isChecked():
             self.add_layer()
             return
@@ -243,6 +293,9 @@ class BeschaeftigtenMigration(Migration):
         self.dialog.show()
 
     def setup_params(self):
+        '''
+        set up migration settings for each muncipality in study area
+        '''
         if self.params:
             self.params.close()
         self.ui.svb_parameter_group.setVisible(True)
@@ -345,6 +398,9 @@ class BeschaeftigtenMigration(Migration):
         self.params.changed.connect(save)
 
     def add_layer(self):
+        '''
+        show layer with migration of jobs
+        '''
         self.output = ProjectLayer.from_table(
             self.wanderung.table, groupname=self.layer_group)
         self.output.draw(
@@ -356,6 +412,9 @@ class BeschaeftigtenMigration(Migration):
 
 
 class Grundsteuer(QObject):
+    '''
+    parameters and calculation of property tax
+    '''
     changed = pyqtSignal()
 
     def __init__(self, project, ui, layer_group):
@@ -377,7 +436,7 @@ class Grundsteuer(QObject):
         self.gemeinden = Gemeindebilanzen.features(project=self.project)
         self.grst_settings = GrundsteuerSettings.features(create=True)
         if len(self.grst_settings) == 0:
-            self.get_grst_base_settings()
+            self.init_grst_base_settings()
         self.grst_settings = self.grst_settings[0]
         self.areas = Teilflaechen.features(project=self.project)
         self.ew_wanderung = EinwohnerWanderung.features()
@@ -388,7 +447,10 @@ class Grundsteuer(QObject):
         self.setup_sachwert()
         self.setup_bauvolumen()
 
-    def get_grst_base_settings(self):
+    def init_grst_base_settings(self):
+        '''
+        initialize the parameters of the base settings
+        '''
         gemeinden = self.project.basedata.get_table(
             'bkg_gemeinden', 'Basisdaten_deutschland').features()
         gem = gemeinden.get(AGS=self.project_frame.ags)
@@ -409,6 +471,9 @@ class Grundsteuer(QObject):
         self.grst_settings.add(**attrs)
 
     def setup_hebesatz(self):
+        '''
+        assessment rate parameters
+        '''
         if self.hebesatz_params:
             self.hebesatz_params.close()
         layout = self.ui.grundsteuer_hebesatz_param_group.layout()
@@ -433,6 +498,9 @@ class Grundsteuer(QObject):
         self.hebesatz_params.changed.connect(save)
 
     def setup_rohmiete(self):
+        '''
+        gross rent parameters
+        '''
         tou = self.areas.values('nutzungsart')
         if self.grst_settings.is_new_bundesland \
            or not Nutzungsart.WOHNEN.value in tou:
@@ -490,6 +558,9 @@ class Grundsteuer(QObject):
         self.rohmiete_params.changed.connect(save)
 
     def setup_sachwert(self):
+        '''
+        asset value parameters
+        '''
         tou = self.areas.values('nutzungsart')
         if not self.grst_settings.is_new_bundesland\
            or not Nutzungsart.WOHNEN.value in tou:
@@ -529,6 +600,9 @@ class Grundsteuer(QObject):
         self.sachwert_params.changed.connect(save)
 
     def setup_bauvolumen(self):
+        '''
+        construction volume parameters
+        '''
         tou = self.areas.values('nutzungsart')
         if not (Nutzungsart.GEWERBE.value in tou or
                 Nutzungsart.EINZELHANDEL.value in tou):
@@ -577,13 +651,9 @@ class Grundsteuer(QObject):
         self.bauvolumen_params.changed.connect(save)
 
     def calculate(self):
-        #if len(self.ew_wanderung) == 0 and len(self.svb_wanderung) == 0:
-            #QMessageBox.warning(
-                #self.ui, 'Fehler',
-                #'Bitte führen Sie zunächst die Schätzung der Wanderungssalden '
-                #'(Einwohner und/oder Beschäftige) durch.')
-            #return
-
+        '''
+        calculate the property tax
+        '''
         job = GrundsteuerCalculation(self.project)
 
         def on_success(r):
@@ -595,6 +665,9 @@ class Grundsteuer(QObject):
         self.dialog.show()
 
     def add_layer(self):
+        '''
+        show property tax layer
+        '''
         self.output = ProjectLayer.from_table(
             self.gemeinden.table, groupname=self.layer_group)
         self.output.draw(
@@ -617,6 +690,9 @@ class Grundsteuer(QObject):
 
 
 class Gewerbesteuer(QObject):
+    '''
+    parameters and calculation of business tax
+    '''
     changed = pyqtSignal()
 
     def __init__(self, project, ui, layer_group):
@@ -660,6 +736,9 @@ class Gewerbesteuer(QObject):
         self.params.changed.connect(save)
 
     def calculate(self):
+        '''
+        calculate the business tax
+        '''
         if len(BeschaeftigtenWanderung.features()) == 0:
             QMessageBox.warning(
                 self.ui, 'Fehler',
@@ -677,6 +756,9 @@ class Gewerbesteuer(QObject):
         self.dialog.show()
 
     def add_layer(self):
+        '''
+        show business tax layer
+        '''
         self.output = ProjectLayer.from_table(
             self.gemeinden.table, groupname=self.layer_group)
         self.output.draw(
@@ -693,7 +775,10 @@ class Gewerbesteuer(QObject):
 
 
 class MunicipalTaxRevenue(Domain):
-    """"""
+    '''
+    domain-widget for analyzing the job and inhabitant migration and the
+    resulting tax revenue changes
+    '''
     radius = 25000
 
     ui_label = 'Kommunale Steuereinnahmen'
@@ -749,14 +834,17 @@ class MunicipalTaxRevenue(Domain):
             project=self.project)[0]
         self.gemeinden = Gemeindebilanzen.features(create=True)
         if len(self.gemeinden) == 0:
-            self.get_gemeinden()
+            self.init_gemeinden()
 
         self.migration_ew.load_content()
         self.migration_svb.load_content()
         self.grundsteuer.load_content()
         self.gewerbesteuer.load_content()
 
-    def get_gemeinden(self):
+    def init_gemeinden(self):
+        '''
+        get the muncipalities around the project areas and store them
+        '''
         gemeinden = self.project.basedata.get_table('bkg_gemeinden',
                                                     'Basisdaten_deutschland')
         buffer_geom = self.project_frame.geom.buffer(self.radius, 5)
@@ -773,6 +861,9 @@ class MunicipalTaxRevenue(Domain):
             self.gemeinden.add(**attrs)
 
     def calc_einkommensteuer(self):
+        '''
+        calculate the income tax based on the inhabitant migration
+        '''
         if len(self.migration_ew.wanderung) == 0:
             QMessageBox.warning(
                 self.ui, 'Fehler',
@@ -791,6 +882,9 @@ class MunicipalTaxRevenue(Domain):
         self.dialog.show()
 
     def calc_fam_ausgleich(self):
+        '''
+        calculate the family compensation based on the income tax
+        '''
         if sum([abs(gem.einkommensteuer) for gem in self.gemeinden]) == 0:
             QMessageBox.warning(
                 self.ui, 'Fehler',
@@ -808,6 +902,9 @@ class MunicipalTaxRevenue(Domain):
         self.dialog.show()
 
     def calc_umsatzsteuer(self):
+        '''
+        calculate the value added tax based on the business tax
+        '''
         if sum([abs(gem.gewerbesteuer) for gem in self.gemeinden]) == 0:
             QMessageBox.warning(
                 self.ui, 'Fehler',
@@ -830,6 +927,9 @@ class MunicipalTaxRevenue(Domain):
         self.add_ust_layer()
 
     def calc_gesamtsumme(self):
+        '''
+        calculate the total change of tax revenue
+        '''
         tou = self.areas.values('nutzungsart')
         if (Nutzungsart.WOHNEN.value in tou and
             sum([abs(gem.fam_leistungs_ausgleich)
@@ -855,6 +955,9 @@ class MunicipalTaxRevenue(Domain):
         self.add_gesamt_layer()
 
     def add_est_layer(self):
+        '''
+        show income tax layer
+        '''
         self.output = ProjectLayer.from_table(
             self.gemeinden.table, groupname=self.layer_group)
         self.output.draw(
@@ -866,6 +969,9 @@ class MunicipalTaxRevenue(Domain):
         self.output.zoom_to()
 
     def add_fla_layer(self):
+        '''
+        show family compensation layer
+        '''
         self.output = ProjectLayer.from_table(
             self.gemeinden.table, groupname=self.layer_group)
         self.output.draw(
@@ -877,6 +983,9 @@ class MunicipalTaxRevenue(Domain):
         self.output.zoom_to()
 
     def add_ust_layer(self):
+        '''
+        show value added tax layer
+        '''
         self.output = ProjectLayer.from_table(
             self.gemeinden.table, groupname=self.layer_group)
         self.output.draw(
@@ -888,6 +997,9 @@ class MunicipalTaxRevenue(Domain):
         self.output.zoom_to()
 
     def add_gesamt_layer(self):
+        '''
+        show layer with total changes in tax revenues
+        '''
         self.output = ProjectLayer.from_table(
             self.gemeinden.table, groupname=self.layer_group)
         self.output.draw(
@@ -903,6 +1015,9 @@ class MunicipalTaxRevenue(Domain):
                                    'gewerbesteuer', 'umsatzsteuer',
                                    'fam_leistungs_ausgleich',
                                    'summe_einnahmen']):
+        '''
+        remove the results and layers
+        '''
         bilanzen = Gemeindebilanzen.features(create=True)
         df_bilanzen = bilanzen.to_pandas()
         for field in fields:
@@ -913,12 +1028,18 @@ class MunicipalTaxRevenue(Domain):
 
     @classmethod
     def reset_gewerbe_einzelhandel(cls):
+        '''
+        remove the results based on changes of business and retail trade
+        '''
         BeschaeftigtenWanderung.get_table(create=True).truncate()
         cls.reset_results(fields=['grundsteuer', 'gewerbesteuer','umsatzsteuer',
                                   'summe_einnahmen'])
 
     @classmethod
     def reset_wohnen(cls):
+        '''
+        remove the results based on residential changes
+        '''
         EinwohnerWanderung.get_table(create=True).truncate()
         cls.reset_results(fields=['grundsteuer', 'fam_leistungs_ausgleich',
                                   'einkommensteuer', 'summe_einnahmen'])

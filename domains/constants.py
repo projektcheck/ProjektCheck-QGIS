@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class Nutzungsart(Enum):
+    '''
+    possible types of use for project areas
+    '''
     UNDEFINIERT = 0
     WOHNEN = 1
     GEWERBE = 2
@@ -9,6 +12,9 @@ class Nutzungsart(Enum):
 
 
 class Branche(Enum):
+    '''
+    types of industries
+    '''
     VERARBEITEND = 1
     BAUGEWERBE = 2
     GROSSHANDEL = 3
@@ -18,6 +24,9 @@ class Branche(Enum):
 
 
 class Gewerbegebietstyp(Enum):
+    '''
+    types of business areas
+    '''
     BENUTZERDEFINIERT = 0
     GEWERBE_GROSS = 1
     GEWERBE_KLEIN = 2

@@ -1,8 +1,30 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    bahn_query.py
+    ---------------------
+    Date                 : October 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+scrapers for public stops and public transport connections
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '29/10/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import datetime
 from time import sleep
 import re
-import sys
 from lxml import html
 import numpy as np
 import pandas as pd
@@ -21,6 +43,12 @@ requests = Request(synchronous=True)
 
 
 class Stop(Point):
+    '''
+    representation of a public stop, taken from ArcGIS-version to keep the
+    interface used in some auxiliary functions in this domain
+
+    ToDo: replace this with the actual Feature
+    '''
     def __init__(self, x, y, name, distance=0, id=None, epsg=4326):
         super(Stop, self).__init__(x, y, id=id, epsg=epsg)
         self.name = name
@@ -28,10 +56,14 @@ class Stop(Point):
 
 
 class BahnQuery(object):
+    '''
+    Deutsche-Bahn-scraper for connections, stops and time tables
+    '''
     reiseauskunft_url = 'https://reiseauskunft.bahn.de/bin/query.exe/dn'
     mobile_url = 'https://mobile.bahn.de/bin/mobil/query.exe/dox'
     timetable_url = 'https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn'
 
+    # default request parameters for connections
     reiseauskunft_params = {
         'start': 1,
         'S': '',
@@ -40,6 +72,7 @@ class BahnQuery(object):
         'time': ''
     }
 
+    # default request parameters for public stops
     stop_params = {
         'Id': 9627,
         'n': 1,
@@ -53,6 +86,7 @@ class BahnQuery(object):
         'look_y': 0
     }
 
+    # default request parameters for timetables
     timetable_params = {
         'ld': 96242,
         'country': 'DEU',
@@ -70,6 +104,15 @@ class BahnQuery(object):
     date_pattern = '%d.%m.%Y'
 
     def __init__(self, date=None, timeout=0):
+        '''
+        Parameters
+        ----------
+        date : datetime.date, optional
+            date to scrape data for, defaults to today
+        timeout : int, optional
+            pause between requests in seconds to avoid block due to too many
+            requests, defaults to no pause
+        '''
         date = date or datetime.date.today()
         self.date = date.strftime(self.date_pattern)
         self.timeout = timeout
@@ -81,17 +124,32 @@ class BahnQuery(object):
         return c / 1000000.
 
     def stops_near(self, point, max_distance=2000, stopclass=1023, n=5000):
-        """get closest station to given point (tuple of x,y; epsg: 4326)
-        ordered by distance (ascending)
-        """
+        '''
+        get closest station to given point
+
+        Parameters
+        ----------
+        point : tuple
+            x, y values in WGS84 (4326)
+        max_distance : int
+            maximum distance of stops to given point
+        stopclass : int
+            id of internal DB stop class
+        n : int
+            maximum number of stops returned
+
+        Returns
+        -------
+        list
+            stops ordered by distance (ascending)
+        '''
         # set url-parameters
         params = self.stop_params.copy()
         params['look_maxdist'] = max_distance
         params['look_stopclass'] = stopclass
-        if point.epsg != 4326:
-            raise ValueError('Point has to be in WGS84!')
-        params['look_x'] = self._to_db_coord(point.x)
-        params['look_y'] = self._to_db_coord(point.y)
+        x, y = point
+        params['look_x'] = self._to_db_coord(x)
+        params['look_y'] = self._to_db_coord(y)
 
         r = requests.get(self.mobile_url, params=params, verify=False)
 
@@ -128,7 +186,26 @@ class BahnQuery(object):
 
     def routing(self, origin_name, destination_name, times, max_retries=1):
         '''
-        times - int or str (e.g. 15 or 15:00)
+        scrape fastest connection by public transport between origin and
+        destination
+
+        Parameters
+        ----------
+        origin_name : str
+            address or station name to depart from
+        destination_name : str
+            address or station name to arrive at
+        times : list of int or list of str
+            departure times (e.g. [14, 15, 16] or [14:00, 15:00, 16:00])
+        max_retries : int
+            maximum number of retries per time slot if DB api is returning
+            valid results
+
+        Returns
+        -------
+        tuple
+            duration in minutes, departure time as text, number of changes,
+            modes as text
         '''
         params = self.reiseauskunft_params.copy()
         params['date'] = self.date
@@ -201,7 +278,16 @@ class BahnQuery(object):
         return duration, departure, changes, mode
 
     def n_departures(self, stop_ids, max_journeys=10000):
-        '''stop_ids have to be hafas ids'''
+        '''
+        scrape number of departures for stops with given ids (HAFAS)
+
+        Parameters
+        ----------
+        stop_ids : list
+            HAFAS ids of stops
+        max_journeys : int, optional
+            maximum number of routes per requested time table
+        '''
         # set url-parameters
         params = self.timetable_params.copy()
         params['date'] = self.date
@@ -221,6 +307,9 @@ class BahnQuery(object):
         return n_departures
 
     def get_timetable_url(self, stop_id):
+        '''
+        set up an url to request the stop with given id
+        '''
         params = self.timetable_params.copy()
         params['date'] = self.date
         params['evaId'] = stop_id
@@ -230,8 +319,21 @@ class BahnQuery(object):
 
 
 class StopScraper(Worker):
-
+    '''
+    worker to scrape and write public stops and number of departures per stop
+    '''
     def __init__(self, project, date=None, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        date : datetime.date, optional
+            date to scrape number of departures for, defaults to next working
+            day
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.haltestellen = Haltestellen.features(create=True, project=project)
@@ -251,7 +353,8 @@ class StopScraper(Worker):
         self.update_departures(projectarea_only=True)
 
     def write_centers_stops(self):
-        '''get centers in radius around project centroid, write their closest
+        '''
+        get centers in radius around project centroid, write their closest
         stops and the stops near the project to the db
         '''
         # truncate tables, will be filled in progress
@@ -277,7 +380,7 @@ class StopScraper(Worker):
                 t_p = Point(point[0], point[1],
                             epsg=settings.EPSG)
                 t_p.transform(4326)
-                stops_near = self.query.stops_near(t_p, n=1)
+                stops_near = self.query.stops_near((t_p.x, t_p.y), n=1)
                 if len(stops_near) > 0:
                     closest = stops_near[0]
                     stops.append(closest)
@@ -301,14 +404,15 @@ class StopScraper(Worker):
         p_centroid = Point(centroid.x(), centroid.y(),
                            epsg=settings.EPSG)
         p_centroid.transform(4326)
-        tfl_stops = self.query.stops_near(p_centroid, n=10)
+        tfl_stops = self.query.stops_near((p_centroid.x, p_centroid.y), n=10)
 
         self._stops_to_db(oz_stops)
         self._stops_to_db(mz_stops)
         self._stops_to_db(tfl_stops, is_project_stop=1)
 
     def update_departures(self, projectarea_only=False):
-        '''update the db-column 'abfahrten' of the stops with the number
+        '''
+        update the db-column 'abfahrten' of the stops with the number
         of departures
         '''
         df_stops = self.haltestellen.filter(
@@ -320,16 +424,10 @@ class StopScraper(Worker):
         self.haltestellen.update_pandas(df_stops)
 
     def _stops_to_db(self, stops, is_project_stop=False):
-        '''(warning: changes projection of point!)'''
-        ids = []
-        names = []
-        shapes = []
-        distances = []
-
         for stop in stops:
-            stop.transform(settings.EPSG)
+            geom = stop.transform(settings.EPSG, inplace=False).geom
             self.haltestellen.add(
-                geom=stop.geom,
+                geom=geom,
                 id_bahn=stop.id,
                 name=stop.name,
                 flaechenzugehoerig=is_project_stop,
@@ -339,10 +437,27 @@ class StopScraper(Worker):
 
 
 class BahnRouter(Worker):
+    '''
+    worker to scrape and write public routes between a public stop and central
+    places
+    '''
 
-    times = range(9, 18)
+    times = range(9, 18) # time slots to query connections for
 
     def __init__(self, haltestelle, project, date=None, parent=None):
+        '''
+        Parameters
+        ----------
+        haltestelle : Feature
+            the stop to depart from
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        date : datetime.date, optional
+            date to scrape public connections for, defaults to next working
+            day
+        '''
         super().__init__(parent=parent)
         self.origin = haltestelle
         self.haltestellen = Haltestellen.features(project=project)
@@ -358,6 +473,9 @@ class BahnRouter(Worker):
         self.routing()
 
     def routing(self):
+        '''
+        scrape and write best connections between stop and central places
+        '''
         df_centers = self.zentrale_orte.to_pandas()
         df_centers['update'] = False
         n_centers = len(df_centers)
@@ -404,16 +522,21 @@ class BahnRouter(Worker):
                 df_update, pkeys=['id_origin', 'id_destination'])
 
 def next_monday():
+    '''
+    Returns
+    -------
+    datetime.date
+       the next monday proceeding from today
+    '''
     today = date.today()
     nextmonday = today + timedelta(days=-today.weekday(), weeks=1)
     return nextmonday
 
 def next_working_day(min_days_infront=2):
-    """
+    '''
     get the next working day in germany (no holidays, no saturdays, no sundays
     in all federal states)
-    reuqires the basetable Feriendichte to hold days infront of today
-    (atm data incl. 2017 - 2020)
+    requires the basetable "Feriendichte" to hold days infront of today
 
     Parameters
     ----------
@@ -422,10 +545,10 @@ def next_working_day(min_days_infront=2):
 
     Returns
     -------
-    day : datetime.date
+    datetime.date
        the next day without holidays,
        if day is out of range of basetable: today + min_days_infront
-    """
+    '''
 
     today = np.datetime64(date.today())
 

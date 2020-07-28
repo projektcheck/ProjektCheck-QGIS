@@ -1,4 +1,27 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    tax.py
+    ---------------------
+    Date                 : May 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+calculation of taxes
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '22/05/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
+
 from projektcheck.domains.definitions.tables import (
     Teilflaechen, Projektrahmendaten, Gewerbeanteile, Verkaufsflaechen)
 from projektcheck.domains.municipaltaxrevenue.tables import (
@@ -10,6 +33,9 @@ from projektcheck.base.domain import Worker
 
 
 class GrundsteuerCalculation(Worker):
+    '''
+    calculation of property tax
+    '''
 
     # ToDo: that is not a good way to allocate the fields to the building type
     geb_types_suffix = {
@@ -20,6 +46,14 @@ class GrundsteuerCalculation(Worker):
     }
 
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.bilanzen = Gemeindebilanzen.features(project=project)
@@ -44,6 +78,15 @@ class GrundsteuerCalculation(Worker):
         return True
 
     def calc_messbetrag_wohnen(self, is_new_bl):
+        '''
+        base rate for living
+
+        Parameters
+        ----------
+        is_new_bl : bool
+            project area is part of "Neue Bundesländer" if True (different base
+            calculations)
+        '''
         messzahlen = self.project.basedata.get_table(
             'GrSt_Wohnflaeche_und_Steuermesszahlen', 'Einnahmen').features()
         vvf = self.project.basedata.get_table(
@@ -80,14 +123,27 @@ class GrundsteuerCalculation(Worker):
         return messbetrag_sum
 
     def calc_messbetrag_gewerbe(self):
+        '''
+        base rate for business taxes
+        '''
         ewert = (1685 * self.grst_settings.Bueroflaeche +
                  800 * self.grst_settings.Verkaufsraeume) * 0.1554
         return ewert * 0.0035
 
 
 class EinkommensteuerCalculation(Worker):
-
+    '''
+    calculation of income tax
+    '''
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.bilanzen = Gemeindebilanzen.features(project=project)
@@ -127,8 +183,18 @@ class EinkommensteuerCalculation(Worker):
 
 
 class FamAusgleichCalculation(Worker):
-
+    '''
+    calculation of family compensation
+    '''
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.bilanzen = Gemeindebilanzen.features(project=project)
@@ -152,8 +218,18 @@ class FamAusgleichCalculation(Worker):
 
 
 class GewerbesteuerCalculation(Worker):
-
+    '''
+    calculation of business tax
+    '''
     def __init__(self, project, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.project = project
         self.bilanzen = Gemeindebilanzen.features(project=project)
@@ -192,6 +268,9 @@ class GewerbesteuerCalculation(Worker):
         return True
 
     def calc_messbetrag_gewerbe(self):
+        '''
+        base rate for businesses
+        '''
         messzahlen = self.project.basedata.get_table(
             'GewSt_Messbetrag_pro_Arbeitsplatz', 'Einnahmen').features().filter(
                 AGS2=self.project_frame.ags[:2])
@@ -213,6 +292,9 @@ class GewerbesteuerCalculation(Worker):
         return messbetrag_sum, svb_sum
 
     def calc_messbetrag_einzelhandel(self):
+        '''
+        base rate for retail trade
+        '''
         messzahlen = self.project.basedata.get_table(
             'GewSt_Messbetrag_und_SvB_pro_qm_Verkaufsflaeche',
             'Einnahmen').features()
