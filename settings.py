@@ -1,13 +1,13 @@
 '''
-Basic settings of the plugin. Change but do not remove any of these properties!
+Basic settings of the plugin. You may change but not remove any of these properties!
 '''
 import os
 
 from projektcheck.base.project import settings
 
 settings.EPSG = 25832 # epsg in database
-settings.MAX_AREA_DISTANCE = 1000
-settings.PROJECT_RADIUS = 20000
+settings.MAX_AREA_DISTANCE = 1000 # max distance between project areas
+settings.PROJECT_RADIUS = 20000 # size of selectable study area around the project areas
 
 # paths to resources
 base_path = os.path.dirname(os.path.realpath(__file__))
@@ -20,6 +20,8 @@ settings.UI_PATH = os.path.join(base_path, 'ui')
 # service urls
 settings.BASEDATA_URL = 'https://gis.ggr-planung.de/repos/projektcheck'
 settings.GEOSERVER_URL = 'https://geoserver.ggr-planung.de/geoserver/projektcheck'
+settings.OTP_ROUTER_URL = 'https://projektcheck.ggr-planung.de/otp'
+settings.OTP_ROUTER_ID = 'deutschland' # name of the otp router (equals server folder to graph)
 
 # zensus raster files
 settings.ZENSUS_500_FILE = 'ZensusEinwohner500.tif'

@@ -15,8 +15,6 @@ requests = Request(synchronous=True)
 
 
 class Isochrones(Worker):
-    isochrone_url = ('https://projektcheck.ggr-planung.de'
-                     '/otp/routers/deutschland/isochrone')
     isochrone_params = {
         'routerId': 'deutschland',
         'algorithm': 'accSampling',
@@ -42,6 +40,8 @@ class Isochrones(Worker):
     def __init__(self, project, modus='zu Fuß', connector=None, steps=1,
                  cutoff=10, parent=None):
         super().__init__(parent=parent)
+        self.isochrone_url = (f'{settings.OTP_ROUTER_URL}/routers/'
+                              f'{settings.OTP_ROUTER_ID}/isochrone')
         self.isochronen = Isochronen.features(project=project)
         self.project_frame = Projektrahmendaten.features(project=project)[0]
         self.cutoff_sec = cutoff * 60

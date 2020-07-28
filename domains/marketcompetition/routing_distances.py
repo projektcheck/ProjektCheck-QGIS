@@ -1,7 +1,26 @@
 # -*- coding: utf-8 -*-
-#from rpctools.utils.config import Folders
-#from rpctools.utils.spatial_lib import clip_raster
-#from rpctools.utils.spatial_lib import Point
+'''
+***************************************************************************
+    routing_distances.py
+    ---------------------
+    Date                 : May 2020
+    Copyright            : (C) 2020 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+raster based routing
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '14/05/2020'
+__copyright__ = 'Copyright 2020, HafenCity University Hamburg'
 
 import os
 import time
@@ -15,26 +34,15 @@ import osr
 
 from projektcheck.utils.spatial import Point, clip_raster
 from projektcheck.utils.connection import Request
+from projektcheck.settings import settings
 
 requests = Request(synchronous=True)
 
-def filter_raster(array, threshold=120):
-    y_dim, x_dim = np.shape(array)
-    new_array = np.copy(array)
-    for x in range(1, x_dim - 1):
-        for y in range(1, y_dim -1):
-            if array[y][x] < threshold:
-                continue
-            neighbours = [array[y - 1][x - 1], array[y][x - 1],
-                          array[y + 1][x - 1], array[y - 1][x],
-                          array[y + 1][x], array[y - 1][x + 1],
-                          array[y][x + 1], array[y + 1][x + 1]]
-            new_array[y][x] = np.sum(neighbours) / len(neighbours)
-    return new_array
-
 def dilate_raster(array, kernel_size=3, threshold=120):
-    '''smooth the borders of areas exceeding the given threshold,
-    so that these areas shrink by half the kernel-size along their borders'''
+    '''
+    smooth the borders of areas exceeding the given threshold,
+    so that these areas shrink by half the kernel-size along their borders
+    '''
     thresh_exceeded = array >= threshold
     ret = np.where(thresh_exceeded, np.nan, array)
     o = kernel_size // 2
@@ -49,6 +57,9 @@ def dilate_raster(array, kernel_size=3, threshold=120):
 
 
 class RasterManagement:
+    '''
+    wrapper for a raster file to map coordinates to raster values
+    '''
     def __init__(self):
         self.raster_values = self.raster_origin = self.srid = None
         self.cellWidth = self.cellHeight = None
@@ -56,6 +67,10 @@ class RasterManagement:
         self.point_raster_map = {}
 
     def load(self, raster_file, unreachable=120):
+        '''
+        load a raster file. unreachable defines time threshold in minutes
+        representing unreachable raster cells
+        '''
         ds = gdal.OpenEx(raster_file)
         ulx, xres, xskew, uly, yskew, yres = ds.GetGeoTransform()
         try:
@@ -74,6 +89,9 @@ class RasterManagement:
         )
 
     def register_points(self, points):
+        '''
+        map given points to raster
+        '''
         if self.raster_values is None:
             raise Exception('A raster-file has to be loaded first!')
         for point in points:
@@ -86,16 +104,29 @@ class RasterManagement:
             self.point_raster_map[point.id] = (mapped_x, mapped_y)
 
     def get_value(self, point):
+        '''
+        get value at given point
+        '''
         mapped_x, mapped_y = self.point_raster_map[point.id]
         return self.raster_values[mapped_y][mapped_x]
 
 
 class DistanceRouting:
-    URL = r'https://projektcheck.ggr-planung.de/otp/surfaces'
+    '''
+
+    '''
     ROUTER = 'deutschland'
     RASTER_FILE_PATTERN = 'raster_{id}.tif'
 
-    def __init__(self, target_epsg=4326, resolution=1):
+    def __init__(self, target_epsg=4326, resolution=300):
+        '''
+        Parameters
+        ----------
+        resolution : int, optional
+            side length of raster cells in pixels, defaults to 300 pixels
+        target_epsg : int, optional
+            epsg code of targeted projection, defaults to 4326
+        '''
         self.epsg = 4326
         self.resolution = resolution
         self.target_epsg = target_epsg
@@ -110,13 +141,13 @@ class DistanceRouting:
         bbox : tuple of points
             p1 and p2 define the upper right and the lower left corner of the
             box
-        rel_edge : float opt
+        rel_edge : float, optional
             relative factor for enlargement
 
         Returns
         -------
-        bbox : tuple of points
-            bigger bbox
+        tuple
+            tuple of points, resized bbox
         """
         p1, p2 = bbox
         bbox_size = abs(p1.x-p2.x)
@@ -128,6 +159,9 @@ class DistanceRouting:
         return ret
 
     def get_distances(self, origin, destinations, bbox=None):
+        '''
+
+        '''
         kmh = 12
         distances = np.ones(len(destinations), dtype=int)
         beelines = np.ones(len(destinations), dtype=int)
@@ -186,23 +220,21 @@ class DistanceRouting:
                    'Bitte überprüfen Sie die Lage des Punktes '
                    '(innerhalb Deutschlands und max. 1000m '
                    'vom bestehenden Straßennetz entfernt)')
+        otp_url = settings.OTP_ROUTER_URL + '/surfaces'
         try:
-            r = requests.post(self.URL, params=params)
-            r.raise_for_status()
-        except (requests.exceptions.ConnectionError,
-                requests.exceptions.Timeout):
+            r = requests.post(otp_url, params=params)
+        except ConnectionError:
             raise Exception(
                 'Der Server antwortet nicht. Möglicherweise ist er nicht aktiv '
                 'oder überlastet.')
-        except requests.exceptions.HTTPError:
-            raise Exception(err_msg)
-        print(f'request post {time.time() - start}s')
+        #except requests.exceptions.HTTPError:
+            #raise Exception(err_msg)
 
         try:
             id = r.json()['id']
         except:
             raise Exception(err_msg)
-        url = f'{self.URL}/{id}/raster'
+        url = f'{otp_url}/{id}/raster'
 
         params = {
             'resolution': self.resolution,

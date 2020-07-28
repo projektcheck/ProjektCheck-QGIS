@@ -11,6 +11,7 @@ import pandas as pd
 from projektcheck.utils.polyline import PolylineCodec
 from projektcheck.utils.spatial import Point
 from projektcheck.utils.connection import Request
+from projektcheck.settings import settings
 
 requests = Request(synchronous=True)
 
@@ -381,11 +382,11 @@ class Link(object):
 
 
 class OTPRouter(object):
-    url = r'https://projektcheck.ggr-planung.de/otp/routers/deutschland/plan'
-    router = 'deutschland'
     router_epsg = 4326
 
     def __init__(self, distance=None, epsg=31467):
+        self.router = settings.OTP_ROUTER_ID
+        self.url = f'{settings.OTP_ROUTER_URL}/routers/{self.router}/plan'
         self.epsg = epsg
         self.dist = distance
         self.nodes = Nodes(epsg)
