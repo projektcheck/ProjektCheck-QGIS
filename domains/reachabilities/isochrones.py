@@ -47,7 +47,7 @@ class Isochrones(Worker):
     # default query parameters
     isochrone_params = {
         'routerId': settings.OTP_ROUTER_ID,
-        'algorithm': 'accSampling',
+        'algorithm': 'accSampling', # 'algorithm': 'recursiveGrid',
         'maxWalkDistance': 4000,
         'fromPlace': '0, 0',
         'mode': 'WALK',

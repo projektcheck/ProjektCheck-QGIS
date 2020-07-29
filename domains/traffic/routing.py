@@ -1,9 +1,31 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    otp_router.py
+    ---------------------
+    Date                 : December 2019
+    Copyright            : (C) 2019 by Christoph Franke, Max Bohnet
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+routing from and to project areas, calculation of traffic load
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '12/12/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 import os
-from qgis.core import QgsPoint, QgsLineString, QgsDistanceArea
-from qgis.core import QgsGeometryUtils
+from qgis.core import QgsPoint
 from qgis.core import (QgsGeometry, QgsPoint, QgsProject,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform)
-import math
 import numpy as np
 
 from projektcheck.utils.spatial import Point
@@ -17,10 +39,32 @@ from projektcheck.settings import settings
 
 
 class Routing(Worker):
+    '''
+    Distribution of the additional traffic produced by the project areas between
+    the shortest paths from and to transfer nodes located on an inner circle
+    around the traffic connectors. The transfer nodes are calculated by merging
+    the shortest paths to points placed on two circles around the inner circle.
+    '''
+    # radius of outer circle (additional to inner circle)
     outer_circle = 2000
+    # number of destination points on outer and middle ring to route to
     n_segments = 24
 
     def __init__(self, project, distance=1000, recalculate=False, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project the areas and their connectors are in
+        distance : int, optional
+            the radius in meters of the inner ring the transfer nodes are
+            located in, defaults to 1000 m
+        recalculate : bool, optional
+            recalculate the transfer nodes and shortest paths, defaults to only
+            distributing the traffic on the already calculated routes
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
         super().__init__(parent=parent)
         self.otp_pickle_file = os.path.join(project.path, 'otpgraph.pickle')
         self.project = project
@@ -49,6 +93,9 @@ class Routing(Worker):
             self.calculate_traffic_load()
 
     def calculate_ways(self):
+        '''
+        calculate and store the additional ways per type of use of the areas
+        '''
         # get ways per type of use
         ways_tou = {}
         self.ways.delete()
@@ -171,6 +218,9 @@ class Routing(Worker):
                                        area_id=area.id, geom=geom)
 
     def calculate_traffic_load(self):
+        '''
+        distribute the traffic to the shortest paths
+        '''
         self.traffic_load.delete()
 
         self.log('Verteile das Verkehrsaufkommen...')

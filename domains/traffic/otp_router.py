@@ -1,4 +1,27 @@
 # -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    otp_router.py
+    ---------------------
+    Date                 : December 2019
+    Copyright            : (C) 2019 by Christoph Franke, Max Bohnet
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+helper classes for calculation of transfer nodes and shortest paths
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '12/12/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from osgeo import ogr
 from collections import OrderedDict
 from scipy.sparse import csc_matrix
@@ -178,15 +201,6 @@ class TransferNodes(OrderedDict):
                 n_routes = n_routes_sources.get(route.source_id, 0)
                 n_routes_sources[route.source_id] = n_routes + 1
         return
-        for area in self.source_ids:
-            total_weights_sources[area.source_id] = \
-                self.get_total_weights(area.source_id)
-
-        for tn in self.values():
-            for route in tn.routes.values():
-                n_routes_for_area = tn.get_n_routes_for_area(route.source_id)
-                total_weight_area = total_weights_sources[route.source_id]
-                route.weight = tn.weight / total_weight_area / n_routes_for_area
 
 
 class Nodes(object):

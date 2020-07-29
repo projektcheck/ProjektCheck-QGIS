@@ -1,3 +1,28 @@
+# -*- coding: utf-8 -*-
+'''
+***************************************************************************
+    traffic.py
+    ---------------------
+    Date                 : July 2019
+    Copyright            : (C) 2019 by Christoph Franke
+    Email                : franke at ggr-planung dot de
+***************************************************************************
+*                                                                         *
+*   This program is free software: you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 3 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************
+
+domain for calculating and visualizing the additional traffic load caused by
+the project areas
+'''
+
+__author__ = 'Christoph Franke'
+__date__ = '16/07/2019'
+__copyright__ = 'Copyright 2019, HafenCity University Hamburg'
+
 from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
 from qgis.PyQt.QtWidgets import QMessageBox
 import os
@@ -18,7 +43,9 @@ from projektcheck.utils.utils import open_file
 
 
 class Traffic(Domain):
-    """"""
+    '''
+    domain-widget for calculating and visualizing the additional traffic load
+    '''
 
     ui_label = 'Verkehr im Umfeld'
     ui_file = 'domain_03-ViU.ui'
@@ -28,6 +55,9 @@ class Traffic(Domain):
 
     @classmethod
     def reset(cls, project=None):
+        '''
+        remove existing results
+        '''
         if not project:
             project = cls.project_manager.active_project
         TransferNodes.features(project=project, create=True).delete()
@@ -67,6 +97,9 @@ class Traffic(Domain):
         self.setup_settings()
 
     def setup_settings(self):
+        '''
+        set up ways and weights
+        '''
         if self.params:
             self.params.close()
         layout = self.ui.settings_group.layout()
@@ -108,6 +141,10 @@ class Traffic(Domain):
         self.params.show()
 
     def save_settings(self):
+        '''
+        save the state of the ways and weights and recalculate the traffic load
+        with those as new inputs
+        '''
         sum_weights = 0
         for node in self.transfer_nodes:
             sum_weights += node.weight
@@ -133,6 +170,10 @@ class Traffic(Domain):
         dialog.show()
 
     def calculate_traffic(self):
+        '''
+        calculate the traffic load (if recalculation is not checked only show
+        results already calculated)
+        '''
         max_dist = getattr(self.settings, 'MAX_AREA_DISTANCE', None)
         points = [c.geom.asPoint() for c in self.connectors]
         xs = [p.x() for p in points]
@@ -174,6 +215,9 @@ class Traffic(Domain):
             self.draw_traffic()
 
     def draw_traffic(self):
+        '''
+        show layer visualizing the additional traffic load and transfer nodes
+        '''
         output = ProjectLayer.from_table(self.transfer_nodes.table,
                                          groupname=self.layer_group)
         output.draw(label='Zielpunkte',

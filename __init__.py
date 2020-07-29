@@ -22,6 +22,7 @@ __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
+# debugging in WingIDE
 try:
     import wingdbstub
     wingdbstub.Ensure()
