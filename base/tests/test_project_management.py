@@ -45,11 +45,7 @@ class ProjectTest(unittest.TestCase):
         cls.project_manager.active_project = cls.project
         cls.workspace = None
 
-    def test_project_table(self):
-        table = TestProjectTable.get_table()
-        self.workspace = table.workspace
-
-    def test_features(self):
+    def test_00_features(self):
         features = TestProjectTable.features(create=True)
         self.workspace = features.table.workspace
         assert len(features) == 0
@@ -74,13 +70,16 @@ class ProjectTest(unittest.TestCase):
         features.delete(id=feat1.id)
         assert len(features) == 0
 
+    def test_01_project_table(self):
+        table = TestProjectTable.get_table()
+        self.workspace = table.workspace
 
-    def test_missing_fields(self):
+    def test_02_auto_add_missing_fields(self):
         features = TestProjectTable.features(create=True)
         for i in range(5):
             features.add(name=i)
         TestProjectTable.missing = Field(int, default=50)
-        features = TestProjectTable.features(create=True)
+        features = TestProjectTable.features()
         df = features.to_pandas()
         assert df['missing'].unique()[0] == 50
 
@@ -90,7 +89,6 @@ class ProjectTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.project.close()
         cls.project_manager.remove_project(cls.project)
 
 if __name__ == "__main__":

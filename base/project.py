@@ -233,6 +233,7 @@ class Project:
         self.groupname = f'Projekt "{self.name}"'
         path = path or settings.project_path
         self.path = os.path.join(path, name)
+        self.data = Geopackage(base_path=self.path, read_only=False)
 
     @property
     def basedata(self):
@@ -240,13 +241,6 @@ class Project:
         the base data (same for all projects)
         '''
         return ProjectManager().basedata
-
-    @property
-    def data(self):
-        '''
-        the project data
-        '''
-        return Geopackage(base_path=self.path, read_only=False)
 
     def remove(self):
         '''
@@ -601,11 +595,11 @@ class ProjectTable:
             table not found (create == False)
         '''
         project = project or ProjectManager().active_project
-        Database = getattr(cls.Meta, 'database', Geopackage)
+        #Database = getattr(cls.Meta, 'database', Geopackage)
         workspace_name = getattr(cls.Meta, 'workspace', 'default')
         table_name = getattr(cls.Meta, 'name', cls.__name__.lower())
         geometry_type = getattr(cls.Meta, 'geom', None)
-        database = Database(project.path, read_only=False)
+        database = project.data
         workspace = database.get_or_create_workspace(workspace_name)
         try:
             fields, defaults = cls._fields()

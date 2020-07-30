@@ -31,7 +31,6 @@ class ProjectTest(unittest.TestCase):
         cls.project_manager.basedata = Geopackage(base_path='.', read_only=True)
         if cls.projectname in [p.name for p in cls.project_manager.projects]:
             cls.project_manager.remove_project(cls.projectname)
-        cls.project = cls.project_manager.create_project(cls.projectname)
         cls.workspace = None
 
     def test_project_creation(self):
@@ -41,12 +40,11 @@ class ProjectTest(unittest.TestCase):
         layer = QgsVectorLayer(shape_path, 'testlayer_shp', 'ogr')
         job = ProjectInitialization(self.projectname, layer,
                                     self.project_manager.settings.EPSG)
-        job.work()
+        self.project = job.work()
 
     @classmethod
     def tearDownClass(cls):
-        cls.project.close()
-        cls.project_manager.remove_project(cls.project)
+        cls.project_manager.remove_project(cls.projectname)
 
 
 if __name__ == "__main__":

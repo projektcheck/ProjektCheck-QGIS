@@ -240,7 +240,7 @@ class GeopackageWorkspace(Workspace):
         '''
         close ogr connection to geopackage file
         '''
-        #self._conn.Destroy()
+        # self._conn.Destroy()
         del(self._conn)
         self._conn = None
         super().close()
@@ -612,7 +612,8 @@ class GeopackageTable(Table):
                 feat = self._layer.GetNextFeature()
         if getattr(self, '_fields', None):
             self._fields.append(field)
-        self.field_names.append(name)
+        if name not in self.field_names:
+            self.field_names.append(name)
 
     def delete(self, id: int):
         '''
@@ -987,5 +988,5 @@ class Geopackage(Database):
         '''
         closes all open workspaces
         '''
-        for workspace in self._workspaces:
+        for workspace in self._workspaces.values():
             workspace.close()
