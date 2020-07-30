@@ -28,7 +28,7 @@ from qgis.gui import QgisInterface, QgsMapCanvas
 import os
 
 from .project import (ProjectManager, ProjectLayer,
-                                            Project, Settings)
+                      Project, Settings)
 from .database import Database
 from projektcheck.settings import settings
 

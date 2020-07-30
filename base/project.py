@@ -29,7 +29,7 @@ import shutil
 import sys
 from collections import OrderedDict
 from operator import itemgetter
-from typing import Tuple, List
+from typing import Tuple, List, Union
 from qgis.core import QgsVectorLayer, QgsLayerTreeGroup
 
 from projektcheck.utils.singleton import Singleton
@@ -495,7 +495,7 @@ class ProjectManager(metaclass=Singleton):
             os.mkdir(target_folder)
         return project
 
-    def remove_project(self, project: Project):
+    def remove_project(self, project: Union[Project, str]):
         '''
         remove a project physically
         '''

@@ -373,7 +373,7 @@ class EditNullfallMarkets(EditMarkets):
         market.vkfl_planfall = vkfl
         crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
-        market.AGS = ags.AGS_0
+        market.AGS = ags.AGS
         market.save()
         self.changed.emit()
         self.canvas.refreshAllLayers()
@@ -485,7 +485,7 @@ class EditPlanfallMarkets(EditMarkets):
         )
         crs = QgsCoordinateReferenceSystem(f'EPSG:{self.project.settings.EPSG}')
         ags = get_ags([market], self.basedata, source_crs=crs)[0]
-        market.AGS = ags.AGS_0
+        market.AGS = ags.AGS
         vkfl = self.market_tool.betriebstyp_to_vkfl(
             market.id_betriebstyp_planfall, market.id_kette)
         market.vkfl_planfall = vkfl

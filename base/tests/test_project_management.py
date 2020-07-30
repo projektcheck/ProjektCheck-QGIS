@@ -11,6 +11,7 @@ from projektcheck.base.geopackage import Geopackage
 from projektcheck.base.database import Field
 from projektcheck.settings import settings
 from qgis.core import QgsGeometry, QgsPointXY
+from time import sleep
 
 settings._write_instantly = False
 
@@ -89,14 +90,8 @@ class ProjectTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #project = ProjectManager().active_project
-        #database = Geopackage(project.path, read_only=False)
-        #database.remove_workspace('test')
-        #cls.project.close()
-        if cls.workspace:
-            cls.workspace.close()
+        cls.project.close()
         cls.project_manager.remove_project(cls.project)
-
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(ProjectTest)

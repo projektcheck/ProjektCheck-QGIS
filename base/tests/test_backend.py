@@ -166,7 +166,7 @@ class GeopackageTest(unittest.TestCase):
         self.table.add_field(Field(int, default=0, name='1'))
         self.table.add_field(Field(str, default='hallo', name='2'))
         self.table.add(geom=None)
-        df = self.table.to_pandas()
+        df = self.table.to_pandas(columns=self.table.field_names)
         uq1 = df['1'].unique()
         uq2 = df['2'].unique()
         assert len(uq1) == 1

@@ -48,17 +48,11 @@ from qgis.gui import QgsMapCanvas
 class MapTool:
     '''
     abstract class for tools triggered by clicking a certain ui element
-
-    Attributes
-    ----------
-    cursor : QCursor
-        the appearance of the cursor when hovering the map canvas while tool is
-        active
     '''
-    cursor = QCursor(Qt.CrossCursor)
 
     def __init__(self, ui_element: QWidget, canvas: QgsMapCanvas = None,
-                 tip: str = '', target_epsg: int = 25832):
+                 tip: str = '', target_epsg: int = 25832,
+                 cursor : int = Qt.CrossCursor):
         '''
         Parameters
         ----------
@@ -74,7 +68,11 @@ class MapTool:
         target_epsg : int, optional
             all geometries determined by map interactions will be transformed
             into the crs with given epsg code, defaults to 25832
+        cursor : int, optional
+            the appearance of the cursor when hovering the map canvas while tool
+            is active, defaults to cross hair (Qt.CrossCursor)
         '''
+        self.cursor = QCursor(cursor)
         self.ui_element = ui_element
         self.canvas = canvas or utils.iface.mapCanvas()
         # workaround: .clicked.connect(self.toggle) works only occasionally

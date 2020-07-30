@@ -5,14 +5,18 @@ __license__ = 'GPL'
 
 import unittest
 import os
-import time
-from qgis.core import QgsVectorLayer, QgsApplication
+from utilities import get_qgis_app
 
-from projektcheck.base.project import ProjectManager
+QGIS_APP, CANVAS, IFACE, PARENT = get_qgis_app()
+from processing.core.Processing import Processing
+Processing.initialize()
+
+from qgis.core import QgsVectorLayer
+
 from projektcheck.settings import settings
+from projektcheck.base.project import ProjectManager
+from projektcheck.base.geopackage import Geopackage
 from projektcheck.domains.definitions.project import ProjectInitialization
-
-#from qgis.core import QgsGeometry, QgsPointXY
 
 settings._write_instantly = False
 
@@ -23,16 +27,11 @@ class ProjectTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        QgsApplication.setPrefixPath(
-            "C:\Program Files\QGIS 3.6\bin\qgis-bin-g7.exe", True)
-        qgs = QgsApplication([], True)
-        qgs.initQgis()
-
         cls.project_manager = ProjectManager()
+        cls.project_manager.basedata = Geopackage(base_path='.', read_only=True)
         if cls.projectname in [p.name for p in cls.project_manager.projects]:
             cls.project_manager.remove_project(cls.projectname)
         cls.project = cls.project_manager.create_project(cls.projectname)
-        cls.project_manager.active_project = cls.project
         cls.workspace = None
 
     def test_project_creation(self):
@@ -40,24 +39,14 @@ class ProjectTest(unittest.TestCase):
             self.project_manager.settings.TEMPLATE_PATH,
             'projektflaechen', 'projektflaechen_template.shp')
         layer = QgsVectorLayer(shape_path, 'testlayer_shp', 'ogr')
-        job = ProjectInitialization(self.project, layer,
+        job = ProjectInitialization(self.projectname, layer,
                                     self.project_manager.settings.EPSG)
-        job.run()
-
-    def tearDown(self):
-        if self.workspace:
-            self.workspace.close()
+        job.work()
 
     @classmethod
     def tearDownClass(cls):
-        #project = ProjectManager().active_project
-        #database = Geopackage(project.path, read_only=False)
-        #database.remove_workspace('test')
-        #cls.project.close()
-        if cls.workspace:
-            cls.workspace.close()
+        cls.project.close()
         cls.project_manager.remove_project(cls.project)
-        qgs.exitQgis()
 
 
 if __name__ == "__main__":

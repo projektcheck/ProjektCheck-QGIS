@@ -36,10 +36,15 @@ from projektcheck.base.database import Workspace
 from projektcheck.domains.definitions.project import (ProjectInitialization,
                                                       CloneProject)
 from projektcheck.utils.utils import open_file
-from projektcheck.domains import (JobsInhabitants, ProjectDefinitions,
-                                  Traffic, Reachabilities, Ecology,
-                                  LandUse, InfrastructuralCosts,
-                                  MunicipalTaxRevenue, SupermarketsCompetition)
+from projektcheck.domains.jobs_inhabitants.jobs_inhabitants import JobsInhabitants
+from projektcheck.domains.definitions.definitions import ProjectDefinitions
+from projektcheck.domains.traffic.traffic import Traffic
+from projektcheck.domains.reachabilities.reachabilities import Reachabilities
+from projektcheck.domains.ecology.ecology import Ecology
+from projektcheck.domains.landuse.landuse import LandUse
+from projektcheck.domains.infrastructuralcosts.infrastructuralcosts import InfrastructuralCosts
+from projektcheck.domains.municipaltaxrevenue.municipaltaxrevenue import MunicipalTaxRevenue
+from projektcheck.domains.marketcompetition.marketcompetition import SupermarketsCompetition
 from projektcheck.domains.definitions.tables import Projektrahmendaten
 
 

@@ -25,6 +25,7 @@ from abc import ABC
 from typing import List
 import numpy as np
 import matplotlib
+matplotlib.use('agg')
 from matplotlib.patches import Patch
 import locale
 matplotlib.use('ps')

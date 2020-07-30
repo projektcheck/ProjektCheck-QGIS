@@ -32,6 +32,8 @@ from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer, QgsWkbTypes
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
                                                 NavigationToolbar2QT)
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from zipfile import ZipFile, BadZipFile
 import os
@@ -197,11 +199,11 @@ class NewProjectDialog(Dialog):
         '''
         name = str(self.name_edit.text())
         status_text = ''
-        regexp = re.compile(f'[\\\/\:*?\"\'<>|]')
+        regexp = re.compile('[\\\/\:*?\"\'<>|]')
         error = False
         if name and regexp.search(name):
             status_text = ('Der Projektname darf keines der folgenden Zeichen '
-                           f'enthalten: \/:*?"\'<>|')
+                           'enthalten: \/:*?"\'<>|')
             error = True
         elif name in self.project_names:
             status_text = (

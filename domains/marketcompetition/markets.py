@@ -168,7 +168,7 @@ class ReadMarketsWorker(Worker):
         '''
         gem = get_ags(markets, self.project.basedata)
         for i, market in enumerate(markets):
-            market.AGS = gem[i].AGS_0
+            market.AGS = gem[i].AGS
             market.save()
 
     def vkfl_to_betriebstyp(self, markets: List[Supermarket]

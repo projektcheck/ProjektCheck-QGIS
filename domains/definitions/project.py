@@ -23,8 +23,8 @@ __date__ = '04/10/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 from qgis.core import (QgsCoordinateReferenceSystem, QgsPointXY,
-                       QgsCoordinateTransform, QgsProject,
-                       QgsGeometry)
+                       QgsCoordinateTransform, QgsProject, QgsGeometry,
+                       QgsProcessingException)
 from datetime import datetime
 import numpy as np
 import shutil
@@ -70,14 +70,19 @@ class ProjectInitialization(Worker):
         self.project_areas = Teilflaechen.features(project=self.project,
                                                    create=True)
 
-        parameters = {
-            'INPUT': self.area_layer,
-            'DROP_Z_VALUES': True,
-            'OUTPUT': 'memory:'
-        }
-        area_layer = processing.run(
-            'native:dropmzvalues', parameters)['OUTPUT']
-
+        # remove z-values from imported areas (they might mess up the geometries
+        # later)
+        try:
+            parameters = {
+                'INPUT': self.area_layer,
+                'DROP_Z_VALUES': True,
+                'OUTPUT': 'memory:'
+            }
+            area_layer = processing.run(
+                'native:dropmzvalues', parameters)['OUTPUT']
+        # native:dropmzvalues is not always available (e.g. in tests)
+        except QgsProcessingException:
+            area_layer = self.area_layer
         layer_features = list(area_layer.getFeatures())
 
         self.log(f'Neues Projekt angelegt im Ordner {self.project.path}')
@@ -100,7 +105,7 @@ class ProjectInitialization(Worker):
         basedata = self.project_manager.basedata
         ags_feats = get_ags(layer_features, basedata, source_crs=source_crs,
                             use_centroid=True)
-        ags = [f.AGS_0 for f in ags_feats]
+        ags = [f.AGS for f in ags_feats]
         gem_names = [f.GEN for f in ags_feats]
         gem_types = [f.Gemeindetyp for f in ags_feats]
         if len(np.unique(ags)) > 1:
