@@ -1,39 +1,62 @@
-# This file contains metadata for your plugin. Since
-# version 2.0 of QGIS this is the proper way to supply
-# information about a plugin. The old method of
-# embedding metadata in __init__.py will
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.# Mandatory items:
-
 [general]
 name=Projekt-Check
-qgisMinimumVersion=3.0
-description=Projekt-Check Profi
-version=1.0.4
+qgisMinimumVersion=3.4
+description=Projekt-Check Profi-Check - tool to assist in the planning of residential, commercial and industrial areas in Germany.
+version=1.1
 author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
-email=franke@ggr-planung.de
+email=gis@ggr-planung.de
 
-about=<p>Mit Projekt-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.</p> <p><i>Hinweis: Bitte schließen im Falle eines Updates alle offenen Hilfe-PDFs und starten Sie nach dem Update QGIS neu, damit die Änderungen übernommen werden.</i></p>
+about=Mit Projekt-Check Profi-Check können Kommunen, Planungsbüros, Politik sowie Bürgerinnen und Bürger neue Flächenplanungen vorprüfen.
+
+      Hinweis: Bitte schließen im Falle eines Updates alle offenen Hilfe-PDFs. Falls dennoch eine Fehlermeldung auftritt, starten Sie bitte QGIS neu und führen Sie das Update erneut ohne geöffnetes Projekt-Check-Plugin aus.
+      Benötigt lxml- and pandas-Bibliotheken (ab QGIS 3.10+ standardmäßig enthalten)
 
 tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
-# End of mandatory metadata
+plugin_dependencies=pandas, lxml
 
-# Recommended items:
+changelog=
+      1.1
+      ---------
+      Allgemein
+      - Kompatibilität mit MacOS und Linux
+      - überarbeitete Anleitungen
+      - zusätzliche Parameterhilfetexte
+      - genauere Validierung der Inputs bei der Projekterstellung
+      - diverse Fehler in der Projekterstellung behoben
+      - Abstürze beim Wechsel der Projekte behoben
+      - Fehler nach Update des Plugins behoben
+      Verkehr im Umfeld
+      - überarbeitete Belastungsschätzung
+      - Berücksichtigung der Rückrichtung zu den Flächen
+      - Setzen der Anbindungspunkte in die Projektdefinition verschoben
+      Ökologie
+      - Fehler beim Zeichnen der Bodenbedeckungen behoben
+      - Zeichnung von Flächen, die sich selbst überschneiden, nicht mehr erlaubt
+      Erreichbarkeit
+      - Fehler in der Erzeugung der Isochronen behoben
+      - Darstellung der Haltestellen überarbeitet
+      Kommunale Steuereinnahmen
+      - Fehler in den Berechnungen der Grund- und Gewerbesteuer behoben
+      - Fehler mit extremen Wanderungssalden in Randgebieten behoben
+      - überarbeitete Layerdarstellungen
+      Standortkonkurrenz Supermärkte
+      - automatisch generierte Märkte auf den Planflächen können nicht mehr entfernt werden
+      - überarbeitete Layerdarstellungen
+      - Google-API ersetzt durch Nominatim in der Geokodierung der Markttemplates
+      - diverse Fehler in der Definition des Betrachtungsraums und der Märkte behoben
+      - Fehler in der Berechnung der Projektwirkung behoben
 
-# Uncomment the following line and add your changelog:
-# changelog=
+      1.0
+      ---------
+      erste stabile Version mit allen Wirkungsbereichen
 
-# Tags are comma separated with spaces allowed
-tags=projekt-check,rpc,projektcheck,planung
+tags=profi-check,proficheck,projekt-check,rpc,projektcheck,planung
 
 homepage=https://www.projekt-check.de/
 category=Plugins
 icon=icon.png
-# experimental flag
 experimental=False
 
-# deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
 

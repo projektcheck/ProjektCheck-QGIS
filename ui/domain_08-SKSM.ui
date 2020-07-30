@@ -1,0 +1,1263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockWidget</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>505</width>
+    <height>810</height>
+   </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QgsCollapsibleGroupBox{
+font: bold 10pt ;
+}
+QToolBox:tab {
+	font: bold 10pt ;
+    color: Grey;
+}
+QToolBox:tab:selected {
+	font: bold 10pt ;
+    color: black;
+}
+QGroupBox::title {
+	font: bold italic 8pt ;
+    color: black;
+}
+QPushButton::flat{
+background-color: none;
+border: 0;
+border-style:none;
+border-color: blue;
+border-width: 0px;
+border-radius: 0px;
+padding:2px;
+}
+QPushButton::flat:hover{
+background-color: azure;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}
+QPushButton::flat:pressed{
+background-color: powderblue;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}</string>
+  </property>
+  <property name="windowTitle">
+   <string>Projekt-Check / Wirkungsanalysen / Standortkonkurrenz Supermärkte</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>491</width>
+         <height>754</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_10">
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
+          <property name="title">
+           <string>Betrachtungsraum</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QPushButton" name="select_communities_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Betrachtungsraum auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;In einer Karte die Gemeinden auswählen, die in die Betrachtung der Standortkonkurrenz zwischen bestehenden und neuen oder veränderten Märkten einbezogen werden sollen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Betrachtungsraum auswählen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_select_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_select_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_1.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="show_markets_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Märkte und Zentren anzeigen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bereits definierte bzw. eingelesene Märkte und Zentren in der Karte anzeigen lassen, sofern sie dort nicht zu sehen sind.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Märkte und Zentren anzeigen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_visible_3.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_visible_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_visible_3.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_3">
+          <property name="title">
+           <string>Lebensmitteleinzelhandel im Bestand</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Erfassungsvorlagen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout">
+             <item row="0" column="0">
+              <widget class="QPushButton" name="create_template_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erfassungsvorlage für Lebensmittelmärkte in Bestand erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine leere Erfassungsvorlage für Bestandsmärkte in Form einer csv-, Excel- oder Shape-Datei erzeugen lassen, um diese anschließend händisch zu befüllen und abschließend wieder einzulesen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">text-align:left</string>
+               </property>
+               <property name="text">
+                <string>Erfassungsvorlage erzeugen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_template_create_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_template_create_1.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="read_template_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Befüllte Vorlage wieder einlesen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine zuvor erzeugte und anschließend händisch befüllte Erfassungsvorlage (csv-, Excel- oder Shape-Datei) wieder einlesen und die Märkte in der Karte sichtbar machen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">text-align:left</string>
+               </property>
+               <property name="text">
+                <string>befüllte Vorlage einlesen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_template_read_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_template_read_1.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="template_help_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Erfassungsvorlage erzeugen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine leere Erfassungsvorlage im csv-, Excel- oder Shapefile-Format erzeugen, in der die Bestandsmärkte händisch eingetragen und später wieder mit Projekt-Check eingelesen werden können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">text-align:left</string>
+               </property>
+               <property name="text">
+                <string>Ausfüllhilfe anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>OpenStreetMap-Daten</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="add_osm_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenStreetMap-Daten verwenden&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OpenStreetMap-Daten zu Lebensmittelgeschäften aus dem Internet laden, aufbereiten und in der Karte anzeigen. Diese Daten müssen anschließend i.d.R. noch nachbearbeitet werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Betrachtungsraum mit Märkten
+aus OSM ergänzen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_markets_osm_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_12">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="osm_buffer_check">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>zusätzlicher Buffer für Umkreissuche (in m):</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QSpinBox" name="osm_buffer_input">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="maximum">
+                <number>10000</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSlider" name="osm_buffer_slider">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zusätzlicher Buffer für Umkreissuche&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Auch das Randgebiet des Betrachtungsraums durch Märkte aus OpenStreetMap ergänzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="maximum">
+                <number>10000</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_14">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="remove_osm_button">
+               <property name="text">
+                <string>OSM-Märkte löschen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Individuelle Bearbeitung</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="add_nullfall_market_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Einzeichnen eines oder mehrerer bestehender Märkte in die Karte. Die Eigenschaften der Märkte (Name, Anbieter, Betriebstyp) können anschließend editiert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Markt im Bestand hinzufügen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>6</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Daten eines Marktes im Bestand anzeigen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item>
+              <widget class="QComboBox" name="nullfall_market_combo">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Markt aus der Liste auswählen, um seine Eigenschaften (Name, Anbieter, Betriebstyp) anzuzeigen und bei Bedarf zu verändern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="select_nullfall_market_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines bestehenden Marktes durch Anklicken in der Karte. Nach der Auswahl werden dessen Eigenschaften (Name, Anbieter, Betriebstyp) angezeigt und können bei Bedarf verändert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Markt in Karte auswählen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="nullfall_market_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9"/>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_15">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="remove_nullfall_markets_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Märkte im Bestand löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Alle Lebensmittelmärkte im Bestand löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>alle Märkte im Bestand löschen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_5">
+          <property name="title">
+           <string>Veränderungen durch Planung</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Veränderung bestehender Märkte im Planfall</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Markt im Bestand</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_18">
+             <item>
+              <widget class="QComboBox" name="changed_market_combo">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bestehenden Markt aus der Liste auswählen, um seinen Betriebstyp im Planfall zu verändern oder ihn im Planfall zu schließen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="select_changed_market_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines bestehenden Marktes durch Anklicken in der Karte. Nach der Auswahl kann dessen Betriebstyp im Planfall verändert oder er kann im Planfall geschlossen werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Markt in Karte auswählen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="changed_market_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_18"/>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_16">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="reset_changed_markets_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Veränderungen an Bestandsmärkten zurücksetzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Rücknahme aller bereits definierten Veränderungen an Bestandsmärkten im Planfall.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>alle Veränderungen zurücksetzen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_2.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_12">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Neue Märkte im Planfall</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="add_planfall_market_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt im Planfall hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen neuen Markt im Planfall hinzufügen. Dieser kann auch außerhalb des Plangebiets aus der Projektdefinition liegen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Neuen Markt hinzufügen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_market_add_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_market_add_1.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Neuer Markt</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <item>
+              <widget class="QComboBox" name="planfall_market_combo">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt (Planfall) aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen bereits in die Karte eingetragenen neuen Markt im Planfall aus der Liste auswählen, um seine Eigenschaften im Planfall zu verändern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="select_planfall_market_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Neuen Markt (Planfall) in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines neuen Marktes im Planfall durch Anklicken in der Karte. Nach der Auswahl können dessen Eigenschaften im Planfall verändert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Markt in Karte auswählen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="planfall_market_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_17"/>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_19">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="remove_planfall_markets_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle neuen Märkte im Planfall löschen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Alle für den Planfall definierten neuen Märkte löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>alle neuen Märkte  löschen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_4">
+          <property name="title">
+           <string>Zentren</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QPushButton" name="draw_center_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentren zeichnen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Einzeichnen von Zentren in die Karte. Zentren sind Teilbereich von Gemeinden (z.B. eine Innenstadt), für die in der Auswertung ein gesondertes Ergebnis ausgewiesen werden soll.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Zentrum zeichnen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</normaloff>
+               <normalon>../images/iconset_mob/20190619_iconset_mob_draw_polygon_2_checkable.png</normalon>../images/iconset_mob/20190619_iconset_mob_draw_polygon_1_checkable.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Zentrum</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_19">
+             <item>
+              <widget class="QComboBox" name="centers_combo">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum aus der Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ein bereits in der Karte eingezeichnetes Zentrum aus der Liste auswählen, um den Namen zu ändern oder es zu löschen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="select_center_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zentrum in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines bereits gezeichneten Zentrums durch Anklicken in der Karte. Nach der Auswahl kann dessen Name verändert werden oder es kann gelöscht werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Zentrum in Karte auswählen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+                 <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="center_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_19"/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
+          <property name="title">
+           <string>Projektwirkung</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QPushButton" name="calculate_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Projektwirkung schätzen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Umsatzumverteilung zwischen Planfall und Nullfall bezogen auf die Gemeinden und die Zentren sowie weitere Kennwerte der Einzelhandelsplanung schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Projektwirkung schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_1.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="manual_button">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Standortkonkurrenz Supermärkte“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Kurzanleitung</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgscollapsiblegroupbox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>osm_buffer_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>osm_buffer_input</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>266</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>64</x>
+     <y>289</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>osm_buffer_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>osm_buffer_input</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>437</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>64</x>
+     <y>289</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>osm_buffer_input</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>osm_buffer_slider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>441</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>osm_buffer_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>osm_buffer_slider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>402</x>
+     <y>266</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>470</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

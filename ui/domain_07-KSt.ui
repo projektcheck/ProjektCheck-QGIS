@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockWidget</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>580</width>
+    <height>922</height>
+   </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QgsCollapsibleGroupBox{
+font: bold 10pt ;
+}
+QToolBox:tab {
+	font: bold 10pt ;
+    color: Grey;
+}
+QToolBox:tab:selected {
+	font: bold 10pt ;
+    color: black;
+}
+QGroupBox::title {
+	font: bold italic 8pt ;
+    color: black;
+}
+QPushButton::flat{
+background-color: none;
+border: 0;
+border-style:none;
+border-color: blue;
+border-width: 0px;
+border-radius: 0px;
+padding:2px;
+}
+QPushButton::flat:hover{
+background-color: azure;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}
+QPushButton::flat:pressed{
+background-color: powderblue;
+border-style:solid;
+border-color: royalblue;
+border-width: 1px;
+border-radius: 0px;
+padding: 2px;
+}</string>
+  </property>
+  <property name="windowTitle">
+   <string>Projekt-Check / Wirkungsanalysen / Kommunale Steuereinnahmen</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QScrollArea" name="scrollArea_3">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>566</width>
+         <height>866</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
+          <property name="title">
+           <string>Wanderungssalden</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Einwohner</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="migration_inhabitants_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen (Einwohner)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Schätzen, welche Veränderung der Einwohnerzahlen sich durch das Projekt in der Projektgemeinde sowie den umliegenden Gemeinden durch Umzüge in die neuen Wohnungen sowie Nachbezüge der Bestandswohnungen ergeben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Wanderungssalden anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="recalculate_inhabitants_check">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Neuberechnung erzwingen</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="einwohner_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Beschäftigte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="migration_jobs_button">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wanderungssalden schätzen (Beschäftigte)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Schätzen, welche Veränderung der Zahl der Beschäftigten (am Arbeitsort) sich durch das Projekt in der Projektgemeinde sowie den umliegenden Gemeinden durch Umzüge von Unternehmen auf die neuen Flächen sowie Nachbezüge der Bestandsflächen ergeben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Wanderungssalden anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_statistics_1.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="recalculate_jobs_check">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Neuberechnung erzwingen</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="svb_parameter_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_15"/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
+          <property name="title">
+           <string>Fiskalische Wirkungen</string>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Grundsteuer</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="grundsteuer_hebesatz_param_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_10"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="grundsteuer_rohmiete_param_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_12"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="grundsteuer_sachwert_param_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_13"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="grundsteuer_bauvolumen_param_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_14"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calc_grundsteuer_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Grundsteuer&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde aus der Grundsteuer B auf Basis der vorstehenden Kennwerte sowie der Angaben aus der Projektdefinition schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Grundsteuer schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_property_calculate_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Einkommensteuer (Kommunalanteil)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calc_einkommensteuer_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Einkommensteuer (Kommunalanteil)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus der Einkommensteuer (Kommunalanteil) auf Basis der vorstehenden Schätzung der Wanderungssalden (Einwohner) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Einkommenssteuer schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_income_calculate_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_3">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Familienleistungsausgleich</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calc_fla_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Familienleistungsausgleich&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus Mitteln des Familienleistungsausgleichs auf Basis der vorstehenden Schätzung der Wanderungssalden (Einwohner) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Familienleistungsausgleich schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_family_compensation_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_4">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Gewerbesteuer (netto)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="gewerbesteuer_hebesatz_param_group">
+             <property name="font">
+              <font>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>8</pointsize>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_16"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calc_gewerbesteuer_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gewerbesteuer (netto)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus der Gewerbesteuer (netto) auf Basis der vorstehenden Schätzung der Wanderungssalden (Beschäftigte) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Gewerbesteuer (netto) schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_business_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_6">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_12">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Umsatzsteuer (Kommunalanteil)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calc_umsatzsteuer_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Umsatzsteuer (Kommunalanteil)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die zusätzlichen jährlichen Mehreinnahmen der Projektgemeinde sowie die voraussichtlichen Mindereinnahmen der umliegenden Gemeinden aus der Umsatzsteuer (Kommunalanteil) auf Basis der vorstehenden Schätzung der Wanderungssalden (Beschäftigte) schätzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Umsatzsteuer schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_tax_sales_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_7">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Summe der Steuereinahmen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calc_gesamtsumme_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gesamtsumme&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die mit den vorstehenden Funktionen ermittelten Mehr- und Mindereinnahmen aus der Grundsteuer, der Einkommensteuer, dem Familienleistungsausgleich, der Gewerbesteuer und der Umsatzsteuer aufsummieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Gesamtsumme schätzen</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../images/iconset_mob/20190619_iconset_mob_sum_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_sum_1.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="result_help_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Interpretationshilfe&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine kurze Interpretationshilfe (pdf) anzeigen lassen, in der u.a. beschrieben ist, welche Effekte (z.B. Kommunaler Finanzausgleich und Kreisumlage) in der Gesamtsumme noch nicht enthalten sind.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Hinweise zur Ergebnisinterpretation</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="manual_button">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kurzanleitung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigt eine Kurzanleitung (pdf) zu den Funktionen im Analysebereich „Kommunale Steuereinnahmen“ an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Kurzanleitung</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</normaloff>../images/iconset_mob/20190619_iconset_mob_info_2.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgscollapsiblegroupbox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
