@@ -13,7 +13,6 @@ about=Mit Projekt-Check Profi-Check können Kommunen, Planungsbüros, Politik so
 
 tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
-plugin_dependencies=pandas, lxml
 
 changelog=
       1.1
