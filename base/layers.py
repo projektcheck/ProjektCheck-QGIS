@@ -339,7 +339,9 @@ class TileLayer(Layer):
         if not self.layer:
             self.layer = QgsRasterLayer(self.url, label, 'wms')
             QgsProject.instance().addMapLayer(self.layer, False)
-            l = self.parent.insertLayer(0, self.layer) if self.prepend \
+        tree_layer = self.tree_layer
+        if not tree_layer:
+            tree_layer = self.parent.insertLayer(0, self.layer) if self.prepend\
                 else self.parent.addLayer(self.layer)
-            l.setItemVisibilityChecked(checked)
-            l.setExpanded(expanded)
+        tree_layer.setItemVisibilityChecked(checked)
+        tree_layer.setExpanded(expanded)

@@ -101,6 +101,7 @@ class Reachabilities(Domain):
         self.isochronen = Isochronen.features(create=True)
         self.project_frame = Projektrahmendaten.features()[0]
         self.stops_layer = None
+        self.oepnv_layer = None
         self.fill_haltestellen()
         self.fill_connectors()
 
@@ -388,11 +389,18 @@ class Reachabilities(Domain):
         group = (f'{self.layer_group}/ÖPNV Hintergrundkarte')
         url = ('type=xyz&url=http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png'
                '&zmax=18&zmin=0&crs=EPSG:{settings.EPSG}')
-        layer = TileLayer(url, groupname=group, prepend=False)
-        layer.draw('ÖPNVKarte (memomaps.de) © OpenStreetMap-Mitwirkende')
-        layer.layer.setTitle(
-            'Karte memomaps.de CC-BY-SA (openstreetmap.org/copyright), '
-            'Kartendaten Openstreetmap ODbL')
+        if not self.oepnv_layer:
+            self.oepnv_layer = TileLayer(url, groupname=group, prepend=False)
+        if self.oepnv_layer.tree_layer:
+            # toggle visibility if already there
+            self.oepnv_layer.tree_layer.setItemVisibilityChecked(
+                not self.oepnv_layer.tree_layer.isVisible())
+        else:
+            self.oepnv_layer.draw(
+                'ÖPNVKarte (memomaps.de) © OpenStreetMap-Mitwirkende')
+            self.oepnv_layer.layer.setTitle(
+                'Karte memomaps.de CC-BY-SA (openstreetmap.org/copyright), '
+                'Kartendaten Openstreetmap ODbL')
 
     def close(self):
         self.feature_picker.set_active(False)

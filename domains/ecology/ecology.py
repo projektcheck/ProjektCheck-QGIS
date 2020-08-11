@@ -118,6 +118,7 @@ class Ecology(Domain):
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
         self.output_nullfall = None
         self.output_planfall = None
+        self._layers = {}
 
         def toggle():
             for tool in self._tools:
@@ -263,7 +264,7 @@ class Ecology(Domain):
         '''
         def add_layer_from_dict(layers, parent_group):
             for name, url in layers:
-                self.add_wms_layer( name, url, parent_group=parent_group)
+                self.add_wms_layer(name, url, parent_group=parent_group)
 
         self.ui.nature_button.setCheckable(False)
         self.ui.nature_button.clicked.connect(
@@ -562,8 +563,16 @@ class Ecology(Domain):
             group += f'/{parent_group}'
         url = (f'{url}&crs=EPSG:{self.settings.EPSG}'
                '&format=image/png&dpiMode=7&styles')
-        layer = TileLayer(url, groupname=group)
-        layer.draw(name)
+        layer = self._layers.get(url)
+        if not layer:
+            layer = TileLayer(url, groupname=group)
+            self._layers[url] = layer
+        if layer.tree_layer:
+            # toggle visibility if already there
+            layer.tree_layer.setItemVisibilityChecked(
+                not layer.tree_layer.isVisible())
+        else:
+            layer.draw(name)
 
     def calculate_rating(self):
         '''
