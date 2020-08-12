@@ -376,6 +376,10 @@ class EditNullfallMarkets(EditMarkets):
         market.AGS = ags.AGS
         market.save()
         self.changed.emit()
+        # workaround: if layer had no data before it needs to be readded to show
+        # sth, refresh doesn't work
+        if len(self.markets) == 1:
+            self.add_layer()
         self.canvas.refreshAllLayers()
         self.fill_combo(select=market)
 
@@ -491,6 +495,10 @@ class EditPlanfallMarkets(EditMarkets):
         market.vkfl_planfall = vkfl
         market.save()
         self.changed.emit()
+        # workaround: if layer had no data before it needs to be readded to show
+        # sth, refresh doesn't work
+        if len(self.markets) == 1:
+            self.add_layer()
         self.canvas.refreshAllLayers()
         self.fill_combo(select=market)
 
