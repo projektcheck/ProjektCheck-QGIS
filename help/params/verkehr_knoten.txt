@@ -1,0 +1,5 @@
+{
+    "tooltip": "Herkunfts-/Zielpunkt editieren",
+    "beschreibung": "<b>Sie können hier den Namen des gewählten Herkunfts-/Zielpunktes ändern.</b>",
+    "name": "Der Name des gewählten Herkunfts-/Zielpunktes."
+}

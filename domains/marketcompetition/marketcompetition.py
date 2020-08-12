@@ -33,12 +33,12 @@ import os
 from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
 from projektcheck.base.tools import (FeaturePicker, MapClickedTool,
-                                          PolygonMapTool)
+                                     PolygonMapTool)
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.base.params import Params, Param, Seperator
 from projektcheck.base.inputs import LineEdit, ComboBox, Checkbox
 from projektcheck.utils.utils import (center_canvas, clear_layout,
-                                           get_ags, open_file)
+                                      get_ags, open_file)
 from .tables import Centers, Markets, MarketCellRelations
 from .read_osm import ReadOSMWorker
 from .market_templates import (MarketTemplateCreateDialog, MarketTemplate,
@@ -147,7 +147,7 @@ class EditMarkets(QObject):
             label = f'-> {label} geplant: {betriebstyp}'
         return label
 
-    def fill_combo(self, select: 'Feature'=None):
+    def fill_combo(self, select: 'Feature' = None):
         '''
         fill combobox with available markets, preselect given market
         '''

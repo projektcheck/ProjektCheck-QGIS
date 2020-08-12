@@ -38,19 +38,17 @@ from projektcheck.domains.traffic.tables import (
 from projektcheck.settings import settings
 
 
-class Routing(Worker):
+class TransferNodeCalculation(Worker):
     '''
-    Distribution of the additional traffic produced by the project areas between
-    the shortest paths from and to transfer nodes located on an inner circle
-    around the traffic connectors. The transfer nodes are calculated by merging
-    the shortest paths to points placed on two circles around the inner circle.
+    The transfer nodes are calculated by merging the shortest paths to points
+    placed on two circles around the inner circle.
     '''
     # radius of outer circle (additional to inner circle)
     outer_circle = 2000
     # number of destination points on outer and middle ring to route to
     n_segments = 24
 
-    def __init__(self, project, distance=1000, recalculate=False, parent=None):
+    def __init__(self, project, distance=1000, parent=None):
         '''
         Parameters
         ----------
@@ -59,9 +57,6 @@ class Routing(Worker):
         distance : int, optional
             the radius in meters of the inner ring the transfer nodes are
             located in, defaults to 1000 m
-        recalculate : bool, optional
-            recalculate the transfer nodes and shortest paths, defaults to only
-            distributing the traffic on the already calculated routes
         parent : QObject, optional
             parent object of thread, defaults to no parent (global)
         '''
@@ -72,49 +67,11 @@ class Routing(Worker):
         self.areas = Teilflaechen.features(project=project)
         self.connectors = Connectors.features(project=project)
         self.itineraries = Itineraries.features(project=project, create=True)
-        self.links = RouteLinks.features(project=project, create=True)
-        self.traffic_load = TrafficLoadLinks.features(project=project,
-                                                      create=True)
         self.transfer_nodes = TransferNodes.features(project=project,
                                                      create=True)
-        self.ways = Ways.features(project=project, create=True)
-        self._recalculate = recalculate
 
     def work(self):
-        if not self._recalculate:
-            self.calculate_transfer_nodes()
-            self.set_progress(40)
-            self.calculate_ways()
-            self.set_progress(50)
-            self.route_transfer_nodes()
-            self.set_progress(90)
-            self.calculate_traffic_load()
-        else:
-            self.calculate_traffic_load()
-
-    def calculate_ways(self):
-        '''
-        calculate and store the additional ways per type of use of the areas
-        '''
-        # get ways per type of use
-        ways_tou = {}
-        self.ways.delete()
-        self.log('Prüfe Wege...')
-        for area in self.areas:
-            if area.nutzungsart == 0:
-                continue
-            entry = ways_tou.get(area.nutzungsart)
-            if not entry:
-                entry = ways_tou[area.nutzungsart] = [0, 0]
-            entry[0] += area.wege_gesamt
-            entry[1] += area.wege_miv
-        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
-            if wege_gesamt == 0:
-                continue
-            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
-                # if wege_gesamt > 0 else 0
-            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
-                          miv_anteil=miv_anteil)
+        self.calculate_transfer_nodes()
 
     def calculate_transfer_nodes(self):
         '''
@@ -172,6 +129,72 @@ class Routing(Worker):
                 polyline = QgsGeometry.fromPolyline(points)
                 self.itineraries.add(geom=polyline, route_id=route.route_id,
                                      transfer_node_id=tn_id)
+
+
+class Routing(Worker):
+    '''
+    Distribution of the additional traffic produced by the project areas between
+    the shortest paths from and to transfer nodes located on an inner circle
+    around the traffic connectors.
+    '''
+
+    def __init__(self, project, recalculate=False, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project the areas and their connectors are in
+        recalculate : bool, optional
+            recalculate the shortest paths, defaults to only
+            distributing the traffic on the already calculated routes
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
+        super().__init__(parent=parent)
+        self.project = project
+        self.areas = Teilflaechen.features(project=project)
+        self.connectors = Connectors.features(project=project)
+        self.itineraries = Itineraries.features(project=project, create=True)
+        self.links = RouteLinks.features(project=project, create=True)
+        self.traffic_load = TrafficLoadLinks.features(project=project,
+                                                      create=True)
+        self.transfer_nodes = TransferNodes.features(project=project)
+        self.ways = Ways.features(project=project, create=True)
+        self._recalculate = recalculate
+
+    def work(self):
+        if not self._recalculate:
+            self.calculate_ways()
+            self.set_progress(40)
+            self.route_transfer_nodes()
+            self.set_progress(80)
+            self.calculate_traffic_load()
+        else:
+            self.calculate_traffic_load()
+
+    def calculate_ways(self):
+        '''
+        calculate and store the additional ways per type of use of the areas
+        '''
+        # get ways per type of use
+        ways_tou = {}
+        self.ways.delete()
+        self.log('Prüfe Wege...')
+        for area in self.areas:
+            if area.nutzungsart == 0:
+                continue
+            entry = ways_tou.get(area.nutzungsart)
+            if not entry:
+                entry = ways_tou[area.nutzungsart] = [0, 0]
+            entry[0] += area.wege_gesamt
+            entry[1] += area.wege_miv
+        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
+            if wege_gesamt == 0:
+                continue
+            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
+                # if wege_gesamt > 0 else 0
+            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
+                          miv_anteil=miv_anteil)
 
     def route_transfer_nodes(self):
         '''
