@@ -26,7 +26,7 @@ import processing
 import os
 from qgis.core import (QgsRasterLayer, QgsVectorLayer, QgsFeature,
                        QgsVectorFileWriter, QgsField)
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QVariant
 
 from projektcheck.utils.spatial import create_layer
 from projektcheck.domains.definitions.tables import (Teilflaechen,

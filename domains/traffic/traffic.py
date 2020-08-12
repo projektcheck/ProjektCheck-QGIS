@@ -23,8 +23,7 @@ __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
-from qgis.PyQt.Qt import QSpacerItem, QSizePolicy
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QSpacerItem, QSizePolicy
 import os
 import numpy as np
 

@@ -23,11 +23,10 @@ __date__ = '16/07/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 
-from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
                                  QTableWidget, QTableWidgetItem,
-                                 QAbstractScrollArea)
+                                 QAbstractScrollArea, QPushButton)
 from qgis.core import QgsWkbTypes
 import os
 

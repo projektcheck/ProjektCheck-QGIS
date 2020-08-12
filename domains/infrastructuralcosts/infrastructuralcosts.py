@@ -23,9 +23,8 @@ __author__ = 'Christoph Franke'
 __date__ = '18/10/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
-from qgis.PyQt.Qt import QRadioButton, QPushButton
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QRadioButton, QPushButton
 import numpy as np
 import os
 
@@ -184,6 +183,8 @@ class InfrastructureDrawing:
         if geom_typ == 'line':
             feature.length = geom.length()
             feature.save()
+        # workaround: if layer had no data before it needs to be readded to show
+        # sth, refresh doesn't work
         if len(features) == 1:
             self.draw_output(geom_typ, redraw=True)
         self.canvas.refreshAllLayers()

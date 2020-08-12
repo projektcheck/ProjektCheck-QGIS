@@ -23,11 +23,11 @@ __date__ = '17/04/2019'
 
 import os
 from typing import List
-from qgis.PyQt.Qt import (QSpinBox, QSlider, QObject, QDoubleSpinBox,
-                          QLineEdit, QComboBox, Qt, QLabel, QHBoxLayout,
-                          QCheckBox, QPushButton, QSizePolicy, QLayout)
+from qgis.PyQt.QtWidgets import (QSpinBox, QSlider, QDoubleSpinBox,
+                                 QLineEdit, QComboBox, QLabel, QHBoxLayout,
+                                 QCheckBox, QPushButton, QSizePolicy, QLayout)
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal, QObject, Qt
 
 from projektcheck.settings import settings
 

@@ -22,13 +22,12 @@ __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
 
 from abc import ABC
-from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject, QLabel,
-                          QGridLayout, QWidget, QScrollArea, QLayout,
-                          QBoxLayout)
+from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject
 from qgis.PyQt.QtGui import QIcon, QCursor
-from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
-                                 QPushButton, QLayoutItem)
+from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy, QPushButton,
+                                 QLayoutItem, QVBoxLayout, QHBoxLayout,
+                                 QFrame, QLabel, QGridLayout, QWidget,
+                                 QScrollArea, QLayout, QBoxLayout)
 from typing import Union, List
 from collections import OrderedDict
 import math

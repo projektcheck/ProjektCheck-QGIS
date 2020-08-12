@@ -29,8 +29,7 @@ from collections import OrderedDict
 import pandas as pd
 import numpy as np
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
-from qgis.PyQt.Qt import QVariant
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import pyqtSignal, QObject, QVariant
 from qgis.core import (QgsField, QgsVectorLayer, QgsVectorFileWriter,
                        QgsFeature, QgsProject)
 

@@ -15,6 +15,12 @@ tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
 
 changelog=
+      1.2
+      ---------
+      Allgemein
+      - Kompatibilität mit Windows 7 und 8
+      Standortkonkurrenz Supermärkte
+      - Fehler in der Darstellung der Märkte behoben
       1.1
       ---------
       Allgemein
