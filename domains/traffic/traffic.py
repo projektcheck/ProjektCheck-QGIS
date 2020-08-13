@@ -192,14 +192,15 @@ class Traffic(Domain):
             self.ui.transfer_node_parameter_group.setVisible(False)
             return
         self.ui.transfer_node_parameter_group.setVisible(True)
-        self.node_params = Params(layout,
-                                  help_file='verkehr_knoten.txt')
+        self.ui.transfer_node_parameter_group.setTitle(node.name)
+        self.node_params = Params(layout, help_file='verkehr_knoten.txt')
         self.node_params.name = Param(
             node.name, LineEdit(width=300),
             label='Name')
 
         def save():
             node.name = self.node_params.name.value
+            self.ui.transfer_node_parameter_group.setTitle(node.name)
             node.save()
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
@@ -272,10 +273,12 @@ class Traffic(Domain):
 
         layout = self.ui.settings_group.layout()
         clear_layout(layout)
-        self.settings_params = Params(parent=layout, button_label='Annahmen verändern',
-                             help_file='verkehr_wege_gewichtungen.txt')
+        self.settings_params = Params(parent=layout,
+                                      button_label='Annahmen verändern',
+                                      help_file='verkehr_wege_gewichtungen.txt')
 
-        self.settings_params.add(Title('Verkehrsaufkommen und Verkehrsmittelwahl'))
+        self.settings_params.add(
+            Title('Verkehrsaufkommen und Verkehrsmittelwahl'))
         for i, way in enumerate(self.ways):
             name = Nutzungsart(way.nutzungsart).name.capitalize()
             self.settings_params.add(Title(name, fontsize=8))
@@ -313,12 +316,9 @@ class Traffic(Domain):
         save the state of the ways and weights and recalculate the traffic load
         with those as new inputs
         '''
-        sum_weights = 0
-        for node in self.transfer_nodes:
-            sum_weights += node.weight
 
         for node in self.transfer_nodes:
-            node.weight = self.settings_params[node.name].value * sum_weights / 100
+            node.weight = self.settings_params[node.name].value
             node.save()
 
         for way in self.ways:
@@ -391,9 +391,9 @@ class Traffic(Domain):
                 return
 
         if len(self.traffic_load) == 0:
-            tree_layer = ProjectLayer.find(self.layer_group)
-            if tree_layer:
-                tree_layer[0].removeAllChildren()
+            #tree_layer = ProjectLayer.find(self.layer_group)
+            #if tree_layer:
+                #tree_layer[0].removeAllChildren()
             job = Routing(self.project)
             def on_success(res):
                 self.draw_traffic(zoom_to=True)
@@ -412,8 +412,9 @@ class Traffic(Domain):
         '''
         self.node_output = ProjectLayer.from_table(self.transfer_nodes.table,
                                                    groupname=self.layer_group)
-        self.node_output .draw(label='Zielpunkte',
-                               style_file='verkehr_zielpunkte.qml')
+        self.node_output.draw(label='Zielpunkte',
+                              style_file='verkehr_zielpunkte.qml')
+        self.select_tool.set_layer(self.node_output.layer)
         if zoom_to:
             self.node_output .zoom_to()
 
@@ -445,5 +446,8 @@ class Traffic(Domain):
 
     def close(self):
         if hasattr(self, 'params'):
+            self.node_params.close()
             self.settings_params.close()
+        self.select_tool.set_active(False)
+        self.add_node_tool.set_active(False)
         super().close()
