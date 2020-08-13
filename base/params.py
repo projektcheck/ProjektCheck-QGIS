@@ -161,15 +161,24 @@ class Param(QObject):
             return
         self.row = QHBoxLayout()
         label = QLabel(self.label)
-        spacer = QSpacerItem(0, 0, QSizePolicy.Expanding)
+        spacer = QFrame()
+        spacer_layout = QHBoxLayout()
+        spacer_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding))
+        spacer.setLayout(spacer_layout)
+        # dotted line in preview
+        if not edit:
+            spacer.setFrameShape(QFrame.StyledPanel)
+            spacer.setStyleSheet('border-width: 1px; border-style: none; '
+                                 'border-bottom-style: dotted;'
+                                 'border-color: grey;')
         if isinstance(layout, QGridLayout):
             n_rows = layout.rowCount()
             layout.addWidget(label, n_rows, 0)
-            layout.addItem(spacer, n_rows, 1)
+            layout.addWidget(spacer, n_rows, 1)
             layout.addLayout(self.row, n_rows, 2)
         else:
             self.row.addWidget(label)
-            self.row.addItem(spacer)
+            self.row.addWidget(spacer)
             layout.addLayout(self.row)
         if edit:
             self.input.draw(self.row, unit=self.unit)
