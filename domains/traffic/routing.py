@@ -108,7 +108,7 @@ class TransferNodeCalculation(Worker):
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 otp_router.route(source, destination)
-            #self.set_progress(60 * (i + 1) / len(self.areas))
+            self.set_progress(80 * (i + 1) / len(self.areas))
 
         otp_router.build_graph(distance=inner_circle)
         otp_router.remove_redundancies()
@@ -165,9 +165,7 @@ class Routing(Worker):
     def work(self):
         if not self._recalculate:
             self.calculate_ways()
-            self.set_progress(40)
             self.route_transfer_nodes()
-            self.set_progress(80)
             self.calculate_traffic_load()
         else:
             self.calculate_traffic_load()
@@ -239,6 +237,7 @@ class Routing(Worker):
                         self.links.add(from_node_id=from_id, to_node_id=to_id,
                                        transfer_node_id=transfer_node.id,
                                        area_id=area.id, geom=geom)
+            self.set_progress(80 * (i + 1) / len(self.areas))
 
     def calculate_traffic_load(self):
         '''
@@ -262,6 +261,7 @@ class Routing(Worker):
                 idx = df_links['area_id'] == area.id
                 df_links.loc[idx, 'wege_miv'] = (miv_gesamt_new * area.wege_miv
                                                  / miv_gesamt_old)
+        self.areas.filter()
 
         df_transfer = self.transfer_nodes.to_pandas(columns=['fid', 'weight'])
         df_weighted = df_links.merge(

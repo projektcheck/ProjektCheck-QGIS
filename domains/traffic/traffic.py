@@ -90,11 +90,7 @@ class Traffic(Domain):
         self.ui.calculate_traffic_button.clicked.connect(
             self.calculate_traffic)
 
-        def remove_nodes():
-            self.reset(project=self.project)
-            self.fill_node_combo()
-            self.setup_traffic_settings()
-        self.ui.remove_transfer_nodes_button.clicked.connect(remove_nodes)
+        self.ui.remove_transfer_nodes_button.clicked.connect(self.remove_nodes)
 
         pdf_path = os.path.join(
             self.settings.HELP_PATH, 'Anleitung_Verkehr_im_Umfeld.pdf')
@@ -116,7 +112,6 @@ class Traffic(Domain):
         self.ways = Ways.features(project=self.project, create=True)
         self.connectors = Connectors.features(project=self.project, create=True)
 
-        self.ui.distance_frame.setVisible(False)
         self.draw_nodes()
         self.fill_node_combo()
         self.setup_traffic_settings()
@@ -235,7 +230,7 @@ class Traffic(Domain):
             self.ui.transfer_node_parameter_group,
             'Herkunfts-/Zielpunkt entfernen',
             f'Soll der Punkt "{node.name}" '
-            'entfernt werden?\n',
+            'entfernt werden?',
              QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             # ToDo: redist. weights
@@ -244,6 +239,19 @@ class Traffic(Domain):
             self.setup_traffic_settings()
             self.canvas.refreshAllLayers()
 
+    def remove_nodes(self):
+        if len(self.transfer_nodes) == 0:
+            return
+        reply = QMessageBox.question(
+            self.ui.transfer_node_parameter_group,
+            'Herkunfts-/Zielpunkte entfernen',
+            f'Sollen alle Herkunfts-/Zielpunkte entfernt werden?',
+             QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.reset(project=self.project)
+            self.fill_node_combo()
+            self.setup_traffic_settings()
+
     def setup_traffic_settings(self):
         '''
         set up ways and weights
@@ -251,15 +259,17 @@ class Traffic(Domain):
         has_nodes = len(self.transfer_nodes) != 0
         initial_calc_done = len(self.traffic_load) != 0
         self.ui.calculate_traffic_button.setEnabled(has_nodes)
-        self.ui.distance_frame.setVisible(initial_calc_done)
+        self.ui.settings_frame.setVisible(initial_calc_done)
         button_text = 'Straßenverkehrsbelastung anzeigen' if initial_calc_done \
             else 'Straßenverkehrsbelastung berechnen'
         self.ui.calculate_traffic_button.setText(button_text)
-        if not initial_calc_done:
-            return
 
         if self.settings_params:
             self.settings_params.close()
+
+        if not initial_calc_done:
+            return
+
         layout = self.ui.settings_group.layout()
         clear_layout(layout)
         self.settings_params = Params(parent=layout, button_label='Annahmen verändern',
@@ -331,6 +341,16 @@ class Traffic(Domain):
         '''
         calculate the traffic nodes. resets all nodes and results
         '''
+        if len(self.transfer_nodes) > 0:
+            reply = QMessageBox.question(
+                self.ui.transfer_node_parameter_group,
+                'Herkunfts-/Zielpunkt entfernen',
+                'Die Berechnung der Herkunfts-/Zielpunkte setzt alle '
+                'vorhandenen Punkte und Berechnungen zurück.\n'
+                'Wollen Sie die Berechnung fortsetzen?',
+                 QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.No:
+                return
         self.reset(project=self.project)
         tree_layer = ProjectLayer.find(self.layer_group)
         if tree_layer:
@@ -340,10 +360,11 @@ class Traffic(Domain):
         def on_success(res):
             self.draw_nodes()
             self.draw_itineraries(zoom_to=True)
-            self.setup_nodes()
+        def on_close():
+            self.fill_node_combo()
             self.setup_traffic_settings()
         dialog = ProgressDialog(
-            job, parent=self.ui, on_success=on_success)
+            job, parent=self.ui, on_success=on_success, on_close=on_close)
         dialog.show()
 
     def calculate_traffic(self):
@@ -421,15 +442,6 @@ class Traffic(Domain):
                     filter=f'trips > 0')
         if zoom_to:
             output.zoom_to()
-
-    @classmethod
-    def remove_results(cls):
-        '''
-        remove result layers
-        '''
-        tree_layer = ProjectLayer.find(cls.layer_group)
-        if tree_layer:
-            tree_layer[0].removeAllChildren()
 
     def close(self):
         if hasattr(self, 'params'):
