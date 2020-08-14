@@ -40,7 +40,8 @@ from projektcheck.base.params import (Params, Param, Title,
 from projektcheck.base.inputs import SpinBox, Slider, LineEdit
 from projektcheck.domains.constants import Nutzungsart
 from projektcheck.utils.utils import open_file, center_canvas, clear_layout
-from projektcheck.base.tools import FeaturePicker, MapClickedTool
+from projektcheck.base.tools import (FeaturePicker, MapClickedTool,
+                                     FeatureDragger)
 
 
 class Traffic(Domain):
@@ -61,10 +62,9 @@ class Traffic(Domain):
         '''
         if not project:
             project = cls.project_manager.active_project
-        TransferNodes.features(project=project, create=True).delete()
-        RouteLinks.features(project=project, create=True).delete()
-        Itineraries.features(project=project, create=True).delete()
-        TrafficLoadLinks.features(project=project, create=True).delete()
+        RouteLinks.features(project=project, create=True).table.truncate()
+        Itineraries.features(project=project, create=True).table.truncate()
+        TrafficLoadLinks.features(project=project, create=True).table.truncate()
 
     def setupUi(self):
         self.node_output = None
@@ -72,8 +72,16 @@ class Traffic(Domain):
         self.select_tool = FeaturePicker(self.ui.select_transfer_node_button,
                                          canvas=self.canvas)
         self.select_tool.feature_picked.connect(self.select_node)
+
+        self.drag_tool = FeatureDragger(
+            self.ui.move_transfer_node_button, canvas=self.canvas)
+        self.drag_tool.feature_dragged.connect(self.move_node)
+
         self.ui.select_transfer_node_button.clicked.connect(
             lambda: self.draw_nodes())
+        self.ui.move_transfer_node_button.clicked.connect(
+            lambda: self.draw_nodes())
+
         self.ui.transfer_node_combo.currentIndexChanged.connect(
             lambda idx: self.toggle_node(
                 self.ui.transfer_node_combo.currentData(), center_on_point=True)
@@ -178,9 +186,19 @@ class Traffic(Domain):
             self.draw_nodes()
         self.canvas.refreshAllLayers()
         self.fill_node_combo(select=node)
-        self.links.delete()
-        self.traffic_load.delete()
+        self.links.table.truncate()
+        self.traffic_load.table.truncate()
         self.setup_weights()
+
+    def move_node(self, feature_id: int, point: 'QgsPointXY'):
+        node = self.transfer_nodes.get(id=feature_id)
+        node.geom = point
+        node.save()
+        self.drag_tool.reset()
+        self.canvas.refreshAllLayers()
+        self.links.table.truncate()
+        self.traffic_load.table.truncate()
+        self.set_status()
 
     def select_node(self, feature):
         '''
@@ -263,8 +281,8 @@ class Traffic(Domain):
             delta = 100 - sum(self.transfer_nodes.values('weight'))
             first = self.transfer_nodes[0]
             first.weight = max(first.weight + delta, 0)
-            self.links.delete()
-            self.traffic_load.delete()
+            self.links.table.truncate()
+            self.traffic_load.table.truncate()
             self.canvas.refreshAllLayers()
             self.fill_node_combo()
             self.setup_weights()
@@ -312,7 +330,7 @@ class Traffic(Domain):
             for node in self.transfer_nodes:
                 node.weight = self.weight_params[node.name].value
                 node.save()
-            self.traffic_load.delete()
+            self.traffic_load.table.truncate()
             self.canvas.refreshAllLayers()
             self.set_status()
 
@@ -351,7 +369,7 @@ class Traffic(Domain):
                 way.miv_anteil = self.ways_params[f'{name}_miv'].value
                 way.wege_gesamt = self.ways_params[f'{name}_gesamt'].value
                 way.save()
-            self.traffic_load.delete()
+            self.traffic_load.table.truncate()
             self.canvas.refreshAllLayers()
             self.set_status()
 
@@ -448,6 +466,7 @@ class Traffic(Domain):
         self.node_output.draw(label='Herkunfts-/Zielpunkte',
                               style_file='verkehr_zielpunkte.qml')
         self.select_tool.set_layer(self.node_output.layer)
+        self.drag_tool.set_layer(self.node_output.layer)
         if zoom_to:
             self.node_output .zoom_to()
 
@@ -485,5 +504,6 @@ class Traffic(Domain):
         if self.weight_params:
             self.weight_params.close()
         self.select_tool.set_active(False)
+        self.drag_tool.set_active(False)
         self.add_node_tool.set_active(False)
         super().close()

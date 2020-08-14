@@ -376,7 +376,7 @@ padding: 2px;
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="add_transfer_node_button_2">
+           <widget class="QPushButton" name="move_transfer_node_button">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -587,6 +587,39 @@ padding: 2px;
             <number>0</number>
            </property>
            <item>
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="text">
+              <string>Annahmen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_10">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>6</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QGroupBox" name="weights_group">
              <property name="title">
               <string>Gewichtungen der Herkunfts-/Zielpunkte</string>
@@ -634,81 +667,81 @@ padding: 2px;
              </property>
             </spacer>
            </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="text">
+              <string>Belastungsschätzung</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>6</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QPushButton" name="calculate_traffic_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Routen der Fahrten von den Herkunfts-/Zielpunkten zum Plangebiet werden gesucht und eine vorläufige Schätzung der Verkehrsbelastung durchgeführt. &lt;br/&gt;Wenn die Funktion für das aktuelle Projekt bereits ausgeführt wurde und keine Änderungen an den Annahmen oder Herkunfts-Zielpunkten vorgenommen wurden, wird das vorliegende Ergebnis erneut angezeigt.&lt;/p&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Straßenverkehrsbelastung anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
           </layout>
          </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string/>
-          </property>
-          <property name="text">
-           <string>Belastungsschätzung</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>6</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QPushButton" name="calculate_traffic_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Routen der Fahrten von den Herkunfts-/Zielpunkten zum Plangebiet werden gesucht und eine vorläufige Schätzung der Verkehrsbelastung durchgeführt. &lt;br/&gt;Wenn die Funktion für das aktuelle Projekt bereits ausgeführt wurde und keine Änderungen an den Annahmen oder Herkunfts-Zielpunkten vorgenommen wurden, wird das vorliegende Ergebnis erneut angezeigt.&lt;/p&gt;</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Straßenverkehrsbelastung anzeigen</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
         </item>
         <item>
          <spacer name="verticalSpacer">

@@ -86,7 +86,7 @@ class TransferNodeCalculation(Worker):
         project_epsg = settings.EPSG
         otp_router = OTPRouter(distance=inner_circle, epsg=project_epsg)
 
-        self.itineraries.delete()
+        self.itineraries.table.truncate()
 
         for i, area in enumerate(self.areas):
             self.log(f'Suche Routen ausgehend von Teilfläche {area.name}...')
@@ -117,7 +117,7 @@ class TransferNodeCalculation(Worker):
         otp_router.transfer_nodes.calc_initial_weight()
 
         transfer_nodes_df = otp_router.get_transfer_node_features()
-        self.transfer_nodes.delete()
+        self.transfer_nodes.table.truncate()
         transfer_nodes_df['fid'] = range(1, len(transfer_nodes_df) + 1)
         self.transfer_nodes.update_pandas(transfer_nodes_df)
 
@@ -176,7 +176,7 @@ class Routing(Worker):
         '''
         # get ways per type of use
         ways_tou = {}
-        self.ways.delete()
+        self.ways.table.truncate()
         self.log('Prüfe Wege...')
         for area in self.areas:
             if area.nutzungsart == 0:
@@ -198,7 +198,7 @@ class Routing(Worker):
         '''
         routing between transfer nodes and area connectors
         '''
-        self.links.delete()
+        self.links.table.truncate()
         project_epsg = settings.EPSG
         #route_ids = {}
         otp_router = OTPRouter(epsg=project_epsg)
@@ -243,7 +243,7 @@ class Routing(Worker):
         '''
         distribute the traffic to the shortest paths
         '''
-        self.traffic_load.delete()
+        self.traffic_load.table.truncate()
 
         self.log('Verteile das Verkehrsaufkommen...')
 
