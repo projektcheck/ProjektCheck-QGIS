@@ -630,8 +630,8 @@ class GeopackageTable(Table):
         '''
         truncate the table removing all features in it
         '''
-        for feat in self._layer:
-            self._layer.DeleteFeature(feat.GetFID())
+        self.workspace.conn.ExecuteSQL(
+            f'DELETE FROM {self.name};', dialect='SQLITE')
 
     def values(self, field: Field) -> List[object]:
         '''

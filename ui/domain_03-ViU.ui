@@ -314,7 +314,7 @@ padding: 2px;
            </font>
           </property>
           <property name="text">
-           <string>Punkte bearbeiten</string>
+           <string>Punkte setzen und bearbeiten</string>
           </property>
          </widget>
         </item>
@@ -387,7 +387,7 @@ padding: 2px;
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bestehenden Markt hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Einzeichnen eines oder mehrerer bestehender Märkte in die Karte. Die Eigenschaften der Märkte (Name, Anbieter, Betriebstyp) können anschließend editiert werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Herkunfts-/Zielpunkt verschieben&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Verschieben eines existierenden Herkunfts-/Zielpunktes mit Drag&amp;Drop. Klicken Sie dazu auf einen Punkt und ziehen Sie ihn bei gedrückter Maustatse auf die neue Position auf der Karte.&lt;/p&gt;</string>
             </property>
             <property name="text">
              <string>Punkt verschieben</string>

@@ -191,6 +191,9 @@ class Traffic(Domain):
         self.setup_weights()
 
     def move_node(self, feature_id: int, point: 'QgsPointXY'):
+        '''
+        move transfer node with given id to given point
+        '''
         node = self.transfer_nodes.get(id=feature_id)
         node.geom = point
         node.save()
@@ -216,6 +219,9 @@ class Traffic(Domain):
         self.ui.transfer_node_combo.setCurrentIndex(idx)
 
     def setup_node_params(self, node):
+        '''
+        set up the parameters of a single transfer node
+        '''
         if self.node_params:
             self.node_params.close()
         layout = self.ui.transfer_node_parameter_group.layout()
@@ -257,6 +263,9 @@ class Traffic(Domain):
         button.clicked.connect(lambda: self.remove_node(node))
 
     def remove_node(self, node):
+        '''
+        remove given transfer node
+        '''
         if not node:
             return
         reply = QMessageBox.question(
@@ -288,6 +297,9 @@ class Traffic(Domain):
             self.setup_weights()
 
     def remove_nodes(self):
+        '''
+        remove all transfer nodes
+        '''
         if len(self.transfer_nodes) == 0:
             return
         reply = QMessageBox.question(
@@ -304,6 +316,9 @@ class Traffic(Domain):
             self.setup_weights()
 
     def setup_weights(self):
+        '''
+        set up the parameters to weight the transfer nodes
+        '''
         self.set_status()
 
         if self.weight_params:
@@ -339,7 +354,7 @@ class Traffic(Domain):
 
     def setup_ways(self):
         '''
-        set up ways and weights
+        set up paramaters to set ways
         '''
 
         if self.ways_params:
@@ -464,11 +479,11 @@ class Traffic(Domain):
         self.node_output = ProjectLayer.from_table(self.transfer_nodes.table,
                                                    groupname=self.layer_group)
         self.node_output.draw(label='Herkunfts-/Zielpunkte',
-                              style_file='verkehr_zielpunkte.qml')
+                              style_file='verkehr_zielpunkte.qml', prepend=True)
         self.select_tool.set_layer(self.node_output.layer)
         self.drag_tool.set_layer(self.node_output.layer)
         if zoom_to:
-            self.node_output .zoom_to()
+            self.node_output.zoom_to()
 
     def draw_itineraries(self, zoom_to=False):
         '''
