@@ -192,8 +192,8 @@ class Layer(ABC):
 
     def draw(self, style_path: str = None, label: str = '', redraw: str = True,
              checked: bool = True, filter: str = None, expanded: bool = True,
-             prepend: bool = False, uncheck_siblings: bool = False
-             ) -> QgsVectorLayer:
+             prepend: bool = False, uncheck_siblings: bool = False,
+             toggle_if_exists=False) -> QgsVectorLayer:
         '''
         load the data into a vector layer, draw it and add it to the layer tree
 
@@ -220,6 +220,10 @@ class Layer(ABC):
         uncheck_siblings: bool, optional
             uncheck other layers in same group, defaults to leave their
             check-state as is
+        toggle_if_exists: bool, optional
+            toggle visibility if layer is already in layer tree, overrides
+            "checked" parameter, ignored when redraw is True, defaults to set
+            visibility according to given  "checked" parameter
 
         Returns
         ----------
@@ -250,6 +254,8 @@ class Layer(ABC):
         if not tree_layer:
             tree_layer = self.parent.insertLayer(0, self.layer) if prepend else\
                 self.parent.addLayer(self.layer)
+        elif toggle_if_exists:
+            checked = not tree_layer.isVisible()
         tree_layer.setItemVisibilityChecked(checked)
         tree_layer.setExpanded(expanded)
         if filter is not None:
@@ -316,7 +322,8 @@ class TileLayer(Layer):
         self.url = url
         self.prepend = prepend
 
-    def draw(self, label: str, checked: bool = True, expanded: bool = True):
+    def draw(self, label: str, checked: bool = True, expanded: bool = True,
+             toggle_if_exists=False):
         '''
         create the tile layer, draw it and add it to the layer tree
 
@@ -330,6 +337,10 @@ class TileLayer(Layer):
             defaults to redrawing the layer
         checked: bool, optional
             set check state of layer in layer tree, defaults to being checked
+        toggle_if_exists: bool, optional
+            toggle visibility if layer is already in layer tree, overrides
+            "checked" parameter, defaults to set visibility according to given
+            "checked" parameter
         '''
         self.layer = None
         for child in self.parent.children():
@@ -343,5 +354,7 @@ class TileLayer(Layer):
         if not tree_layer:
             tree_layer = self.parent.insertLayer(0, self.layer) if self.prepend\
                 else self.parent.addLayer(self.layer)
+        elif toggle_if_exists:
+            checked = not tree_layer.isVisible()
         tree_layer.setItemVisibilityChecked(checked)
         tree_layer.setExpanded(expanded)

@@ -761,7 +761,8 @@ class ProjectLayer(Layer):
     def draw(self, style_file: str = None, label: str = '', redraw: str = True,
              checked: bool = True, filter: str = None, expanded: bool = True,
              read_only: bool = True, prepend: bool = False,
-             uncheck_siblings: bool = False) -> QgsVectorLayer:
+             toggle_if_exists=False, uncheck_siblings: bool = False
+             ) -> QgsVectorLayer:
         '''
         load the data into a vector layer, draw it and add it to the layer tree
 
@@ -791,6 +792,10 @@ class ProjectLayer(Layer):
             check-state as is
         read_only: bool, optional
             layer can not be altered by the user if True, defaults to read only
+        toggle_if_exists: bool, optional
+            toggle visibility if layer is already in layer tree, overrides
+            "checked" parameter, ignored when redraw is True, defaults to set
+            visibility according to given  "checked" parameter
 
         Returns
         ----------
@@ -802,7 +807,8 @@ class ProjectLayer(Layer):
         layer = super().draw(style_path=style_path, label=label,
                              checked=checked, filter=filter, redraw=redraw,
                              prepend=prepend, expanded=expanded,
-                             uncheck_siblings=uncheck_siblings)
+                             uncheck_siblings=uncheck_siblings,
+                             toggle_if_exists=toggle_if_exists)
         layer.setReadOnly(read_only)
         return layer
 
