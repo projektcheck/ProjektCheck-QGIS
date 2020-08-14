@@ -152,7 +152,7 @@ class EinwohnerMigration(Migration):
         project_ags = self.project_frame.ags
         project_gem = self.gemeinden.get(AGS=project_ags)
         wanderung = self.wanderung.get(AGS=project_ags)
-        sum_ew = sum(self.areas.values('ew'))
+        sum_ew = sum(x or 0 for x in self.areas.values('ew'))
 
         def update_salden(ags_changed):
             param = self.params[ags_changed]
@@ -320,7 +320,7 @@ class BeschaeftigtenMigration(Migration):
         project_ags = self.project_frame.ags
         project_gem = self.gemeinden.get(AGS=project_ags)
         wanderung = self.wanderung.get(AGS=project_ags)
-        sum_ap = sum(self.areas.values('ap_gesamt'))
+        sum_ap = sum(x or 0 for x in self.areas.values('ap_gesamt'))
 
         # ToDo: this is exactly the same as in EinwohnerMigration
         def update_salden(ags_changed):

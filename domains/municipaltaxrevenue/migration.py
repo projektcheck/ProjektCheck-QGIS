@@ -243,7 +243,8 @@ class EwMigrationCalculation(MigrationCalculation):
         anteil_ags = ew_wichtet_ags / ew_wichtet_ags.sum()
 
         project_ags = self.project_frame.ags
-        zuzug_project = sum(self.areas.values('ew'))
+        ew = [v for v in self.areas.values('ew') if v]
+        zuzug_project = sum(ew)
         randsummen = self.project.basedata.get_table(
             'Wanderung_Randsummen', 'Einnahmen').features()
         factor = randsummen.get(IDWanderungstyp=1).Anteil_Wohnen
@@ -294,7 +295,8 @@ class SvBMigrationCalculation(MigrationCalculation):
         anteil_ags = svb_wichtet_ags / svb_wichtet_ags.sum()
 
         project_ags = self.project_frame.ags
-        zuzug_project = sum(self.areas.values('ap_gesamt'))
+        ap = [v for v in self.areas.values('ap_gesamt') if v]
+        zuzug_project = sum(ap)
         randsummen = self.project.basedata.get_table(
             'Wanderung_Randsummen', 'Einnahmen').features()
         factor = randsummen.get(IDWanderungstyp=1).Anteil_Gewerbe
