@@ -117,7 +117,6 @@ class Ecology(Domain):
         self.ui.toggle_drawing_button.clicked.connect(self.add_output)
         self.output_nullfall = None
         self.output_planfall = None
-        self._layers = {}
 
         def toggle():
             for tool in self._tools:
@@ -392,7 +391,7 @@ class Ecology(Domain):
         self.canvas.refreshAllLayers()
 
         if len(features) == 1:
-            self.add_output()
+            self.add_output(redraw=True)
 
     def fill_area(self, typ, planfall=True):
         #self.clear_drawing(planfall=planfall)
@@ -535,7 +534,7 @@ class Ecology(Domain):
         features.delete()
         self.canvas.refreshAllLayers()
 
-    def add_output(self):
+    def add_output(self, redraw=False):
         '''
         add drawings as layer
         '''
@@ -545,7 +544,7 @@ class Ecology(Domain):
         output = self.output_planfall if planfall else self.output_nullfall
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
-        output.draw(label=label, style_file=style, redraw=False)
+        output.draw(label=label, style_file=style, redraw=redraw)
         setattr(self, 'output_planfall' if planfall else 'output_nullfall',
                 output)
         disabled_out = self.output_nullfall if planfall \
@@ -562,16 +561,8 @@ class Ecology(Domain):
             group += f'/{parent_group}'
         url = (f'{url}&crs=EPSG:{self.settings.EPSG}'
                '&format=image/png&dpiMode=7&styles')
-        layer = self._layers.get(url)
-        if not layer:
-            layer = TileLayer(url, groupname=group)
-            self._layers[url] = layer
-        if layer.tree_layer:
-            # toggle visibility if already there
-            layer.tree_layer.setItemVisibilityChecked(
-                not layer.tree_layer.isVisible())
-        else:
-            layer.draw(name)
+        layer = TileLayer(url, groupname=group)
+        layer.draw(name, toggle_if_exists=True)
 
     def calculate_rating(self):
         '''
