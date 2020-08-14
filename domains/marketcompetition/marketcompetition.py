@@ -200,7 +200,7 @@ class EditMarkets(QObject):
         '''
         raise NotImplementedError
 
-    def add_layer(self, zoom_to=False):
+    def add_layer(self, zoom_to=False, toggle_if_exists=False):
         '''
         add output layer showing markets
         '''
@@ -209,10 +209,12 @@ class EditMarkets(QObject):
         self.output.draw(
             label=self.market_label,
             style_file=self.layer_style,
-            filter=self.layer_filter
+            filter=self.layer_filter,
+            redraw=not toggle_if_exists,
+            toggle_if_exists=toggle_if_exists
         )
         self.select_tool.set_layer(self.output.layer)
-        if zoom_to:
+        if zoom_to and self.output.tree_layer.isVisible():
             self.output.zoom_to()
 
     def add_market(self, geom):
@@ -391,7 +393,7 @@ class EditPlanfallMarkets(EditMarkets):
     layer_filter = 'id_betriebstyp_nullfall = 0'
     layer_style = 'standortkonkurrenz_geplante_maerkte.qml'
     filter_args = {'id_betriebstyp_nullfall': 0}
-    market_label = 'geplante Märkte'
+    market_label = 'Geplante Märkte'
     suffix = 'planfall'
 
     def setup_params(self, market):
@@ -523,12 +525,13 @@ class ChangeMarkets(EditMarkets):
                          layer_group=layer_group)
         self.nullfall_edit = nullfall_edit
 
-    def add_layer(self, zoom_to=False):
+    def add_layer(self, zoom_to=False, toggle_if_exists=False):
         '''
         add the nullfall layer in addition to layer showing the changed markets
         '''
-        super().add_layer(zoom_to=zoom_to)
-        self.nullfall_edit.add_layer(zoom_to)
+        super().add_layer(toggle_if_exists=toggle_if_exists)
+        self.nullfall_edit.add_layer(zoom_to=zoom_to,
+                                     toggle_if_exists=toggle_if_exists)
         self.select_tool.set_layer(self.nullfall_edit.output.layer)
 
     def setup_params(self, market):
@@ -700,7 +703,7 @@ class EditCenters:
                               self.output.layer.crs())
         self.setup_params(center)
 
-    def add_layer(self, zoom_to=True):
+    def add_layer(self, toggle_if_exists=False):
         '''
         show the centers in a layer
         '''
@@ -709,7 +712,8 @@ class EditCenters:
         self.output.draw(
             label='Zentren',
             style_file='standortkonkurrenz_zentren.qml',
-            filter='nutzerdefiniert=1'
+            filter='nutzerdefiniert=1',
+            redraw=not toggle_if_exists, toggle_if_exists=toggle_if_exists
         )
         self.select_tool.set_layer(self.output.layer)
 
@@ -920,10 +924,10 @@ class SupermarketsCompetition(Domain):
         add layers of markets in status quo and scenario and the user-defined
         centers
         '''
-        self.planfall_edit.add_layer()
-        self.changed_edit.add_layer()
-        self.nullfall_edit.add_layer(zoom_to=zoom_to)
-        self.center_edit.add_layer()
+        self.planfall_edit.add_layer(toggle_if_exists=True)
+        self.changed_edit.add_layer(zoom_to=True, toggle_if_exists=True)
+        #self.nullfall_edit.add_layer(zoom_to=zoom_to, toggle_if_exists=True)
+        self.center_edit.add_layer(toggle_if_exists=True)
 
     def show_study_area(self, zoom_to=True):
         '''
@@ -936,7 +940,8 @@ class SupermarketsCompetition(Domain):
             label='Ausgewählte Gemeinden/Verw.gemeinschaften im '
             'Betrachtungsraum',
             style_file='standortkonkurrenz_gemeinden_ausgewaehlt.qml',
-            filter='auswahl!=0 AND nutzerdefiniert=-1'
+            filter='auswahl!=0 AND nutzerdefiniert=-1',
+            redraw=False, checked=self.ui.select_communities_button.isChecked()
         )
         self.community_picker.set_layer(self.communities_selected_layer)
 
@@ -945,7 +950,8 @@ class SupermarketsCompetition(Domain):
         self.communities_not_selected_layer = output.draw(
             label='Nicht ausgewählte Gemeinden/Verw.gemeinschaften',
             style_file='standortkonkurrenz_gemeinden_nicht_ausgewaehlt.qml',
-            filter='auswahl=0 AND nutzerdefiniert=-1'
+            filter='auswahl=0 AND nutzerdefiniert=-1',
+            redraw=False, checked=self.ui.select_communities_button.isChecked()
         )
         self.community_picker.add_layer(self.communities_not_selected_layer)
         if zoom_to:

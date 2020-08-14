@@ -23,6 +23,8 @@ changelog=
       - einige Layer werden umgeschaltet, falls bereits vorhanden, statt sie neu zu zeichnen
       Standortkonkurrenz Supermärkte
       - Fehler in der Darstellung der Märkte behoben
+      Kommunale Steuereinnahmen
+      - Fehlermeldung bei der Berechnung der Wanderungssalden der Beschäftigten behoben
       Verkehr
       - Möglichkeit der manuellen Bearbeitung der Herkunfts-/Zielpunkte
       - überarbeitete Benutzerführung
