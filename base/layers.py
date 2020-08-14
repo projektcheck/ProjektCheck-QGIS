@@ -238,10 +238,6 @@ class Layer(ABC):
         if redraw:
             self.remove()
 
-        if uncheck_siblings:
-            for layer in self.parent.children():
-                layer.setItemVisibilityChecked(False)
-
         if not self.layer:
             self.layer = QgsVectorLayer(self.data_path, self.layername, "ogr")
             if label:
@@ -256,6 +252,13 @@ class Layer(ABC):
                 self.parent.addLayer(self.layer)
         elif toggle_if_exists:
             checked = not tree_layer.isVisible()
+
+        if uncheck_siblings:
+            for child in self.parent.children():
+                if child == tree_layer:
+                    continue
+                child.setItemVisibilityChecked(False)
+
         tree_layer.setItemVisibilityChecked(checked)
         tree_layer.setExpanded(expanded)
         if filter is not None:

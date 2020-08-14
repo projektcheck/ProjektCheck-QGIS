@@ -105,7 +105,7 @@ class EinwohnerMigration(Migration):
         calculate the migration
         '''
         if not self.ui.recalculate_inhabitants_check.isChecked():
-            self.add_layer()
+            self.add_layer(toggle_if_exists=True)
             return
         sum_ew = sum(x or 0 for x in self.areas.values('ew'))
         if sum_ew == 0:
@@ -226,7 +226,7 @@ class EinwohnerMigration(Migration):
             scrollable=True)
         self.params.changed.connect(save)
 
-    def add_layer(self):
+    def add_layer(self, toggle_if_exists=False):
         '''
         show layer with migration of inhabitants
         '''
@@ -235,9 +235,11 @@ class EinwohnerMigration(Migration):
         self.output.draw(
             label='Wanderungssalden Einwohner',
             style_file='einnahmen_einwohnerwanderung.qml',
-            uncheck_siblings=True, redraw=False
+            uncheck_siblings=True, redraw=not toggle_if_exists,
+            toggle_if_exists=toggle_if_exists
         )
-        self.output.zoom_to()
+        if self.output.tree_layer.isVisible():
+            self.output.zoom_to()
 
 
 class BeschaeftigtenMigration(Migration):
@@ -264,7 +266,7 @@ class BeschaeftigtenMigration(Migration):
         calculate migration of jobs
         '''
         if not self.ui.recalculate_jobs_check.isChecked():
-            self.add_layer()
+            self.add_layer(toggle_if_exists=True)
             return
         sum_ap = sum(x or 0 for x in self.areas.values('ap_gesamt'))
         if sum_ap == 0:
@@ -397,7 +399,7 @@ class BeschaeftigtenMigration(Migration):
                          scrollable=True)
         self.params.changed.connect(save)
 
-    def add_layer(self):
+    def add_layer(self, toggle_if_exists = False):
         '''
         show layer with migration of jobs
         '''
@@ -406,9 +408,11 @@ class BeschaeftigtenMigration(Migration):
         self.output.draw(
             label='Wanderungssalden Beschäftigte',
             style_file='einnahmen_beschaeftigtenwanderung.qml',
-            uncheck_siblings=True, redraw=False
+            uncheck_siblings=True, redraw=not toggle_if_exists,
+            toggle_if_exists=toggle_if_exists
         )
-        self.output.zoom_to()
+        if self.output.tree_layer.isVisible():
+            self.output.zoom_to()
 
 
 class Grundsteuer(QObject):

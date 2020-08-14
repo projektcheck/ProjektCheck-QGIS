@@ -503,7 +503,7 @@ class Traffic(Domain):
             )
             dialog.show()
         else:
-            self.draw_traffic(zoom_to=True)
+            self.draw_traffic(zoom_to=True, toggle_if_exists=True)
 
     def draw_nodes(self, zoom_to=False):
         '''
@@ -531,7 +531,7 @@ class Traffic(Domain):
             self.itinerary_output.zoom_to()
 
 
-    def draw_traffic(self, zoom_to=False):
+    def draw_traffic(self, zoom_to=False, toggle_if_exists=False):
         '''
         show layer visualizing the additional traffic load
         '''
@@ -540,8 +540,9 @@ class Traffic(Domain):
                                          groupname=self.layer_group)
         output.draw(label='Zusätzliche PKW-Fahrten',
                     style_file='verkehr_links_zusaetzliche_PKW-Fahrten.qml',
-                    filter=f'trips > 0')
-        if zoom_to:
+                    filter=f'trips > 0', toggle_if_exists=toggle_if_exists,
+                    redraw=not toggle_if_exists)
+        if zoom_to and output.tree_layer.isVisible():
             output.zoom_to()
 
     def close(self):

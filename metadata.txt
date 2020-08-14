@@ -20,11 +20,12 @@ changelog=
       Allgemein
       - Kompatibilität mit Windows 7 und 8
       - Geschwindkeitsoptimierungen der Projektdatenbank
+      - einige Layer werden umgeschaltet, falls bereits vorhanden, statt sie neu zu zeichnen
       Standortkonkurrenz Supermärkte
       - Fehler in der Darstellung der Märkte behoben
       Verkehr
       - Möglichkeit der manuellen Bearbeitung der Herkunfts-/Zielpunkte
-      - überarbeitetes Interface
+      - überarbeitete Benutzerführung
 
       1.1
       ---------

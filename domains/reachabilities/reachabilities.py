@@ -56,7 +56,7 @@ class Reachabilities(Domain):
     date_format = "%d.%m.%Y"
 
     def setupUi(self):
-
+        self.einrichtungen_output = None
         self.ui.stops_button.clicked.connect(self.query_stops)
         #self.ui.show_stops_button.clicked.connect(self.draw_haltestellen)
 
@@ -171,7 +171,7 @@ class Reachabilities(Domain):
         unchecked
         '''
         if not self.ui.recalculatestops_check.isChecked():
-            self.draw_haltestellen()
+            self.draw_haltestellen(toggle_if_exists=True)
             return
 
         date = next_working_day()
@@ -229,7 +229,7 @@ class Reachabilities(Domain):
         self.ui.connector_combo.blockSignals(False)
         self.toggle_connector()
 
-    def draw_haltestellen(self, zoom_to=True):
+    def draw_haltestellen(self, zoom_to=True, toggle_if_exists=False):
         '''
         show layer of public stops
         '''
@@ -239,9 +239,10 @@ class Reachabilities(Domain):
             label='Haltestellen',
             style_file='erreichbarkeit_haltestellen.qml',
             filter='flaechenzugehoerig=1 AND abfahrten>0',
+            toggle_if_exists=toggle_if_exists, redraw=not toggle_if_exists,
             prepend=True)
         self.feature_picker.set_layer(self.stops_layer)
-        if zoom_to:
+        if zoom_to and output.tree_layer.isVisible():
             output.zoom_to()
         self.toggle_stop()
 
@@ -274,7 +275,7 @@ class Reachabilities(Domain):
             return
         recalculate = self.ui.recalculate_time_check.isChecked()
         if not recalculate:
-            self.draw_erreichbarkeiten(stop)
+            self.draw_erreichbarkeiten(stop, toggle_if_exists=True)
             return
         date = next_working_day()
         stop.berechnet = ''
@@ -294,7 +295,7 @@ class Reachabilities(Domain):
             on_success=lambda project: on_success(project, stop, date))
         dialog.show()
 
-    def draw_erreichbarkeiten(self, stop):
+    def draw_erreichbarkeiten(self, stop, toggle_if_exists=False):
         '''
         show layer with durations of connections between currently selected
         public stop and central places
@@ -308,8 +309,10 @@ class Reachabilities(Domain):
             groupname=f'{self.layer_group}/{sub_group}')
         output.draw(label=label,
                     style_file='erreichbarkeit_erreichbarkeiten_oepnv.qml',
-                    filter=f'id_origin={stop.id}')
-        output.zoom_to()
+                    filter=f'id_origin={stop.id}', redraw=not toggle_if_exists,
+                    toggle_if_exists=toggle_if_exists)
+        if output.tree_layer.isVisible():
+            output.zoom_to()
 
     def get_isochrones(self):
         '''
@@ -339,22 +342,29 @@ class Reachabilities(Domain):
         '''
         query locations of interest around project areas
         '''
+        if self.einrichtungen_output and len(self.einrichtungen) > 0:
+            self.draw_einrichtungen()
+            return
         radius = self.ui.radius_input.value()
         job = EinrichtungenQuery(self.project, radius=radius, parent=self.ui)
         dialog = ProgressDialog(
-            job, parent=self.ui, on_success=lambda r: self.draw_einrichtungen())
+            job, parent=self.ui, on_success=lambda r: self.draw_einrichtungen(),
+            auto_close=True
+        )
         dialog.show()
 
     def draw_einrichtungen(self):
         '''
         show layer with locations of interest
         '''
-        output = ProjectLayer.from_table(
+        self.einrichtungen_output = ProjectLayer.from_table(
             self.einrichtungen.table, groupname=self.layer_group)
-        output.draw(label='Einrichtungen',
+        self.einrichtungen_output.draw(label='Einrichtungen',
                     style_file='erreichbarkeit_einrichtungen.qml',
+                    toggle_if_exists=True, redraw=False,
                     prepend=True)
-        output.zoom_to()
+        if self.einrichtungen_output.tree_layer.isVisible():
+            self.einrichtungen_output.zoom_to()
 
     def draw_isochrones(self, modus, connector):
         '''
@@ -389,16 +399,11 @@ class Reachabilities(Domain):
         group = (f'{self.layer_group}/ÖPNV Hintergrundkarte')
         url = ('type=xyz&url=http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png'
                '&zmax=18&zmin=0&crs=EPSG:{settings.EPSG}')
-        if not self.oepnv_layer:
-            self.oepnv_layer = TileLayer(url, groupname=group, prepend=False)
-        if self.oepnv_layer.tree_layer:
-            # toggle visibility if already there
-            self.oepnv_layer.tree_layer.setItemVisibilityChecked(
-                not self.oepnv_layer.tree_layer.isVisible())
-        else:
-            self.oepnv_layer.draw(
-                'ÖPNVKarte (memomaps.de) © OpenStreetMap-Mitwirkende')
-            self.oepnv_layer.layer.setTitle(
+
+        layer = TileLayer(url, groupname=group, prepend=False)
+        layer.draw('ÖPNVKarte (memomaps.de) © OpenStreetMap-Mitwirkende',
+                   toggle_if_exists=True)
+        layer.layer.setTitle(
                 'Karte memomaps.de CC-BY-SA (openstreetmap.org/copyright), '
                 'Kartendaten Openstreetmap ODbL')
 
