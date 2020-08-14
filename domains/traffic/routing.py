@@ -164,35 +164,10 @@ class Routing(Worker):
 
     def work(self):
         if self._recalculate:
-            self.calculate_ways()
             self.route_transfer_nodes()
             self.calculate_traffic_load()
         else:
             self.calculate_traffic_load()
-
-    def calculate_ways(self):
-        '''
-        calculate and store the additional ways per type of use of the areas
-        '''
-        # get ways per type of use
-        ways_tou = {}
-        self.ways.table.truncate()
-        self.log('Prüfe Wege...')
-        for area in self.areas:
-            if area.nutzungsart == 0:
-                continue
-            entry = ways_tou.get(area.nutzungsart)
-            if not entry:
-                entry = ways_tou[area.nutzungsart] = [0, 0]
-            entry[0] += area.wege_gesamt
-            entry[1] += area.wege_miv
-        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
-            if wege_gesamt == 0:
-                continue
-            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
-                # if wege_gesamt > 0 else 0
-            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
-                          miv_anteil=miv_anteil)
 
     def route_transfer_nodes(self):
         '''

@@ -31,6 +31,7 @@ import numpy as np
 from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
 from projektcheck.base.dialogs import ProgressDialog
+from projektcheck.domains.definitions.tables import Teilflaechen
 from projektcheck.domains.traffic.tables import (
     TrafficLoadLinks, Itineraries, TransferNodes, Ways, Connectors, RouteLinks)
 from projektcheck.domains.traffic.routing import (Routing,
@@ -65,10 +66,14 @@ class Traffic(Domain):
         RouteLinks.features(project=project, create=True).table.truncate()
         Itineraries.features(project=project, create=True).table.truncate()
         TrafficLoadLinks.features(project=project, create=True).table.truncate()
+        Ways.features(project=project, create=True).table.truncate()
 
     def setupUi(self):
         self.node_output = None
         self.itinerary_output = None
+        self.ways_params = None
+        self.weight_params = None
+        self.node_params = None
         self.select_tool = FeaturePicker(self.ui.select_transfer_node_button,
                                          canvas=self.canvas)
         self.select_tool.feature_picked.connect(self.select_node)
@@ -107,12 +112,10 @@ class Traffic(Domain):
 
     def load_content(self):
         super().load_content()
-        self.ways_params = None
-        self.weight_params = None
-        self.node_params = None
         output = ProjectLayer.find('Projektdefinition')
         if output:
             output[0].setItemVisibilityChecked(True)
+        self.areas = Teilflaechen.features(project=self.project)
         self.links = RouteLinks.features(project=self.project, create=True)
         self.traffic_load = TrafficLoadLinks.features(project=self.project,
                                                       create=True)
@@ -310,7 +313,9 @@ class Traffic(Domain):
         if reply == QMessageBox.Yes:
             if self.itinerary_output:
                 self.itinerary_output.remove()
-            self.reset(project=self.project)
+            self.transfer_nodes.table.truncate()
+            self.links.table.truncate()
+            self.traffic_load.table.truncate()
             self.canvas.refreshAllLayers()
             self.fill_node_combo()
             self.setup_weights()
@@ -360,6 +365,9 @@ class Traffic(Domain):
         if self.ways_params:
             self.ways_params.close()
 
+        if len(self.ways) == 0:
+            self.calculate_ways()
+
         layout = self.ui.ways_group.layout()
         clear_layout(layout)
         self.ways_params = Params(parent=layout,
@@ -391,6 +399,29 @@ class Traffic(Domain):
         self.ways_params.changed.connect(save)
         self.ways_params.show()
 
+    def calculate_ways(self):
+        '''
+        calculate and store the additional ways per type of use of the areas
+        '''
+        # get ways per type of use
+        ways_tou = {}
+        self.ways.table.truncate()
+        for area in self.areas:
+            if area.nutzungsart == 0:
+                continue
+            entry = ways_tou.get(area.nutzungsart)
+            if not entry:
+                entry = ways_tou[area.nutzungsart] = [0, 0]
+            entry[0] += area.wege_gesamt
+            entry[1] += area.wege_miv
+        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
+            if wege_gesamt == 0:
+                continue
+            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
+                # if wege_gesamt > 0 else 0
+            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
+                          miv_anteil=miv_anteil)
+
     def set_status(self):
         '''
         sets visibility and active status of certain ui elements depending on
@@ -418,7 +449,9 @@ class Traffic(Domain):
                  QMessageBox.Yes, QMessageBox.No)
             if reply == QMessageBox.No:
                 return
-        self.reset(project=self.project)
+        self.transfer_nodes.table.truncate()
+        self.links.table.truncate()
+        self.traffic_load.table.truncate()
         distance = self.ui.distance_input.value()
         job = TransferNodeCalculation(self.project, distance=distance)
         def on_success(res):
