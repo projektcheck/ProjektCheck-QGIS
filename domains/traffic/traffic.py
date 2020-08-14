@@ -23,8 +23,7 @@ __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
-from qgis.PyQt.QtWidgets import (QMessageBox, QSpacerItem, QSizePolicy,
-                                 QPushButton)
+from qgis.PyQt.QtWidgets import QMessageBox, QPushButton
 from qgis.PyQt.QtGui import QIcon
 import os
 import numpy as np
@@ -33,7 +32,7 @@ from projektcheck.base.domain import Domain
 from projektcheck.base.project import ProjectLayer
 from projektcheck.base.dialogs import ProgressDialog
 from projektcheck.domains.traffic.tables import (
-    TrafficLoadLinks, Itineraries, TransferNodes, Ways, Connectors)
+    TrafficLoadLinks, Itineraries, TransferNodes, Ways, Connectors, RouteLinks)
 from projektcheck.domains.traffic.routing import (Routing,
                                                   TransferNodeCalculation)
 from projektcheck.base.params import (Params, Param, Title,
@@ -63,6 +62,7 @@ class Traffic(Domain):
         if not project:
             project = cls.project_manager.active_project
         TransferNodes.features(project=project, create=True).delete()
+        RouteLinks.features(project=project, create=True).delete()
         Itineraries.features(project=project, create=True).delete()
         TrafficLoadLinks.features(project=project, create=True).delete()
 
@@ -105,6 +105,7 @@ class Traffic(Domain):
         output = ProjectLayer.find('Projektdefinition')
         if output:
             output[0].setItemVisibilityChecked(True)
+        self.links = RouteLinks.features(project=self.project, create=True)
         self.traffic_load = TrafficLoadLinks.features(project=self.project,
                                                       create=True)
         self.transfer_nodes = TransferNodes.features(project=self.project,
@@ -177,6 +178,7 @@ class Traffic(Domain):
             self.draw_nodes()
         self.canvas.refreshAllLayers()
         self.fill_node_combo(select=node)
+        self.links.delete()
         self.traffic_load.delete()
         self.setup_weights()
 
@@ -204,7 +206,7 @@ class Traffic(Domain):
             self.ui.transfer_node_parameter_group.setVisible(False)
             return
         self.ui.transfer_node_parameter_group.setVisible(True)
-        self.ui.transfer_node_parameter_group.setTitle(node.name)
+        #self.ui.transfer_node_parameter_group.setTitle(node.name)
         self.node_params = Params(layout, help_file='verkehr_knoten.txt')
         self.node_params.name = Param(
             node.name, LineEdit(width=300),
@@ -212,7 +214,7 @@ class Traffic(Domain):
 
         def save():
             node.name = self.node_params.name.value
-            self.ui.transfer_node_parameter_group.setTitle(node.name)
+            #self.ui.transfer_node_parameter_group.setTitle(node.name)
             node.save()
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
@@ -248,6 +250,8 @@ class Traffic(Domain):
         if reply == QMessageBox.Yes:
             if self.itinerary_output:
                 self.itinerary_output.remove()
+            # workaround: refresg node if weight was changed in the meantime
+            node = self.transfer_nodes.get(id=node.id)
             # distribute removed weight
             d = (100 - node.weight) / 100
             node.delete()
@@ -259,10 +263,11 @@ class Traffic(Domain):
             delta = 100 - sum(self.transfer_nodes.values('weight'))
             first = self.transfer_nodes[0]
             first.weight = max(first.weight + delta, 0)
+            self.links.delete()
             self.traffic_load.delete()
+            self.canvas.refreshAllLayers()
             self.fill_node_combo()
             self.setup_weights()
-            self.canvas.refreshAllLayers()
 
     def remove_nodes(self):
         if len(self.transfer_nodes) == 0:
@@ -273,25 +278,18 @@ class Traffic(Domain):
             f'Sollen alle Herkunfts-/Zielpunkte entfernt werden?',
              QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
+            if self.itinerary_output:
+                self.itinerary_output.remove()
             self.reset(project=self.project)
             self.canvas.refreshAllLayers()
             self.fill_node_combo()
             self.setup_weights()
 
     def setup_weights(self):
-        has_nodes = len(self.transfer_nodes) != 0
-        initial_calc_done = len(self.traffic_load) != 0
-        self.ui.calculate_traffic_button.setEnabled(has_nodes)
-        self.ui.settings_frame.setVisible(initial_calc_done)
-        button_text = 'Straßenverkehrsbelastung anzeigen' if initial_calc_done \
-            else 'Straßenverkehrsbelastung berechnen'
-        self.ui.calculate_traffic_button.setText(button_text)
+        self.set_status()
 
         if self.weight_params:
             self.weight_params.close()
-
-        if not initial_calc_done:
-            return
 
         layout = self.ui.weights_group.layout()
         clear_layout(layout)
@@ -312,9 +310,11 @@ class Traffic(Domain):
 
         def save():
             for node in self.transfer_nodes:
-                node.weight = self.ways_params[node.name].value
+                node.weight = self.weight_params[node.name].value
                 node.save()
-            self.settings_changed()
+            self.traffic_load.delete()
+            self.canvas.refreshAllLayers()
+            self.set_status()
 
         self.weight_params.changed.connect(save)
         self.weight_params.show()
@@ -351,31 +351,25 @@ class Traffic(Domain):
                 way.miv_anteil = self.ways_params[f'{name}_miv'].value
                 way.wege_gesamt = self.ways_params[f'{name}_gesamt'].value
                 way.save()
-            self.settings_changed()
+            self.traffic_load.delete()
+            self.canvas.refreshAllLayers()
+            self.set_status()
 
         self.ways_params.changed.connect(save)
         self.ways_params.show()
 
-    def settings_changed(self):
+    def set_status(self):
         '''
-        redistribute ways, call when ways or weight params have changed
+        sets visibility and active status of certain ui elements depending on
+        current state of calculations
         '''
-
-        for way in self.ways:
-            name = Nutzungsart(way.nutzungsart).name.capitalize()
-            way.miv_anteil = self.ways_params[f'{name}_miv'].value
-            way.wege_gesamt = self.ways_params[f'{name}_gesamt'].value
-            way.save()
-
-        job = Routing(self.project, recalculate=False)
-        def on_success(res):
-            self.draw_traffic()
-            self.setup_weights()
-        dialog = ProgressDialog(
-            job, parent=self.ui,
-            on_success=on_success
-        )
-        dialog.show()
+        has_nodes = len(self.transfer_nodes) != 0
+        calc_done = len(self.traffic_load) != 0
+        self.ui.calculate_traffic_button.setEnabled(has_nodes)
+        self.ui.settings_frame.setVisible(has_nodes)
+        button_text = 'Straßenverkehrsbelastung anzeigen' if calc_done \
+            else 'Straßenverkehrsbelastung berechnen'
+        self.ui.calculate_traffic_button.setText(button_text)
 
     def calculate_nodes(self):
         '''
@@ -392,9 +386,6 @@ class Traffic(Domain):
             if reply == QMessageBox.No:
                 return
         self.reset(project=self.project)
-        tree_layer = ProjectLayer.find(self.layer_group)
-        if tree_layer:
-            tree_layer[0].removeAllChildren()
         distance = self.ui.distance_input.value()
         job = TransferNodeCalculation(self.project, distance=distance)
         def on_success(res):
@@ -403,6 +394,7 @@ class Traffic(Domain):
         def on_close():
             self.fill_node_combo()
             self.setup_weights()
+            self.canvas.refreshAllLayers()
         dialog = ProgressDialog(
             job, parent=self.ui, on_success=on_success, on_close=on_close)
         dialog.show()
@@ -431,7 +423,8 @@ class Traffic(Domain):
                 return
 
         if len(self.traffic_load) == 0:
-            job = Routing(self.project, recalculate=True)
+            recalculate = len(self.links) == 0
+            job = Routing(self.project, recalculate=recalculate)
             def on_success(res):
                 if self.itinerary_output:
                     self.itinerary_output.remove()
@@ -468,7 +461,7 @@ class Traffic(Domain):
         self.itinerary_output.draw(label='Zulaufstrecken', expanded=False,
                                    style_file='verkehr_kuerzeste_Wege.qml')
         if zoom_to:
-            output.zoom_to()
+            self.itinerary_output.zoom_to()
 
 
     def draw_traffic(self, zoom_to=False):
