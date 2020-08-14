@@ -113,7 +113,7 @@ class TransferNodeCalculation(Worker):
         otp_router.build_graph(distance=inner_circle)
         otp_router.remove_redundancies()
 
-        self.log('Berechne Herkunfts- und Zielpunkte aus den Routen...')
+        self.log('Berechne Herkunfts-/Zielpunkte aus den Routen...')
         otp_router.transfer_nodes.calc_initial_weight()
 
         transfer_nodes_df = otp_router.get_transfer_node_features()
@@ -163,7 +163,7 @@ class Routing(Worker):
         self._recalculate = recalculate
 
     def work(self):
-        if not self._recalculate:
+        if self._recalculate:
             self.calculate_ways()
             self.route_transfer_nodes()
             self.calculate_traffic_load()
@@ -209,7 +209,7 @@ class Routing(Worker):
         )
         for i, area in enumerate(self.areas):
             self.log(f'Suche Routen zwischen Teilfläche {area.name} und den '
-                     'Herkunfts- und Zielpunkten...')
+                     'Herkunfts-/Zielpunkten...')
             connector = self.connectors.get(id_teilflaeche=area.id)
             qpoint = connector.geom.asPoint()
             pcon = Point(id=area.id, x=qpoint.x(), y=qpoint.y(),

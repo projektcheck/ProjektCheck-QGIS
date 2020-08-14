@@ -68,6 +68,7 @@ class Traffic(Domain):
 
     def setupUi(self):
         self.node_output = None
+        self.itinerary_output = None
         self.select_tool = FeaturePicker(self.ui.select_transfer_node_button,
                                          canvas=self.canvas)
         self.select_tool.feature_picked.connect(self.select_node)
@@ -98,7 +99,8 @@ class Traffic(Domain):
 
     def load_content(self):
         super().load_content()
-        self.settings_params = None
+        self.ways_params = None
+        self.weight_params = None
         self.node_params = None
         output = ProjectLayer.find('Projektdefinition')
         if output:
@@ -114,7 +116,8 @@ class Traffic(Domain):
 
         self.draw_nodes()
         self.fill_node_combo()
-        self.setup_traffic_settings()
+        self.setup_ways()
+        self.setup_weights()
 
     def fill_node_combo(self, select: 'Feature' = None):
         '''
@@ -149,8 +152,17 @@ class Traffic(Domain):
         '''
         add a transfer node to the database
         '''
-        weight = 100 / len(self.transfer_nodes) if len(self.transfer_nodes) > 0\
-            else 0
+        if self.itinerary_output:
+            self.itinerary_output.remove()
+        # equal share of weight for new node
+        weight = 100 / (len(self.transfer_nodes) + 1)
+        # reduce weights of other nodes by weight of new node
+        d = (100 - weight) / 100
+        for node in self.transfer_nodes:
+            node.weight = round(node.weight * d)
+            node.save()
+        # distribute delta caused by rounding errors
+        weight = 100 - sum(self.transfer_nodes.values('weight'))
         node = self.transfer_nodes.add(
             name=name,
             geom=geom,
@@ -166,7 +178,7 @@ class Traffic(Domain):
         self.canvas.refreshAllLayers()
         self.fill_node_combo(select=node)
         self.traffic_load.delete()
-        self.setup_traffic_settings()
+        self.setup_weights()
 
     def select_node(self, feature):
         '''
@@ -205,7 +217,7 @@ class Traffic(Domain):
             self.canvas.refreshAllLayers()
             # lazy way to update the combo box
             self.fill_node_combo(select=node)
-            self.setup_traffic_settings()
+            self.setup_weights()
 
         self.node_params.show(title='Herkunfts-/Zielpunkt bearbeiten')
         self.node_params.changed.connect(save)
@@ -234,10 +246,22 @@ class Traffic(Domain):
             'entfernt werden?',
              QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            # ToDo: redist. weights
-            self.traffic_load.delete()
+            if self.itinerary_output:
+                self.itinerary_output.remove()
+            # distribute removed weight
+            d = (100 - node.weight) / 100
             node.delete()
-            self.setup_traffic_settings()
+            if d > 0:
+                for node in self.transfer_nodes:
+                    node.weight = round(node.weight / d)
+                    node.save()
+            # distribute delta caused by rounding errors
+            delta = 100 - sum(self.transfer_nodes.values('weight'))
+            first = self.transfer_nodes[0]
+            first.weight = max(first.weight + delta, 0)
+            self.traffic_load.delete()
+            self.fill_node_combo()
+            self.setup_weights()
             self.canvas.refreshAllLayers()
 
     def remove_nodes(self):
@@ -250,13 +274,11 @@ class Traffic(Domain):
              QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.reset(project=self.project)
+            self.canvas.refreshAllLayers()
             self.fill_node_combo()
-            self.setup_traffic_settings()
+            self.setup_weights()
 
-    def setup_traffic_settings(self):
-        '''
-        set up ways and weights
-        '''
+    def setup_weights(self):
         has_nodes = len(self.transfer_nodes) != 0
         initial_calc_done = len(self.traffic_load) != 0
         self.ui.calculate_traffic_button.setEnabled(has_nodes)
@@ -265,37 +287,17 @@ class Traffic(Domain):
             else 'Straßenverkehrsbelastung berechnen'
         self.ui.calculate_traffic_button.setText(button_text)
 
-        if self.settings_params:
-            self.settings_params.close()
+        if self.weight_params:
+            self.weight_params.close()
 
         if not initial_calc_done:
             return
 
-        layout = self.ui.settings_group.layout()
+        layout = self.ui.weights_group.layout()
         clear_layout(layout)
-        self.settings_params = Params(parent=layout,
-                                      button_label='Annahmen verändern',
-                                      help_file='verkehr_wege_gewichtungen.txt')
-
-        self.settings_params.add(
-            Title('Verkehrsaufkommen und Verkehrsmittelwahl'))
-        for i, way in enumerate(self.ways):
-            name = Nutzungsart(way.nutzungsart).name.capitalize()
-            self.settings_params.add(Title(name, fontsize=8))
-            self.settings_params[f'{name}_gesamt'] = Param(
-                way.wege_gesamt, SpinBox(),
-                label='Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)')
-            self.settings_params[f'{name}_miv'] = Param(
-                way.miv_anteil, SpinBox(maximum=100),
-                label='Anteil der von Pkw-Fahrenden gefahrenen Wegen', unit='%')
-            if i != len(self.ways) - 1:
-                self.settings_params.add(Seperator(margin=0))
-
-        spacer = QSpacerItem(
-            10, 10, QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.settings_params.add(spacer)
-
-        self.settings_params.add(Title('Gewichtung der Herkunfts-/Zielpunkte'))
+        self.weight_params = Params(parent=layout,
+                                    button_label='Gewichtungen verändern',
+                                    help_file='verkehr_gewichtungen.txt')
 
         dependency = SumDependency(100)
         for node in self.transfer_nodes:
@@ -305,32 +307,70 @@ class Traffic(Domain):
                 Slider(maximum=100, lockable=True),
                 label=node.name, unit='%'
             )
-            self.settings_params.add(param, name=node.name)
+            self.weight_params.add(param, name=node.name)
             dependency.add(param)
 
-        self.settings_params.changed.connect(self.save_settings)
-        self.settings_params.show()
+        def save():
+            for node in self.transfer_nodes:
+                node.weight = self.ways_params[node.name].value
+                node.save()
+            self.settings_changed()
 
-    def save_settings(self):
+        self.weight_params.changed.connect(save)
+        self.weight_params.show()
+
+    def setup_ways(self):
         '''
-        save the state of the ways and weights and recalculate the traffic load
-        with those as new inputs
+        set up ways and weights
         '''
 
-        for node in self.transfer_nodes:
-            node.weight = self.settings_params[node.name].value
-            node.save()
+        if self.ways_params:
+            self.ways_params.close()
+
+        layout = self.ui.ways_group.layout()
+        clear_layout(layout)
+        self.ways_params = Params(parent=layout,
+                                  button_label='Annahmen verändern',
+                                  help_file='verkehr_wege.txt')
+
+        for i, way in enumerate(self.ways):
+            name = Nutzungsart(way.nutzungsart).name.capitalize()
+            self.ways_params.add(Title(name, fontsize=8))
+            self.ways_params[f'{name}_gesamt'] = Param(
+                way.wege_gesamt, SpinBox(),
+                label='Gesamtanzahl der Wege pro Werktag (Hin- und Rückwege)')
+            self.ways_params[f'{name}_miv'] = Param(
+                way.miv_anteil, SpinBox(maximum=100),
+                label='Anteil der von Pkw-Fahrenden gefahrenen Wegen', unit='%')
+            if i != len(self.ways) - 1:
+                self.ways_params.add(Seperator(margin=0))
+
+        def save():
+            for way in self.ways:
+                name = Nutzungsart(way.nutzungsart).name.capitalize()
+                way.miv_anteil = self.ways_params[f'{name}_miv'].value
+                way.wege_gesamt = self.ways_params[f'{name}_gesamt'].value
+                way.save()
+            self.settings_changed()
+
+        self.ways_params.changed.connect(save)
+        self.ways_params.show()
+
+    def settings_changed(self):
+        '''
+        redistribute ways, call when ways or weight params have changed
+        '''
 
         for way in self.ways:
             name = Nutzungsart(way.nutzungsart).name.capitalize()
-            way.miv_anteil = self.settings_params[f'{name}_miv'].value
-            way.wege_gesamt = self.settings_params[f'{name}_gesamt'].value
+            way.miv_anteil = self.ways_params[f'{name}_miv'].value
+            way.wege_gesamt = self.ways_params[f'{name}_gesamt'].value
             way.save()
 
-        job = Routing(self.project, recalculate=True)
+        job = Routing(self.project, recalculate=False)
         def on_success(res):
             self.draw_traffic()
-            self.setup_traffic_settings()
+            self.setup_weights()
         dialog = ProgressDialog(
             job, parent=self.ui,
             on_success=on_success
@@ -362,7 +402,7 @@ class Traffic(Domain):
             self.draw_itineraries(zoom_to=True)
         def on_close():
             self.fill_node_combo()
-            self.setup_traffic_settings()
+            self.setup_weights()
         dialog = ProgressDialog(
             job, parent=self.ui, on_success=on_success, on_close=on_close)
         dialog.show()
@@ -382,22 +422,22 @@ class Traffic(Domain):
                     dist = np.linalg.norm(
                         np.subtract((xs[i], ys[i]), (xs[j], ys[j])))
                     distances.append(dist)
-            if distances and max(distances) > max_dist:
+            if distances and max(distances) > 2 * max_dist:
                 QMessageBox.warning(
                     self.ui, 'Hinweis',
                     'Der Abstand zwischen den Anbindungspunkten ist zu groß. '
                     'Er darf für die Schätzung der Verkehrsbelastung jeweils '
-                    f'nicht größer als {max_dist} m sein!')
+                    f'nicht größer als {2 * max_dist} m sein!')
                 return
 
         if len(self.traffic_load) == 0:
-            #tree_layer = ProjectLayer.find(self.layer_group)
-            #if tree_layer:
-                #tree_layer[0].removeAllChildren()
-            job = Routing(self.project)
+            job = Routing(self.project, recalculate=True)
             def on_success(res):
+                if self.itinerary_output:
+                    self.itinerary_output.remove()
+                self.draw_nodes()
                 self.draw_traffic(zoom_to=True)
-                self.setup_traffic_settings()
+                self.setup_weights()
             dialog = ProgressDialog(
                 job, parent=self.ui,
                 on_success=on_success
@@ -412,7 +452,7 @@ class Traffic(Domain):
         '''
         self.node_output = ProjectLayer.from_table(self.transfer_nodes.table,
                                                    groupname=self.layer_group)
-        self.node_output.draw(label='Zielpunkte',
+        self.node_output.draw(label='Herkunfts-/Zielpunkte',
                               style_file='verkehr_zielpunkte.qml')
         self.select_tool.set_layer(self.node_output.layer)
         if zoom_to:
@@ -423,10 +463,10 @@ class Traffic(Domain):
         show layer visualizing the itineraries used for determining the
         transfer nodes
         '''
-        output = ProjectLayer.from_table(self.itineraries.table,
-                                         groupname=self.layer_group)
-        output.draw(label='Kürzeste Wege',
-                    style_file='verkehr_kuerzeste_Wege.qml', expanded=False)
+        self.itinerary_output = ProjectLayer.from_table(
+            self.itineraries.table, groupname=self.layer_group)
+        self.itinerary_output.draw(label='Zulaufstrecken', expanded=False,
+                                   style_file='verkehr_kuerzeste_Wege.qml')
         if zoom_to:
             output.zoom_to()
 
@@ -445,9 +485,12 @@ class Traffic(Domain):
             output.zoom_to()
 
     def close(self):
-        if hasattr(self, 'params'):
+        if self.node_params:
             self.node_params.close()
-            self.settings_params.close()
+        if self.ways_params:
+            self.ways_params.close()
+        if self.weight_params:
+            self.weight_params.close()
         self.select_tool.set_active(False)
         self.add_node_tool.set_active(False)
         super().close()

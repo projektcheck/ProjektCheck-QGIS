@@ -109,6 +109,20 @@ padding: 2px;
       </item>
      </layout>
     </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Verkehr im Umfeld</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
@@ -137,7 +151,7 @@ padding: 2px;
            <string/>
           </property>
           <property name="text">
-           <string>Schritt 1: Herkunfts-/Zielpunkte</string>
+           <string>Herkunfts-/Zielpunkte setzen</string>
           </property>
          </widget>
         </item>
@@ -150,7 +164,7 @@ padding: 2px;
            </font>
           </property>
           <property name="text">
-           <string>Automatische Generierung</string>
+           <string>Automatische Generierung (optional)</string>
           </property>
          </widget>
         </item>
@@ -284,7 +298,7 @@ padding: 2px;
            </font>
           </property>
           <property name="text">
-           <string>Bearbeitung</string>
+           <string>Punkte bearbeiten</string>
           </property>
          </widget>
         </item>
@@ -485,19 +499,6 @@ padding: 2px;
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <widget class="QPushButton" name="remove_transfer_nodes_button">
             <property name="toolTip">
              <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Herkunfts-/Zielpunkte löschen&lt;/span&gt;&lt;/p&gt;</string>
@@ -511,68 +512,8 @@ padding: 2px;
             </property>
            </widget>
           </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>10</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string/>
-          </property>
-          <property name="text">
-           <string>Schritt 2: Routensuche und vorläufige Belastungsschätzung</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QPushButton" name="calculate_traffic_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Routen der Fahrten von den Herkunfts-/Zielpunkten zum Plangebiet suchen und eine vorläufige Schätzung der Verkehrsbelastung durchführen. &lt;br/&gt;Wenn Funktion für aktuelles Projekt bereits ausgeführt, wird vorliegendes Ergebnis erneut angezeigt, falls nicht &lt;span style=&quot; font-style:italic;&quot;&gt;Neuberechnung&lt;/span&gt; gewählt wurde. &lt;/p&gt;</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Straßenverkehrsbelastung anzeigen</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -587,7 +528,7 @@ padding: 2px;
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_6">
+         <spacer name="verticalSpacer_8">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -630,6 +571,47 @@ padding: 2px;
             <number>0</number>
            </property>
            <item>
+            <widget class="QLabel" name="label_12">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="text">
+              <string>Gewichtungen der Herkunfts-/Zielpunkte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="weights_group">
+             <property name="title">
+              <string/>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3"/>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QLabel" name="label_3">
              <property name="font">
               <font>
@@ -642,23 +624,96 @@ padding: 2px;
               <string/>
              </property>
              <property name="text">
-              <string>Schritt 3: Anpassung der Annahmen</string>
+              <string>Verkehrsaufkommen und Verkehrsmittelwahl</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="settings_group">
+            <widget class="QGroupBox" name="ways_group">
              <property name="title">
               <string/>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout"/>
             </widget>
            </item>
+           <item>
+            <spacer name="verticalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_3">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Belastungsschätzung</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="calculate_traffic_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Routen der Fahrten von den Herkunfts-/Zielpunkten zum Plangebiet suchen und eine vorläufige Schätzung der Verkehrsbelastung durchführen. &lt;br/&gt;Wenn Funktion für aktuelles Projekt bereits ausgeführt, wird vorliegendes Ergebnis erneut angezeigt.&lt;/p&gt;</string>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Straßenverkehrsbelastung anzeigen</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -672,20 +727,6 @@ padding: 2px;
         </item>
        </layout>
       </widget>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_10">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Verkehr im Umfeld</string>
-      </property>
      </widget>
     </item>
    </layout>
