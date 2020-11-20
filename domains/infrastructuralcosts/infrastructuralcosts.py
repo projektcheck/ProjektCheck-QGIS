@@ -23,9 +23,8 @@ __author__ = 'Christoph Franke'
 __date__ = '18/10/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
-from qgis.PyQt.Qt import QRadioButton, QPushButton
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QRadioButton, QPushButton
 import numpy as np
 import os
 
@@ -62,10 +61,10 @@ class InfrastructureDrawing:
         self.project = project
         self.canvas = canvas
         self.ui.show_lines_button.clicked.connect(
-            lambda: self.draw_output('line'))
+            lambda: self.draw_output('line', toggle_if_exists=True))
         self.ui.show_lines_button.setCheckable(False)
         self.ui.show_points_button.clicked.connect(
-            lambda: self.draw_output('point'))
+            lambda: self.draw_output('point', toggle_if_exists=True))
         self.ui.show_points_button.setCheckable(False)
 
         self.ui.points_combo.currentIndexChanged.connect(
@@ -184,12 +183,15 @@ class InfrastructureDrawing:
         if geom_typ == 'line':
             feature.length = geom.length()
             feature.save()
+        # workaround: if layer had no data before it needs to be readded to show
+        # sth, refresh doesn't work
         if len(features) == 1:
             self.draw_output(geom_typ, redraw=True)
         self.canvas.refreshAllLayers()
         return feature
 
-    def draw_output(self, geom_typ: str='line', redraw: bool=False):
+    def draw_output(self, geom_typ: str='line', redraw: bool=False,
+                    toggle_if_exists: bool=False):
         '''
         add either the point measures or line measures as a layer depending on
         given geom_type ('line' or 'point')
@@ -200,7 +202,8 @@ class InfrastructureDrawing:
         output = self.output_lines if geom_typ == 'line' else self.output_points
         style = 'kosten_erschliessungsnetze_{}elemente.qml'.format(
             'linien' if geom_typ == 'line' else 'punkt')
-        output.draw(label=label, style_file=style, redraw=redraw)
+        output.draw(label=label, style_file=style, redraw=redraw,
+                    toggle_if_exists=toggle_if_exists)
         tool = self.select_lines_tool if geom_typ == 'line' \
             else self.select_point_tool
         tool.set_layer(output.layer)

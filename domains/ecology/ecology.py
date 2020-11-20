@@ -23,11 +23,10 @@ __date__ = '16/07/2019'
 __copyright__ = 'Copyright 2019, HafenCity University Hamburg'
 
 
-from qgis.PyQt.Qt import QPushButton
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QMessageBox, QVBoxLayout,
                                  QTableWidget, QTableWidgetItem,
-                                 QAbstractScrollArea)
+                                 QAbstractScrollArea, QPushButton)
 from qgis.core import QgsWkbTypes
 import os
 
@@ -263,7 +262,7 @@ class Ecology(Domain):
         '''
         def add_layer_from_dict(layers, parent_group):
             for name, url in layers:
-                self.add_wms_layer( name, url, parent_group=parent_group)
+                self.add_wms_layer(name, url, parent_group=parent_group)
 
         self.ui.nature_button.setCheckable(False)
         self.ui.nature_button.clicked.connect(
@@ -392,7 +391,7 @@ class Ecology(Domain):
         self.canvas.refreshAllLayers()
 
         if len(features) == 1:
-            self.add_output()
+            self.add_output(redraw=True)
 
     def fill_area(self, typ, planfall=True):
         #self.clear_drawing(planfall=planfall)
@@ -535,7 +534,7 @@ class Ecology(Domain):
         features.delete()
         self.canvas.refreshAllLayers()
 
-    def add_output(self):
+    def add_output(self, redraw=False):
         '''
         add drawings as layer
         '''
@@ -545,7 +544,7 @@ class Ecology(Domain):
         output = self.output_planfall if planfall else self.output_nullfall
         style = 'flaeche_oekologie_bodenbedeckung_planfall.qml' if planfall \
             else 'flaeche_oekologie_bodenbedeckung_nullfall.qml'
-        output.draw(label=label, style_file=style, redraw=False)
+        output.draw(label=label, style_file=style, redraw=redraw)
         setattr(self, 'output_planfall' if planfall else 'output_nullfall',
                 output)
         disabled_out = self.output_nullfall if planfall \
@@ -563,7 +562,7 @@ class Ecology(Domain):
         url = (f'{url}&crs=EPSG:{self.settings.EPSG}'
                '&format=image/png&dpiMode=7&styles')
         layer = TileLayer(url, groupname=group)
-        layer.draw(name)
+        layer.draw(name, toggle_if_exists=True)
 
     def calculate_rating(self):
         '''

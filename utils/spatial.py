@@ -3,7 +3,7 @@ from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsFeature, QgsPolygon, QgsCoordinateTransform,
                        QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
                        QgsFeatureIterator)
-from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QVariant
 import gdal, osr
 from typing import Union, Tuple, List
 import os

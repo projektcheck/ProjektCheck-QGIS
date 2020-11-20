@@ -157,8 +157,7 @@ class Projektwirkung(Worker):
         df_relations = self.relations.to_pandas()
         df_cells = self.cells.to_pandas().rename(columns={'fid': 'id'})
 
-        sales = Sales(self.project.basedata, df_relations, df_markets, df_cells,
-                      debug=DEBUG)
+        sales = Sales(self.project.basedata, df_relations, df_markets, df_cells)
         self.set_progress(70)
         self.log('Berechne Nullfall...')
         kk_nullfall = sales.calculate_nullfall()

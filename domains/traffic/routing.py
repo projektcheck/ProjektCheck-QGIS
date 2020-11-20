@@ -38,19 +38,17 @@ from projektcheck.domains.traffic.tables import (
 from projektcheck.settings import settings
 
 
-class Routing(Worker):
+class TransferNodeCalculation(Worker):
     '''
-    Distribution of the additional traffic produced by the project areas between
-    the shortest paths from and to transfer nodes located on an inner circle
-    around the traffic connectors. The transfer nodes are calculated by merging
-    the shortest paths to points placed on two circles around the inner circle.
+    The transfer nodes are calculated by merging the shortest paths to points
+    placed on two circles around the inner circle.
     '''
     # radius of outer circle (additional to inner circle)
     outer_circle = 2000
     # number of destination points on outer and middle ring to route to
     n_segments = 24
 
-    def __init__(self, project, distance=1000, recalculate=False, parent=None):
+    def __init__(self, project, distance=1000, parent=None):
         '''
         Parameters
         ----------
@@ -59,9 +57,6 @@ class Routing(Worker):
         distance : int, optional
             the radius in meters of the inner ring the transfer nodes are
             located in, defaults to 1000 m
-        recalculate : bool, optional
-            recalculate the transfer nodes and shortest paths, defaults to only
-            distributing the traffic on the already calculated routes
         parent : QObject, optional
             parent object of thread, defaults to no parent (global)
         '''
@@ -72,49 +67,11 @@ class Routing(Worker):
         self.areas = Teilflaechen.features(project=project)
         self.connectors = Connectors.features(project=project)
         self.itineraries = Itineraries.features(project=project, create=True)
-        self.links = RouteLinks.features(project=project, create=True)
-        self.traffic_load = TrafficLoadLinks.features(project=project,
-                                                      create=True)
         self.transfer_nodes = TransferNodes.features(project=project,
                                                      create=True)
-        self.ways = Ways.features(project=project, create=True)
-        self._recalculate = recalculate
 
     def work(self):
-        if not self._recalculate:
-            self.calculate_transfer_nodes()
-            self.set_progress(40)
-            self.calculate_ways()
-            self.set_progress(50)
-            self.route_transfer_nodes()
-            self.set_progress(90)
-            self.calculate_traffic_load()
-        else:
-            self.calculate_traffic_load()
-
-    def calculate_ways(self):
-        '''
-        calculate and store the additional ways per type of use of the areas
-        '''
-        # get ways per type of use
-        ways_tou = {}
-        self.ways.delete()
-        self.log('Prüfe Wege...')
-        for area in self.areas:
-            if area.nutzungsart == 0:
-                continue
-            entry = ways_tou.get(area.nutzungsart)
-            if not entry:
-                entry = ways_tou[area.nutzungsart] = [0, 0]
-            entry[0] += area.wege_gesamt
-            entry[1] += area.wege_miv
-        for tou, (wege_gesamt, wege_miv) in ways_tou.items():
-            if wege_gesamt == 0:
-                continue
-            miv_anteil = round(100 * wege_miv / wege_gesamt) # \
-                # if wege_gesamt > 0 else 0
-            self.ways.add(wege_gesamt=wege_gesamt, nutzungsart=tou,
-                          miv_anteil=miv_anteil)
+        self.calculate_transfer_nodes()
 
     def calculate_transfer_nodes(self):
         '''
@@ -129,7 +86,7 @@ class Routing(Worker):
         project_epsg = settings.EPSG
         otp_router = OTPRouter(distance=inner_circle, epsg=project_epsg)
 
-        self.itineraries.delete()
+        self.itineraries.table.truncate()
 
         for i, area in enumerate(self.areas):
             self.log(f'Suche Routen ausgehend von Teilfläche {area.name}...')
@@ -151,16 +108,16 @@ class Routing(Worker):
                 destination = Point(x, y, epsg=project_epsg)
                 destination.transform(otp_router.router_epsg)
                 otp_router.route(source, destination)
-            #self.set_progress(60 * (i + 1) / len(self.areas))
+            self.set_progress(80 * (i + 1) / len(self.areas))
 
         otp_router.build_graph(distance=inner_circle)
         otp_router.remove_redundancies()
 
-        self.log('Berechne Herkunfts- und Zielpunkte aus den Routen...')
+        self.log('Berechne Herkunfts-/Zielpunkte aus den Routen...')
         otp_router.transfer_nodes.calc_initial_weight()
 
         transfer_nodes_df = otp_router.get_transfer_node_features()
-        self.transfer_nodes.delete()
+        self.transfer_nodes.table.truncate()
         transfer_nodes_df['fid'] = range(1, len(transfer_nodes_df) + 1)
         self.transfer_nodes.update_pandas(transfer_nodes_df)
 
@@ -173,11 +130,50 @@ class Routing(Worker):
                 self.itineraries.add(geom=polyline, route_id=route.route_id,
                                      transfer_node_id=tn_id)
 
+
+class Routing(Worker):
+    '''
+    Distribution of the additional traffic produced by the project areas between
+    the shortest paths from and to transfer nodes located on an inner circle
+    around the traffic connectors.
+    '''
+
+    def __init__(self, project, recalculate=False, parent=None):
+        '''
+        Parameters
+        ----------
+        project : Poject
+            the project the areas and their connectors are in
+        recalculate : bool, optional
+            recalculate the shortest paths, defaults to only
+            distributing the traffic on the already calculated routes
+        parent : QObject, optional
+            parent object of thread, defaults to no parent (global)
+        '''
+        super().__init__(parent=parent)
+        self.project = project
+        self.areas = Teilflaechen.features(project=project)
+        self.connectors = Connectors.features(project=project)
+        self.itineraries = Itineraries.features(project=project, create=True)
+        self.links = RouteLinks.features(project=project, create=True)
+        self.traffic_load = TrafficLoadLinks.features(project=project,
+                                                      create=True)
+        self.transfer_nodes = TransferNodes.features(project=project)
+        self.ways = Ways.features(project=project, create=True)
+        self._recalculate = recalculate
+
+    def work(self):
+        if self._recalculate:
+            self.route_transfer_nodes()
+            self.calculate_traffic_load()
+        else:
+            self.calculate_traffic_load()
+
     def route_transfer_nodes(self):
         '''
         routing between transfer nodes and area connectors
         '''
-        self.links.delete()
+        self.links.table.truncate()
         project_epsg = settings.EPSG
         #route_ids = {}
         otp_router = OTPRouter(epsg=project_epsg)
@@ -188,7 +184,7 @@ class Routing(Worker):
         )
         for i, area in enumerate(self.areas):
             self.log(f'Suche Routen zwischen Teilfläche {area.name} und den '
-                     'Herkunfts- und Zielpunkten...')
+                     'Herkunfts-/Zielpunkten...')
             connector = self.connectors.get(id_teilflaeche=area.id)
             qpoint = connector.geom.asPoint()
             pcon = Point(id=area.id, x=qpoint.x(), y=qpoint.y(),
@@ -216,12 +212,13 @@ class Routing(Worker):
                         self.links.add(from_node_id=from_id, to_node_id=to_id,
                                        transfer_node_id=transfer_node.id,
                                        area_id=area.id, geom=geom)
+            self.set_progress(80 * (i + 1) / len(self.areas))
 
     def calculate_traffic_load(self):
         '''
         distribute the traffic to the shortest paths
         '''
-        self.traffic_load.delete()
+        self.traffic_load.table.truncate()
 
         self.log('Verteile das Verkehrsaufkommen...')
 
@@ -239,6 +236,7 @@ class Routing(Worker):
                 idx = df_links['area_id'] == area.id
                 df_links.loc[idx, 'wege_miv'] = (miv_gesamt_new * area.wege_miv
                                                  / miv_gesamt_old)
+        self.areas.filter()
 
         df_transfer = self.transfer_nodes.to_pandas(columns=['fid', 'weight'])
         df_weighted = df_links.merge(

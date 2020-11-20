@@ -103,7 +103,7 @@ class ProjektCheck:
             # Create the dockwidget (after translation) and keep reference
             self.mainwidget = ProjektCheckControl(
                 iface=self.iface, position=Qt.TopDockWidgetArea)
-
+        self.pluginIsActive = True
         # connect to provide cleanup on closing of dockwidget
         self.mainwidget.closing_widget.connect(self.onClosePlugin)
 

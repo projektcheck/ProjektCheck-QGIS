@@ -500,3 +500,111 @@ class PolygonMapTool(LineMapTool):
         drawn polygon
     '''
     wkbtype = QgsWkbTypes.PolygonGeometry
+
+
+class FeatureDragger(FeaturePicker):
+    '''
+    tool for moving features on the map canvas with drag & drop,
+    does not change the geometry of the dragged feature but draws a marker
+    at the new position and emits the geometry
+
+    Attributes
+    ----------
+    feature_dragged : pyqtSignal
+        emitted when a feature is dragged or clicked on the map canvas,
+        (feature id, release position)
+    drag_cursor : QCursor
+        the appearance of the cursor while dragging a feature
+    '''
+    feature_dragged = pyqtSignal(int, QgsPointXY)
+    drag_cursor = QCursor(Qt.DragMoveCursor)
+
+    def __init__(self, ui_element: QWidget, layers: List[QgsVectorLayer] = [],
+                 canvas: QgsMapCanvas = None, target_epsg: int = 25832):
+        '''
+        Parameters
+        ----------
+        ui_element : QWidget
+            clickable UI element, clicking on it will adctivate/deactivate this
+            tool
+        layers : list, optional
+            the layers containing the features that can be picked,
+            defaults to not setting any layers
+        canvas : QgsMapCanvas, optional
+            the map canvas the tool will work on, defaults to the map canvas of
+            the QGIS UI
+        target_epsg : int, optional
+            projection of emitted geometry after drawing as epsg code,
+            defaults to 25832
+        '''
+        super().__init__(ui_element, layers=layers, canvas=canvas)
+        self._marker = None
+        self._picked_feature = None
+        self._dragging = False
+        self.target_crs = QgsCoordinateReferenceSystem(target_epsg)
+
+    def reset(self):
+        '''
+        reset the feature picker to it's initial state
+        '''
+        self.remove_marker()
+        self._picked_feature = None
+
+    def remove_marker(self):
+        '''
+        remove the marker from the map
+        '''
+        if not self._marker:
+            return
+        self.canvas.scene().removeItem(self._marker)
+        self._marker = None
+
+    def canvasPressEvent(self, e):
+        '''
+        override, remember feature on click and move marker (create one if not
+        drawn yet)
+        '''
+        if self._picked_feature is None:
+            features = QgsMapToolIdentify(self.canvas).identify(
+                e.pos().x(), e.pos().y(), self._layers,
+                QgsMapToolIdentify.TopDownStopAtFirst)
+            if len(features) == 0:
+                return
+            feature = features[0].mFeature
+            self._picked_feature = feature.id()
+        # there is a feature -> drag it
+        self._dragging = True
+        self.canvas.setCursor(self.drag_cursor)
+        # not marked yet -> mark position
+        if not self._marker:
+            color = QColor(0, 0, 255)
+            color.setAlpha(100)
+            self._marker = QgsVertexMarker(self.canvas)
+            self._marker.setColor(color)
+            self._marker.setIconSize(10)
+            self._marker.setIconType(QgsVertexMarker.ICON_CIRCLE)
+            self._marker.setPenWidth(10)
+        point = self.toMapCoordinates(e.pos())
+        self._marker.setCenter(point)
+
+    def canvasMoveEvent(self, e):
+        '''
+        override, move marker if mouse dragging is active and mouse is moved
+        '''
+        if not self._marker or not self._dragging:
+            return
+        # update position of marker while dragging
+        point = self.toMapCoordinates(e.pos())
+        self._marker.setCenter(point)
+
+    def canvasReleaseEvent(self, mouseEvent):
+        '''
+        override, emit geometry of position of marker on mouse release
+        '''
+        self._dragging = False
+        if self._picked_feature is None:
+            return
+        self.canvas.setCursor(self.cursor)
+        point = self.toMapCoordinates(self._marker.pos().toPoint())
+        self.feature_dragged.emit(self._picked_feature,
+                                  self.transform_from_map(point))

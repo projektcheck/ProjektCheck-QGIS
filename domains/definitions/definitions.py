@@ -924,6 +924,7 @@ class ProjectDefinitions(Domain):
         '''
         set up possible user interactions and the sub-domains
         '''
+        self.tou_output = None
         self.ui.area_combo.currentIndexChanged.connect(
             lambda: self.change_area())
 
@@ -1072,9 +1073,8 @@ class ProjectDefinitions(Domain):
         close sub-domains and parameters
         '''
         self.connector_setter.close()
-        layer = self.tou_output.layer
-        if layer:
-            layer.removeSelection()
+        if self.tou_output and self.tou_output.layer:
+            self.tou_output.layer.removeSelection()
         if hasattr(self, 'params'):
             self.params.close()
         if self.typ:

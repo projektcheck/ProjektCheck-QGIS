@@ -109,6 +109,20 @@ padding: 2px;
       </item>
      </layout>
     </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Verkehr im Umfeld</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
@@ -119,13 +133,13 @@ padding: 2px;
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>461</width>
-         <height>594</height>
+         <width>469</width>
+         <height>618</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="label_9">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -137,44 +151,53 @@ padding: 2px;
            <string/>
           </property>
           <property name="text">
-           <string>Schritt 1: Routensuche und vorläufige Belastungsschätzung</string>
+           <string>Herkunfts-/Zielpunkte</string>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <spacer name="verticalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>6</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Automatische Generierung (optional)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="calculate_traffic_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+           <widget class="QPushButton" name="calc_transfer_nodes_button">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Routensuche und erste Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Routen der Fahrten zum Plangebiet suchen und eine vorläufige Schätzung der Verkehrsbelastung durchführen. &lt;br/&gt;Wenn Funktion für aktuelles Projekt bereits ausgeführt, wird vorliegendes Ergebnis erneut angezeigt, falls nicht &lt;span style=&quot; font-style:italic;&quot;&gt;Neuberechnung&lt;/span&gt; gewählt wurde. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Automatische Ermittlung von Herkunfts-/Zielpunkten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht die automatische Berechnung von Herkunfts-/Zielpunkten im angegebenen Umkreis anhand der kürzesten Wege zu den Anbindungspunkten der Teilflächen (Zulaufstrecken).&lt;/p&gt; &lt;p&gt;&lt;b&gt;Achtung:&lt;/b&gt; alle bestehenden Herkunfts-/Zielpunkte und Berechnungen werden gelöscht!&lt;/p&gt;</string>
             </property>
             <property name="text">
-             <string>Straßenverkehrsbelastung anzeigen</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
+             <string>Berechnung starten</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="recalculate_check">
-            <property name="text">
-             <string>Neuberechnung (Reset)</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
+           <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -267,28 +290,461 @@ padding: 2px;
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <spacer name="verticalSpacer_4">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>20</width>
+            <height>10</height>
            </size>
           </property>
          </spacer>
         </item>
         <item>
-         <widget class="QGroupBox" name="settings_group">
-          <property name="title">
-           <string>Schritt 2: Anpassung der Annahmen</string>
+         <widget class="QLabel" name="label_16">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout"/>
+          <property name="text">
+           <string>Punkte setzen und bearbeiten</string>
+          </property>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_3">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QPushButton" name="add_transfer_node_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Herkunfts-/Zielpunkt hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Einzeichnen eines oder mehrerer Herkunfts-/Zielpunkte in die Karte.&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Punkt hinzufügen</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../images/iconset_mob/20190619_iconset_mob_new_point_2.png</normaloff>
+              <normalon>../images/iconset_mob/20190619_iconset_mob_new_point_1.png</normalon>../images/iconset_mob/20190619_iconset_mob_new_point_2.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="move_transfer_node_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Herkunfts-/Zielpunkt verschieben&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Verschieben eines existierenden Herkunfts-/Zielpunktes mit Drag&amp;Drop. Klicken Sie dazu auf einen Punkt und ziehen Sie ihn bei gedrückter Maustatse auf die neue Position auf der Karte.&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Punkt verschieben</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../images/iconset_mob/20190619_iconset_mob_edit_point_1.png</normaloff>
+              <normalon>../images/iconset_mob/20190619_iconset_mob_edit_point_2.png</normalon>../images/iconset_mob/20190619_iconset_mob_edit_point_1.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Herkunfts-/Zielpunkte</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QComboBox" name="transfer_node_combo">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Herkunfts-/Zielpunkt aus Liste auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Einen Herkunfts-/Zielpunkt aus der Liste auswählen, um seine Eigenschaften anzuzeigen und bei Bedarf zu verändern.&lt;/p&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="select_transfer_node_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Herkunfts-/Zielpunkt in der Karte auswählen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Klicken der Schaltfläche ermöglicht das Auswählen eines Herkunfts-/Zielpunktes durch Anklicken in der Karte.&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Punkt in Karte auswählen</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../images/iconset_mob/20190619_iconset_mob_select_11.png</normaloff>
+              <normalon>../images/iconset_mob/20190619_iconset_mob_select_21.png</normalon>../images/iconset_mob/20190619_iconset_mob_select_11.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="transfer_node_parameter_group">
+          <property name="font">
+           <font>
+            <family>MS Shell Dlg 2</family>
+            <pointsize>8</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <property name="topMargin">
+            <number>6</number>
+           </property>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="remove_transfer_nodes_button">
+            <property name="toolTip">
+             <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alle Herkunfts-/Zielpunkte löschen&lt;/span&gt;&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>alle Punkte löschen</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</normaloff>../images/iconset_mob/20190619_iconset_mob_delete_1.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>14</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QFrame" name="settings_frame">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="text">
+              <string>Annahmen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_10">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>6</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="weights_group">
+             <property name="title">
+              <string>Gewichtungen der Herkunfts-/Zielpunkte</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3"/>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="ways_group">
+             <property name="title">
+              <string>Verkehrsaufkommen und Verkehrsmittelwahl</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout"/>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="text">
+              <string>Belastungsschätzung</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>6</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QPushButton" name="calculate_traffic_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Schätzung der Verkehrsbelastung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Die Routen der Fahrten von den Herkunfts-/Zielpunkten zum Plangebiet werden gesucht und eine vorläufige Schätzung der Verkehrsbelastung durchgeführt. &lt;br/&gt;Wenn die Funktion für das aktuelle Projekt bereits ausgeführt wurde und keine Änderungen an den Annahmen oder Herkunfts-Zielpunkten vorgenommen wurden, wird das vorliegende Ergebnis erneut angezeigt.&lt;/p&gt;</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Straßenverkehrsbelastung anzeigen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</normaloff>../images/iconset_mob/20190619_iconset_mob_calculate_traffic_3.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -304,56 +760,9 @@ padding: 2px;
       </widget>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_10">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Verkehr im Umfeld</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>recalculate_check</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>distance_frame</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>267</x>
-     <y>121</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>455</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>recalculate_check</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>settings_group</receiver>
-   <slot>setHidden(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>201</x>
-     <y>114</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>168</x>
-     <y>185</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

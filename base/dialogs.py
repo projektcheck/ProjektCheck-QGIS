@@ -24,10 +24,12 @@ __date__ = '16/07/2019'
 from qgis.PyQt import uic
 import re
 from typing import Tuple, Union
-from qgis.PyQt.Qt import (QDialog, QDialogButtonBox, QVBoxLayout, QHBoxLayout,
-                          Qt, QLineEdit, QLabel, QPushButton, QSpacerItem,
-                          QSizePolicy, QTimer, QVariant, QTextCursor, QObject)
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QWidget
+from qgis.PyQt.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout,
+                                 QHBoxLayout, QFileDialog, QMessageBox, QWidget,
+                                 QLineEdit, QLabel, QPushButton, QSpacerItem,
+                                 QSizePolicy)
+from qgis.PyQt.QtGui import QTextCursor
+from qgis.PyQt.QtCore import Qt, QTimer, QVariant, QObject
 from qgis.gui import QgsMapLayerComboBox
 from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer, QgsWkbTypes
 from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,

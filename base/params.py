@@ -22,13 +22,12 @@ __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
 
 from abc import ABC
-from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.Qt import (QVBoxLayout, QHBoxLayout, QFrame, QObject, QLabel,
-                          QGridLayout, QWidget, QScrollArea, QLayout,
-                          QBoxLayout)
+from qgis.PyQt.QtCore import pyqtSignal, Qt, QObject
 from qgis.PyQt.QtGui import QIcon, QCursor
-from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy,
-                                 QPushButton, QLayoutItem)
+from qgis.PyQt.QtWidgets import (QSpacerItem, QSizePolicy, QPushButton,
+                                 QLayoutItem, QVBoxLayout, QHBoxLayout,
+                                 QFrame, QLabel, QGridLayout, QWidget,
+                                 QScrollArea, QLayout, QBoxLayout)
 from typing import Union, List
 from collections import OrderedDict
 import math
@@ -162,15 +161,24 @@ class Param(QObject):
             return
         self.row = QHBoxLayout()
         label = QLabel(self.label)
-        spacer = QSpacerItem(0, 0, QSizePolicy.Expanding)
+        spacer = QFrame()
+        spacer_layout = QHBoxLayout()
+        spacer_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding))
+        spacer.setLayout(spacer_layout)
+        # dotted line in preview
+        if not edit:
+            spacer.setFrameShape(QFrame.StyledPanel)
+            spacer.setStyleSheet('border-width: 1px; border-style: none; '
+                                 'border-bottom-style: dotted;'
+                                 'border-color: grey;')
         if isinstance(layout, QGridLayout):
             n_rows = layout.rowCount()
             layout.addWidget(label, n_rows, 0)
-            layout.addItem(spacer, n_rows, 1)
+            layout.addWidget(spacer, n_rows, 1)
             layout.addLayout(self.row, n_rows, 2)
         else:
             self.row.addWidget(label)
-            self.row.addItem(spacer)
+            self.row.addWidget(spacer)
             layout.addLayout(self.row)
         if edit:
             self.input.draw(self.row, unit=self.unit)

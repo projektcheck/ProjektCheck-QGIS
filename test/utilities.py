@@ -22,7 +22,7 @@ def get_qgis_app():
     If QGIS is already running the handle to that app will be returned.
     """
 
-    from PyQt5 import QtGui, QtCore, QtWidgets
+    from PyQt5 import QtCore, QtWidgets
     from qgis.core import QgsApplication
     from qgis.gui import QgsMapCanvas
     from qgis_interface import QgisInterface

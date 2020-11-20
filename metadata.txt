@@ -2,7 +2,7 @@
 name=Projekt-Check
 qgisMinimumVersion=3.4
 description=Projekt-Check Profi-Check - tool to assist in the planning of residential, commercial and industrial areas in Germany.
-version=1.1
+version=1.2.1
 author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
 email=gis@ggr-planung.de
 
@@ -15,6 +15,25 @@ tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
 
 changelog=
+      1.2.1
+      ---------
+      Standortkonkurrenz Supermärkte
+      - kritischer Fehler in der Ausführung der Projektwirkung behoben
+
+      1.2
+      ---------
+      Allgemein
+      - Kompatibilität mit Windows 7 und 8
+      - Geschwindkeitsoptimierungen der Projektdatenbank
+      - einige Layer werden umgeschaltet, falls bereits vorhanden, statt sie neu zu zeichnen
+      Standortkonkurrenz Supermärkte
+      - Fehler in der Darstellung der Märkte behoben
+      Kommunale Steuereinnahmen
+      - Fehlermeldung bei der Berechnung der Wanderungssalden der Beschäftigten behoben
+      Verkehr
+      - Möglichkeit der manuellen Bearbeitung der Herkunfts-/Zielpunkte
+      - überarbeitete Benutzerführung
+
       1.1
       ---------
       Allgemein
