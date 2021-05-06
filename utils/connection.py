@@ -291,7 +291,6 @@ class Request(QObject):
             timer.stop()
         if reply.error():
             self.error.emit(reply.errorString())
-            raise ConnectionError(reply.errorString())
         res = Reply(reply)
         self.finished.emit(res)
         return res

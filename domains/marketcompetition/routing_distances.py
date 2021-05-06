@@ -223,20 +223,16 @@ class DistanceRouting:
             'maxPreTransitTime': 1200,
             # the max traveltime will be (cutoffMinutes + 30 min)
             'cutoffMinutes': 70,
-            #'searchRadiusM': 1000,
+            'searchRadiusM': 1000,
             'walkSpeed': kmh / 3.6,
             'intersectCosts': False,
         }
         start = time.time()
-        err_msg = ('Der Server meldet einen Fehler bei der Berechnung. '
-                   'Bitte überprüfen Sie die Lage des Punktes '
-                   '(innerhalb Deutschlands und max. 1000m '
-                   'vom bestehenden Straßennetz entfernt)')
         otp_url = settings.OTP_ROUTER_URL + '/surfaces'
         try:
             r = requests.post(otp_url, params=params)
         except ConnectionError:
-            raise Exception(
+            raise ConnectionError(
                 'Der Server antwortet nicht. Möglicherweise ist er nicht aktiv '
                 'oder überlastet.')
         #except requests.exceptions.HTTPError:
@@ -245,7 +241,7 @@ class DistanceRouting:
         try:
             id = r.json()['id']
         except:
-            raise Exception(err_msg)
+            return None
         url = f'{otp_url}/{id}/raster'
 
         params = {

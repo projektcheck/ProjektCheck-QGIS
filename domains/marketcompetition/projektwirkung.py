@@ -314,6 +314,11 @@ class Projektwirkung(Worker):
                 try:
                     distances, beelines = routing.get_distances(
                         origin, destinations, bbox)
+                    if (distances >= 0).sum() == 0:
+                        self.message.emit(
+                            'Der Markt ist nicht erreichbar. Er liegt entweder '
+                            'weit außerhalb des Betrachtungsraums oder konnte '
+                            'nicht an das Straßennetz angebunden werden.')
                 except Exception as e:
                     self.error.emit(str(e))
                     return
@@ -325,6 +330,8 @@ class Projektwirkung(Worker):
             self.set_progress(progress_start + (i * progress_step))
             i += 1
         # workaround: ogr crashes when setting relations in loop
+        if len(results) > 0:
+            self.message.emit('Speichere Distanzen...')
         for market_id, (destinations, distances, beelines) in results.items():
             self.distances_to_db(market_id, destinations, distances,
                                  beelines)
