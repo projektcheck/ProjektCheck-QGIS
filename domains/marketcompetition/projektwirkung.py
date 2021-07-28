@@ -400,8 +400,9 @@ class Projektwirkung(Worker):
 
         # lazy replacing instead of updating, removing old entries this way
         self.log(u'Schreibe Kenngrößen in Datenbank...')
-        self.relations.table.truncate()
-        self.relations.update_pandas(df_relations)
+        # self.relations.table.truncate()
+        self.relations.update_pandas(df_relations, pkeys=['id_markt',
+                                                          'id_siedlungszelle'])
 
     def get_markets_in_user_centers(self):
         '''

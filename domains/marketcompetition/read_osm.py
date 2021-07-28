@@ -98,8 +98,8 @@ class ReadOSMWorker(ReadMarketsWorker):
             nutzerdefiniert=-1, auswahl__ne=0)
         in_com_ids = intersect(markets, communities, input_fields=['id'],
                                epsg=self.epsg, buffer=self.buffer)
-        in_com_ids = [i['id'] for i in in_com_ids]
-        markets_in_com = [m for m in markets if m.id in in_com_ids]
+        in_com_ids = [str(i['id']) for i in in_com_ids]
+        markets_in_com = [m for m in markets if str(m.id) in in_com_ids]
 
         self.set_progress(50)
         self.log(f'Schreibe {len(markets_in_com)} Märkte in die Datenbank...')
