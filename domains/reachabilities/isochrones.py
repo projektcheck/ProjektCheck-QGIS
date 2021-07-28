@@ -26,7 +26,7 @@ import json
 from qgis.core import (QgsProject, QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsGeometry, QgsWkbTypes)
 import json
-import ogr
+from osgeo import ogr
 
 from projektcheck.utils.spatial import Point
 from projektcheck.base.domain import Worker

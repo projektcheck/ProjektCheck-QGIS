@@ -2,7 +2,7 @@
 name=Projekt-Check
 qgisMinimumVersion=3.4
 description=Projekt-Check Profi-Check - tool to assist in the planning of residential, commercial and industrial areas in Germany.
-version=1.2.2
+version=1.2.4
 author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
 email=gis@ggr-planung.de
 
@@ -15,6 +15,17 @@ tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
 
 changelog=
+      1.2.4
+      ---------
+      Allgemein
+      - Kompatibilität mit QGIS 3.16.9+ LTR
+
+      1.2.3
+      ---------
+      Standortkonkurrenz Supermärkte
+      - sporadischer Fehler bei erneuter Berechnung behoben
+      - ab QGIS 3.16.7 auftretender Fehler bei der Ergänzung mit OSM-Märkten behoben
+
       1.2.2
       ---------
       Standortkonkurrenz Supermärkte

@@ -28,9 +28,7 @@ import numpy as np
 import math
 from scipy.ndimage import filters
 import tempfile
-import processing
-from osgeo import gdal
-import osr
+from osgeo import gdal, osr
 
 from projektcheck.utils.spatial import Point, clip_raster
 from projektcheck.utils.connection import Request

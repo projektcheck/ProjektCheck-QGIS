@@ -4,7 +4,7 @@ from qgis.core import (QgsPointXY, QgsGeometry, QgsVectorLayer, QgsField,
                        QgsProject, QgsCoordinateReferenceSystem, QgsPoint,
                        QgsFeatureIterator)
 from qgis.PyQt.QtCore import QVariant
-import gdal, osr
+from osgeo import gdal, osr
 from typing import Union, Tuple, List
 import os
 import tempfile
