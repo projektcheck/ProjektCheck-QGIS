@@ -105,6 +105,8 @@ class LandUse(Domain):
         self.change_area()
 
         self.area_union = None
+        # ToDo: fix filter side effects
+        self.areas.filter()
         for area in self.areas:
             self.area_union = area.geom if not self.area_union \
                 else self.area_union.combine(area.geom)
