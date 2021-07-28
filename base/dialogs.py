@@ -22,6 +22,7 @@ __author__ = 'Christoph Franke'
 __date__ = '16/07/2019'
 
 from qgis.PyQt import uic
+from qgis.utils import iface
 import re
 from typing import Tuple, Union
 from qgis.PyQt.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout,
@@ -588,7 +589,7 @@ class DiagramDialog(Dialog):
             the modality of the dialog (modal if True, modeless if False),
             defaults to being modal
         '''
-        super().__init__(modal=modal, title=title)
+        super().__init__(modal=modal, title=title, parent=iface.mainWindow())
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvasQTAgg(figure)
 
