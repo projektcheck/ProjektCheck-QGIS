@@ -332,6 +332,7 @@ class GeopackageTable(Table):
         cursor = self._layer.GetNextFeature()
         self._cursor = cursor
         if not cursor:
+            self.reset_cursor()
             raise StopIteration
         return self._ogr_feat_to_row(cursor)
 

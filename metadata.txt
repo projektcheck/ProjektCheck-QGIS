@@ -15,10 +15,15 @@ tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
 
 changelog=
+      1.2.5
+      ---------
+      Allgemein
+      - Fehler beim Iterieren über gespeicherte Features (z.B. Anzeige der Wegpunkte in Verkehr im Umfeld)
+
       1.2.4
       ---------
       Allgemein
-      - Kompatibilität mit QGIS 3.16.9+ LTR
+      - Kompatibilität mit QGIS 3.16.9+ LTR (Importe und Diagramme)
 
       1.2.3
       ---------

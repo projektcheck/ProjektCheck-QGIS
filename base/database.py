@@ -157,6 +157,7 @@ class FeatureCollection:
         self._it = 0
 
     def __iter__(self):
+        self.table.reset_cursor()
         return self
 
     def __next__(self):
