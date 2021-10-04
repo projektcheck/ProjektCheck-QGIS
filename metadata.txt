@@ -2,7 +2,7 @@
 name=Projekt-Check
 qgisMinimumVersion=3.4
 description=Projekt-Check Profi-Check - tool to assist in the planning of residential, commercial and industrial areas in Germany.
-version=1.2.4
+version=1.2.5
 author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
 email=gis@ggr-planung.de
 
@@ -19,6 +19,8 @@ changelog=
       ---------
       Allgemein
       - Fehler beim Iterieren über gespeicherte Features (z.B. Anzeige der Wegpunkte in Verkehr im Umfeld)
+      Flächeninanspruchnahme
+      - QGIS-Crash beim Wechsel vom Wirkungsbereich zurück zur Projektdefinition behoben
 
       1.2.4
       ---------
