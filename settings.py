@@ -18,9 +18,9 @@ settings.HELP_PATH = os.path.join(base_path, 'help')
 settings.UI_PATH = os.path.join(base_path, 'ui')
 
 # service urls
-settings.BASEDATA_URL = 'https://gis.ggr-planung.de/repos/projektcheck'
-settings.GEOSERVER_URL = 'https://geoserver.ggr-planung.de/geoserver/projektcheck'
-settings.OTP_ROUTER_URL = 'https://projektcheck.ggr-planung.de/otp'
+settings.BASEDATA_URL = 'https://projektcheck.dl.ils-geomonitoring.de/downloads'
+settings.GEOSERVER_URL = 'https://projektcheck.gs.ils-geomonitoring.de/projektcheck'
+settings.OTP_ROUTER_URL = 'https://otp.ggr.ils-geomonitoring.de/otp'
 settings.OTP_ROUTER_ID = 'deutschland' # name of the otp router (equals server folder to graph)
 
 # zensus raster files
