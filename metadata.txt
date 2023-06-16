@@ -2,7 +2,7 @@
 name=Projekt-Check
 qgisMinimumVersion=3.4
 description=Projekt-Check Profi-Check - tool to assist in the planning of residential, commercial and industrial areas in Germany.
-version=1.2.5
+version=1.3
 author=GGR-Planung, HafenCity University Hamburg, ILS Dortmund
 email=gis@ggr-planung.de
 
@@ -15,6 +15,11 @@ tracker=https://github.com/projektcheck/ProjektCheck-QGIS/issues
 repository=https://github.com/projektcheck/ProjektCheck-QGIS
 
 changelog=
+      1.3
+      ---------
+      Allgemein
+      - Austausch der Links der verwendeten Services nach Umzug der Services zum ILS (Institut für Landes- und Stadtentwicklungsforschung gGmbH)
+
       1.2.5
       ---------
       Allgemein

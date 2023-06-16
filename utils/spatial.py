@@ -203,8 +203,7 @@ def create_layer(features: Union[List[QgsFeature], QgsFeatureIterator],
         if isinstance(feature.geom, QgsPolygon):
             geom = QgsGeometry.fromPolygonXY(feature.geom)
         f.setGeometry(geom)
-        for field in fields:
-            f.setAttributes([getattr(feature, field)])
+        f.setAttributes([getattr(feature, field) for field in fields])
         pr.addFeature(f)
     return layer
 
